@@ -15,12 +15,12 @@ function isAdmin(){return ["admin","super_admin"].includes(state.profile?.role)}
 function roleName(r){return r==="super_admin"?"主管理员":r==="admin"?"副管理员":"普通成员"}
 function navLink(key,href,label){return '<a class="'+(page===key?"active":"")+'" href="'+href+'">'+label+'</a>'}
 function renderChrome(){
-  q("#siteHeader").innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>ModelHub · 建模学习与作业平台</small></span></a><nav class="nav">'+
+  q("#siteHeader").innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室交流平台</b><small>机械创新 · 学习交流 · 项目协作</small></span></a><nav class="nav">'+
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
     navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html","个人资料")+
     '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录 / 注册</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
-  q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>ModelHub · 独立模块化学习平台</small></div></div></footer>';
+  q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><div><b>江苏科技大学机械创新实验室交流平台</b><small>机械创新 · 学习交流 · 项目协作</small></div></div></footer>';
   document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 style="margin:0">登录 / 注册</h2><p style="margin:0;color:#8fa4bd">登录只需邮箱和密码；注册需填写姓名、专业并通过实验室通行证。</p><div class="two"><label>姓名（注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>专业（注册必填）<input id="regMajor" maxlength="60" placeholder="例如：机械工程"></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="register" class="btn sec" type="button">注册</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">验证正确后账号直接创建。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><div id="toast" class="toast"></div>');
   bindAuth();
 }
@@ -213,8 +213,84 @@ async function initSubmit(){
 }
 async function initMine(){
   if(!requireLogin())return;
-  const r=await supabase.from("submissions").select("*,exams(title)").eq("user_id",state.user.id).order("created_at",{ascending:false});const data=r.data||[];
-  q("#mineBody").innerHTML=data.length?data.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.file_name)+'</td><td><span class="status">'+esc(x.status)+'</span></td><td>'+fmt(x.created_at)+'</td></tr>').join(""):'<tr><td colspan="4" style="color:#7890aa">暂无提交记录。</td></tr>';
+  const [r,e]=await Promise.all([
+    supabase.from("submissions").select("*,exams(title)").eq("user_id",state.user.id).order("created_at",{ascending:false}),
+    supabase.from("exams").select("id,title").order("created_at",{ascending:false})
+  ]);
+  if(r.error)return toast("加载提交记录失败："+r.error.message);
+  const data=r.data||[], exams=e.data||[];
+  const body=q("#mineBody");
+  body.innerHTML=data.length?data.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.file_name)+'</td><td><span class="status">'+esc(x.status)+'</span></td><td>'+fmt(x.created_at)+'</td><td><div class="rowActions"><button class="btn sec editSub" data-id="'+esc(x.id)+'">修改</button><button class="btn danger cancelSub" data-id="'+esc(x.id)+'">取消提交</button></div></td></tr>').join(""):'<tr><td colspan="5" style="color:#7890aa">暂无提交记录。</td></tr>';
+
+  const editDialog=q("#editSubmissionDialog"), editForm=q("#editSubmissionForm"), editExam=q("#editExam"), editName=q("#editSubmitName"), editNote=q("#editNote"), editFile=q("#editFile"), editCurrent=q("#editCurrentFile"), editStatus=q("#editStatus");
+  editExam.innerHTML=exams.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
+
+  document.querySelectorAll(".editSub").forEach(b=>b.onclick=()=>{
+    const x=data.find(s=>s.id===b.dataset.id); if(!x)return;
+    q("#editSubmissionId").value=x.id;
+    editExam.value=x.exam_id||"";
+    editName.value=x.submitter_name||state.profile?.full_name||"";
+    editNote.value=x.note||"";
+    editFile.value="";
+    editCurrent.textContent="当前文件："+(x.file_name||"—");
+    editStatus.textContent="如不选择新文件，将只修改任务、姓名/队伍名称和备注。";
+    editDialog.showModal();
+  });
+
+  q("#closeEditSubmission").onclick=()=>editDialog.close();
+  editForm.onsubmit=async ev=>{
+    ev.preventDefault();
+    const id=q("#editSubmissionId").value;
+    const old=data.find(s=>s.id===id); if(!old)return;
+    const exam_id=editExam.value, submitter_name=editName.value.trim(), note=editNote.value.trim(), newFile=editFile.files[0];
+    if(!exam_id)return toast("请选择任务");
+    if(!submitter_name)return toast("请填写姓名 / 队伍名称");
+    if(newFile&&!/\.(zip|rar|7z)$/i.test(newFile.name))return toast("替换文件仅支持 ZIP / RAR / 7Z");
+    const saveBtn=q("#saveSubmissionEdit"), oldText=saveBtn.textContent;
+    let newPath=null;
+    try{
+      saveBtn.disabled=true;
+      if(newFile){
+        newPath=state.user.id+"/"+exam_id+"/"+storageObjectPath("files",newFile.name);
+        saveBtn.textContent="上传新文件 0%";
+        await uploadStorageFile("submissions",newPath,newFile,p=>{saveBtn.textContent="上传新文件 "+p+"%"});
+      }
+      saveBtn.textContent="正在保存修改…";
+      const payload={exam_id,submitter_name,note};
+      if(newFile){payload.file_name=newFile.name;payload.storage_path=newPath}
+      const u=await supabase.from("submissions").update(payload).eq("id",id).eq("user_id",state.user.id);
+      if(u.error){if(newPath)await supabase.storage.from("submissions").remove([newPath]);throw u.error}
+      if(newFile&&old.storage_path&&old.storage_path!==newPath)await supabase.storage.from("submissions").remove([old.storage_path]);
+      toast("提交记录已修改");
+      editDialog.close();
+      await initMine();
+    }catch(err){
+      console.error("修改提交失败",err);
+      editStatus.textContent="修改失败："+(err?.message||String(err));
+      toast("修改失败："+(err?.message||String(err)));
+    }finally{
+      saveBtn.disabled=false;
+      saveBtn.textContent=oldText;
+    }
+  };
+
+  document.querySelectorAll(".cancelSub").forEach(b=>b.onclick=async()=>{
+    const x=data.find(s=>s.id===b.dataset.id); if(!x)return;
+    if(!confirm("确定取消这次提交吗？取消后该提交记录和已上传文件都会删除，无法恢复。"))return;
+    try{
+      const d=await supabase.from("submissions").delete().eq("id",x.id).eq("user_id",state.user.id);
+      if(d.error)throw d.error;
+      if(x.storage_path){
+        const rm=await supabase.storage.from("submissions").remove([x.storage_path]);
+        if(rm.error)console.warn("提交记录已删除，但文件清理失败",rm.error);
+      }
+      toast("已取消提交");
+      await initMine();
+    }catch(err){
+      console.error("取消提交失败",err);
+      toast("取消失败："+(err?.message||String(err)));
+    }
+  });
 }
 async function initProfile(){
   if(!requireLogin())return;
