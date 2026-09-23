@@ -36,7 +36,7 @@ function bindAuth(){
 }
 async function loadProfile(){
   if(!state.user){state.profile=null;return}
-  const r=await supabase.from("profiles").select("id,email,role,full_name,major,created_at").eq("id",state.user.id).maybeSingle();
+  const r=await supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,created_at").eq("id",state.user.id).maybeSingle();
   state.profile=r.data||null;
 }
 function requireLogin(box="#pageGate"){
@@ -88,8 +88,8 @@ async function initMine(){
 }
 async function initProfile(){
   if(!requireLogin())return;
-  q("#profileName").value=state.profile?.full_name||"";q("#profileMajor").value=state.profile?.major||"";q("#profileEmail").textContent=state.profile?.email||state.user.email;q("#profileRole").textContent=roleName(state.profile?.role);q("#profileDisplayName").textContent=state.profile?.full_name||"未填写姓名";q("#profileDisplayMajor").textContent=state.profile?.major||"未填写专业";
-  q("#profileForm").onsubmit=async e=>{e.preventDefault();const full_name=q("#profileName").value.trim(),major=q("#profileMajor").value.trim();if(!full_name||!major)return toast("姓名和专业不能为空");const r=await supabase.from("profiles").update({full_name,major}).eq("id",state.user.id).select("id,email,role,full_name,major,created_at").single();if(r.error)return toast("保存失败："+r.error.message);state.profile=r.data;updateAuthUI();q("#profileDisplayName").textContent=full_name;q("#profileDisplayMajor").textContent=major;toast("个人资料已保存，并同步到管理员后台")};
+  q("#profileName").value=state.profile?.full_name||"";q("#profileMajor").value=state.profile?.major||"";q("#profilePhone").value=state.profile?.phone||"";q("#profileQQ").value=state.profile?.qq||"";q("#profileEmail").textContent=state.profile?.email||state.user.email;q("#profileRole").textContent=roleName(state.profile?.role);q("#profileDisplayName").textContent=state.profile?.full_name||"未填写姓名";q("#profileDisplayMajor").textContent=state.profile?.major||"未填写专业";
+  q("#profileForm").onsubmit=async e=>{e.preventDefault();const full_name=q("#profileName").value.trim(),major=q("#profileMajor").value.trim(),phone=q("#profilePhone").value.trim(),qq=q("#profileQQ").value.trim();if(!full_name||!major)return toast("姓名和专业不能为空");if(phone&&!/^[0-9+()\-\s]{5,30}$/.test(phone))return toast("请输入有效电话号码");if(qq&&!/^\d{5,20}$/.test(qq))return toast("QQ 号应为 5-20 位数字");const r=await supabase.from("profiles").update({full_name,major,phone:phone||null,qq:qq||null}).eq("id",state.user.id).select("id,email,role,full_name,major,phone,qq,created_at").single();if(r.error)return toast("保存失败："+r.error.message);state.profile=r.data;updateAuthUI();q("#profileDisplayName").textContent=full_name;q("#profileDisplayMajor").textContent=major;toast("个人资料已保存，并同步到管理员后台")};
 }
 async function initAdmin(){
   if(!state.user||!isAdmin()){q("#adminGate").innerHTML='<div class="notice">当前账号没有管理权限。</div>';q("#adminContent").classList.add("hidden");return}
