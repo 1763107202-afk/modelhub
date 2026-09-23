@@ -17,11 +17,11 @@ function navLink(key,href,label){return '<a class="'+(page===key?"active":"")+'"
 function renderChrome(){
   q("#siteHeader").innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></span></a><nav class="nav">'+
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
-    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html","资料库")+'<span class="navSep"></span>'+
+    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files/","资料库")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html","个人资料")+
-    '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录 / 注册</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
+    '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
-  document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 style="margin:0">登录 / 注册</h2><p style="margin:0;color:#8fa4bd">登录只需邮箱和密码；注册需填写姓名、专业并通过实验室通行证。</p><div class="two"><label>姓名（注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>专业（注册必填）<input id="regMajor" maxlength="60" placeholder="例如：机械工程"></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="register" class="btn sec" type="button">注册</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">验证正确后账号直接创建。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><div id="toast" class="toast"></div>');
+  document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 id="authModeTitle" style="margin:0">成员登录</h2><p id="authModeHint" style="margin:0;color:#8fa4bd">已注册成员只需要邮箱和密码即可登录。</p><div id="registerFields" class="two hidden"><label>姓名（首次注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>专业 / 班级（首次注册必填）<input id="regMajor" maxlength="60" placeholder="例如：机械工程三班"></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="showRegister" class="btn sec" type="button">首次注册</button><button id="continueRegister" class="btn pri hidden" type="button">继续注册</button><button id="backLogin" class="btn ghost hidden" type="button">返回登录</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">通行证只在首次注册时验证，之后登录无需再次填写。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><div id="toast" class="toast"></div>');
   bindAuth();
 }
 function updateAuthUI(){
@@ -32,11 +32,50 @@ function updateAuthUI(){
   q("#adminNav").classList.toggle("hidden",!isAdmin());document.querySelectorAll(".adminSep").forEach(x=>x.classList.toggle("hidden",!isAdmin()));
 }
 function bindAuth(){
-  q("#authOpen").onclick=()=>q("#auth").showModal();q("#closeAuth").onclick=()=>q("#auth").close();q("#logout").onclick=()=>supabase.auth.signOut();
-  q("#login").onclick=async()=>{const r=await supabase.auth.signInWithPassword({email:q("#email").value.trim(),password:q("#password").value});q("#authMsg").textContent=r.error?r.error.message:"登录成功";if(!r.error)q("#auth").close()};
-  q("#register").onclick=()=>{const n=q("#regName").value.trim(),m=q("#regMajor").value.trim(),e=q("#email").value.trim(),p=q("#password").value;if(!n)return q("#authMsg").textContent="请填写姓名";if(!m)return q("#authMsg").textContent="请填写专业";if(!e||p.length<6)return q("#authMsg").textContent="请输入有效邮箱，密码至少 6 位";q("#authMsg").textContent="";q("#passMsg").textContent="";q("#passcodeConfirm").value="";q("#auth").close();q("#passAuth").showModal()};
-  q("#cancelPasscode").onclick=()=>{q("#passAuth").close();q("#auth").showModal()};
-  q("#confirmPasscode").onclick=async()=>{const full_name=q("#regName").value.trim(),major=q("#regMajor").value.trim(),email=q("#email").value.trim(),password=q("#password").value,lab_passcode=q("#passcodeConfirm").value.trim();if(!lab_passcode)return q("#passMsg").textContent="请输入实验室通行证";q("#passMsg").textContent="正在验证并注册…";const r=await supabase.auth.signUp({email,password,options:{data:{lab_passcode,full_name,major}}});if(r.error){q("#passMsg").textContent=/Database error|unexpected_failure/i.test(r.error.message||"")?"通行证不正确或注册失败":r.error.message;return}if(r.data.session){q("#passMsg").textContent="注册成功，已自动登录";setTimeout(()=>q("#passAuth").close(),400);return}const s=await supabase.auth.signInWithPassword({email,password});q("#passMsg").textContent=s.error?s.error.message:"注册成功，已自动登录";if(!s.error)setTimeout(()=>q("#passAuth").close(),400)};
+  const setAuthMode=mode=>{
+    const reg=mode==="register";
+    q("#registerFields").classList.toggle("hidden",!reg);
+    q("#login").classList.toggle("hidden",reg);
+    q("#showRegister").classList.toggle("hidden",reg);
+    q("#continueRegister").classList.toggle("hidden",!reg);
+    q("#backLogin").classList.toggle("hidden",!reg);
+    q("#authModeTitle").textContent=reg?"首次注册":"成员登录";
+    q("#authModeHint").textContent=reg?"首次注册需填写姓名、专业/班级，并验证实验室通行证。":"已注册成员只需要邮箱和密码即可登录。";
+    q("#authMsg").textContent="";
+  };
+  q("#authOpen").onclick=()=>{setAuthMode("login");q("#auth").showModal()};
+  q("#closeAuth").onclick=()=>q("#auth").close();
+  q("#logout").onclick=()=>supabase.auth.signOut();
+  q("#showRegister").onclick=()=>setAuthMode("register");
+  q("#backLogin").onclick=()=>setAuthMode("login");
+  q("#login").onclick=async()=>{
+    const email=q("#email").value.trim(),password=q("#password").value;
+    if(!email||!password)return q("#authMsg").textContent="请输入邮箱和密码";
+    q("#authMsg").textContent="正在登录…";
+    const r=await supabase.auth.signInWithPassword({email,password});
+    q("#authMsg").textContent=r.error?r.error.message:"登录成功";
+    if(!r.error)q("#auth").close();
+  };
+  q("#continueRegister").onclick=()=>{
+    const n=q("#regName").value.trim(),m=q("#regMajor").value.trim(),e=q("#email").value.trim(),p=q("#password").value;
+    if(!n)return q("#authMsg").textContent="首次注册请填写姓名";
+    if(!m)return q("#authMsg").textContent="首次注册请填写专业 / 班级";
+    if(!e||p.length<6)return q("#authMsg").textContent="请输入有效邮箱，密码至少 6 位";
+    q("#authMsg").textContent="";q("#passMsg").textContent="";q("#passcodeConfirm").value="";
+    q("#auth").close();q("#passAuth").showModal();
+  };
+  q("#cancelPasscode").onclick=()=>{q("#passAuth").close();setAuthMode("register");q("#auth").showModal()};
+  q("#confirmPasscode").onclick=async()=>{
+    const full_name=q("#regName").value.trim(),major=q("#regMajor").value.trim(),email=q("#email").value.trim(),password=q("#password").value,lab_passcode=q("#passcodeConfirm").value.trim();
+    if(!lab_passcode)return q("#passMsg").textContent="请输入实验室通行证";
+    q("#passMsg").textContent="正在验证并注册…";
+    const r=await supabase.auth.signUp({email,password,options:{data:{lab_passcode,full_name,major}}});
+    if(r.error){q("#passMsg").textContent=/Database error|unexpected_failure/i.test(r.error.message||"")?"通行证不正确或注册失败":r.error.message;return}
+    if(r.data.session){q("#passMsg").textContent="注册成功，已自动登录";setTimeout(()=>q("#passAuth").close(),400);return}
+    const s=await supabase.auth.signInWithPassword({email,password});
+    q("#passMsg").textContent=s.error?s.error.message:"注册成功，已自动登录";
+    if(!s.error)setTimeout(()=>q("#passAuth").close(),400);
+  };
 }
 async function loadProfile(){
   if(!state.user){state.profile=null;return}
@@ -46,7 +85,7 @@ async function loadProfile(){
 function requireLogin(box="#pageGate"){
   if(state.user)return true;
   const el=q(box);if(el)el.innerHTML='<div class="notice">此页面需要登录后使用。 <button id="gateLogin" class="btn sec" type="button">立即登录</button></div>';
-  setTimeout(()=>{const b=q("#gateLogin");if(b)b.onclick=()=>q("#auth").showModal()},0);return false;
+  setTimeout(()=>{const b=q("#gateLogin");if(b)b.onclick=()=>q("#authOpen").click()},0);return false;
 }
 function embed(u){
   if(!u)return '<div style="font-size:44px;color:#3a5677">▶</div>';
