@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>成员往期作业 | 机械创新实验室</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#07111f;color:#edf5ff;line-height:1.6}a{color:inherit;text-decoration:none}button{font:inherit}.wrap{width:min(1120px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;background:#07111ff2;border-bottom:1px solid #ffffff12;backdrop-filter:blur(14px)}.topin{min-height:74px;display:flex;align-items:center;gap:12px}.brand{display:flex;align-items:center;gap:11px;font-weight:900}.brand img{width:52px;height:52px;border-radius:50%;object-fit:contain}.nav{margin-left:auto;display:flex;gap:8px}.btn{border:0;border-radius:11px;padding:9px 14px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}.pri{color:#fff;background:linear-gradient(135deg,#4f8cff,#7758ff)}.sec{color:#dfeeff;background:#11233a;border:1px solid #29415d}.ghost{color:#cad9eb;background:transparent;border:1px solid #2a3e56}.hero{padding:44px 0 24px}.eyebrow{font-size:12px;letter-spacing:.15em;color:#76abff;font-weight:900}.hero h1{font-size:clamp(34px,5vw,52px);margin:8px 0 8px}.hero p{margin:0;color:#8fa4bd}.profile{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.cell{padding:14px;border-radius:15px;background:#0b192a;border:1px solid #1d334c}.cell small{display:block;color:#7890aa}.cell b{display:block;margin-top:3px}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:18px 0}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#102946;color:#a5cffb;border:1px solid #274d75}.list{display:grid;gap:12px;padding-bottom:50px}.item{padding:16px;border-radius:17px;background:linear-gradient(180deg,#12233a,#0b1828);border:1px solid #1d334d}.itemTop{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.item h3{margin:0 0 4px}.meta{font-size:12px;color:#7890aa}.note{margin-top:8px;color:#9db0c7;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status{font-size:11px;padding:4px 8px;border-radius:999px;background:#123326;color:#78ddb0}.empty{padding:40px;text-align:center;border:1px dashed #2b425d;border-radius:16px;color:#7f94ae}.loginbox{width:min(430px,calc(100% - 28px));margin:70px auto;padding:24px;border-radius:20px;background:#0c1929;border:1px solid #29415e;display:grid;gap:13px}.loginbox input{width:100%;padding:11px 12px;border:1px solid #223a57;border-radius:11px;background:#081524;color:#edf6ff}.hidden{display:none!important}@media(max-width:760px){.profile{grid-template-columns:1fr 1fr}.itemTop{flex-direction:column}.nav{width:100%;margin-left:0}.topin{flex-wrap:wrap;padding:10px 0}}@media(max-width:480px){.profile{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap topin"><a class="brand" href="./admin-members.html"><img src="./lab-logo-320.jpg?v=12" alt="Logo"><span>机械创新实验室 · 往期作业</span></a><div class="nav"><a class="btn ghost" href="./admin-members.html">返回成员后台</a><a class="btn ghost" href="./admin.html">管理后台</a><button id="logoutBtn" class="btn sec hidden">退出</button></div></div></header>
+
+<section id="loginView" class="loginbox">
+  <span class="eyebrow">ADMIN LOGIN</span>
+  <h2 style="margin:0">管理员登录</h2>
+  <p style="margin:0;color:#8fa4bd">只有主管理员或副管理员可以查看成员往期作业。</p>
+  <input id="email" type="email" placeholder="管理员邮箱">
+  <input id="password" type="password" placeholder="密码">
+  <button id="loginBtn" class="btn pri">登录</button>
+  <div id="loginMsg" style="color:#8fa4bd;font-size:13px"></div>
+</section>
+
+<main id="content" class="wrap hidden">
+  <section class="hero">
+    <span class="eyebrow">ASSIGNMENT HISTORY</span>
+    <h1 id="title">成员往期作业</h1>
+    <p>按时间查看该成员的所有历史提交，可下载任意一份作业。</p>
+    <div class="profile">
+      <div class="cell"><small>姓名</small><b id="name">—</b></div>
+      <div class="cell"><small>专业</small><b id="major">—</b></div>
+      <div class="cell"><small>邮箱</small><b id="memberEmail">—</b></div>
+      <div class="cell"><small>累计提交</small><b id="count">0</b></div>
+    </div>
+  </section>
+  <div class="toolbar"><span id="summary" class="pill">0 份作业</span><span id="updated" class="meta"></span></div>
+  <section id="list" class="list"></section>
+  <div id="empty" class="empty hidden">该成员还没有提交过作业。</div>
+</main>
+
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
+const q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
+let admin=null;
+const memberId=new URLSearchParams(location.search).get("id");
+
+function showLogin(msg=""){q("#loginView").classList.remove("hidden");q("#content").classList.add("hidden");q("#logoutBtn").classList.add("hidden");q("#loginMsg").textContent=msg}
+function showContent(){q("#loginView").classList.add("hidden");q("#content").classList.remove("hidden");q("#logoutBtn").classList.remove("hidden")}
+
+async function enter(){
+  const s=await supabase.auth.getSession();
+  const user=s.data.session?.user;
+  if(!user)return showLogin();
+  const me=await supabase.from("profiles").select("id,email,role").eq("id",user.id).maybeSingle();
+  if(me.error)return showLogin("读取管理员身份失败："+me.error.message);
+  if(!["admin","super_admin"].includes(me.data?.role))return showLogin("当前账号没有权限查看成员作业。");
+  admin=me.data;
+  if(!memberId){showContent();q("#list").innerHTML='<div class="empty">缺少成员 ID，请从成员后台点击“作业”进入。</div>';return}
+  showContent();
+  await loadMember();
+}
+
+async function loadMember(){
+  const [p,s]=await Promise.all([
+    supabase.from("profiles").select("id,email,full_name,major,phone,qq,role").eq("id",memberId).maybeSingle(),
+    supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").eq("user_id",memberId).order("created_at",{ascending:false})
+  ]);
+  if(p.error){q("#list").innerHTML='<div class="empty">成员资料读取失败：'+esc(p.error.message)+'</div>';return}
+  if(s.error){q("#list").innerHTML='<div class="empty">作业记录读取失败：'+esc(s.error.message)+'</div>';return}
+  const m=p.data,rows=s.data||[];
+  q("#title").textContent=(m?.full_name||m?.email||"成员")+" · 往期作业";
+  q("#name").textContent=m?.full_name||"未填写";
+  q("#major").textContent=m?.major||"未填写";
+  q("#memberEmail").textContent=m?.email||"—";
+  q("#count").textContent=rows.length;
+  q("#summary").textContent=rows.length+" 份作业";
+  q("#updated").textContent="更新时间："+new Date().toLocaleString("zh-CN",{hour12:false});
+  q("#empty").classList.toggle("hidden",rows.length>0);
+  q("#list").innerHTML=rows.map((x,i)=>'<article class="item"><div class="itemTop"><div><div class="meta">第 '+(rows.length-i)+' 次提交</div><h3>'+esc(x.exams?.title||"未关联任务")+'</h3><div>'+esc(x.file_name||"—")+'</div></div><span class="status">'+esc(x.status||"—")+'</span></div><div class="meta">提交时间：'+fmt(x.created_at)+(x.submitter_name?' · 提交人：'+esc(x.submitter_name):"")+'</div>'+(x.note?'<div class="note">备注：'+esc(x.note)+'</div>':'')+'<div class="actions">'+(x.storage_path?'<button class="btn pri downloadBtn" data-path="'+esc(x.storage_path)+'" data-name="'+esc(x.file_name||"作业文件")+'">下载作业</button>':'<span class="meta">文件路径不可用</span>')+'</div></article>').join("");
+  document.querySelectorAll(".downloadBtn").forEach(b=>b.onclick=async()=>{b.disabled=true;const old=b.textContent;b.textContent="正在生成下载链接…";const r=await supabase.storage.from("submissions").createSignedUrl(b.dataset.path,120);b.disabled=false;b.textContent=old;if(r.error){alert("下载失败："+r.error.message);return}window.open(r.data.signedUrl,"_blank")});
+}
+
+q("#loginBtn").onclick=async()=>{q("#loginMsg").textContent="正在登录…";const r=await supabase.auth.signInWithPassword({email:q("#email").value.trim(),password:q("#password").value});if(r.error){q("#loginMsg").textContent=r.error.message;return}await enter()};
+q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();showLogin("已退出登录。")};
+supabase.auth.onAuthStateChange((_e,s)=>{if(!s)showLogin()});
+await enter();
+</script>
+</body>
+</html>
