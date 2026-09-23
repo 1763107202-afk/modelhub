@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-labelledby="t d">
+<title id="t">江苏科技大学机械创新实验室</title><desc id="d">机械创新实验室蓝色机械科技风格徽标</desc>
+<defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#0ea5e9"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
+<circle cx="110" cy="110" r="106" fill="#fff"/><circle cx="110" cy="110" r="97" fill="url(#g)"/>
+<g fill="#dff4ff" transform="translate(110 55)"><circle r="25"/><g><rect x="-7" y="-41" width="14" height="17" rx="3"/><rect x="-7" y="24" width="14" height="17" rx="3"/><rect x="-41" y="-7" width="17" height="14" rx="3"/><rect x="24" y="-7" width="17" height="14" rx="3"/></g><circle r="11" fill="#2563eb"/></g>
+<g stroke="#e7f7ff" stroke-width="12" stroke-linecap="round"><path d="M58 92l75 75"/><path d="M162 92l-75 75"/></g>
+<g fill="#e7f7ff"><circle cx="55" cy="89" r="15"/><circle cx="165" cy="89" r="15"/></g>
+<path d="M91 109l22 0-8 21 24-2-39 45 10-31-22 3z" fill="#ff334e"/>
+<text x="110" y="198" text-anchor="middle" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="14" font-weight="700" fill="#fff">机械创新实验室</text>
+</svg>
