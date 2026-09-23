@@ -40,10 +40,86 @@
 .labFooter img{display:block;object-fit:contain!important;object-position:center!important;padding:2px;margin:0;flex:0 0 auto}
 @media(max-width:900px){.worksGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.worksGrid{grid-template-columns:1fr}}
+
+/* mobile header final fix */
+.labBrandLogo{
+  width:52px!important;height:52px!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:50% 50%!important;
+  clip-path:circle(49% at 50% 50%);
+  background:transparent!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:0 0 0 6px rgba(14,165,233,.10)!important;
+}
+.brandText{justify-content:center}
+nav a{white-space:nowrap}
+
+@media(max-width:600px){
+  .top{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    gap:12px!important;
+    padding:16px 12px 10px!important;
+  }
+  .brand{
+    width:100%!important;
+    min-width:0!important;
+    justify-content:center!important;
+    align-items:center!important;
+    text-align:center!important;
+    flex-direction:column!important;
+    gap:8px!important;
+  }
+  .labBrandLogo{
+    width:72px!important;
+    height:72px!important;
+    margin:0 auto!important;
+    display:block!important;
+  }
+  .brandText{
+    width:100%!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    line-height:1.25!important;
+  }
+  .brandText b{font-size:16px!important}
+  .brandText small{display:block!important;font-size:10px!important;margin-top:4px!important}
+  .acct{
+    width:100%!important;
+    margin:0!important;
+    justify-content:center!important;
+  }
+  nav{
+    order:3!important;
+    width:100%!important;
+    max-width:100%!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    overflow-x:auto!important;
+    padding:4px 0 8px!important;
+    scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none}
+  nav a{
+    flex:0 0 auto!important;
+    white-space:nowrap!important;
+    padding:8px 11px!important;
+    border-radius:10px!important;
+    background:#0c1929!important;
+    border:1px solid #1d3149!important;
+    line-height:1.2!important;
+  }
+}
 </style>
 </head>
 <body>
-<header class="top"><span id="labVersionBadge" style="position:fixed;right:12px;bottom:12px;z-index:999;background:#0ea5e9;color:#fff;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;box-shadow:0 8px 22px #0006">机械创新实验室版 · v5</span>
+<header class="top">
 <a class="brand" href="#"><img class="labBrandLogo" src="data:image/jpeg;base64,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" alt="机械创新实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>ModelHub · 建模学习与作业平台</small></span></a>
 <nav><a href="#lab">实验室</a><a href="#works">往届作品</a><a href="#exams">试卷</a><a href="#tutorials">教程</a><a href="#submit">提交</a><a href="#mine">我的提交</a><a id="adminNav" class="hidden" href="#admin">管理后台</a></nav>
 <div class="acct"><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录 / 注册</button><button id="logout" class="btn ghost hidden">退出</button></div>
