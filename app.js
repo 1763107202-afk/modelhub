@@ -98,8 +98,31 @@ function resourcePreview(x){
   const hint=type==="pdf"?"点击下方按钮在线查看或下载 PDF":type==="word"?"点击下方按钮打开或下载 Word 文档":"点击下方按钮打开或下载 PPT 演示文稿";
   return '<div class="docPreview"><div class="docIcon '+esc(type)+'">'+icon+'</div><strong>'+esc(x.file_name||resourceTypeName(type))+'</strong><span>'+hint+'</span></div>';
 }
+async function loadAnnouncements(adminMode=false){
+  const r=await supabase.from("announcements").select("*").order("created_at",{ascending:false}).limit(adminMode?50:6);
+  if(r.error){console.error("公告加载失败",r.error);return}
+  const data=r.data||[];
+  if(adminMode){
+    const box=q("#adminAnnouncementList");
+    if(!box)return;
+    box.innerHTML=data.length?data.map(x=>'<article class="announcement adminAnnouncement '+(x.level==="important"?"important":"")+'"><div class="announcementTop"><div><span class="announcementBadge">'+(x.level==="important"?"重要公告":"公告")+'</span><h3>'+esc(x.title)+'</h3></div><button class="btn danger delAnnouncement" data-id="'+esc(x.id)+'">删除</button></div><p>'+esc(x.content)+'</p><small>'+fmt(x.created_at)+'</small></article>').join(""):'<div class="empty">暂无公告。</div>';
+    document.querySelectorAll(".delAnnouncement").forEach(b=>b.onclick=async()=>{
+      if(!confirm("确定删除这条公告吗？"))return;
+      const d=await supabase.from("announcements").delete().eq("id",b.dataset.id);
+      if(d.error)return toast("删除失败："+d.error.message);
+      toast("公告已删除");
+      await loadAnnouncements(true);
+    });
+  }else{
+    const box=q("#announcementList"),section=q("#announcementSection");
+    if(!box||!section)return;
+    section.classList.toggle("hidden",data.length===0);
+    box.innerHTML=data.map(x=>'<article class="announcement '+(x.level==="important"?"important":"")+'"><div class="announcementTop"><div><span class="announcementBadge">'+(x.level==="important"?"重要公告":"公告")+'</span><h3>'+esc(x.title)+'</h3></div><small>'+fmt(x.created_at)+'</small></div><p>'+esc(x.content)+'</p></article>').join("");
+  }
+}
 async function initHome(){
   const [e,v,w]=await Promise.all([supabase.from("exams").select("id"),supabase.from("tutorials").select("id"),supabase.from("past_works").select("id")]);
+  await loadAnnouncements(false);
   q("#homeExams").textContent=(e.data||[]).length;q("#homeVideos").textContent=(v.data||[]).length;q("#homeWorks").textContent=(w.data||[]).length;
   if(state.user){const m=await supabase.from("submissions").select("id").eq("user_id",state.user.id);q("#homeMine").textContent=(m.data||[]).length}else q("#homeMine").textContent="—";
 }
@@ -300,6 +323,22 @@ async function initProfile(){
 async function initAdmin(){
   if(!state.user||!isAdmin()){q("#adminGate").innerHTML='<div class="notice">当前账号没有管理权限。</div>';q("#adminContent").classList.add("hidden");return}
   q("#adminContent").classList.remove("hidden");
+  q("#announcementForm").onsubmit=async e=>{
+    e.preventDefault();
+    const title=q("#announcementTitle").value.trim(),content=q("#announcementContent").value.trim(),level=q("#announcementLevel").value;
+    if(!title)return toast("请填写公告标题");
+    if(!content)return toast("请填写公告内容");
+    const btn=e.submitter||q("#announcementForm button");
+    const oldText=btn?.textContent||"发布公告";
+    try{
+      if(btn){btn.disabled=true;btn.textContent="正在发布…"}
+      const ins=await supabase.from("announcements").insert({title,content,level,created_by:state.user.id});
+      if(ins.error)throw ins.error;
+      e.target.reset();toast("公告发布成功");await loadAnnouncements(true);
+    }catch(err){toast("公告发布失败："+(err?.message||String(err)))}
+    finally{if(btn){btn.disabled=false;btn.textContent=oldText}}
+  };
+  await loadAnnouncements(true);
   q("#workForm").onsubmit=async e=>{e.preventDefault();const title=q("#workTitle").value.trim();if(!title)return toast("请填写作品名称");let cover_url="",storage_path=null;const f=q("#workCover").files[0];const btn=e.submitter||q("#workForm button");const oldText=btn?.textContent||"发布作品";try{if(f){storage_path=storageObjectPath("covers",f.name);if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}await uploadStorageFile("works",storage_path,f,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});cover_url=supabase.storage.from("works").getPublicUrl(storage_path).data.publicUrl}if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("past_works").insert({title,year:q("#workYear").value?Number(q("#workYear").value):null,team_name:q("#workTeam").value.trim(),description:q("#workDesc").value.trim(),cover_url:cover_url||null,storage_path,detail_url:q("#workUrl").value.trim()||null,created_by:state.user.id});if(ins.error){if(storage_path)await supabase.storage.from("works").remove([storage_path]);throw ins.error}e.target.reset();toast("往届作品发布成功");setTimeout(()=>location.href="./works.html",450)}catch(err){console.error("作品发布失败",err);toast("作品发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   q("#examForm").onsubmit=async e=>{e.preventDefault();const title=q("#examTitle").value.trim(),f=q("#pdf").files[0];if(!title)return toast("请填写任务标题");if(!f)return toast("请选择 PDF 文件");if(!/\.pdf$/i.test(f.name))return toast("任务文件必须是 PDF");const p=storageObjectPath("pdf",f.name);const btn=e.submitter||q("#examForm button");const oldText=btn?.textContent||"发布任务";try{if(btn){btn.disabled=true;btn.textContent="PDF 上传中 0% · "+bytesText(f.size)}await uploadStorageFile("exams",p,f,x=>{if(btn)btn.textContent="PDF 上传中 "+x+"% · "+bytesText(f.size)});const url=supabase.storage.from("exams").getPublicUrl(p).data.publicUrl;if(btn)btn.textContent="正在发布任务…";const ins=await supabase.from("exams").insert({title,description:q("#examDesc").value.trim(),deadline:q("#deadline").value?new Date(q("#deadline").value).toISOString():null,file_url:url,storage_path:p,created_by:state.user.id});if(ins.error){await supabase.storage.from("exams").remove([p]);throw ins.error}e.target.reset();toast("试卷 / 任务发布成功");setTimeout(()=>location.href="./exams.html",450)}catch(err){console.error("任务发布失败",err);toast("任务发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null;const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v)$/i.test(f.name))return toast("请选择视频文件");storage_path=tutorialStoragePath(type,f.name);file_name=f.name;if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,created_by:state.user.id});if(ins.error){if(storage_path)await supabase.storage.from("tutorials").remove([storage_path]);throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前存储上传上限，请压缩视频或改用外部链接");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
