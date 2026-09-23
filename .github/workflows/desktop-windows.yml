@@ -46,7 +46,7 @@ jobs:
         working-directory: desktop
         run: npm run icons
 
-      - name: Build NSIS and MSI installers
+      - name: Build Windows NSIS installer
         working-directory: desktop
         run: npm run build:windows
 
@@ -56,6 +56,5 @@ jobs:
           name: JUST-Mechanical-Innovation-Lab-Windows
           path: |
             desktop/src-tauri/target/release/bundle/nsis/*.exe
-            desktop/src-tauri/target/release/bundle/msi/*.msi
-          if-no-files-found: error
+                      if-no-files-found: error
           retention-days: 30
