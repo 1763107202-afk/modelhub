@@ -122,7 +122,7 @@ async function initTutorials(){
   document.querySelectorAll(".delTutorial").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这个教程资料吗？"))return;let p=b.dataset.path||"";if(!p){const u=b.dataset.url||"",key="/storage/v1/object/public/tutorials/";if(u.includes(key)){try{p=decodeURIComponent(u.split(key)[1].split("?")[0])}catch(_e){}}}if(p){const rm=await supabase.storage.from("tutorials").remove([p]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("tutorials").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("教程资料已删除");await initTutorials()});
 }
 async function initSubmit(){
-  const gate=q("#pageGate"),form=q("#subForm"),btn=q("#submitBtn");
+  const gate=q("#pageGate"),form=q("#subForm"),btn=q("#submitBtn"),status=q("#submitStatus");
   if(!state.user){
     if(form)form.classList.add("hidden");
     requireLogin();
@@ -130,41 +130,84 @@ async function initSubmit(){
   }
   if(form)form.classList.remove("hidden");
   if(gate)gate.innerHTML="";
+  const setStatus=(msg,type="info")=>{
+    if(!status)return;
+    status.textContent=msg||"";
+    status.className="submitStatus "+type;
+  };
   try{
     const e=await supabase.from("exams").select("id,title").order("created_at",{ascending:false});
     if(e.error)throw e.error;
-    q("#examSel").innerHTML='<option value="">请选择试卷 / 任务</option>'+(e.data||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
+    const exams=e.data||[];
+    q("#examSel").innerHTML='<option value="">请选择试卷 / 任务</option>'+exams.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
     q("#submitName").value=state.profile?.full_name||"";
-    q("#subFile").onchange=()=>q("#fileText").textContent=q("#subFile").files[0]?.name||"点击选择建模压缩包";
-    q("#subForm").onsubmit=async ev=>{
-      ev.preventDefault();
-      const f=q("#subFile").files[0],exam=q("#examSel").value;
-      if(!f||!exam)return toast("请选择任务和文件");
-      if(!/\.(zip|rar|7z)$/i.test(f.name))return toast("仅支持 ZIP / RAR / 7Z");
+    q("#subFile").onchange=()=>{
+      const f=q("#subFile").files[0];
+      q("#fileText").textContent=f?f.name:"点击选择建模压缩包";
+      setStatus(f?"已选择："+f.name:"");
+    };
+    if(!exams.length){
+      setStatus("当前没有可提交的任务，请管理员先发布试卷 / 任务。","warn");
+      if(btn)btn.disabled=true;
+      return;
+    }
+    if(btn)btn.disabled=false;
+    btn.onclick=async()=>{
+      const f=q("#subFile").files[0];
+      const exam=q("#examSel").value;
       const submitter=q("#submitName").value.trim();
-      if(!submitter)return toast("请填写姓名 / 队伍名称");
+      const note=q("#note").value.trim();
+      if(!exam){setStatus("请先选择对应试卷 / 任务。","error");toast("请选择试卷 / 任务");return}
+      if(!submitter){setStatus("请填写姓名 / 队伍名称。","error");toast("请填写姓名 / 队伍名称");return}
+      if(!f){setStatus("请先选择 ZIP / RAR / 7Z 建模压缩包。","error");toast("请选择建模压缩包");return}
+      if(!/\.(zip|rar|7z)$/i.test(f.name)){setStatus("文件格式不正确，仅支持 ZIP / RAR / 7Z。","error");toast("仅支持 ZIP / RAR / 7Z");return}
       const p=state.user.id+"/"+exam+"/"+storageObjectPath("files",f.name);
-      const oldText=btn?.textContent||"提交文件";
+      const oldText=btn.textContent||"提交文件";
       try{
-        if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}
-        await uploadStorageFile("submissions",p,f,x=>{if(btn)btn.textContent="上传中 "+x+"% · "+bytesText(f.size)});
-        if(btn)btn.textContent="正在保存提交记录…";
-        const ins=await supabase.from("submissions").insert({user_id:state.user.id,exam_id:exam,submitter_name:submitter,note:q("#note").value.trim(),file_name:f.name,storage_path:p,status:"已提交"});
-        if(ins.error){await supabase.storage.from("submissions").remove([p]);throw ins.error}
-        ev.target.reset();
+        btn.disabled=true;
+        btn.textContent="上传中 0% · "+bytesText(f.size);
+        setStatus("正在上传文件，请不要关闭页面…","info");
+        await uploadStorageFile("submissions",p,f,x=>{
+          btn.textContent="上传中 "+x+"% · "+bytesText(f.size);
+          setStatus("正在上传："+x+"%","info");
+        });
+        btn.textContent="正在保存提交记录…";
+        setStatus("文件上传完成，正在保存提交记录…","info");
+        const ins=await supabase.from("submissions").insert({
+          user_id:state.user.id,
+          exam_id:exam,
+          submitter_name:submitter,
+          note,
+          file_name:f.name,
+          storage_path:p,
+          status:"已提交"
+        });
+        if(ins.error){
+          await supabase.storage.from("submissions").remove([p]);
+          throw ins.error;
+        }
+        q("#subForm").reset();
         q("#fileText").textContent="点击选择建模压缩包";
         q("#submitName").value=state.profile?.full_name||"";
+        setStatus("提交成功，正在跳转到“我的提交”…","success");
         toast("提交成功");
+        setTimeout(()=>location.href="./mine.html",650);
       }catch(err){
+        const msg=err?.message||String(err);
         console.error("作业提交失败",err);
-        toast("提交失败："+(err?.message||String(err)));
+        if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))setStatus("提交失败：登录状态或上传权限异常，请重新登录后再试。","error");
+        else if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))setStatus("提交失败：文件过大，请压缩后重试。","error");
+        else setStatus("提交失败："+msg,"error");
+        toast("提交失败："+msg);
       }finally{
-        if(btn){btn.disabled=false;btn.textContent=oldText}
+        btn.disabled=false;
+        btn.textContent=oldText;
       }
     };
   }catch(err){
+    const msg=err?.message||String(err);
     console.error("提交页面初始化失败",err);
-    if(gate)gate.innerHTML='<div class="notice">提交页面加载失败：'+esc(err?.message||String(err))+'。请刷新页面或重新登录后再试。</div>';
+    if(gate)gate.innerHTML='<div class="notice">提交页面加载失败：'+esc(msg)+'。请刷新页面或重新登录后再试。</div>';
     if(form)form.classList.add("hidden");
   }
 }
