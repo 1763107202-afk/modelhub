@@ -59,3 +59,17 @@
  .heroTitleV18 .heroLabV18{font-size:clamp(36px,10.6vw,48px)!important}
  .heroTitleV18 .heroCommunityV18{font-size:clamp(28px,8.5vw,36px)!important}
 }
+
+/* Announcements v19 */
+.announcementSection{padding-top:0}
+.announcementList{display:grid;gap:12px}
+.announcement{padding:17px 18px;border:1px solid #24415f;border-radius:16px;background:linear-gradient(180deg,#0d1d30,#091624)}
+.announcement.important{border-color:#6a4b24;background:linear-gradient(180deg,#241c12,#14120e)}
+.announcementTop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.announcementTop h3{margin:5px 0 0;font-size:18px}
+.announcement p{margin:10px 0 0;color:#9bb0c8;white-space:pre-wrap}
+.announcement small{color:#7188a4;white-space:nowrap}
+.announcementBadge{display:inline-flex;padding:3px 8px;border-radius:999px;background:#143656;color:#a7d3ff;font-size:11px;font-weight:800}
+.announcement.important .announcementBadge{background:#4b3016;color:#ffd59e}
+.adminAnnouncement{margin-bottom:10px}
+@media(max-width:650px){.announcementTop{flex-direction:column}.announcementTop small{white-space:normal}}
