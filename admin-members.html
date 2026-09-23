@@ -14,8 +14,8 @@
 .toolbar{display:grid;grid-template-columns:1fr 220px auto;gap:12px;padding:15px;border-radius:18px;margin:16px 0}input,select{width:100%;padding:11px 12px;border:1px solid #223a57;border-radius:11px;background:#081524;color:#edf6ff;outline:none}input:focus,select:focus{border-color:#5e91ff}
 .tablewrap{overflow:auto;border-radius:18px;border:1px solid #1c3049;background:#0b192a}table{width:100%;border-collapse:collapse;min-width:1050px}th,td{padding:13px 14px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:middle}th{position:sticky;top:0;background:#091625;color:#7890aa;z-index:2}.member{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#31598a,#6b4bd6);font-weight:900}.muted{color:#7890aa}.role{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#123326;color:#78ddb0}.role.admin{background:#2d234b;color:#c9b7ff}.role.super{background:#4b2b15;color:#ffd39b}.actions{display:flex;gap:7px;white-space:nowrap}
 .empty{padding:40px;text-align:center;color:#7890aa}.foot{padding:35px 0 50px;color:#6f849e}.loginbox{width:min(430px,calc(100% - 28px));margin:70px auto;padding:24px;border-radius:22px;display:grid;gap:14px}.loginbox h2{margin:0}.loginbox p{margin:0;color:#8fa4bd}.msg{font-size:13px;color:#92a8c0}
-.dialog{border:0;background:transparent}.dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}.dialogbox{width:min(560px,calc(100vw - 28px));padding:22px;border:1px solid #29415e;border-radius:20px;background:#0c1929;color:#eef6ff}.dialogbox h2{margin:0 0 14px}.detailList{display:grid;gap:9px;max-height:55vh;overflow:auto}.detailItem{padding:12px;border-radius:13px;background:#091625;border:1px solid #1b3048}.detailItem b{display:block}.detailItem small{color:#7890aa}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;font-size:13px;color:#cbd9ea}.dialogActions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
-@media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.topin{align-items:flex-start;padding:10px 0;flex-wrap:wrap}.nav{width:100%;margin-left:0}.brand small{display:none}}@media(max-width:520px){.stats{grid-template-columns:1fr}.two{grid-template-columns:1fr}.brand span b{font-size:14px}}
+.dialog{border:0;background:transparent}.dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}.dialogbox{width:min(720px,calc(100vw - 28px));padding:22px;border:1px solid #29415e;border-radius:20px;background:#0c1929;color:#eef6ff}.dialogbox h2{margin:0 0 14px}.detailList{display:grid;gap:9px;max-height:55vh;overflow:auto}.detailItem{padding:14px;border-radius:13px;background:#091625;border:1px solid #1b3048}.detailItem b{display:block}.detailItem small{color:#7890aa}.detailTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.detailActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.memberMetaGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.memberMetaCell{padding:10px 12px;border-radius:11px;background:#081524;border:1px solid #1b3048}.memberMetaCell small{display:block;color:#7890aa}.memberMetaCell b{display:block;margin-top:2px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;font-size:13px;color:#cbd9ea}.dialogActions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+@media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.topin{align-items:flex-start;padding:10px 0;flex-wrap:wrap}.nav{width:100%;margin-left:0}.brand small{display:none}}@media(max-width:520px){.stats{grid-template-columns:1fr}.two,.memberMetaGrid{grid-template-columns:1fr}.brand span b{font-size:14px}}
 </style>
 </head>
 <body>
@@ -69,8 +69,9 @@
 
 <dialog id="detailDialog" class="dialog">
   <div class="dialogbox">
-    <h2 id="detailTitle">成员提交详情</h2>
-    <div id="detailMeta" class="msg" style="margin-bottom:12px"></div>
+    <h2 id="detailTitle">成员设置</h2>
+    <div id="detailMeta" class="memberMetaGrid"></div>
+    <div style="margin:4px 0 10px;font-weight:800">已提交作业</div>
     <div id="detailList" class="detailList"></div>
     <div class="dialogActions"><button id="closeDetail" class="btn ghost">关闭</button></div>
   </div>
@@ -139,7 +140,7 @@ function render(){
       '<td>'+fmt(m.created_at)+'</td>'+
       '<td><b>'+arr.length+'</b></td>'+
       '<td>'+(latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">'+fmt(latest.created_at)+'</div>':'<span class="muted">暂无提交</span>')+'</td>'+
-      '<td><div class="actions"><button class="btn ghost detailBtn" data-id="'+esc(m.id)+'">提交详情</button><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+'</div></td>'+
+      '<td><div class="actions"><button class="btn pri detailBtn" data-id="'+esc(m.id)+'">设置</button><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+'</div></td>'+
     '</tr>';
   }).join("");
   q("#empty").classList.toggle("hidden",state.filtered.length>0);
@@ -152,9 +153,10 @@ function render(){
 }
 function openDetail(id){
   const m=state.members.find(x=>x.id===id), arr=state.subs.filter(x=>x.user_id===id).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-  q("#detailTitle").textContent=(m?.full_name||m?.email||"成员")+" · 提交详情";
-  q("#detailMeta").textContent=[m?.major,m?.email,"共 "+arr.length+" 次提交"].filter(Boolean).join(" · ");
-  q("#detailList").innerHTML=arr.length?arr.map(s=>'<div class="detailItem"><b>'+esc(s.exams?.title||"未关联试卷")+'</b><div>'+esc(s.file_name||"—")+'</div><small>'+fmt(s.created_at)+' · '+esc(s.status||"—")+(s.submitter_name?' · '+esc(s.submitter_name):"")+'</small></div>').join(""):'<div class="empty">该成员暂无提交记录。</div>';
+  q("#detailTitle").textContent=(m?.full_name||m?.email||"成员")+" · 设置";
+  q("#detailMeta").innerHTML='<div class="memberMetaCell"><small>姓名</small><b>'+esc(m?.full_name||"未填写")+'</b></div><div class="memberMetaCell"><small>专业</small><b>'+esc(m?.major||"未填写")+'</b></div><div class="memberMetaCell"><small>邮箱</small><b>'+esc(m?.email||"—")+'</b></div><div class="memberMetaCell"><small>提交数量</small><b>'+arr.length+' 次</b></div>';
+  q("#detailList").innerHTML=arr.length?arr.map(s=>'<div class="detailItem"><div class="detailTop"><div><b>'+esc(s.exams?.title||"未关联试卷")+'</b><div>'+esc(s.file_name||"—")+'</div></div><span class="status">'+esc(s.status||"—")+'</span></div><small>提交时间：'+fmt(s.created_at)+(s.submitter_name?' · 提交人：'+esc(s.submitter_name):"")+(s.note?' · 备注：'+esc(s.note):"")+'</small><div class="detailActions">'+(s.storage_path?'<button class="btn sec memberDl" data-p="'+esc(s.storage_path)+'">下载作业</button>':"")+'</div></div>').join(""):'<div class="empty">该成员暂无提交作业。</div>';
+  document.querySelectorAll(".memberDl").forEach(b=>b.onclick=async()=>{const r=await supabase.storage.from("submissions").createSignedUrl(b.dataset.p,120);if(r.error)return alert("下载失败："+r.error.message);window.open(r.data.signedUrl,"_blank")});
   q("#detailDialog").showModal();
 }
 async function toggleRole(id,currentRole){if(state.profile?.role!=="super_admin")return alert("只有主管理员可以设置副管理员");const target=state.members.find(x=>x.id===id);if(!target)return;const next=currentRole==="admin"?"student":"admin";const action=next==="admin"?"设为副管理员":"取消副管理员";if(!confirm("确定将 "+(target.full_name||target.email)+" "+action+"吗？"))return;const r=await supabase.from("profiles").update({role:next}).eq("id",id);if(r.error){alert("权限修改失败："+r.error.message);return}await loadAdminData();}
@@ -166,7 +168,7 @@ function openEdit(id){
 async function loadAdminData(){
   const [p,s]=await Promise.all([
     supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,created_at").order("created_at",{ascending:false}),
-    supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,created_at,exam_id,exams(title)").order("created_at",{ascending:false})
+    supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").order("created_at",{ascending:false})
   ]);
   if(p.error)throw p.error;if(s.error)throw s.error;
   state.members=p.data||[];state.subs=s.data||[];
