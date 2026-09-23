@@ -140,7 +140,7 @@ function render(){
       '<td>'+fmt(m.created_at)+'</td>'+
       '<td><b>'+arr.length+'</b></td>'+
       '<td>'+(latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">'+fmt(latest.created_at)+'</div>':'<span class="muted">暂无提交</span>')+'</td>'+
-      '<td><div class="actions"><button class="btn pri detailBtn" data-id="'+esc(m.id)+'">设置</button><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+'</div></td>'+
+      '<td><div class="actions"><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+'</div></td>'+
     '</tr>';
   }).join("");
   q("#empty").classList.toggle("hidden",state.filtered.length>0);
@@ -148,7 +148,6 @@ function render(){
   q("#studentCount").textContent=state.members.filter(x=>x.role==="student").length;
   q("#majorCount").textContent=new Set(state.members.map(x=>x.major).filter(Boolean)).size;
   q("#submissionCount").textContent=state.subs.length;
-  document.querySelectorAll(".detailBtn").forEach(b=>b.onclick=()=>openDetail(b.dataset.id));
   document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));
 }
 function openDetail(id){
