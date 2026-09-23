@@ -8,7 +8,7 @@
     "icons": "tauri icon ../lab-logo.svg",
     "dev": "tauri dev",
     "build": "tauri build",
-    "build:windows": "tauri build --bundles nsis,msi"
+    "build:windows": "tauri build --bundles nsis"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"
