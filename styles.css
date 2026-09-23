@@ -53,3 +53,20 @@
 .announcement.important .announcementBadge{background:#4b3016;color:#ffd59e}
 .adminAnnouncement{margin-bottom:10px}
 @media(max-width:650px){.announcementTop{flex-direction:column}.announcementTop small{white-space:normal}}
+
+/* Lab file library v21 */
+.fileToolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+.fileToolbar select{width:auto;min-width:180px}
+.fileGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.fileCard{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;padding:18px;border:1px solid #1c3049;border-radius:19px;background:#0b192a}
+.fileIcon{width:84px;height:84px;border-radius:18px;display:grid;place-items:center;background:#132b47;border:1px solid #285078;color:#b9dbff;font-size:19px;font-weight:950;letter-spacing:.04em}
+.fileIcon.sheet{background:#123226;border-color:#286349;color:#aef0cd}
+.fileIcon.word{background:#112e55;border-color:#2c63a5;color:#c8e3ff}
+.fileIcon.ppt{background:#3d2414;border-color:#8a4d24;color:#ffd7bd}
+.fileIcon.archive{background:#30224b;border-color:#624b8b;color:#dfd0ff}
+.fileIcon.video{background:#3a1825;border-color:#7a3450;color:#ffd2df}
+.fileIcon.pdf{background:#3a181e;border-color:#75313c;color:#ffd5dc}
+.fileIcon.image{background:#17352b;border-color:#39705d;color:#c6f2de}
+.fileIcon.cad{background:#153640;border-color:#2f7281;color:#c7f2fa}
+.fileBody{min-width:0}.fileBody h3{margin:5px 0;font-size:19px}.fileBody p{margin:0;color:#8fa4bd;font-size:14px}.fileTop{display:flex;align-items:center;justify-content:space-between;gap:10px}.fileTop small{color:#7087a2}.fileMeta{margin-top:10px;color:#7188a4;font-size:12px;overflow-wrap:anywhere}
+@media(max-width:800px){.fileGrid{grid-template-columns:1fr}.fileCard{grid-template-columns:68px minmax(0,1fr)}.fileIcon{width:68px;height:68px}.fileToolbar{align-items:stretch;flex-direction:column}.fileToolbar select{width:100%}}
