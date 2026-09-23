@@ -122,12 +122,51 @@ async function initTutorials(){
   document.querySelectorAll(".delTutorial").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这个教程资料吗？"))return;let p=b.dataset.path||"";if(!p){const u=b.dataset.url||"",key="/storage/v1/object/public/tutorials/";if(u.includes(key)){try{p=decodeURIComponent(u.split(key)[1].split("?")[0])}catch(_e){}}}if(p){const rm=await supabase.storage.from("tutorials").remove([p]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("tutorials").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("教程资料已删除");await initTutorials()});
 }
 async function initSubmit(){
-  if(!requireLogin())return;
-  const e=await supabase.from("exams").select("id,title").order("created_at",{ascending:false});
-  q("#examSel").innerHTML='<option value="">请选择试卷 / 任务</option>'+(e.data||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
-  q("#submitName").value=state.profile?.full_name||"";
-  q("#subFile").onchange=()=>q("#fileText").textContent=q("#subFile").files[0]?.name||"点击选择建模压缩包";
-  q("#subForm").onsubmit=async ev=>{ev.preventDefault();const f=q("#subFile").files[0],exam=q("#examSel").value;if(!f||!exam)return toast("请选择任务和文件");if(!/\.(zip|rar|7z)$/i.test(f.name))return toast("仅支持 ZIP / RAR / 7Z");const p=state.user.id+"/"+exam+"/"+storageObjectPath("files",f.name);const up=await supabase.storage.from("submissions").upload(p,f);if(up.error)return toast(up.error.message);const ins=await supabase.from("submissions").insert({user_id:state.user.id,exam_id:exam,submitter_name:q("#submitName").value.trim(),note:q("#note").value.trim(),file_name:f.name,storage_path:p,status:"已提交"});if(ins.error)return toast(ins.error.message);ev.target.reset();q("#fileText").textContent="点击选择建模压缩包";q("#submitName").value=state.profile?.full_name||"";toast("提交成功")};
+  const gate=q("#pageGate"),form=q("#subForm"),btn=q("#submitBtn");
+  if(!state.user){
+    if(form)form.classList.add("hidden");
+    requireLogin();
+    return;
+  }
+  if(form)form.classList.remove("hidden");
+  if(gate)gate.innerHTML="";
+  try{
+    const e=await supabase.from("exams").select("id,title").order("created_at",{ascending:false});
+    if(e.error)throw e.error;
+    q("#examSel").innerHTML='<option value="">请选择试卷 / 任务</option>'+(e.data||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
+    q("#submitName").value=state.profile?.full_name||"";
+    q("#subFile").onchange=()=>q("#fileText").textContent=q("#subFile").files[0]?.name||"点击选择建模压缩包";
+    q("#subForm").onsubmit=async ev=>{
+      ev.preventDefault();
+      const f=q("#subFile").files[0],exam=q("#examSel").value;
+      if(!f||!exam)return toast("请选择任务和文件");
+      if(!/\.(zip|rar|7z)$/i.test(f.name))return toast("仅支持 ZIP / RAR / 7Z");
+      const submitter=q("#submitName").value.trim();
+      if(!submitter)return toast("请填写姓名 / 队伍名称");
+      const p=state.user.id+"/"+exam+"/"+storageObjectPath("files",f.name);
+      const oldText=btn?.textContent||"提交文件";
+      try{
+        if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}
+        await uploadStorageFile("submissions",p,f,x=>{if(btn)btn.textContent="上传中 "+x+"% · "+bytesText(f.size)});
+        if(btn)btn.textContent="正在保存提交记录…";
+        const ins=await supabase.from("submissions").insert({user_id:state.user.id,exam_id:exam,submitter_name:submitter,note:q("#note").value.trim(),file_name:f.name,storage_path:p,status:"已提交"});
+        if(ins.error){await supabase.storage.from("submissions").remove([p]);throw ins.error}
+        ev.target.reset();
+        q("#fileText").textContent="点击选择建模压缩包";
+        q("#submitName").value=state.profile?.full_name||"";
+        toast("提交成功");
+      }catch(err){
+        console.error("作业提交失败",err);
+        toast("提交失败："+(err?.message||String(err)));
+      }finally{
+        if(btn){btn.disabled=false;btn.textContent=oldText}
+      }
+    };
+  }catch(err){
+    console.error("提交页面初始化失败",err);
+    if(gate)gate.innerHTML='<div class="notice">提交页面加载失败：'+esc(err?.message||String(err))+'。请刷新页面或重新登录后再试。</div>';
+    if(form)form.classList.add("hidden");
+  }
 }
 async function initMine(){
   if(!requireLogin())return;
