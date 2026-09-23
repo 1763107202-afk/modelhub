@@ -17,7 +17,7 @@ function navLink(key,href,label){return '<a class="'+(page===key?"active":"")+'"
 function renderChrome(){
   q("#siteHeader").innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></span></a><nav class="nav">'+
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
-    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+'<span class="navSep"></span>'+
+    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html","资料库")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html","个人资料")+
     '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录 / 注册</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
@@ -169,6 +169,33 @@ async function initTutorials(){
   q("#videoGrid").innerHTML=data.map(x=>{const type=x.resource_type||"video",url=x.video_url||"",action=type==="video"?"打开 / 播放视频":type==="pdf"?"查看 / 下载 PDF":type==="word"?"打开 / 下载 Word":"打开 / 下载 PPT";return '<article class="video"><div class="frame '+(type!=="video"?"docFrame":"")+'">'+resourcePreview(x)+'</div><div class="info"><span class="resourceType">'+resourceTypeName(type)+'</span><h3>'+esc(x.title)+'</h3><p style="color:#8fa4bd">'+esc(x.description||"暂无简介")+'</p><div class="actions">'+(type==="video"&&!/^https?:/i.test(url)?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>')+(isAdmin()?'<button class="btn danger delTutorial" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'" data-path="'+esc(x.storage_path||"")+'">删除教程</button>':'')+'</div></div></article>'}).join("");
   q("#videoEmpty").classList.toggle("hidden",data.length>0);
   document.querySelectorAll(".delTutorial").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这个教程资料吗？"))return;let p=b.dataset.path||"";if(!p){const u=b.dataset.url||"",key="/storage/v1/object/public/tutorials/";if(u.includes(key)){try{p=decodeURIComponent(u.split(key)[1].split("?")[0])}catch(_e){}}}if(p){const rm=await supabase.storage.from("tutorials").remove([p]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("tutorials").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("教程资料已删除");await initTutorials()});
+}
+function labFileTypeName(t){return ({sheet:"表格",word:"Word",ppt:"PPT",archive:"压缩包",video:"视频",pdf:"PDF",image:"图片",cad:"CAD / 模型",other:"其他"})[t]||"其他"}
+function labFileIcon(t){return ({sheet:"XLS",word:"DOC",ppt:"PPT",archive:"ZIP",video:"VID",pdf:"PDF",image:"IMG",cad:"CAD",other:"FILE"})[t]||"FILE"}
+async function initFiles(){
+  const r=await supabase.from("lab_files").select("*").order("created_at",{ascending:false});
+  if(r.error){q("#fileGrid").innerHTML='<div class="empty">资料库加载失败：'+esc(r.error.message)+'</div>';return}
+  const all=r.data||[];
+  const select=q("#fileFilter");
+  const render=()=>{
+    const f=select?.value||"all";
+    const data=f==="all"?all:all.filter(x=>x.category===f);
+    q("#fileCount").textContent=String(data.length);
+    q("#fileGrid").innerHTML=data.length?data.map(x=>{
+      const url=supabase.storage.from("lab-files").getPublicUrl(x.storage_path).data.publicUrl;
+      return '<article class="fileCard"><div class="fileIcon '+esc(x.category)+'">'+labFileIcon(x.category)+'</div><div class="fileBody"><div class="fileTop"><span class="resourceType">'+labFileTypeName(x.category)+'</span><small>'+fmt(x.created_at)+'</small></div><h3>'+esc(x.title)+'</h3><p>'+esc(x.description||"暂无说明")+'</p><div class="fileMeta">'+esc(x.file_name)+' · '+bytesText(Number(x.file_size||0))+'</div><div class="actions"><a class="btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开 / 下载</a>'+(isAdmin()?'<button class="btn danger delLabFile" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path)+'">删除</button>':'')+'</div></div></article>';
+    }).join(""):'<div class="empty">当前分类暂无文件。</div>';
+    document.querySelectorAll(".delLabFile").forEach(b=>b.onclick=async()=>{
+      if(!confirm("确定删除这个文件吗？删除后无法恢复。"))return;
+      const rm=await supabase.storage.from("lab-files").remove([b.dataset.path]);
+      if(rm.error)return toast("文件删除失败："+rm.error.message);
+      const d=await supabase.from("lab_files").delete().eq("id",b.dataset.id);
+      if(d.error)return toast("记录删除失败："+d.error.message);
+      toast("文件已删除");await initFiles();
+    });
+  };
+  if(select)select.onchange=render;
+  render();
 }
 async function initSubmit(){
   const gate=q("#pageGate"),form=q("#subForm"),btn=q("#submitBtn"),status=q("#submitStatus");
@@ -365,6 +392,24 @@ async function initAdmin(){
     finally{if(btn){btn.disabled=false;btn.textContent=oldText}}
   };
   await loadAnnouncements(true);
+  q("#labFileForm").onsubmit=async e=>{
+    e.preventDefault();
+    const title=q("#labFileTitle").value.trim(),category=q("#labFileCategory").value,description=q("#labFileDesc").value.trim(),f=q("#labFileInput").files[0];
+    if(!title)return toast("请填写文件标题");
+    if(!f)return toast("请选择文件");
+    const path=state.user.id+"/"+category+"/"+storageObjectPath("files",f.name);
+    const btn=e.submitter||q("#labFileForm button");
+    const oldText=btn?.textContent||"上传到资料库";
+    try{
+      if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}
+      await uploadStorageFile("lab-files",path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});
+      if(btn)btn.textContent="正在保存资料信息…";
+      const ins=await supabase.from("lab_files").insert({title,description:description||null,category,file_name:f.name,storage_path:path,file_size:f.size,mime_type:f.type||null,created_by:state.user.id});
+      if(ins.error){await supabase.storage.from("lab-files").remove([path]);throw ins.error}
+      e.target.reset();toast("文件已发布到资料库");
+    }catch(err){console.error("资料库上传失败",err);toast("上传失败："+(err?.message||String(err)))}
+    finally{if(btn){btn.disabled=false;btn.textContent=oldText}}
+  };
   q("#workForm").onsubmit=async e=>{e.preventDefault();const title=q("#workTitle").value.trim();if(!title)return toast("请填写作品名称");let cover_url="",storage_path=null;const f=q("#workCover").files[0];const btn=e.submitter||q("#workForm button");const oldText=btn?.textContent||"发布作品";try{if(f){storage_path=storageObjectPath("covers",f.name);if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}await uploadStorageFile("works",storage_path,f,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});cover_url=supabase.storage.from("works").getPublicUrl(storage_path).data.publicUrl}if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("past_works").insert({title,year:q("#workYear").value?Number(q("#workYear").value):null,team_name:q("#workTeam").value.trim(),description:q("#workDesc").value.trim(),cover_url:cover_url||null,storage_path,detail_url:q("#workUrl").value.trim()||null,created_by:state.user.id});if(ins.error){if(storage_path)await supabase.storage.from("works").remove([storage_path]);throw ins.error}e.target.reset();toast("往届作品发布成功");setTimeout(()=>location.href="./works.html",450)}catch(err){console.error("作品发布失败",err);toast("作品发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   q("#examForm").onsubmit=async e=>{e.preventDefault();const title=q("#examTitle").value.trim(),f=q("#pdf").files[0];if(!title)return toast("请填写任务标题");if(!f)return toast("请选择 PDF 文件");if(!/\.pdf$/i.test(f.name))return toast("任务文件必须是 PDF");const p=storageObjectPath("pdf",f.name);const btn=e.submitter||q("#examForm button");const oldText=btn?.textContent||"发布任务";try{if(btn){btn.disabled=true;btn.textContent="PDF 上传中 0% · "+bytesText(f.size)}await uploadStorageFile("exams",p,f,x=>{if(btn)btn.textContent="PDF 上传中 "+x+"% · "+bytesText(f.size)});const url=supabase.storage.from("exams").getPublicUrl(p).data.publicUrl;if(btn)btn.textContent="正在发布任务…";const ins=await supabase.from("exams").insert({title,description:q("#examDesc").value.trim(),deadline:q("#deadline").value?new Date(q("#deadline").value).toISOString():null,file_url:url,storage_path:p,created_by:state.user.id});if(ins.error){await supabase.storage.from("exams").remove([p]);throw ins.error}e.target.reset();toast("试卷 / 任务发布成功");setTimeout(()=>location.href="./exams.html",450)}catch(err){console.error("任务发布失败",err);toast("任务发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null;const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v)$/i.test(f.name))return toast("请选择视频文件");storage_path=tutorialStoragePath(type,f.name);file_name=f.name;if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,created_by:state.user.id});if(ins.error){if(storage_path)await supabase.storage.from("tutorials").remove([storage_path]);throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前存储上传上限，请压缩视频或改用外部链接");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
@@ -377,7 +422,7 @@ async function loadAllSubmissions(){
   document.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{const s=await supabase.storage.from("submissions").createSignedUrl(b.dataset.p,120);if(s.error)return toast(s.error.message);window.open(s.data.signedUrl,"_blank")});
   document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这条提交吗？"))return;if(b.dataset.p){const rm=await supabase.storage.from("submissions").remove([b.dataset.p]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("提交已删除");await loadAllSubmissions()});
 }
-async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="admin")return initAdmin()}
+async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="admin")return initAdmin()}
 renderChrome();
 const s=await supabase.auth.getSession();state.user=s.data.session?.user||null;await loadProfile();updateAuthUI();await runPage();
 supabase.auth.onAuthStateChange(async(_e,session)=>{state.user=session?.user||null;await loadProfile();updateAuthUI();await runPage()});
