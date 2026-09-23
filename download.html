@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>软件下载 | 江苏科技大学机械创新实验室交流平台</title>
+  <link rel="stylesheet" href="./styles-v43.css">
+  <style>
+    .downloadShell{max-width:920px;margin:0 auto}
+    .downloadCard{display:grid;grid-template-columns:120px 1fr;gap:28px;align-items:center;padding:30px}
+    .downloadLogo{width:112px;height:112px;border-radius:26px;object-fit:cover;box-shadow:0 12px 34px rgba(17,45,77,.15)}
+    .downloadTitle{margin:0 0 8px;font-size:28px}
+    .downloadMeta{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 18px}
+    .downloadMeta span{padding:6px 10px;border-radius:999px;background:rgba(51,116,255,.08);color:#54708f;font-size:12px}
+    .downloadActions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .downloadNote{margin-top:16px;color:#7188a4;font-size:13px;line-height:1.7}
+    .downloadFeatures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+    .downloadFeature{padding:18px}
+    .downloadFeature b{display:block;margin-bottom:7px}
+    .downloadFeature span{color:#7188a4;font-size:13px;line-height:1.6}
+    @media(max-width:720px){
+      .downloadCard{grid-template-columns:1fr;text-align:center;padding:24px}
+      .downloadLogo{margin:0 auto}
+      .downloadActions,.downloadMeta{justify-content:center}
+      .downloadFeatures{grid-template-columns:1fr}
+      .downloadTitle{font-size:23px}
+    }
+  </style>
+</head>
+<body data-page="download">
+  <div id="siteHeader"></div>
+  <main>
+    <section class="pageHero wrap">
+      <span class="eyebrow">DESKTOP APP</span>
+      <h1>软件下载</h1>
+      <p>Windows 桌面客户端与网页版共用同一账号、资料库、公告、进度和管理后台。</p>
+    </section>
+    <section class="section wrap downloadShell">
+      <article class="glass downloadCard">
+        <img class="downloadLogo" src="./assets/lab-logo.webp?v=14" alt="机械创新实验室">
+        <div>
+          <span class="eyebrow">WINDOWS CLIENT</span>
+          <h2 class="downloadTitle">江苏科技大学机械创新实验室交流平台</h2>
+          <p>桌面独立窗口运行，无浏览器地址栏；登录后即可直接使用现有实验室平台全部在线功能。</p>
+          <div class="downloadMeta">
+            <span>版本 1.0.0</span>
+            <span>Windows x64</span>
+            <span>需要联网</span>
+          </div>
+          <div class="downloadActions">
+            <a class="btn pri" href="./downloads/JUST-Lab-Platform-Windows-x64-setup.exe" download>下载 Windows 安装版</a>
+            <a class="btn sec" href="./index.html">返回网页版</a>
+          </div>
+          <div class="downloadNote">安装程序由项目的 GitHub Actions 自动构建并发布。若浏览器提示保留或继续下载，请确认文件来源为本实验室平台后再安装。</div>
+        </div>
+      </article>
+      <div class="downloadFeatures">
+        <div class="glass downloadFeature"><b>数据完全同步</b><span>桌面端与网页版使用同一套 Supabase 数据，内容无需重复迁移。</span></div>
+        <div class="glass downloadFeature"><b>网站更新即生效</b><span>客户端直接加载线上平台，大多数网页功能更新后无需重新安装软件。</span></div>
+        <div class="glass downloadFeature"><b>Windows 独立体验</b><span>可固定到桌面、开始菜单或任务栏，适合实验室日常使用。</span></div>
+      </div>
+    </section>
+  </main>
+  <div id="siteFooter"></div>
+  <script type="module" src="./app-v44.js"></script>
+</body>
+</html>
