@@ -9,3 +9,11 @@
 
 /* Submission management v15 */
 .rowActions{display:flex;gap:7px;flex-wrap:wrap}.submitStatus{font-size:12px;color:#89a3bf}.submitStatus.success{color:#76ddb0}.submitStatus.error{color:#ff9b9b}.submitStatus.warn{color:#ffd082}.dialogbox textarea{resize:vertical}
+
+/* Homepage title refinement v16 */
+.heroTitle{margin:14px 0 16px!important;display:flex;flex-direction:column;align-items:flex-start;gap:4px;line-height:.98!important}
+.heroTitle .heroSchool{display:block;color:#edf5ff;background:none;-webkit-text-fill-color:initial;font-size:clamp(42px,4.4vw,58px);font-weight:900;letter-spacing:-.035em;white-space:nowrap}
+.heroTitle .heroPlatform{display:block;font-size:clamp(38px,4vw,52px);font-weight:900;letter-spacing:-.045em;white-space:nowrap;background:linear-gradient(90deg,#69adff,#9d7cff 72%,#b287ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.heroGrid>div:first-child{min-width:0}
+@media(max-width:980px){.heroTitle .heroSchool{font-size:clamp(40px,7vw,58px)}.heroTitle .heroPlatform{font-size:clamp(36px,6.3vw,52px)}}
+@media(max-width:650px){.heroTitle{gap:7px}.heroTitle .heroSchool{font-size:clamp(36px,10vw,48px);white-space:normal}.heroTitle .heroPlatform{font-size:clamp(32px,8.7vw,44px);white-space:normal;line-height:1.06}}
