@@ -1,9 +1,16 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><title>近期进度 | 江苏科技大学机械创新实验室交流平台</title><link rel="stylesheet" href="./styles-v39.css"><link rel="stylesheet" href="./theme-v3.css?v=20260924-1925"><script src="./theme-init-v2.js?v=20260924-1910"></script><style>
 .progressDualEntry,.progressStatusGrid,.progressFeedGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
 .progressDualEntry{margin-bottom:22px}
-.teamMemberOptions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;max-height:260px;overflow:auto;padding:10px;border:1px solid #213a57;border-radius:14px;background:#081524}
-.teamMemberChoice{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;background:#0b192a;border:1px solid #1d334c;cursor:pointer}
-.teamMemberChoice input{width:auto}
+.teamMemberHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.teamMemberHeader label{margin:0}
+.teamMemberSearch{margin-bottom:8px}
+.teamMemberOptions{display:grid;grid-template-columns:1fr;gap:8px;max-height:300px;overflow:auto;padding:10px;border:1px solid #213a57;border-radius:14px;background:#081524}
+.teamMemberChoice{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;padding:11px 12px;border-radius:11px;background:#0b192a;border:1px solid #1d334c;cursor:pointer;min-width:0}
+.teamMemberChoice input{width:auto;margin:0}
+.teamMemberText{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0}
+.teamMemberText b{font-size:14px;white-space:nowrap}
+.teamMemberText small{font-size:12px;color:#7890aa;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.teamMemberSearchEmpty{padding:18px;text-align:center;color:#7890aa}
 .teamProgressCard{padding:20px;border:1px solid #1c3049;border-radius:20px;background:#0b192a}
 .teamProgressMembers{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .teamProgressMember{font-size:12px;padding:5px 8px;border-radius:999px;background:#102b48;border:1px solid #28527b;color:#b9dcff}
@@ -12,7 +19,7 @@ html[data-theme="light"] .teamMemberChoice{background:#fff;border-color:#d8e4ef;
 html[data-theme="light"] .teamProgressCard{background:#fff;border-color:#d8e4ef;color:#263b52}
 html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
 @media(max-width:900px){.progressDualEntry,.progressStatusGrid,.progressFeedGrid{grid-template-columns:1fr}}
-@media(max-width:650px){.teamMemberOptions{grid-template-columns:1fr}}
+@media(max-width:650px){.teamMemberText{display:block}.teamMemberText small{display:block;text-align:left;margin-top:3px;white-space:normal}.teamMemberHeader{align-items:flex-start}}
 </style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
 <div class="progressDualEntry">
   <form id="progressForm" class="form glass progressForm">
@@ -33,10 +40,13 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     <label>下一阶段队伍目标（可选）<textarea id="teamNextGoal" rows="5" maxlength="5000" placeholder="下一阶段队伍计划完成的工作"></textarea></label>
     <label>相关链接（可选）<input id="teamProgressLink" type="url" placeholder="https://..."></label>
     <div>
-      <label>队伍成员</label>
+      <div class="teamMemberHeader"><label>队伍成员</label><span id="teamMemberSelectedCount" class="pill">已选 0 人</span></div>
+      <input id="teamMemberSearch" class="teamMemberSearch" type="search" placeholder="搜索姓名、年级、校区或专业">
       <div id="teamMemberOptions" class="teamMemberOptions"><div class="empty">正在加载正式成员…</div></div>
-      <small class="profileHint">这里只显示正式成员。提交后，所选成员都会被计入“队伍进度已更新”。</small>
+      <small class="profileHint">这里只显示正式成员。搜索不会取消已勾选成员；提交后，所选成员都会计入“队伍进度已更新”。</small>
     </div>
+    <label>附件（可选）<input id="teamProgressFile" type="file"></label>
+    <div id="teamProgressFilePreview" class="progressFilePreview"></div>
     <button class="btn pri" type="submit">提交队伍进度</button>
   </form>
 </div>
@@ -53,4 +63,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v49.js?v=20260924-2015"></script></body></html>
+<section><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v51.js?v=20260924-2030"></script></body></html>
