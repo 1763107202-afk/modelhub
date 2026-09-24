@@ -1237,14 +1237,9 @@ async function initProjects(){
   };
   renderProjects();
 }
-async function chooseTeamProjectForPersonalProgress(projectName){
+async function chooseExistingProjectForPersonalProgress(projectName){
   const rows=await fetchProjectDirectory(true);
-  const mineTeams=rows.filter(x=>x.project_mode==="team"&&(x.member_ids||[]).includes(state.user?.id));
-  if(!mineTeams.length)return {mode:"independent",project:null};
-
-  const normalized=String(projectName||"").trim().toLowerCase();
-  const exact=mineTeams.find(x=>String(x.name||"").trim().toLowerCase()===normalized);
-  if(exact)return {mode:"team",project:exact,automatic:true};
+  const mine=rows.filter(x=>(x.member_ids||[]).includes(state.user?.id));
 
   const dialog=q("#personalMergeDialog");
   const list=q("#personalMergeProjectList");
@@ -1254,13 +1249,14 @@ async function chooseTeamProjectForPersonalProgress(projectName){
   if(!dialog||!list||!entered||!independent||!cancel)return {mode:"independent",project:null};
 
   entered.textContent=projectName;
-  list.innerHTML=mineTeams.map(x=>
+  list.innerHTML=mine.length?mine.map(x=>
     '<button class="mergeProjectOption" type="button" data-id="'+esc(x.id)+'"><b>'+esc(x.name)+'</b><small>'+
-    '负责人：'+esc(x.leader_name||"未设置")+
+    (x.project_mode==="team"?"团队项目":"个人项目")+
+    ' · 负责人：'+esc(x.leader_name||"未设置")+
     (x.stage?' · 当前阶段：'+esc(x.stage):'')+
-    ' · 成员：'+esc((x.member_names||[]).join("、")||"暂无")+
+    (x.project_mode==="team"?' · 成员：'+esc((x.member_names||[]).join("、")||"暂无"):'')+
     '</small></button>'
-  ).join("");
+  ).join(""):'<div class="empty">你目前没有可合并的已有项目。本次可以按填写的项目名称建立或更新个人项目。</div>';
 
   return await new Promise(resolve=>{
     let settled=false;
@@ -1271,7 +1267,7 @@ async function chooseTeamProjectForPersonalProgress(projectName){
       resolve(value);
     };
     list.querySelectorAll(".mergeProjectOption").forEach(btn=>{
-      btn.onclick=()=>finish({mode:"team",project:mineTeams.find(x=>x.id===btn.dataset.id)||null,automatic:false});
+      btn.onclick=()=>finish({mode:"existing",project:mine.find(x=>x.id===btn.dataset.id)||null});
     });
     independent.onclick=()=>finish({mode:"independent",project:null});
     cancel.onclick=()=>finish({mode:"cancel",project:null});
@@ -1306,7 +1302,7 @@ async function initProgress(){
     const link_url=rawLink?normalizeShareLink(rawLink):null;
     if(rawLink&&!link_url)return toast("链接格式不正确");
 
-    const mergeChoice=await chooseTeamProjectForPersonalProgress(projectName);
+    const mergeChoice=await chooseExistingProjectForPersonalProgress(projectName);
     if(mergeChoice.mode==="cancel")return;
 
     const btn=e.submitter||form.querySelector("button[type=submit]"),old=btn?.textContent||"提交近期进度";
@@ -1319,7 +1315,7 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const ins=mergeChoice.mode==="team"&&mergeChoice.project
+      const ins=mergeChoice.mode==="existing"&&mergeChoice.project
         ? await supabase.rpc("replace_personal_progress_v2",{
             p_current_progress:current,
             p_next_goal:goal,
@@ -1349,8 +1345,8 @@ async function initProgress(){
       const resultRow=Array.isArray(ins.data)?ins.data[0]:ins.data;
       form.reset();q("#progressFilePreview").textContent="";
       __projectDirectoryCache=[];
-      if(mergeChoice.mode==="team"&&mergeChoice.project){
-        toast("个人进度已合并到团队项目："+mergeChoice.project.name);
+      if(mergeChoice.mode==="existing"&&mergeChoice.project){
+        toast("个人进度已更新，并合并到"+(mergeChoice.project.project_mode==="team"?"团队项目：":"个人项目：")+mergeChoice.project.name);
       }else{
         toast(resultRow?.created_project?"个人进度已更新，并自动创建新的个人项目":resultRow?.resolved_project_mode==="team"?"个人进度已同步到同名团队项目":"个人进度已同步到个人项目");
       }
