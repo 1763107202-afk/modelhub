@@ -127,6 +127,19 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
 <section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main>
+<dialog id="teamMergeDialog" class="dialog">
+  <div class="dialogbox">
+    <span class="eyebrow">TEAM PROJECT MATCH</span>
+    <h2 style="margin:4px 0 8px">这条队伍进度是否属于已有团队项目？</h2>
+    <p class="mergeDialogHint">你当前填写的队伍 / 项目名称：<span id="teamMergeEnteredName" class="mergeProjectName">—</span></p>
+    <p class="mergeDialogHint">检测到你已经加入其他团队项目，但本次填写的名称与它们不同。请选择是否合并，避免重复建立相似团队。</p>
+    <div id="teamMergeProjectList" class="mergeProjectList"></div>
+    <div class="mergeDialogActions">
+      <button id="teamMergeIndependent" class="btn sec" type="button">保持当前名称，按新队伍提交</button>
+      <button id="teamMergeCancel" class="btn ghost" type="button">返回修改</button>
+    </div>
+  </div>
+</dialog>
 <dialog id="personalMergeDialog" class="dialog">
   <div class="dialogbox">
     <span class="eyebrow">PROJECT MATCH</span>
@@ -140,4 +153,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     </div>
   </div>
 </dialog>
-<div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-1905"></script></body></html>
+<div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-1938"></script></body></html>
