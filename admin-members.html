@@ -136,7 +136,7 @@ async function loadAdminMetrics(){
   const row=Array.isArray(r.data)?r.data[0]:r.data;
   renderAdminMetrics(row);
 }
-const state={user:null,profile:null,members:[],subs:[],progress:[],filtered:[],metrics:null};
+const state={user:null,profile:null,members:[],subs:[],progress:[],teamProgress:[],teamMembers:[],filtered:[],metrics:null};
 const THEME_KEY="justLabTheme";
 function preferredTheme(){try{const saved=localStorage.getItem(THEME_KEY);if(saved==="light"||saved==="dark")return saved}catch(_e){}return matchMedia?.("(prefers-color-scheme: light)")?.matches?"light":"dark"}
 function applyTheme(theme,save=false){const next=theme==="light"?"light":"dark";document.documentElement.dataset.theme=next;document.documentElement.style.colorScheme=next;if(save){try{localStorage.setItem(THEME_KEY,next)}catch(_e){}}const btn=q("#themeToggle");if(btn)btn.innerHTML=next==="light"?'☾ <span class="themeLabel">深色</span>':'☀ <span class="themeLabel">浅色</span>'}
@@ -164,9 +164,19 @@ function aggregate(){
 }
 function aggregateProgress(){
   const byUser=new Map();
+  const push=(userId,row)=>{
+    if(!userId)return;
+    if(!byUser.has(userId))byUser.set(userId,[]);
+    byUser.get(userId).push(row);
+  };
   for(const p of state.progress){
-    if(!byUser.has(p.user_id))byUser.set(p.user_id,[]);
-    byUser.get(p.user_id).push(p);
+    push(p.user_id,{...p,_kind:"personal",_title:p.current_progress||"个人进度已更新"});
+  }
+  const teamById=new Map(state.teamProgress.map(x=>[x.id,x]));
+  for(const m of state.teamMembers){
+    const t=teamById.get(m.team_progress_id);
+    if(!t)continue;
+    push(m.member_id,{...t,_kind:"team",_title:t.competition_name||"队伍进度已更新"});
   }
   for(const arr of byUser.values())arr.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
   return byUser;
@@ -190,7 +200,7 @@ function render(){
       '<td><b>'+arr.length+'</b></td>'+
       '<td>'+(latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">'+fmt(latest.created_at)+'</div>':'<span class="muted">暂无提交</span>')+'</td>'+
       '<td><b>'+parr.length+'</b></td>'+
-      '<td>'+(latestProgress?'<b>'+esc(latestProgress.current_progress||"已更新进度")+'</b><div class="muted">'+fmt(latestProgress.created_at)+'</div>':'<span class="muted">暂无进度</span>')+'</td>'+
+      '<td>'+(latestProgress?'<b>'+esc(latestProgress._kind==="team"?(latestProgress.competition_name||"队伍进度已更新"):(latestProgress.current_progress||"个人进度已更新"))+'</b><div class="muted">'+(latestProgress._kind==="team"?"队伍进度 · ":"个人进度 · ")+fmt(latestProgress.created_at)+'</div>':'<span class="muted">暂无进度</span>')+'</td>'+
       '<td><div class="actions"><a class="btn ghost" href="./member.html?id='+encodeURIComponent(m.id)+'">主页</a><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+(state.profile?.role==="super_admin"&&m.id!==state.user?.id?'<button class="btn sec resetPwdBtn" data-id="'+esc(m.id)+'">重置密码</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")+'</div></td>'+
     '</tr>';
   }).join("");
@@ -271,14 +281,20 @@ function openEdit(id){
   q("#editDialog").showModal();
 }
 async function loadAdminData(){
-  const [p,s,pr,mr]=await Promise.all([
+  const [p,s,pr,tp,tm,mr]=await Promise.all([
     supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,created_at").order("created_at",{ascending:false}),
     supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").order("created_at",{ascending:false}),
-    supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,created_at").order("created_at",{ascending:false}),
+    supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
+    supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
+    supabase.from("team_progress_members").select("team_progress_id,member_id"),
     supabase.rpc("get_member_admin_metrics")
   ]);
-  if(p.error)throw p.error;if(s.error)throw s.error;if(pr.error)throw pr.error;
-  state.members=p.data||[];state.subs=s.data||[];state.progress=pr.data||[];
+  if(p.error)throw p.error;if(s.error)throw s.error;if(pr.error)throw pr.error;if(tp.error)throw tp.error;if(tm.error)throw tm.error;
+  state.members=p.data||[];
+  state.subs=s.data||[];
+  state.progress=pr.data||[];
+  state.teamProgress=tp.data||[];
+  state.teamMembers=tm.data||[];
   if(!mr.error)renderAdminMetrics(Array.isArray(mr.data)?mr.data[0]:mr.data);
   populateMajorFilter();render();
   q("#updatedAt").textContent="更新时间："+new Date().toLocaleString("zh-CN",{hour12:false});
@@ -292,8 +308,10 @@ function setupAdminRealtime(){
     .on("postgres_changes",{event:"*",schema:"public",table:"profiles"},refresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"submissions"},refresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"progress_updates"},refresh)
-    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_updates"},metricsOnly)
-    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_members"},metricsOnly)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_updates"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_members"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"projects"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"project_members"},refresh)
     .subscribe();
   window.__memberAdminRealtime=ch;
   if(!window.__memberAdminMetricsTimer){
