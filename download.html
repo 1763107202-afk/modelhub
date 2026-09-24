@@ -19,6 +19,10 @@
     .downloadFeature{padding:18px}
     .downloadFeature b{display:block;margin-bottom:7px}
     .downloadFeature span{color:#7188a4;font-size:13px;line-height:1.6}
+    .iosSteps{display:grid;gap:10px;margin-top:16px}
+    .iosStep{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:rgba(51,116,255,.055)}
+    .iosStep b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(51,116,255,.12);color:#2767b8}
+    .iosStep span{line-height:1.65;color:#5f7896}
     @media(max-width:720px){
       .downloadCard{grid-template-columns:1fr;text-align:center;padding:24px}
       .downloadLogo{margin:0 auto}
@@ -34,7 +38,7 @@
     <section class="pageHero wrap">
       <span class="eyebrow">APP DOWNLOADS</span>
       <h1>软件下载</h1>
-      <p>Windows 与 Android 客户端均与网页版共用同一账号、资料库、公告、进度和管理后台。</p>
+      <p>Windows、Android 客户端与苹果主屏幕快捷方式均使用同一平台账号，资料库、公告、进度和管理后台保持同步。</p>
     </section>
     <section class="section wrap downloadShell">
       <article class="glass downloadCard">
@@ -71,6 +75,29 @@
             <a class="btn sec" href="./index.html">返回网页版</a>
           </div>
           <div class="downloadNote">APK 由 GitHub Actions 自动构建并发布。首次安装时，Android 可能要求允许当前浏览器“安装未知应用”，授权后即可继续安装。</div>
+        </div>
+      </article>
+      <article class="glass downloadCard" style="margin-top:18px">
+        <img class="downloadLogo" src="./assets/lab-logo.webp?v=14" alt="机械创新实验室">
+        <div>
+          <span class="eyebrow">IPHONE / IPAD</span>
+          <h2 class="downloadTitle">苹果用户添加到主屏幕</h2>
+          <p>苹果设备无需安装 APK。建议使用 Safari 打开实验室平台，并将网页添加到主屏幕，之后可像普通 App 一样从桌面直接进入。</p>
+          <div class="downloadMeta">
+            <span>iPhone / iPad</span>
+            <span>推荐 Safari</span>
+            <span>无需下载安装包</span>
+          </div>
+          <div class="iosSteps">
+            <div class="iosStep"><b>1</b><span>使用 <strong>Safari 浏览器</strong> 打开实验室交流平台主页。</span></div>
+            <div class="iosStep"><b>2</b><span>点击 Safari 底部或顶部的 <strong>分享按钮</strong>（方框向上箭头图标）。</span></div>
+            <div class="iosStep"><b>3</b><span>在分享菜单中向下找到并点击 <strong>“添加到主屏幕”</strong>。</span></div>
+            <div class="iosStep"><b>4</b><span>确认名称后点击右上角 <strong>“添加”</strong>，桌面就会出现实验室平台图标。</span></div>
+          </div>
+          <div class="downloadActions" style="margin-top:16px">
+            <a class="btn pri" href="./index.html">打开平台主页</a>
+          </div>
+          <div class="downloadNote">以后直接点击桌面图标即可进入平台。若分享菜单里暂时没有“添加到主屏幕”，可向下滚动菜单查找该选项。</div>
         </div>
       </article>
       <div class="downloadFeatures">
