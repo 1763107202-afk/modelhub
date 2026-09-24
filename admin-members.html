@@ -16,13 +16,13 @@
 .empty{padding:40px;text-align:center;color:#7890aa}.foot{padding:35px 0 50px;color:#6f849e}.loginbox{width:min(430px,calc(100% - 28px));margin:70px auto;padding:24px;border-radius:22px;display:grid;gap:14px}.loginbox h2{margin:0}.loginbox p{margin:0;color:#8fa4bd}.msg{font-size:13px;color:#92a8c0}
 .dialog{border:0;background:transparent}.dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}.dialogbox{width:min(720px,calc(100vw - 28px));padding:22px;border:1px solid #29415e;border-radius:20px;background:#0c1929;color:#eef6ff}.dialogbox h2{margin:0 0 14px}.detailList{display:grid;gap:9px;max-height:55vh;overflow:auto}.detailItem{padding:14px;border-radius:13px;background:#091625;border:1px solid #1b3048}.detailItem b{display:block}.detailItem small{color:#7890aa}.detailTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.detailActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.memberMetaGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.memberMetaCell{padding:10px 12px;border-radius:11px;background:#081524;border:1px solid #1b3048}.memberMetaCell small{display:block;color:#7890aa}.memberMetaCell b{display:block;margin-top:2px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;font-size:13px;color:#cbd9ea}.dialogActions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 @media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.topin{align-items:flex-start;padding:10px 0;flex-wrap:wrap}.nav{width:100%;margin-left:0}.brand small{display:none}}@media(max-width:520px){.stats{grid-template-columns:1fr}.two,.memberMetaGrid{grid-template-columns:1fr}.brand span b{font-size:14px}}
-</style>
+</style><link rel="stylesheet" href="./theme-v1.css">
 </head>
 <body>
 <header class="top">
   <div class="wrap topin">
     <a class="brand" href="./index.html"><img src="./lab-logo-320.jpg?v=12" alt="实验室 Logo"><span><b>机械创新实验室 · 成员后台</b><small>Member Administration Center</small></span></a>
-    <div class="nav"><a class="btn ghost" href="./index.html">返回主站</a><button id="logoutBtn" class="btn sec hidden">退出登录</button></div>
+    <div class="nav"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><a class="btn ghost" href="./index.html">返回主站</a><button id="logoutBtn" class="btn sec hidden">退出登录</button></div>
   </div>
 </header>
 
@@ -97,6 +97,10 @@ const q=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
 const state={user:null,profile:null,members:[],subs:[],progress:[],filtered:[]};
+const THEME_KEY="justLabTheme";
+function preferredTheme(){try{const saved=localStorage.getItem(THEME_KEY);if(saved==="light"||saved==="dark")return saved}catch(_e){}return matchMedia?.("(prefers-color-scheme: light)")?.matches?"light":"dark"}
+function applyTheme(theme,save=false){const next=theme==="light"?"light":"dark";document.documentElement.dataset.theme=next;document.documentElement.style.colorScheme=next;if(save){try{localStorage.setItem(THEME_KEY,next)}catch(_e){}}const btn=q("#themeToggle");if(btn)btn.innerHTML=next==="light"?'☾ <span class="themeLabel">深色</span>':'☀ <span class="themeLabel">浅色</span>'}
+applyTheme(preferredTheme());
 
 function showLogin(msg=""){
   q("#loginView").classList.remove("hidden");
@@ -233,7 +237,7 @@ async function enter(){
   q("#adminBadge").textContent=(state.profile.full_name||state.profile.email)+" · "+(state.profile.role==="super_admin"?"主管理员":"副管理员");
   try{await loadAdminData();setupAdminRealtime()}catch(e){q("#memberBody").innerHTML='<tr><td colspan="13" class="muted">加载失败：'+esc(e.message)+'</td></tr>'}
 }
-q("#loginBtn").onclick=async()=>{
+q("#themeToggle").onclick=()=>{const next=document.documentElement.dataset.theme==="light"?"dark":"light";applyTheme(next,true)};\nq("#loginBtn").onclick=async()=>{
   q("#loginMsg").textContent="正在登录…";
   const r=await supabase.auth.signInWithPassword({email:q("#loginEmail").value.trim(),password:q("#loginPassword").value});
   if(r.error){q("#loginMsg").textContent=r.error.message;return}
