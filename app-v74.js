@@ -1316,7 +1316,7 @@ async function initProgress(){
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
       const ins=mergeChoice.mode==="existing"&&mergeChoice.project
-        ? await supabase.rpc("replace_personal_progress_v2",{
+        ? await supabase.rpc("replace_personal_progress_v3",{
             p_current_progress:current,
             p_next_goal:goal,
             p_project_id:mergeChoice.project.id,
@@ -1383,7 +1383,7 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const rr=await supabase.rpc("upsert_team_progress_v3",{
+      const rr=await supabase.rpc("upsert_team_progress_v4",{
         p_competition_name:competition,
         p_team_progress:teamProgress,
         p_next_goal:nextGoal||null,
