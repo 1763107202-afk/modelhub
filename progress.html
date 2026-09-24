@@ -60,8 +60,9 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <div class="progressDualEntry">
   <form id="progressForm" class="form glass progressForm">
     <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">仿真、论文、科研、专利、课程设计等都可以作为个人项目；也可以不关联项目，单独记录普通个人进度。</p></div>
-    <label>关联项目（可选）<select id="progressProject"><option value="">不关联项目 / 普通个人进度</option></select></label>
-    <small class="profileHint">如果这次进度属于某个个人或团队项目，请在这里关联；项目页会自动同步显示该进度。</small>
+    <label>项目名称<input id="progressProject" list="progressProjectList" maxlength="160" required placeholder="请输入项目名称，例如：桥梁桁架有限元分析"></label>
+    <datalist id="progressProjectList"></datalist>
+    <small class="profileHint">项目名称必须填写。若与你已加入的团队项目名称完全相同（忽略首尾空格和大小写），本次个人进度会同步到该团队项目；若不同，则自动创建或继续更新同名个人项目。</small>
     <label>近期个人进度<textarea id="progressCurrent" rows="6" maxlength="5000" required placeholder="这段时间个人完成了什么、目前做到哪一步、遇到哪些问题"></textarea></label>
     <label>下一时期个人目标<textarea id="progressGoal" rows="5" maxlength="5000" required placeholder="下一阶段个人准备完成哪些任务、达到什么目标"></textarea></label>
     <label>相关链接（可选）<input id="progressLink" type="url" placeholder="https://..."></label>
@@ -122,4 +123,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-0135"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-0208"></script></body></html>
