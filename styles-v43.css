@@ -379,7 +379,3 @@
 .fileToolbar{grid-template-columns:minmax(240px,1fr) minmax(280px,420px) 210px auto}
 @media(max-width:1050px){.fileToolbar{grid-template-columns:1fr 1fr}.fileToolbar>div:first-child{grid-column:1/-1}}
 @media(max-width:900px){.fileToolbar{grid-template-columns:1fr}.fileToolbar>div:first-child{grid-column:auto}}
-.progressCard,.teamProgressCard,.fileCard,.workCard,.announcement,.adminDashCard,.adminLink{
-  content-visibility:auto;
-  contain-intrinsic-size:280px;
-}
