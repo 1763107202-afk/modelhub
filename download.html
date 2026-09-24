@@ -32,9 +32,9 @@
   <div id="siteHeader"></div>
   <main>
     <section class="pageHero wrap">
-      <span class="eyebrow">DESKTOP APP</span>
+      <span class="eyebrow">APP DOWNLOADS</span>
       <h1>软件下载</h1>
-      <p>Windows 桌面客户端与网页版共用同一账号、资料库、公告、进度和管理后台。</p>
+      <p>Windows 与 Android 客户端均与网页版共用同一账号、资料库、公告、进度和管理后台。</p>
     </section>
     <section class="section wrap downloadShell">
       <article class="glass downloadCard">
@@ -55,10 +55,28 @@
           <div class="downloadNote">安装程序由项目的 GitHub Actions 自动构建并发布。若浏览器提示保留或继续下载，请确认文件来源为本实验室平台后再安装。</div>
         </div>
       </article>
+      <article class="glass downloadCard" style="margin-top:18px">
+        <img class="downloadLogo" src="./assets/lab-logo.webp?v=14" alt="机械创新实验室">
+        <div>
+          <span class="eyebrow">ANDROID CLIENT</span>
+          <h2 class="downloadTitle">Android 手机版</h2>
+          <p>面向手机使用优化，平台内部页面留在 App 内；外部链接交给系统浏览器，文件下载使用 Android 系统下载管理器。</p>
+          <div class="downloadMeta">
+            <span>版本 1.0.0</span>
+            <span>Android 7.0+</span>
+            <span>需要联网</span>
+          </div>
+          <div class="downloadActions">
+            <a class="btn pri" href="./downloads/JUST-Lab-Platform-Android.apk" target="_blank" rel="noopener" download>下载 Android APK</a>
+            <a class="btn sec" href="./index.html">返回网页版</a>
+          </div>
+          <div class="downloadNote">APK 由 GitHub Actions 自动构建并发布。首次安装时，Android 可能要求允许当前浏览器“安装未知应用”，授权后即可继续安装。</div>
+        </div>
+      </article>
       <div class="downloadFeatures">
         <div class="glass downloadFeature"><b>数据完全同步</b><span>桌面端与网页版使用同一套 Supabase 数据，内容无需重复迁移。</span></div>
         <div class="glass downloadFeature"><b>网站更新即生效</b><span>客户端直接加载线上平台，大多数网页功能更新后无需重新安装软件。</span></div>
-        <div class="glass downloadFeature"><b>Windows 独立体验</b><span>可固定到桌面、开始菜单或任务栏，适合实验室日常使用。</span></div>
+        <div class="glass downloadFeature"><b>多端使用</b><span>Windows 可固定到桌面，Android 可直接安装到手机，账号和数据保持一致。</span></div>
       </div>
     </section>
   </main>
