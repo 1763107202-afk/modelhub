@@ -1350,6 +1350,48 @@ async function chooseExistingProjectForPersonalProgress(projectName){
     dialog.showModal();
   });
 }
+async function chooseExistingTeamProjectForTeamProgress(teamName){
+  const rows=await fetchProjectDirectory(true);
+  const mineTeams=rows.filter(x=>x.project_mode==="team"&&(x.member_ids||[]).includes(state.user?.id));
+  if(!mineTeams.length)return {mode:"independent",project:null};
+
+  const normalized=String(teamName||"").trim().toLowerCase();
+  const exact=mineTeams.find(x=>String(x.name||"").trim().toLowerCase()===normalized);
+  if(exact)return {mode:"existing",project:exact,automatic:true};
+
+  const dialog=q("#teamMergeDialog");
+  const list=q("#teamMergeProjectList");
+  const entered=q("#teamMergeEnteredName");
+  const independent=q("#teamMergeIndependent");
+  const cancel=q("#teamMergeCancel");
+  if(!dialog||!list||!entered||!independent||!cancel)return {mode:"independent",project:null};
+
+  entered.textContent=teamName||"（未填写）";
+  list.innerHTML=mineTeams.map(x=>
+    '<button class="mergeProjectOption" type="button" data-id="'+esc(x.id)+'"><b>'+esc(x.name)+'</b><small>'+
+    '负责人：'+esc(x.leader_name||"未设置")+
+    (x.stage?' · 当前阶段：'+esc(x.stage):'')+
+    ' · 成员：'+esc((x.member_names||[]).join("、")||"暂无")+
+    '</small></button>'
+  ).join("");
+
+  return await new Promise(resolve=>{
+    let settled=false;
+    const finish=value=>{
+      if(settled)return;
+      settled=true;
+      dialog.close();
+      resolve(value);
+    };
+    list.querySelectorAll(".mergeProjectOption").forEach(btn=>{
+      btn.onclick=()=>finish({mode:"existing",project:mineTeams.find(x=>x.id===btn.dataset.id)||null,automatic:false});
+    });
+    independent.onclick=()=>finish({mode:"independent",project:null});
+    cancel.onclick=()=>finish({mode:"cancel",project:null});
+    dialog.oncancel=e=>{e.preventDefault();finish({mode:"cancel",project:null})};
+    dialog.showModal();
+  });
+}
 async function initProgress(){
   const gate=q("#progressGate"),content=q("#progressContent");
   if(state.user&&state.profile?.membership_status==="freshman"&&!isAdmin()){
@@ -1438,9 +1480,16 @@ async function initProgress(){
     const rawLink=q("#teamProgressLink").value.trim();
     const file=q("#teamProgressFile")?.files?.[0]||null;
     const memberIds=[...teamMemberSelection];
-    const selectedProject=q("#teamProject")?.value||null;
+    let selectedProject=q("#teamProject")?.value||null;
     const leaderId=q("#teamLeader")?.value||null;
     if(!selectedProject&&!competition)return toast("请选择项目或填写比赛 / 队伍名称");
+    if(!selectedProject&&competition){
+      const mergeChoice=await chooseExistingTeamProjectForTeamProgress(competition);
+      if(mergeChoice.mode==="cancel")return;
+      if(mergeChoice.mode==="existing"&&mergeChoice.project){
+        selectedProject=mergeChoice.project.id;
+      }
+    }
     if(!teamProgress)return toast("请填写队伍进度");
     if(!selectedProject&&!memberIds.length)return toast("请至少选择一名队伍成员");
     if(!leaderId)return toast("请选择队伍负责人");
@@ -1494,7 +1543,7 @@ async function initProgress(){
       const teamPreview=q("#teamProgressFilePreview");if(teamPreview)teamPreview.textContent="";
       await loadTeamMemberOptions(true);
       const verifyMembers=await supabase.from("team_progress_members").select("member_id",{count:"exact",head:true});
-      toast("队伍进度已更新，名单正在同步");
+      toast(selectedProject?"队伍进度已更新并同步到已有团队项目":"队伍进度已更新，名单正在同步");
       await loadProgressPage();
       const wantsPersonal=confirm("队伍进度已更新。\n\n你是否还有个人进度需要更新？\n没有个人进度可选择“取消”，本次到此结束。");
       if(wantsPersonal){
