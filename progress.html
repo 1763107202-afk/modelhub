@@ -1,6 +1,16 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><title>近期进度 | 江苏科技大学机械创新实验室交流平台</title><link rel="stylesheet" href="./styles-v39.css"><link rel="stylesheet" href="./theme-v3.css?v=20260924-1925"><script src="./theme-init-v2.js?v=20260924-1910"></script><style>
-.progressDualEntry,.progressStatusGrid,.progressFeedGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-.progressDualEntry{margin-bottom:22px}
+.progressLayout{display:block!important}
+.progressForm{position:static!important;top:auto!important}
+.progressTopGrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(330px,1fr);gap:22px;align-items:stretch;margin-bottom:30px}
+.progressDualEntry{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;min-width:0}
+.progressDualEntry>.progressForm{width:100%;min-width:0;height:100%}
+.progressOverview{display:flex;flex-direction:column;gap:16px;min-width:0;height:100%}
+.progressOverview>.progressReminder{margin:0}
+.progressStatusGrid{display:grid;grid-template-columns:1fr;gap:16px;flex:1}
+.progressStatusGrid>.progressSummary{height:100%}
+.progressFeedGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;width:100%;margin-top:2px}
+.progressFeedGrid>section{min-width:0;width:100%}
+.progressTabs{display:block!important;width:100%}
 .teamMemberHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
 .teamMemberHeader label{margin:0}
 .teamMemberSearch{margin-bottom:8px}
@@ -18,9 +28,11 @@ html[data-theme="light"] .teamMemberOptions{background:#f7faff;border-color:#cbd
 html[data-theme="light"] .teamMemberChoice{background:#fff;border-color:#d8e4ef;color:#263b52}
 html[data-theme="light"] .teamProgressCard{background:#fff;border-color:#d8e4ef;color:#263b52}
 html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
+@media(max-width:1180px){.progressTopGrid{grid-template-columns:1fr}.progressOverview{height:auto}.progressStatusGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.progressDualEntry,.progressStatusGrid,.progressFeedGrid{grid-template-columns:1fr}}
 @media(max-width:650px){.teamMemberText{display:block}.teamMemberText small{display:block;text-align:left;margin-top:3px;white-space:normal}.teamMemberHeader{align-items:flex-start}}
 </style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
+<div class="progressTopGrid">
 <div class="progressDualEntry">
   <form id="progressForm" class="form glass progressForm">
     <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">没有参加比赛，或希望单独记录自己的学习与项目进展时填写。</p></div>
@@ -50,7 +62,7 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     <button class="btn pri" type="submit">提交队伍进度</button>
   </form>
 </div>
-<div class="progressTabs"><section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div><div class="progressSubmitterCount"><b id="progressReminderCount">0</b><span>人</span></div></div><p class="progressReminderHint">超过 14 天没有新的进度记录会进入提醒区；从未提交过的成员按注册时间计算。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
+<div class="progressOverview"><section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div><div class="progressSubmitterCount"><b id="progressReminderCount">0</b><span>人</span></div></div><p class="progressReminderHint">超过 14 天没有新的进度记录会进入提醒区；从未提交过的成员按注册时间计算。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
 <section class="progressSummary glass">
   <div class="progressSummaryHead"><div><span class="eyebrow">PERSONAL UPDATED</span><h2>个人进度已更新</h2></div><div class="progressSubmitterCount"><b id="personalUpdatedCount">0</b><span>人</span></div></div>
   <div id="personalUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有个人进度更新</span></div>
@@ -59,8 +71,11 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
   <div class="progressSummaryHead"><div><span class="eyebrow">TEAM UPDATED</span><h2>队伍进度已更新</h2></div><div class="progressSubmitterCount"><b id="teamUpdatedCount">0</b><span>人</span></div></div>
   <div id="teamUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有队伍进度更新</span></div>
 </section>
-</div><div class="progressFeedGrid">
+</div>
+</div>
+</div>
+<div class="progressFeedGrid">
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v53.js?v=20260924-2100"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v53.js?v=20260924-2135"></script></body></html>
