@@ -82,7 +82,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
-            let start_url = "https://1763107202-afk.github.io/modelhub/"
+            let start_url = "https://1763107202-afk.github.io/modelhub/?desktop=1"
                 .parse()
                 .expect("invalid desktop start URL");
 
