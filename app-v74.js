@@ -1088,10 +1088,27 @@ async function initProjects(){
       return '<article class="projectCardV2"><div class="projectTopV2"><div><span class="statusTag '+statusClass+'">'+esc(projectStatusName(x.status))+'</span><h3>'+esc(x.name)+'</h3><div class="projectMeta">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="personal"?"个人项目":"团队项目")+' · 负责人：'+esc(x.leader_name||"成员")+'</div></div></div>'+
       (x.description?'<p class="projectDesc">'+esc(x.description)+'</p>':'')+
       '<div class="projectMembersV2">'+members.map(n=>'<span class="projectChip">'+esc(n)+'</span>').join("")+pending.map(n=>'<span class="projectChip pending">'+esc(n)+' · 未注册</span>').join("")+'</div>'+
-      '<div class="projectStats"><div class="projectStat"><span>当前阶段</span><b>'+esc(x.stage||"未填写")+'</b></div><div class="projectStat"><span>个人进度</span><b>'+esc(x.personal_progress_count||0)+' 条</b></div><div class="projectStat"><span>队伍进度</span><b>'+esc(x.team_progress_count||0)+' 条</b></div></div>'+
+      '<div class="projectStats"><div class="projectStat"><span>当前阶段</span><b>'+esc(x.stage||"未填写")+'</b></div><button class="projectStat projectProgressBtn" type="button" data-id="'+esc(x.id)+'" data-kind="personal"><span>个人进度</span><b>'+esc(x.personal_progress_count||0)+' 条</b></button><button class="projectStat projectProgressBtn" type="button" data-id="'+esc(x.id)+'" data-kind="team"><span>队伍进度</span><b>'+esc(x.team_progress_count||0)+' 条</b></button></div>'+
       '<div class="actions"><a class="btn sec" href="./progress.html?project='+encodeURIComponent(x.id)+'">更新进度</a><a class="btn ghost" href="./member.html?id='+encodeURIComponent(x.leader_id||state.user.id)+'">负责人主页</a>'+(canJoin?'<button class="btn pri joinProject" data-id="'+esc(x.id)+'">加入项目</button>':'')+(canManage(x)?'<button class="btn ghost editProject" data-id="'+esc(x.id)+'">编辑</button><button class="btn danger deleteProject" data-id="'+esc(x.id)+'">删除</button>':'')+'</div></article>';
     }).join(""):'<div class="empty">目前还没有项目。可以新建竞赛、仿真论文、科研、专利、机械设计或课程设计项目。</div>';
 
+    box.querySelectorAll(".projectProgressBtn").forEach(b=>b.onclick=async()=>{
+      const projectId=b.dataset.id,kind=b.dataset.kind;
+      const x=projects.find(v=>v.id===projectId);if(!x)return;
+      if(kind==="personal"){
+        const r=await supabase.from("progress_updates").select("id,user_id,member_name,current_progress,next_goal,created_at").eq("project_id",projectId).order("created_at",{ascending:false});
+        if(r.error)return toast("个人进度加载失败："+r.error.message);
+        const rows=r.data||[];
+        const textRows=rows.length?rows.map(v=>"【"+(v.member_name||"成员")+"】\n近期进度："+(v.current_progress||"")+(v.next_goal?"\n下一目标："+v.next_goal:"")+"\n更新时间："+fmt(v.created_at)).join("\n\n"):"暂无个人进度";
+        alert(x.name+" · 个人进度\n\n"+textRows);
+      }else{
+        const r=await supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,created_at").eq("project_id",projectId).order("created_at",{ascending:false});
+        if(r.error)return toast("队伍进度加载失败："+r.error.message);
+        const rows=r.data||[];
+        const textRows=rows.length?rows.map(v=>"队伍进度："+(v.team_progress||"")+(v.next_goal?"\n下一目标："+v.next_goal:"")+"\n更新时间："+fmt(v.created_at)).join("\n\n"):"暂无队伍进度";
+        alert(x.name+" · 队伍进度\n\n"+textRows);
+      }
+    });
     box.querySelectorAll(".joinProject").forEach(b=>b.onclick=async()=>{
       const x=projects.find(v=>v.id===b.dataset.id);if(!x)return;
       if(!confirm("确定加入项目“"+x.name+"”吗？"))return;
