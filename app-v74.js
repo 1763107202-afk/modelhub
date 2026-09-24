@@ -997,7 +997,7 @@ function projectStatusName(s){
 let __projectDirectoryCache=[];
 async function fetchProjectDirectory(force=false){
   if(!force&&__projectDirectoryCache.length)return __projectDirectoryCache;
-  const r=await supabase.rpc("get_project_directory");
+  const r=await supabase.rpc("get_project_directory_v2");
   if(r.error)throw r.error;
   __projectDirectoryCache=r.data||[];
   return __projectDirectoryCache;
@@ -1082,13 +1082,25 @@ async function initProjects(){
     box.innerHTML=projects.length?projects.map(x=>{
       const statusClass=x.status==="completed"?"completed":x.status==="paused"?"paused":x.status==="archived"?"archived":"";
       const members=(x.member_names||[]);
+      const pending=(x.pending_member_names||[]);
+      const joined=(x.member_ids||[]).includes(state.user.id);
+      const canJoin=x.project_mode==="team"&&!joined&&!["completed","archived"].includes(x.status);
       return '<article class="projectCardV2"><div class="projectTopV2"><div><span class="statusTag '+statusClass+'">'+esc(projectStatusName(x.status))+'</span><h3>'+esc(x.name)+'</h3><div class="projectMeta">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="personal"?"个人项目":"团队项目")+' · 负责人：'+esc(x.leader_name||"成员")+'</div></div></div>'+
       (x.description?'<p class="projectDesc">'+esc(x.description)+'</p>':'')+
-      '<div class="projectMembersV2">'+members.map(n=>'<span class="projectChip">'+esc(n)+'</span>').join("")+'</div>'+
+      '<div class="projectMembersV2">'+members.map(n=>'<span class="projectChip">'+esc(n)+'</span>').join("")+pending.map(n=>'<span class="projectChip pending">'+esc(n)+' · 未注册</span>').join("")+'</div>'+
       '<div class="projectStats"><div class="projectStat"><span>当前阶段</span><b>'+esc(x.stage||"未填写")+'</b></div><div class="projectStat"><span>个人进度</span><b>'+esc(x.personal_progress_count||0)+' 条</b></div><div class="projectStat"><span>队伍进度</span><b>'+esc(x.team_progress_count||0)+' 条</b></div></div>'+
-      '<div class="actions"><a class="btn sec" href="./progress.html?project='+encodeURIComponent(x.id)+'">更新进度</a><a class="btn ghost" href="./member.html?id='+encodeURIComponent(x.leader_id||state.user.id)+'">负责人主页</a>'+(canManage(x)?'<button class="btn ghost editProject" data-id="'+esc(x.id)+'">编辑</button><button class="btn danger deleteProject" data-id="'+esc(x.id)+'">删除</button>':'')+'</div></article>';
+      '<div class="actions"><a class="btn sec" href="./progress.html?project='+encodeURIComponent(x.id)+'">更新进度</a><a class="btn ghost" href="./member.html?id='+encodeURIComponent(x.leader_id||state.user.id)+'">负责人主页</a>'+(canJoin?'<button class="btn pri joinProject" data-id="'+esc(x.id)+'">加入项目</button>':'')+(canManage(x)?'<button class="btn ghost editProject" data-id="'+esc(x.id)+'">编辑</button><button class="btn danger deleteProject" data-id="'+esc(x.id)+'">删除</button>':'')+'</div></article>';
     }).join(""):'<div class="empty">目前还没有项目。可以新建竞赛、仿真论文、科研、专利、机械设计或课程设计项目。</div>';
 
+    box.querySelectorAll(".joinProject").forEach(b=>b.onclick=async()=>{
+      const x=projects.find(v=>v.id===b.dataset.id);if(!x)return;
+      if(!confirm("确定加入项目“"+x.name+"”吗？"))return;
+      const r=await supabase.rpc("join_project",{p_project_id:x.id});
+      if(r.error)return toast("加入项目失败："+r.error.message);
+      __projectDirectoryCache=[];
+      toast("已加入项目");
+      await initProjects();
+    });
     box.querySelectorAll(".editProject").forEach(b=>b.onclick=()=>openProjectDialog(projects.find(x=>x.id===b.dataset.id)||null));
     box.querySelectorAll(".deleteProject").forEach(b=>b.onclick=async()=>{
       const x=projects.find(v=>v.id===b.dataset.id);if(!x)return;
@@ -1100,6 +1112,26 @@ async function initProjects(){
   };
 
   const picker=q("#projectMemberPicker"),search=q("#projectMemberSearch");
+  const pendingInput=q("#pendingMemberInput"),pendingTags=q("#pendingMemberTags");
+  let pendingNames=[];
+  const renderPending=()=>{
+    if(!pendingTags)return;
+    pendingTags.innerHTML=pendingNames.length?pendingNames.map((n,i)=>'<span class="pendingTag">'+esc(n)+' · 未注册 <button type="button" data-i="'+i+'" aria-label="移除">×</button></span>').join(""):'<span class="projectMeta">暂无未注册成员</span>';
+    pendingTags.querySelectorAll("button[data-i]").forEach(b=>b.onclick=()=>{pendingNames.splice(Number(b.dataset.i),1);renderPending()});
+  };
+  const addPending=()=>{
+    const name=(pendingInput?.value||"").trim();
+    if(!name)return;
+    if(pendingNames.some(x=>x.toLowerCase()===name.toLowerCase()))return toast("这个未注册成员已经添加");
+    const registered=memberRows.find(m=>(m.full_name||"").trim().toLowerCase()===name.toLowerCase());
+    if(registered)return toast("该成员已经注册，请直接在上方勾选");
+    pendingNames.push(name);
+    if(pendingInput)pendingInput.value="";
+    renderPending();
+  };
+  if(q("#addPendingMember"))q("#addPendingMember").onclick=addPending;
+  if(pendingInput)pendingInput.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addPending()}};
+
   const renderPicker=(selectedIds=new Set())=>{
     if(!picker)return;
     const key=(search?.value||"").trim().toLowerCase();
@@ -1120,8 +1152,15 @@ async function initProjects(){
     q("#projectDescription").value=x?.description||"";
     const ids=new Set(x?.member_ids||[state.user.id]);
     if(!ids.size)ids.add(state.user.id);
+    pendingNames=[...(x?.pending_member_names||[])];
+    if(pendingInput)pendingInput.value="";
+    renderPending();
     renderPicker(ids);
-    const toggle=()=>q("#projectMembersWrap").classList.toggle("hidden",q("#projectMode").value==="personal");
+    const toggle=()=>{
+      const isPersonal=q("#projectMode").value==="personal";
+      q("#projectMembersWrap").classList.toggle("hidden",isPersonal);
+      if(isPersonal){pendingNames=[];renderPending()}
+    };
     q("#projectMode").onchange=toggle;toggle();
     if(search){search.value="";search.oninput=()=>renderPicker(new Set([...picker.querySelectorAll(".projectMemberCheck:checked")].map(i=>i.value)))}
     q("#projectDialog").showModal();
@@ -1132,7 +1171,7 @@ async function initProjects(){
     e.preventDefault();
     const mode=q("#projectMode").value;
     const ids=mode==="team"?[...q("#projectMemberPicker").querySelectorAll(".projectMemberCheck:checked")].map(i=>i.value):[state.user.id];
-    const r=await supabase.rpc("save_project",{
+    const r=await supabase.rpc("save_project_v2",{
       p_id:q("#projectId").value||null,
       p_name:q("#projectName").value.trim(),
       p_project_type:q("#projectType").value,
@@ -1140,7 +1179,8 @@ async function initProjects(){
       p_description:q("#projectDescription").value.trim()||null,
       p_stage:q("#projectStage").value.trim()||null,
       p_status:q("#projectStatus").value,
-      p_member_ids:ids
+      p_member_ids:ids,
+      p_pending_member_names:mode==="team"?pendingNames:[]
     });
     if(r.error)return toast("项目保存失败："+r.error.message);
     q("#projectDialog").close();
@@ -1734,7 +1774,7 @@ function scheduleRealtimeRefresh(table){
       if(page==="submit"&&["exams","profiles"].includes(table))return initSubmit();
       if(page==="mine"&&["submissions","exams","profiles"].includes(table))return initMine();
       if(page==="profile"&&table==="profiles")return initProfile();
-      if(page==="projects"&&["projects","project_members","progress_updates","team_progress_updates"].includes(table)){__projectDirectoryCache=[];return initProjects();}
+      if(page==="projects"&&["projects","project_members","project_pending_members","progress_updates","team_progress_updates"].includes(table)){__projectDirectoryCache=[];return initProjects();}
       if(page==="admin"){
         if(["profiles","progress_updates","team_progress_updates","team_progress_members"].includes(table))await loadAdminDashboard();
         if(table==="announcements")return loadAnnouncements(true);
@@ -1754,7 +1794,7 @@ function setupSiteRealtime(){
     tutorials:["tutorials"],
     files:["lab_files","resource_shares"],
     progress:["progress_updates","team_progress_updates","team_progress_members","projects","project_members","profiles"],
-    projects:["projects","project_members","progress_updates","team_progress_updates","profiles"],
+    projects:["projects","project_members","project_pending_members","progress_updates","team_progress_updates","profiles"],
     submit:["exams","profiles","submissions"],
     mine:["submissions","exams","profiles"],
     profile:["profiles"],
