@@ -103,7 +103,7 @@ function navLink(key,href,label){return '<a class="'+(page===key?"active":"")+'"
 function renderChrome(){
   q("#siteHeader").innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></span></a><nav class="nav">'+
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
-    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html?v=20260924-2458","资料库")+navLink("progress","./progress.html","近期进度")+'<span class="navSep"></span>'+
+    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html?v=20260924-2458","资料库")+navLink("projects","./projects.html","项目管理")+navLink("progress","./progress.html","近期进度")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html","个人资料")+navLink("download","./download.html","软件下载")+
     '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><button id="notifyOpen" class="btn ghost hidden" type="button" aria-label="站内通知" title="站内通知">🔔<span id="notifyDot" class="notifyDot hidden"></span></button><a id="adminQuick" class="btn sec hidden" href="./admin.html">管理后台</a><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
@@ -147,7 +147,7 @@ function updateAuthUI(){
   q("#badge").textContent=on?who+(state.profile?.major?" · "+state.profile.major:"")+(state.profile?.membership_status==="freshman"&&!isAdmin()?" · 大一新生":"")+(isAdmin()?" · "+roleName(state.profile.role):""):"";
   q("#adminNav").classList.toggle("hidden",!isAdmin());const aq=q("#adminQuick");if(aq)aq.classList.toggle("hidden",!isAdmin());document.querySelectorAll(".adminSep").forEach(x=>x.classList.toggle("hidden",!isAdmin()));
   const freshmanRestricted=on&&state.profile?.membership_status==="freshman"&&!isAdmin();
-  document.querySelectorAll('a[href="./progress.html"],a[href$="/progress.html"]').forEach(a=>a.classList.toggle("hidden",freshmanRestricted));
+  document.querySelectorAll('a[href="./progress.html"],a[href$="/progress.html"],a[href="./projects.html"],a[href$="/projects.html"]').forEach(a=>a.classList.toggle("hidden",freshmanRestricted));
 }
 function friendlyAuthError(err){
   const raw=String(err?.message||err||"").trim();
@@ -979,6 +979,155 @@ async function loadProgressPage(){
   ]);
   applyProgressFeedSearch();
 }
+
+function projectTypeName(t){
+  return ({competition:"竞赛项目",simulation_paper:"仿真 / 论文",research:"科研项目",patent:"专利项目",design:"机械设计 / 制作",course:"课程设计",other:"其他项目"})[t]||"其他项目";
+}
+function projectStatusName(s){
+  return ({active:"进行中",paused:"暂停",completed:"已完成",archived:"已归档"})[s]||"进行中";
+}
+let __projectDirectoryCache=[];
+async function fetchProjectDirectory(force=false){
+  if(!force&&__projectDirectoryCache.length)return __projectDirectoryCache;
+  const r=await supabase.rpc("get_project_directory");
+  if(r.error)throw r.error;
+  __projectDirectoryCache=r.data||[];
+  return __projectDirectoryCache;
+}
+async function populateProgressProjectOptions(){
+  if(!state.user)return;
+  const rows=await fetchProjectDirectory(true);
+  const mine=rows.filter(x=>(x.member_ids||[]).includes(state.user.id));
+  const personal=q("#progressProject");
+  if(personal){
+    personal.innerHTML='<option value="">不关联项目 / 普通个人进度</option>'+mine.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+esc(projectTypeName(x.project_type))+'</option>').join("");
+  }
+  const team=q("#teamProject");
+  if(team){
+    const teamRows=mine.filter(x=>x.project_mode==="team");
+    team.innerHTML='<option value="">不关联已有项目，按比赛 / 队伍填写</option>'+teamRows.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("");
+    team.onchange=()=>{
+      const hit=teamRows.find(x=>x.id===team.value);
+      const name=q("#teamCompetitionName");
+      const wrap=q("#teamProjectHint");
+      if(hit){
+        if(name){name.value=hit.name;name.readOnly=true}
+        if(wrap)wrap.textContent="已关联项目："+hit.name+"；队伍成员将自动采用项目成员名单。";
+        const ids=new Set(hit.member_ids||[]);
+        teamMemberSelection.clear();
+        ids.forEach(id=>teamMemberSelection.add(id));
+        document.querySelectorAll(".teamMemberCheck").forEach(cb=>cb.checked=teamMemberSelection.has(cb.value));
+        const selected=q("#teamMemberSelectedCount");if(selected)selected.textContent="已选 "+teamMemberSelection.size+" 人";
+        const preview=q("#teamSelectedPreview");
+        if(preview){
+          const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
+          preview.innerHTML=members.length?members.map(m=>'<span class="teamSelectedChip">'+esc(m.full_name||"成员")+'</span>').join(""):'<span class="profileHint">项目成员由项目管理页维护</span>';
+        }
+      }else{
+        if(name){name.readOnly=false}
+        if(wrap)wrap.textContent="可关联已有团队项目；也可以直接填写新的比赛 / 队伍进度。";
+      }
+    };
+  }
+}
+async function initProjects(){
+  const gate=q("#projectGate"),content=q("#projectContent");
+  if(state.user&&state.profile?.membership_status==="freshman"&&!isAdmin()){
+    if(content)content.classList.add("hidden");
+    if(gate)gate.innerHTML='<div class="notice"><b>项目管理仅对正式成员开放。</b><br>转为正式成员后即可创建或加入项目。</div>';
+    return;
+  }
+  if(!state.user){
+    if(content)content.classList.add("hidden");
+    if(gate)gate.innerHTML='<div class="notice">登录后可以查看和管理实验室项目。 <button class="btn sec" id="projectLoginBtn" type="button">登录</button></div>';
+    q("#projectLoginBtn")&&(q("#projectLoginBtn").onclick=()=>q("#authOpen").click());
+    return;
+  }
+  if(gate)gate.innerHTML="";
+  if(content)content.classList.remove("hidden");
+
+  const [projects,membersReq]=await Promise.all([
+    fetchProjectDirectory(true),
+    supabase.rpc("get_formal_member_directory")
+  ]);
+  const memberRows=membersReq.error?[]:(membersReq.data||[]);
+  const memberMap=new Map(memberRows.map(x=>[x.id,x]));
+  const canManage=x=>isAdmin()||x.leader_id===state.user.id;
+
+  const renderProjects=()=>{
+    const box=q("#projectGrid");
+    if(!box)return;
+    box.innerHTML=projects.length?projects.map(x=>{
+      const statusClass=x.status==="completed"?"completed":x.status==="paused"?"paused":x.status==="archived"?"archived":"";
+      const members=(x.member_names||[]);
+      return '<article class="projectCardV2"><div class="projectTopV2"><div><span class="statusTag '+statusClass+'">'+esc(projectStatusName(x.status))+'</span><h3>'+esc(x.name)+'</h3><div class="projectMeta">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="personal"?"个人项目":"团队项目")+' · 负责人：'+esc(x.leader_name||"成员")+'</div></div></div>'+
+      (x.description?'<p class="projectDesc">'+esc(x.description)+'</p>':'')+
+      '<div class="projectMembersV2">'+members.map(n=>'<span class="projectChip">'+esc(n)+'</span>').join("")+'</div>'+
+      '<div class="projectStats"><div class="projectStat"><span>当前阶段</span><b>'+esc(x.stage||"未填写")+'</b></div><div class="projectStat"><span>个人进度</span><b>'+esc(x.personal_progress_count||0)+' 条</b></div><div class="projectStat"><span>队伍进度</span><b>'+esc(x.team_progress_count||0)+' 条</b></div></div>'+
+      '<div class="actions"><a class="btn sec" href="./progress.html?project='+encodeURIComponent(x.id)+'">更新进度</a><a class="btn ghost" href="./member.html?id='+encodeURIComponent(x.leader_id||state.user.id)+'">负责人主页</a>'+(canManage(x)?'<button class="btn ghost editProject" data-id="'+esc(x.id)+'">编辑</button><button class="btn danger deleteProject" data-id="'+esc(x.id)+'">删除</button>':'')+'</div></article>';
+    }).join(""):'<div class="empty">目前还没有项目。可以新建竞赛、仿真论文、科研、专利、机械设计或课程设计项目。</div>';
+
+    box.querySelectorAll(".editProject").forEach(b=>b.onclick=()=>openProjectDialog(projects.find(x=>x.id===b.dataset.id)||null));
+    box.querySelectorAll(".deleteProject").forEach(b=>b.onclick=async()=>{
+      const x=projects.find(v=>v.id===b.dataset.id);if(!x)return;
+      if(!confirm("确定删除项目“"+x.name+"”吗？\n\n已有个人 / 队伍进度记录不会被删除，只会取消项目关联。"))return;
+      const r=await supabase.rpc("delete_project",{p_id:x.id});
+      if(r.error)return toast("删除失败："+r.error.message);
+      __projectDirectoryCache=[];toast("项目已删除");await initProjects();
+    });
+  };
+
+  const picker=q("#projectMemberPicker"),search=q("#projectMemberSearch");
+  const renderPicker=(selectedIds=new Set())=>{
+    if(!picker)return;
+    const key=(search?.value||"").trim().toLowerCase();
+    const rows=memberRows.filter(m=>!key||([m.full_name,m.major].join(" ").toLowerCase().includes(key)));
+    picker.innerHTML=rows.length?rows.map(m=>'<label class="memberPick"><input type="checkbox" class="projectMemberCheck" value="'+esc(m.id)+'" '+(selectedIds.has(m.id)?'checked':'')+'><span><b>'+esc(m.full_name||"成员")+'</b> <small class="projectMeta">'+esc(m.major||"")+'</small></span></label>').join(""):'<div class="empty">没有匹配成员</div>';
+  };
+
+  let editing=null;
+  const openProjectDialog=x=>{
+    editing=x||null;
+    q("#projectDialogTitle").textContent=x?"编辑项目":"新建项目";
+    q("#projectId").value=x?.id||"";
+    q("#projectName").value=x?.name||"";
+    q("#projectType").value=x?.project_type||"competition";
+    q("#projectMode").value=x?.project_mode||"personal";
+    q("#projectStatus").value=x?.status||"active";
+    q("#projectStage").value=x?.stage||"";
+    q("#projectDescription").value=x?.description||"";
+    const ids=new Set(x?.member_ids||[state.user.id]);
+    if(!ids.size)ids.add(state.user.id);
+    renderPicker(ids);
+    const toggle=()=>q("#projectMembersWrap").classList.toggle("hidden",q("#projectMode").value==="personal");
+    q("#projectMode").onchange=toggle;toggle();
+    if(search){search.value="";search.oninput=()=>renderPicker(new Set([...picker.querySelectorAll(".projectMemberCheck:checked")].map(i=>i.value)))}
+    q("#projectDialog").showModal();
+  };
+  q("#newProjectBtn").onclick=()=>openProjectDialog(null);
+  q("#projectCancel").onclick=()=>q("#projectDialog").close();
+  q("#projectForm").onsubmit=async e=>{
+    e.preventDefault();
+    const mode=q("#projectMode").value;
+    const ids=mode==="team"?[...q("#projectMemberPicker").querySelectorAll(".projectMemberCheck:checked")].map(i=>i.value):[state.user.id];
+    const r=await supabase.rpc("save_project",{
+      p_id:q("#projectId").value||null,
+      p_name:q("#projectName").value.trim(),
+      p_project_type:q("#projectType").value,
+      p_project_mode:mode,
+      p_description:q("#projectDescription").value.trim()||null,
+      p_stage:q("#projectStage").value.trim()||null,
+      p_status:q("#projectStatus").value,
+      p_member_ids:ids
+    });
+    if(r.error)return toast("项目保存失败："+r.error.message);
+    q("#projectDialog").close();
+    __projectDirectoryCache=[];
+    toast("项目已保存");
+    await initProjects();
+  };
+  renderProjects();
+}
 async function initProgress(){
   const gate=q("#progressGate"),content=q("#progressContent");
   if(state.user&&state.profile?.membership_status==="freshman"&&!isAdmin()){
@@ -1013,9 +1162,10 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const ins=await supabase.rpc("replace_personal_progress",{
+      const ins=await supabase.rpc("replace_personal_progress_v2",{
         p_current_progress:current,
         p_next_goal:goal,
+        p_project_id:q("#progressProject")?.value||null,
         p_link_url:link_url||null,
         p_attachment_path:attachment_path,
         p_attachment_name:attachment_name,
@@ -1041,9 +1191,10 @@ async function initProgress(){
     const rawLink=q("#teamProgressLink").value.trim();
     const file=q("#teamProgressFile")?.files?.[0]||null;
     const memberIds=[...teamMemberSelection];
-    if(!competition)return toast("请填写比赛名称");
+    const selectedProject=q("#teamProject")?.value||null;
+    if(!selectedProject&&!competition)return toast("请选择项目或填写比赛 / 队伍名称");
     if(!teamProgress)return toast("请填写队伍进度");
-    if(!memberIds.length)return toast("请至少选择一名队伍成员");
+    if(!selectedProject&&!memberIds.length)return toast("请至少选择一名队伍成员");
     const link_url=rawLink?normalizeShareLink(rawLink):null;
     if(rawLink&&!link_url)return toast("链接格式不正确");
     const btn=e.submitter||teamForm.querySelector("button[type=submit]");
@@ -1057,12 +1208,13 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const rr=await supabase.rpc("upsert_team_progress",{
+      const rr=await supabase.rpc("upsert_team_progress_v2",{
         p_competition_name:competition,
         p_team_progress:teamProgress,
         p_next_goal:nextGoal||null,
         p_link_url:link_url||null,
         p_member_ids:memberIds,
+        p_project_id:selectedProject||null,
         p_attachment_path:attachment_path,
         p_attachment_name:attachment_name,
         p_attachment_size:attachment_size,
@@ -1102,6 +1254,13 @@ async function initProgress(){
     finally{if(btn){btn.disabled=false;btn.textContent=old}}
   };
   await loadTeamMemberOptions(true);
+  await populateProgressProjectOptions();
+  const preselect=new URLSearchParams(location.search).get("project");
+  if(preselect){
+    const ps=q("#progressProject"),ts=q("#teamProject");
+    if(ps&&[...ps.options].some(o=>o.value===preselect))ps.value=preselect;
+    if(ts&&[...ts.options].some(o=>o.value===preselect)){ts.value=preselect;ts.dispatchEvent(new Event("change"));}
+  }
   const teamFile=q("#teamProgressFile");
   if(teamFile)teamFile.onchange=()=>{
     const f=teamFile.files[0],box=q("#teamProgressFilePreview");
@@ -1476,13 +1635,14 @@ function scheduleRealtimeRefresh(table){
       if(page==="exams"&&table==="exams")return initExams();
       if(page==="tutorials"&&table==="tutorials")return initTutorials();
       if(page==="files"&&["lab_files","resource_shares"].includes(table))return initFiles();
-      if(page==="progress"&&["progress_updates","team_progress_updates","team_progress_members","profiles"].includes(table)){
+      if(page==="progress"&&["progress_updates","team_progress_updates","team_progress_members","projects","project_members","profiles"].includes(table)){
         progressSignedUrlCache.clear();
         return loadProgressPage();
       }
       if(page==="submit"&&["exams","profiles"].includes(table))return initSubmit();
       if(page==="mine"&&["submissions","exams","profiles"].includes(table))return initMine();
       if(page==="profile"&&table==="profiles")return initProfile();
+      if(page==="projects"&&["projects","project_members","progress_updates","team_progress_updates"].includes(table)){__projectDirectoryCache=[];return initProjects();}
       if(page==="admin"){
         if(["profiles","progress_updates","team_progress_updates","team_progress_members"].includes(table))await loadAdminDashboard();
         if(table==="announcements")return loadAnnouncements(true);
@@ -1501,7 +1661,8 @@ function setupSiteRealtime(){
     exams:["exams"],
     tutorials:["tutorials"],
     files:["lab_files","resource_shares"],
-    progress:["progress_updates","team_progress_updates","team_progress_members","profiles"],
+    progress:["progress_updates","team_progress_updates","team_progress_members","projects","project_members","profiles"],
+    projects:["projects","project_members","progress_updates","team_progress_updates","profiles"],
     submit:["exams","profiles","submissions"],
     mine:["submissions","exams","profiles"],
     profile:["profiles"],
@@ -1522,7 +1683,7 @@ async function enforceRememberLoginPolicy(){
     if(remember==="0"&&!sessionOnly)await supabase.auth.signOut({scope:"local"});
   }catch(_e){}
 }
-async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="admin")return initAdmin()}
+async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
 renderChrome();
 await enforceRememberLoginPolicy();
 const s=await supabase.auth.getSession();
