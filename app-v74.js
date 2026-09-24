@@ -1095,20 +1095,31 @@ async function initProjects(){
     box.querySelectorAll(".projectProgressBtn").forEach(b=>b.onclick=async()=>{
       const projectId=b.dataset.id,kind=b.dataset.kind;
       const x=projects.find(v=>v.id===projectId);if(!x)return;
+      const dialog=q("#projectProgressDialog"),title=q("#projectProgressTitle"),meta=q("#projectProgressMeta"),list=q("#projectProgressList");
+      if(!dialog||!title||!meta||!list)return;
+      title.textContent=x.name+" · "+(kind==="personal"?"个人进度":"队伍进度");
+      meta.textContent=(kind==="personal"?"成员个人贡献记录":"团队整体进度记录")+" · 当前阶段："+(x.stage||"未填写");
+      list.innerHTML='<div class="projectProgressEmpty">正在加载…</div>';
+      dialog.showModal();
       if(kind==="personal"){
         const r=await supabase.from("progress_updates").select("id,user_id,member_name,current_progress,next_goal,created_at").eq("project_id",projectId).order("created_at",{ascending:false});
-        if(r.error)return toast("个人进度加载失败："+r.error.message);
+        if(r.error){list.innerHTML='<div class="projectProgressEmpty">加载失败：'+esc(r.error.message)+'</div>';return}
         const rows=r.data||[];
-        const textRows=rows.length?rows.map(v=>"【"+(v.member_name||"成员")+"】\n近期进度："+(v.current_progress||"")+(v.next_goal?"\n下一目标："+v.next_goal:"")+"\n更新时间："+fmt(v.created_at)).join("\n\n"):"暂无个人进度";
-        alert(x.name+" · 个人进度\n\n"+textRows);
+        list.innerHTML=rows.length?rows.map(v=>
+          '<article class="projectProgressItem"><div class="projectProgressItemHead"><b>'+esc(v.member_name||"成员")+'</b><time>'+esc(fmt(v.created_at))+'</time></div>'+
+          '<div class="projectProgressFields"><section><span>近期进度</span><p>'+esc(v.current_progress||"")+'</p></section><section><span>下一时期目标</span><p>'+esc(v.next_goal||"未填写")+'</p></section></div></article>'
+        ).join(""):'<div class="projectProgressEmpty">这个项目暂时没有个人进度。</div>';
       }else{
-        const r=await supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,created_at").eq("project_id",projectId).order("created_at",{ascending:false});
-        if(r.error)return toast("队伍进度加载失败："+r.error.message);
+        const r=await supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,created_at,created_by_name").eq("project_id",projectId).order("created_at",{ascending:false});
+        if(r.error){list.innerHTML='<div class="projectProgressEmpty">加载失败：'+esc(r.error.message)+'</div>';return}
         const rows=r.data||[];
-        const textRows=rows.length?rows.map(v=>"队伍进度："+(v.team_progress||"")+(v.next_goal?"\n下一目标："+v.next_goal:"")+"\n更新时间："+fmt(v.created_at)).join("\n\n"):"暂无队伍进度";
-        alert(x.name+" · 队伍进度\n\n"+textRows);
+        list.innerHTML=rows.length?rows.map(v=>
+          '<article class="projectProgressItem"><div class="projectProgressItemHead"><b>'+esc(v.created_by_name||"队伍")+'</b><time>'+esc(fmt(v.created_at))+'</time></div>'+
+          '<div class="projectProgressFields"><section><span>队伍进度</span><p>'+esc(v.team_progress||"")+'</p></section><section><span>下一阶段目标</span><p>'+esc(v.next_goal||"未填写")+'</p></section></div></article>'
+        ).join(""):'<div class="projectProgressEmpty">这个项目暂时没有队伍进度。</div>';
       }
     });
+    if(q("#projectProgressClose"))q("#projectProgressClose").onclick=()=>q("#projectProgressDialog")?.close();
     box.querySelectorAll(".joinProject").forEach(b=>b.onclick=async()=>{
       const x=projects.find(v=>v.id===b.dataset.id);if(!x)return;
       if(!confirm("确定加入项目“"+x.name+"”吗？"))return;
