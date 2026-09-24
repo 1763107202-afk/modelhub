@@ -54,6 +54,7 @@ html[data-theme="light"] .teamProgressCard{background:#fff;border-color:#d8e4ef;
 html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
 @media(max-width:1180px){.progressTopGrid{grid-template-columns:1fr}.progressOverview{grid-template-rows:repeat(3,minmax(220px,auto));height:auto}}
 @media(max-width:900px){.progressDualEntry,.progressFeedGrid{grid-template-columns:1fr}.progressDualEntry>.progressForm>.btn[type="submit"]{height:58px;min-height:58px;max-height:58px;flex-basis:58px}.progressOverview{grid-template-rows:repeat(3,minmax(220px,auto))}}
+.mergeProjectList{display:grid;gap:10px;margin:14px 0}.mergeProjectOption{width:100%;text-align:left;padding:13px 14px;border:1px solid #24405f;border-radius:14px;background:#0a1828;color:#eef6ff;cursor:pointer}.mergeProjectOption:hover{border-color:#5e91ff}.mergeProjectOption b{display:block}.mergeProjectOption small{display:block;color:#7890aa;margin-top:3px}.mergeProjectName{font-weight:900;color:#8db8ff}.mergeDialogHint{color:#8fa4bd;margin:0 0 10px}.mergeDialogActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}html[data-theme="light"] .mergeProjectOption{background:#fff;color:#24384e;border-color:#d4e0ec}html[data-theme="light"] .mergeProjectOption small,html[data-theme="light"] .mergeDialogHint{color:#6f8296}
 @media(max-width:650px){.teamMemberText{display:block}.teamMemberText small{display:block;text-align:left;margin-top:3px;white-space:normal}.teamMemberHeader{align-items:flex-start}}
 </style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
 <div class="progressTopGrid">
@@ -125,4 +126,18 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-0245"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main>
+<dialog id="personalMergeDialog" class="dialog">
+  <div class="dialogbox">
+    <span class="eyebrow">PROJECT MATCH</span>
+    <h2 style="margin:4px 0 8px">这条个人进度是否属于团队项目？</h2>
+    <p class="mergeDialogHint">你当前填写的项目名称：<span id="personalMergeEnteredName" class="mergeProjectName">—</span></p>
+    <p class="mergeDialogHint">检测到以下团队项目包含你的名字。若这条进度实际属于其中一个项目，直接合并即可，避免重复创建相似项目。</p>
+    <div id="personalMergeProjectList" class="mergeProjectList"></div>
+    <div class="mergeDialogActions">
+      <button id="personalMergeIndependent" class="btn sec" type="button">保持为独立个人项目</button>
+      <button id="personalMergeCancel" class="btn ghost" type="button">返回修改</button>
+    </div>
+  </div>
+</dialog>
+<div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-0318"></script></body></html>
