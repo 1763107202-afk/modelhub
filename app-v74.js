@@ -761,9 +761,10 @@ async function progressAttachmentHtml(x){
 }
 async function progressCardHtml(x,adminMode=false){
   const media=await progressAttachmentHtml(x);
+  const project=x.project_id?(await fetchProjectDirectory()).find(p=>p.id===x.project_id):null;
   const mine=state.user&&x.user_id===state.user.id;
   return '<article class="progressCard">'+
-    '<div class="progressCardTop"><div><span class="resourceType">'+esc(x.member_name||"成员")+'</span><h3>'+esc(x.member_name||"成员")+(x.member_major?' · '+esc(x.member_major):'')+'</h3></div><time>'+fmt(x.created_at)+'</time></div>'+
+    '<div class="progressCardTop"><div><span class="resourceType">'+esc(x.member_name||"成员")+'</span><h3>'+esc(x.member_name||"成员")+(x.member_major?' · '+esc(x.member_major):'')+'</h3>'+(project?'<div class="meta">关联项目：'+esc(project.name)+'</div>':'')+'</div><time>'+fmt(x.created_at)+'</time></div>'+
     '<div class="progressColumns"><section><span>近期进度</span><p>'+esc(x.current_progress||"")+'</p></section><section><span>下一时期目标</span><p>'+esc(x.next_goal||"")+'</p></section></div>'+
     (x.link_url?'<div class="actions"><a class="btn sec" href="'+esc(x.link_url)+'" target="_blank" rel="noopener noreferrer">打开相关链接</a></div>':'')+
     media+
@@ -895,7 +896,8 @@ async function loadTeamProgressFeed(){
   box.innerHTML=(await Promise.all(rows.map(async x=>{
     const ms=membersBy.get(x.id)||[];
     const media=await progressAttachmentHtml(x);
-    return '<article class="teamProgressCard"><div class="progressCardTop"><div><span class="eyebrow">TEAM PROGRESS</span><h3>'+esc(x.competition_name||"比赛")+'</h3></div><time>'+fmt(x.created_at)+'</time></div>'+
+    const project=x.project_id?(await fetchProjectDirectory()).find(p=>p.id===x.project_id):null;
+    return '<article class="teamProgressCard"><div class="progressCardTop"><div><span class="eyebrow">TEAM PROGRESS</span><h3>'+esc(x.competition_name||"比赛")+'</h3>'+(project?'<div class="meta">关联项目：'+esc(project.name)+'</div>':'')+'</div><time>'+fmt(x.created_at)+'</time></div>'+
       '<div class="progressColumns"><section><span>队伍进度</span><p>'+esc(x.team_progress||"")+'</p></section>'+
       (x.next_goal?'<section><span>下一阶段目标</span><p>'+esc(x.next_goal)+'</p></section>':'')+'</div>'+
       '<div class="meta">提交人：'+esc(x.created_by_name||"成员")+'</div>'+
