@@ -61,7 +61,7 @@
 
   <section class="tablewrap">
     <table>
-      <thead><tr><th>成员</th><th>专业</th><th>电话</th><th>QQ</th><th>邮箱</th><th>权限身份</th><th>注册时间</th><th>作业次数</th><th>最近作业</th><th>进度次数</th><th>最近进度</th><th>操作</th></tr></thead>
+      <thead><tr><th>成员</th><th>专业</th><th>电话</th><th>QQ</th><th>邮箱</th><th>作业次数</th><th>最近作业</th><th>进度次数</th><th>最近进度</th><th>操作</th></tr></thead>
       <tbody id="memberBody"></tbody>
     </table>
     <div id="empty" class="empty hidden">没有符合条件的成员。</div>
@@ -190,8 +190,6 @@ function render(){
       '<td>'+esc(m.phone||"—")+'</td>'+
       '<td>'+esc(m.qq||"—")+'</td>'+
       '<td>'+esc(m.email||"—")+'</td>'+
-      '<td><span class="role '+(m.role==="super_admin"?"super":m.role==="admin"?"admin":"")+'">'+esc(m.role==="super_admin"?"主管理员":m.role==="admin"?"副管理员":"学生")+'</span></td>'+
-      '<td>'+fmt(m.created_at)+'</td>'+
       '<td><b>'+arr.length+'</b></td>'+
       '<td>'+(latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">'+fmt(latest.created_at)+'</div>':'<span class="muted">暂无提交</span>')+'</td>'+
       '<td><b>'+parr.length+'</b></td>'+
@@ -320,7 +318,7 @@ async function enter(){
   if(!["admin","super_admin"].includes(state.profile?.role)){showLogin("当前账号不是管理员，无法进入成员后台。");return}
   showAdmin();
   q("#adminBadge").textContent=(state.profile.full_name||state.profile.email)+" · "+(state.profile.role==="super_admin"?"主管理员":"副管理员");
-  try{await loadAdminData();setupAdminRealtime()}catch(e){q("#memberBody").innerHTML='<tr><td colspan="12" class="muted">加载失败：'+esc(e.message)+'</td></tr>'}
+  try{await loadAdminData();setupAdminRealtime()}catch(e){q("#memberBody").innerHTML='<tr><td colspan="10" class="muted">加载失败：'+esc(e.message)+'</td></tr>'}
 }
 q("#themeToggle").onclick=()=>window.JUSTTheme?.toggle();
 q("#loginBtn").onclick=async()=>{
@@ -347,10 +345,10 @@ q("#editForm").onsubmit=async e=>{
 };
 q("#exportBtn").onclick=()=>{
   const byUser=aggregate();
-  const byProgress=aggregateProgress();const rows=[["姓名","专业","电话","QQ","邮箱","权限身份","注册时间","作业次数","最近作业时间","进度次数","最近进度时间"]];
+  const byProgress=aggregateProgress();const rows=[["姓名","专业","电话","QQ","邮箱","作业次数","最近作业时间","进度次数","最近进度时间"]];
   for(const m of state.filtered){
     const arr=byUser.get(m.id)||[];
-    const parr=byProgress.get(m.id)||[];rows.push([m.full_name||"",m.major||"",m.phone||"",m.qq||"",m.email||"",m.role==="super_admin"?"主管理员":m.role==="admin"?"副管理员":"普通成员",fmt(m.created_at),String(arr.length),arr[0]?fmt(arr[0].created_at):"",String(parr.length),parr[0]?fmt(parr[0].created_at):""]);
+    const parr=byProgress.get(m.id)||[];rows.push([m.full_name||"",m.major||"",m.phone||"",m.qq||"",m.email||"",String(arr.length),arr[0]?fmt(arr[0].created_at):"",String(parr.length),parr[0]?fmt(parr[0].created_at):""]);
   }
   const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
