@@ -35,7 +35,7 @@ html[data-theme="light"]{color-scheme:light}html[data-theme="light"] body{backgr
   </div>
   <div class="stats">
     <div class="stat"><span>个人进度</span><b id="personalCount">0</b><small>当前保留的个人进度记录</small></div>
-    <div class="stat"><span>参与项目 / 比赛</span><b id="projectCount">0</b><small>按比赛名称去重统计</small></div>
+    <div class="stat"><span>参与项目 / 比赛</span><b id="projectCount">0</b><small>包含个人项目和团队项目</small></div>
     <div class="stat"><span>作业提交</span><b id="submissionCount">—</b><small id="submissionHint">本人及管理员可见</small></div>
     <div class="stat"><span>最近更新</span><b id="latestDate" style="font-size:18px">—</b><small>个人进度、队伍进度或作业中的最近记录</small></div>
   </div>
@@ -130,12 +130,15 @@ async function load(){
   document.title=(target.full_name||"成员")+" · 成员个人主页 | 机械创新实验室";
   if(roleIsAdmin(me.role)){q("#backBtn").href="./admin-members.html";q("#backBtn").textContent="返回成员后台";}
 
-  const [personalReq,membershipReq]=await Promise.all([
+  const [personalReq,membershipReq,projectReq]=await Promise.all([
     supabase.from("progress_updates").select("*").eq("user_id",targetId).order("created_at",{ascending:false}),
-    supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot").eq("member_id",targetId)
+    supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot").eq("member_id",targetId),
+    supabase.rpc("get_project_directory")
   ]);
   const personal=personalReq.error?[]:(personalReq.data||[]);
   const memberships=membershipReq.error?[]:(membershipReq.data||[]);
+  const memberProjects=projectReq.error?[]:(projectReq.data||[]).filter(x=>(x.member_ids||[]).includes(targetId));
+  const projectById=new Map(memberProjects.map(x=>[x.id,x]));
   const teamIds=[...new Set(memberships.map(x=>x.team_progress_id).filter(Boolean))];
   let teamRows=[];
   if(teamIds.length){
@@ -150,9 +153,8 @@ async function load(){
   }
 
   q("#personalCount").textContent=String(personal.length);
-  const projectNames=[...new Set(teamRows.map(x=>(x.competition_name||"").trim()).filter(Boolean))];
-  q("#projectCount").textContent=String(projectNames.length);
-  q("#projectSummary").textContent=projectNames.length?projectNames.length+" 个项目 / 比赛":"暂无项目记录";
+  q("#projectCount").textContent=String(memberProjects.length);
+  q("#projectSummary").textContent=memberProjects.length?memberProjects.length+" 个项目":"暂无项目记录";
   if(canSeeAssignments){
     q("#submissionCount").textContent=String(submissions.length);
     q("#submissionHint").textContent=targetId===user.id?"你的累计提交记录":"管理员可见";
@@ -166,22 +168,25 @@ async function load(){
   if(latestPersonal){
     q("#personalTime").textContent=fmt(latestPersonal.created_at);
     const att=await attachmentButton(latestPersonal);
-    q("#personalBox").innerHTML='<article class="progressCard"><h3>阶段进展</h3><div class="progressCols"><section><span>近期进度</span><p>'+esc(latestPersonal.current_progress||"暂无内容")+'</p></section><section><span>下一时期目标</span><p>'+esc(latestPersonal.next_goal||"暂无内容")+'</p></section></div><div class="actions">'+(latestPersonal.link_url?'<a class="btn sec" target="_blank" rel="noopener noreferrer" href="'+esc(latestPersonal.link_url)+'">相关链接</a>':'')+att+'</div></article>';
+    const pp=latestPersonal.project_id?projectById.get(latestPersonal.project_id):null;
+    q("#personalBox").innerHTML='<article class="progressCard"><h3>阶段进展</h3>'+(pp?'<div class="meta">关联项目：'+esc(pp.name)+' · '+esc(pp.stage||"未填写阶段")+'</div>':'<div class="meta">未关联项目</div>')+'<div class="progressCols"><section><span>近期进度</span><p>'+esc(latestPersonal.current_progress||"暂无内容")+'</p></section><section><span>下一时期目标</span><p>'+esc(latestPersonal.next_goal||"暂无内容")+'</p></section></div><div class="actions">'+(latestPersonal.link_url?'<a class="btn sec" target="_blank" rel="noopener noreferrer" href="'+esc(latestPersonal.link_url)+'">相关链接</a>':'')+att+'</div></article>';
   }else q("#personalBox").innerHTML='<div class="empty">该成员暂时没有个人进度记录。</div>';
 
-  if(teamRows.length){
-    q("#projectList").innerHTML=(await Promise.all(teamRows.map(async x=>{
-      const att=await attachmentButton(x);
-      return '<article class="projectCard"><div class="projectTop"><div><h3>'+esc(x.competition_name||"项目 / 比赛")+'</h3><div class="meta">最近更新：'+fmt(x.created_at)+'</div></div></div><div class="progressCols"><section><span>队伍进度</span><p>'+esc(x.team_progress||"暂无内容")+'</p></section><section><span>下一阶段目标</span><p>'+esc(x.next_goal||"暂无内容")+'</p></section></div><div class="actions">'+(x.link_url?'<a class="btn sec" target="_blank" rel="noopener noreferrer" href="'+esc(x.link_url)+'">相关链接</a>':'')+att+'</div></article>';
-    }))).join("");
-  }else q("#projectList").innerHTML='<div class="empty">暂时没有关联的队伍或比赛记录。</div>';
+  if(memberProjects.length){
+    q("#projectList").innerHTML=memberProjects.map(p=>{
+      const relatedPersonal=personal.filter(x=>x.project_id===p.id);
+      const relatedTeam=teamRows.filter(x=>x.project_id===p.id);
+      const latest=[...relatedPersonal,...relatedTeam].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
+      return '<article class="projectCard"><div class="projectTop"><div><h3>'+esc(p.name)+'</h3><div class="meta">'+esc(({competition:"竞赛项目",simulation_paper:"仿真 / 论文",research:"科研项目",patent:"专利项目",design:"机械设计 / 制作",course:"课程设计",other:"其他项目"})[p.project_type]||"其他项目")+' · '+(p.project_mode==="personal"?"个人项目":"团队项目")+' · '+esc(p.stage||"未填写阶段")+'</div></div><span class="chip">'+esc(({active:"进行中",paused:"暂停",completed:"已完成",archived:"已归档"})[p.status]||"进行中")+'</span></div>'+(p.description?'<p>'+esc(p.description)+'</p>':'')+'<div class="projectMembers">'+(p.member_names||[]).map(n=>'<span class="chip">'+esc(n)+'</span>').join("")+'</div><div class="meta">个人进度 '+esc(p.personal_progress_count||0)+' 条 · 队伍进度 '+esc(p.team_progress_count||0)+' 条'+(latest?' · 最近更新 '+fmt(latest.created_at):'')+'</div><div class="actions"><a class="btn sec" href="./progress.html?project='+encodeURIComponent(p.id)+'">查看 / 更新进度</a></div></article>';
+    }).join("");
+  }else q("#projectList").innerHTML='<div class="empty">暂时没有参与项目。可以在“项目 / 队伍管理”中新建个人项目或团队项目。</div>';
 
   if(canSeeAssignments){
     q("#assignmentList").innerHTML=submissions.length?submissions.slice(0,5).map(x=>'<article class="assignmentItem"><div class="assignmentTop"><div><b>'+esc(x.exams?.title||"未关联任务")+'</b><div class="meta">'+esc(x.file_name||"文件")+'</div></div><time class="meta">'+fmt(x.created_at)+'</time></div></article>').join(""):'<div class="empty">暂无作业提交记录。</div>';
   }
 
   const activity=[
-    ...personal.map(x=>({type:"个人进度",title:"更新了个人进度",detail:x.current_progress||"",created_at:x.created_at})),
+    ...personal.map(x=>({type:"个人进度",title:x.project_id&&projectById.get(x.project_id)?projectById.get(x.project_id).name:"更新了个人进度",detail:x.current_progress||"",created_at:x.created_at})),
     ...teamRows.map(x=>({type:"队伍项目",title:x.competition_name||"队伍进度",detail:x.team_progress||"",created_at:x.created_at})),
     ...(canSeeAssignments?submissions.map(x=>({type:"作业提交",title:x.exams?.title||"提交作业",detail:x.file_name||"",created_at:x.created_at})):[])
   ].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
