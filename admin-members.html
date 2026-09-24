@@ -237,7 +237,8 @@ async function enter(){
   q("#adminBadge").textContent=(state.profile.full_name||state.profile.email)+" · "+(state.profile.role==="super_admin"?"主管理员":"副管理员");
   try{await loadAdminData();setupAdminRealtime()}catch(e){q("#memberBody").innerHTML='<tr><td colspan="13" class="muted">加载失败：'+esc(e.message)+'</td></tr>'}
 }
-q("#themeToggle").onclick=()=>{const next=document.documentElement.dataset.theme==="light"?"dark":"light";applyTheme(next,true)};\nq("#loginBtn").onclick=async()=>{
+q("#themeToggle").onclick=()=>{const next=document.documentElement.dataset.theme==="light"?"dark":"light";applyTheme(next,true)};
+q("#loginBtn").onclick=async()=>{
   q("#loginMsg").textContent="正在登录…";
   const r=await supabase.auth.signInWithPassword({email:q("#loginEmail").value.trim(),password:q("#loginPassword").value});
   if(r.error){q("#loginMsg").textContent=r.error.message;return}
