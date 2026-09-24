@@ -24,6 +24,14 @@ html[data-theme="light"] .personalStatusPanel p,html[data-theme="light"] .person
 .progressFeedGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;width:100%;margin-top:2px}
 .progressFeedGrid>section{min-width:0;width:100%}
 .progressTabs{display:block!important;width:100%}
+.progressFeedSearchBar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;margin:0 0 18px;padding:16px 18px;border:1px solid #1d334c;border-radius:18px;background:#0b192a}
+.progressFeedSearchMain{min-width:0}
+.progressFeedSearchMain input{margin:0;width:100%}
+.progressFeedSearchMeta{display:flex;align-items:center;gap:12px;justify-content:flex-end;flex-wrap:wrap}
+.progressFeedSearchMeta small{color:#7890aa;white-space:nowrap}
+.progressFeedSearchBar .btn{min-height:44px;padding:0 16px}
+html[data-theme="light"] .progressFeedSearchBar{background:#fff;border-color:#d8e4ef}
+@media(max-width:760px){.progressFeedSearchBar{grid-template-columns:1fr}.progressFeedSearchMeta{justify-content:space-between}.progressFeedSearchMeta small{white-space:normal}}
 .teamMemberHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
 .teamMemberHeader label{margin:0}
 .teamMemberSearch{margin-bottom:8px}
@@ -97,8 +105,17 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 </div>
 </div>
 </div>
+<div class="progressFeedSearchBar glass">
+  <div class="progressFeedSearchMain">
+    <input id="progressFeedSearch" type="search" placeholder="搜索个人 / 队伍进度：姓名、专业、比赛名称、进度内容、目标…">
+  </div>
+  <div class="progressFeedSearchMeta">
+    <small id="progressFeedSearchResult">可搜索姓名、专业、比赛名称、进度内容和下一阶段目标</small>
+    <button id="progressFeedSearchClear" class="btn sec hidden" type="button">清空</button>
+  </div>
+</div>
 <div class="progressFeedGrid">
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v58.js?v=20260924-2300"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v59.js?v=20260924-2315"></script></body></html>
