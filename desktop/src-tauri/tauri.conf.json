@@ -1,26 +1,14 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "江苏科技大学机械创新实验室交流平台",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "cn.edu.just.mechinnovation.labplatform",
   "build": {
     "devUrl": "https://1763107202-afk.github.io/modelhub/",
     "frontendDist": "https://1763107202-afk.github.io/modelhub/"
   },
   "app": {
-    "windows": [
-      {
-        "label": "main",
-        "title": "江苏科技大学机械创新实验室交流平台",
-        "width": 1440,
-        "height": 900,
-        "minWidth": 1050,
-        "minHeight": 700,
-        "center": true,
-        "resizable": true,
-        "fullscreen": false
-      }
-    ],
+    "windows": [],
     "security": {
       "csp": null
     }

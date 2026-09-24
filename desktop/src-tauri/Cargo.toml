@@ -1,6 +1,6 @@
 [package]
 name = "just-lab-desktop"
-version = "1.0.0"
+version = "1.0.1"
 description = "江苏科技大学机械创新实验室交流平台"
 authors = ["江苏科技大学机械创新实验室"]
 edition = "2021"
@@ -14,3 +14,4 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
