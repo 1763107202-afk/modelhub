@@ -1001,8 +1001,12 @@ async function populateProgressProjectOptions(){
   const rows=await fetchProjectDirectory(true);
   const mine=rows.filter(x=>(x.member_ids||[]).includes(state.user.id));
   const personal=q("#progressProject");
-  if(personal){
-    personal.innerHTML='<option value="">不关联项目 / 普通个人进度</option>'+mine.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+esc(projectTypeName(x.project_type))+'</option>').join("");
+  const personalList=q("#progressProjectList");
+  if(personal&&personalList){
+    personalList.innerHTML=mine.map(x=>'<option value="'+esc(x.name)+'">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="team"?"团队项目":"个人项目")+'</option>').join("");
+    const preselectId=new URLSearchParams(location.search).get("project");
+    const hit=mine.find(x=>x.id===preselectId);
+    if(hit&&!personal.value)personal.value=hit.name;
   }
   const team=q("#teamProject");
   if(team){
@@ -1164,10 +1168,12 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const ins=await supabase.rpc("replace_personal_progress_v2",{
+      const projectName=q("#progressProject")?.value.trim();
+      if(!projectName)return toast("请填写项目名称");
+      const ins=await supabase.rpc("replace_personal_progress_by_project_name",{
+        p_project_name:projectName,
         p_current_progress:current,
         p_next_goal:goal,
-        p_project_id:q("#progressProject")?.value||null,
         p_link_url:link_url||null,
         p_attachment_path:attachment_path,
         p_attachment_name:attachment_name,
@@ -1180,7 +1186,11 @@ async function initProgress(){
         const rm=await supabase.storage.from("progress-files").remove([oldAttachment]);
         if(rm.error)console.warn("旧个人进度附件清理失败",rm.error);
       }
-      form.reset();q("#progressFilePreview").textContent="";toast("个人进度已更新，上一条记录已自动替换");await loadProgressPage();
+      const resultRow=Array.isArray(ins.data)?ins.data[0]:ins.data;
+      form.reset();q("#progressFilePreview").textContent="";
+      __projectDirectoryCache=[];
+      toast(resultRow?.created_project?"个人进度已更新，并自动创建新的个人项目":resultRow?.resolved_project_mode==="team"?"个人进度已同步到同名团队项目":"个人进度已同步到个人项目");
+      await loadProgressPage();
     }catch(err){toast("提交失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=old}}
   };
@@ -1259,8 +1269,7 @@ async function initProgress(){
   await populateProgressProjectOptions();
   const preselect=new URLSearchParams(location.search).get("project");
   if(preselect){
-    const ps=q("#progressProject"),ts=q("#teamProject");
-    if(ps&&[...ps.options].some(o=>o.value===preselect))ps.value=preselect;
+    const ts=q("#teamProject");
     if(ts&&[...ts.options].some(o=>o.value===preselect)){ts.value=preselect;ts.dispatchEvent(new Event("change"));}
   }
   const teamFile=q("#teamProgressFile");
