@@ -3,11 +3,17 @@
 .progressForm{position:static!important;top:auto!important}
 .progressTopGrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(330px,1fr);gap:22px;align-items:stretch;margin-bottom:30px}
 .progressDualEntry{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;min-width:0}
-.progressDualEntry>.progressForm{width:100%;min-width:0;height:100%}
-.progressOverview{display:flex;flex-direction:column;gap:16px;min-width:0;height:100%}
-.progressOverview>.progressReminder{margin:0}
-.progressStatusGrid{display:grid;grid-template-columns:1fr;gap:16px;flex:1}
-.progressStatusGrid>.progressSummary{height:100%}
+.progressDualEntry>.progressForm{width:100%;min-width:0;height:100%;display:flex;flex-direction:column}
+.progressDualEntry>.progressForm>.btn[type="submit"]{width:100%;height:64px;min-height:64px;max-height:64px;flex:0 0 64px;margin-top:auto;padding:0 22px;display:flex;align-items:center;justify-content:center}
+.progressOverview{display:grid;grid-template-rows:minmax(300px,1.55fr) minmax(0,1fr);gap:16px;min-width:0;height:100%;min-height:0}
+.progressOverview>.progressReminder{margin:0;min-height:0}
+.progressStatusGrid{display:grid;grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:16px;min-height:0}
+.progressStatusGrid>.progressSummary{height:auto;min-height:0}
+.progressOverview .progressReminderList{max-height:270px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.progressOverview .progressNameList{max-height:105px;overflow-y:auto;overscroll-behavior:contain;align-content:flex-start;padding-right:4px}
+.progressOverview .progressReminderList::-webkit-scrollbar,.progressOverview .progressNameList::-webkit-scrollbar{width:7px}
+.progressOverview .progressReminderList::-webkit-scrollbar-thumb,.progressOverview .progressNameList::-webkit-scrollbar-thumb{background:rgba(120,144,170,.55);border-radius:999px}
+.progressOverview .progressReminderList::-webkit-scrollbar-track,.progressOverview .progressNameList::-webkit-scrollbar-track{background:transparent}
 .progressFeedGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;width:100%;margin-top:2px}
 .progressFeedGrid>section{min-width:0;width:100%}
 .progressTabs{display:block!important;width:100%}
@@ -31,8 +37,8 @@ html[data-theme="light"] .teamMemberOptions{background:#f7faff;border-color:#cbd
 html[data-theme="light"] .teamMemberChoice{background:#fff;border-color:#d8e4ef;color:#263b52}
 html[data-theme="light"] .teamProgressCard{background:#fff;border-color:#d8e4ef;color:#263b52}
 html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
-@media(max-width:1180px){.progressTopGrid{grid-template-columns:1fr}.progressOverview{height:auto}.progressStatusGrid{grid-template-columns:1fr 1fr}}
-@media(max-width:900px){.progressDualEntry,.progressStatusGrid,.progressFeedGrid{grid-template-columns:1fr}}
+@media(max-width:1180px){.progressTopGrid{grid-template-columns:1fr}.progressOverview{display:flex;height:auto}.progressStatusGrid{grid-template-columns:1fr 1fr;grid-template-rows:auto}.progressOverview .progressReminderList{max-height:260px}.progressOverview .progressNameList{max-height:180px}}
+@media(max-width:900px){.progressDualEntry,.progressStatusGrid,.progressFeedGrid{grid-template-columns:1fr}.progressDualEntry>.progressForm>.btn[type="submit"]{height:58px;min-height:58px;max-height:58px;flex-basis:58px}.progressOverview .progressReminderList{max-height:240px}.progressOverview .progressNameList{max-height:160px}}
 @media(max-width:650px){.teamMemberText{display:block}.teamMemberText small{display:block;text-align:left;margin-top:3px;white-space:normal}.teamMemberHeader{align-items:flex-start}}
 </style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
 <div class="progressTopGrid">
@@ -82,4 +88,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v56.js?v=20260924-2210"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v56.js?v=20260924-2235"></script></body></html>
