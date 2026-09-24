@@ -806,11 +806,17 @@ async function loadTeamMemberOptions(resetSelection=false){
 
   const renderPreview=()=>{
     if(selected)selected.textContent="已选 "+teamMemberSelection.size+" 人";
+    const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
     if(preview){
-      const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
       preview.innerHTML=members.length
         ? members.map(m=>'<span class="teamSelectedChip">'+esc(m.full_name||"成员")+'</span>').join("")
         : '<span class="profileHint">本次将计入：尚未选择成员</span>';
+    }
+    const leader=q("#teamLeader");
+    if(leader){
+      const previous=leader.value;
+      leader.innerHTML='<option value="">请选择负责人</option>'+members.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name||"成员")+(m.major?' · '+esc(m.major):'')+'</option>').join("");
+      if(previous&&teamMemberSelection.has(previous))leader.value=previous;
     }
   };
 
@@ -1029,9 +1035,19 @@ async function populateProgressProjectOptions(){
           const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
           preview.innerHTML=members.length?members.map(m=>'<span class="teamSelectedChip">'+esc(m.full_name||"成员")+'</span>').join(""):'<span class="profileHint">项目成员由项目管理页维护</span>';
         }
+        const leader=q("#teamLeader");
+        if(leader){
+          const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
+          leader.innerHTML='<option value="">请选择负责人</option>'+members.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name||"成员")+(m.major?' · '+esc(m.major):'')+'</option>').join("");
+          if(hit.leader_id&&teamMemberSelection.has(hit.leader_id))leader.value=hit.leader_id;
+        }
+        const hint=q("#teamLeaderHint");
+        if(hint)hint.textContent="当前项目负责人："+(hit.leader_name||"未设置")+"；如需调整可在本次提交时重新选择。";
       }else{
         if(name){name.readOnly=false}
         if(wrap)wrap.textContent="可关联已有团队项目；也可以直接填写新的比赛 / 队伍进度。";
+        const hint=q("#teamLeaderHint");
+        if(hint)hint.textContent="负责人必须从已选队伍成员中选择；提交后会同步到项目负责人。";
       }
     };
   }
@@ -1204,9 +1220,12 @@ async function initProgress(){
     const file=q("#teamProgressFile")?.files?.[0]||null;
     const memberIds=[...teamMemberSelection];
     const selectedProject=q("#teamProject")?.value||null;
+    const leaderId=q("#teamLeader")?.value||null;
     if(!selectedProject&&!competition)return toast("请选择项目或填写比赛 / 队伍名称");
     if(!teamProgress)return toast("请填写队伍进度");
     if(!selectedProject&&!memberIds.length)return toast("请至少选择一名队伍成员");
+    if(!leaderId)return toast("请选择队伍负责人");
+    if(!teamMemberSelection.has(leaderId))return toast("负责人必须是已选队伍成员");
     const link_url=rawLink?normalizeShareLink(rawLink):null;
     if(rawLink&&!link_url)return toast("链接格式不正确");
     const btn=e.submitter||teamForm.querySelector("button[type=submit]");
@@ -1220,12 +1239,13 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const rr=await supabase.rpc("upsert_team_progress_v2",{
+      const rr=await supabase.rpc("upsert_team_progress_v3",{
         p_competition_name:competition,
         p_team_progress:teamProgress,
         p_next_goal:nextGoal||null,
         p_link_url:link_url||null,
         p_member_ids:memberIds,
+        p_leader_id:leaderId,
         p_project_id:selectedProject||null,
         p_attachment_path:attachment_path,
         p_attachment_name:attachment_name,
