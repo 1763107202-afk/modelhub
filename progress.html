@@ -63,7 +63,7 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">仿真、论文、科研、专利、课程设计等都可以作为个人项目；也可以不关联项目，单独记录普通个人进度。</p></div>
     <label>项目名称<input id="progressProject" list="progressProjectList" maxlength="160" required placeholder="请输入项目名称，例如：桥梁桁架有限元分析"></label>
     <datalist id="progressProjectList"></datalist>
-    <small class="profileHint">项目名称必须填写。若与你已加入的团队项目名称完全相同（忽略首尾空格和大小写），本次个人进度会同步到该团队项目；若不同，则自动创建或继续更新同名个人项目。</small>
+    <small class="profileHint">项目名称必须填写。提交时会先让你确认是否合并到已有个人项目或团队项目；选择团队项目后，个人进度仍会更新，同时同步到该团队项目。</small>
     <label>近期个人进度<textarea id="progressCurrent" rows="6" maxlength="5000" required placeholder="这段时间个人完成了什么、目前做到哪一步、遇到哪些问题"></textarea></label>
     <label>下一时期个人目标<textarea id="progressGoal" rows="5" maxlength="5000" required placeholder="下一阶段个人准备完成哪些任务、达到什么目标"></textarea></label>
     <label>相关链接（可选）<input id="progressLink" type="url" placeholder="https://..."></label>
@@ -74,7 +74,7 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
       <div><span class="eyebrow">MY STATUS</span><h4>本周期个人状态</h4></div>
       <div class="personalStatusRow"><span>当前状态</span><b id="personalStatusLabel">正在加载…</b></div>
       <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div>
-      <p>个人进度只保留最新一条；再次提交后会以新的提交时间重新生成记录，并自动清理上一条附件。</p>
+      <p>每个项目分别保留你的最新一条个人进度；同一项目再次提交后会替换旧记录，并自动清理上一条附件。</p>
     </div>
     <button class="btn pri" type="submit">提交个人进度</button>
   </form>
@@ -140,4 +140,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     </div>
   </div>
 </dialog>
-<div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-0318"></script></body></html>
+<div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-1905"></script></body></html>
