@@ -198,7 +198,29 @@ async function load(){
   q("#gate").classList.add("hidden");
   q("#content").classList.remove("hidden");
 }
+let memberRefreshTimer=null;
+function scheduleMemberReload(){
+  clearTimeout(memberRefreshTimer);
+  memberRefreshTimer=setTimeout(()=>load().catch(console.error),250);
+}
+function setupMemberRealtime(){
+  if(globalThis.__memberProfileRealtime)return;
+  const ch=supabase.channel("member-profile-live")
+    .on("postgres_changes",{event:"*",schema:"public",table:"profiles"},scheduleMemberReload)
+    .on("postgres_changes",{event:"*",schema:"public",table:"projects"},scheduleMemberReload)
+    .on("postgres_changes",{event:"*",schema:"public",table:"project_members"},scheduleMemberReload)
+    .on("postgres_changes",{event:"*",schema:"public",table:"progress_updates"},scheduleMemberReload)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_updates"},scheduleMemberReload)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_members"},scheduleMemberReload)
+    .on("postgres_changes",{event:"*",schema:"public",table:"submissions"},scheduleMemberReload)
+    .subscribe();
+  globalThis.__memberProfileRealtime=ch;
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible")scheduleMemberReload();
+  });
+}
 await load();
+setupMemberRealtime();
 </script>
 </body>
 </html>
