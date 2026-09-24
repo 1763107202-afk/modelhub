@@ -1015,15 +1015,19 @@ async function loadProgressPage(){
     supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot"),
     supabase.from("team_progress_updates").select("id,competition_name,created_at")
   ]);
-  const competitionByTeam=new Map((teamProgressReq.data||[]).map(x=>[x.id,x.competition_name]));
+  const progressByTeam=new Map((teamProgressReq.data||[]).map(x=>[x.id,x]));
   const teamMap=new Map();
   if(!teamMemberReq.error&&!teamProgressReq.error){
     (teamMemberReq.data||[]).forEach(x=>{
-      if(!teamMap.has(x.member_id)){
+      const info=progressByTeam.get(x.team_progress_id);
+      if(!info)return;
+      const prev=teamMap.get(x.member_id);
+      if(!prev||new Date(info.created_at||0)>new Date(prev.created_at||0)){
         teamMap.set(x.member_id,{
           member_id:x.member_id,
           member_name:x.member_name_snapshot||"成员",
-          competition_name:competitionByTeam.get(x.team_progress_id)||null
+          competition_name:info.competition_name||null,
+          created_at:info.created_at||null
         });
       }
     });
@@ -1132,10 +1136,17 @@ async function initProjects(){
   if(gate)gate.innerHTML="";
   if(content)content.classList.remove("hidden");
 
-  const [projects,membersReq]=await Promise.all([
-    fetchProjectDirectory(true),
-    supabase.rpc("get_formal_member_directory")
-  ]);
+  let projects,membersReq;
+  try{
+    [projects,membersReq]=await Promise.all([
+      fetchProjectDirectory(true),
+      supabase.rpc("get_formal_member_directory")
+    ]);
+  }catch(err){
+    const box=q("#projectGrid");
+    if(box)box.innerHTML='<div class="empty">项目加载失败：'+esc(err?.message||String(err))+'<br>请稍后刷新页面重试。</div>';
+    return;
+  }
   const memberRows=membersReq.error?[]:(membersReq.data||[]);
   const memberMap=new Map(memberRows.map(x=>[x.id,x]));
   const canManage=x=>isAdmin()||x.leader_id===state.user.id;
@@ -1869,7 +1880,7 @@ function scheduleRealtimeRefresh(table){
       if(state.user&&["announcements","exams","progress_updates","team_progress_updates","team_progress_members","submissions","profiles"].includes(table)){
         loadSiteNotifications(false);
       }
-      if(page==="home"&&["lab_files","resource_shares","tutorials","past_works","announcements","profiles"].includes(table))return initHome();
+      if(page==="home"&&["lab_files","resource_shares","tutorials","past_works","announcements","profiles","projects","progress_updates","team_progress_updates","team_progress_members"].includes(table))return initHome();
       if(page==="works"&&table==="past_works")return initWorks();
       if(page==="exams"&&table==="exams")return initExams();
       if(page==="tutorials"&&table==="tutorials")return initTutorials();
@@ -1895,7 +1906,7 @@ function setupSiteRealtime(){
   if(globalThis.__siteRealtimeChannel)return;
   const notificationTables=state.user?["announcements","exams","progress_updates","team_progress_updates","team_progress_members","submissions","profiles"]:[];
   const pageTables={
-    home:["lab_files","resource_shares","tutorials","past_works","announcements","profiles"],
+    home:["lab_files","resource_shares","tutorials","past_works","announcements","profiles","projects","progress_updates","team_progress_updates","team_progress_members"],
     works:["past_works"],
     exams:["exams"],
     tutorials:["tutorials"],
