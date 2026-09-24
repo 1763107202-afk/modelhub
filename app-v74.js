@@ -1150,6 +1150,48 @@ async function initProjects(){
   };
   renderProjects();
 }
+async function chooseTeamProjectForPersonalProgress(projectName){
+  const rows=await fetchProjectDirectory(true);
+  const mineTeams=rows.filter(x=>x.project_mode==="team"&&(x.member_ids||[]).includes(state.user?.id));
+  if(!mineTeams.length)return {mode:"independent",project:null};
+
+  const normalized=String(projectName||"").trim().toLowerCase();
+  const exact=mineTeams.find(x=>String(x.name||"").trim().toLowerCase()===normalized);
+  if(exact)return {mode:"team",project:exact,automatic:true};
+
+  const dialog=q("#personalMergeDialog");
+  const list=q("#personalMergeProjectList");
+  const entered=q("#personalMergeEnteredName");
+  const independent=q("#personalMergeIndependent");
+  const cancel=q("#personalMergeCancel");
+  if(!dialog||!list||!entered||!independent||!cancel)return {mode:"independent",project:null};
+
+  entered.textContent=projectName;
+  list.innerHTML=mineTeams.map(x=>
+    '<button class="mergeProjectOption" type="button" data-id="'+esc(x.id)+'"><b>'+esc(x.name)+'</b><small>'+
+    '负责人：'+esc(x.leader_name||"未设置")+
+    (x.stage?' · 当前阶段：'+esc(x.stage):'')+
+    ' · 成员：'+esc((x.member_names||[]).join("、")||"暂无")+
+    '</small></button>'
+  ).join("");
+
+  return await new Promise(resolve=>{
+    let settled=false;
+    const finish=value=>{
+      if(settled)return;
+      settled=true;
+      dialog.close();
+      resolve(value);
+    };
+    list.querySelectorAll(".mergeProjectOption").forEach(btn=>{
+      btn.onclick=()=>finish({mode:"team",project:mineTeams.find(x=>x.id===btn.dataset.id)||null,automatic:false});
+    });
+    independent.onclick=()=>finish({mode:"independent",project:null});
+    cancel.onclick=()=>finish({mode:"cancel",project:null});
+    dialog.oncancel=e=>{e.preventDefault();finish({mode:"cancel",project:null})};
+    dialog.showModal();
+  });
+}
 async function initProgress(){
   const gate=q("#progressGate"),content=q("#progressContent");
   if(state.user&&state.profile?.membership_status==="freshman"&&!isAdmin()){
@@ -1172,8 +1214,14 @@ async function initProgress(){
     const current=q("#progressCurrent").value.trim(),goal=q("#progressGoal").value.trim(),rawLink=q("#progressLink").value.trim(),file=q("#progressFile").files[0];
     if(!current)return toast("请填写近期进度");
     if(!goal)return toast("请填写下一时期目标");
+    const projectName=q("#progressProject")?.value.trim();
+    if(!projectName)return toast("请填写项目名称");
     const link_url=rawLink?normalizeShareLink(rawLink):null;
     if(rawLink&&!link_url)return toast("链接格式不正确");
+
+    const mergeChoice=await chooseTeamProjectForPersonalProgress(projectName);
+    if(mergeChoice.mode==="cancel")return;
+
     const btn=e.submitter||form.querySelector("button[type=submit]"),old=btn?.textContent||"提交近期进度";
     let attachment_path=null,attachment_url=null,attachment_name=null,attachment_size=0,attachment_mime=null;
     try{
@@ -1184,18 +1232,27 @@ async function initProgress(){
         await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
-      const projectName=q("#progressProject")?.value.trim();
-      if(!projectName)return toast("请填写项目名称");
-      const ins=await supabase.rpc("replace_personal_progress_by_project_name",{
-        p_project_name:projectName,
-        p_current_progress:current,
-        p_next_goal:goal,
-        p_link_url:link_url||null,
-        p_attachment_path:attachment_path,
-        p_attachment_name:attachment_name,
-        p_attachment_size:attachment_size,
-        p_attachment_mime:attachment_mime
-      });
+      const ins=mergeChoice.mode==="team"&&mergeChoice.project
+        ? await supabase.rpc("replace_personal_progress_v2",{
+            p_current_progress:current,
+            p_next_goal:goal,
+            p_project_id:mergeChoice.project.id,
+            p_link_url:link_url||null,
+            p_attachment_path:attachment_path,
+            p_attachment_name:attachment_name,
+            p_attachment_size:attachment_size,
+            p_attachment_mime:attachment_mime
+          })
+        : await supabase.rpc("replace_personal_progress_by_project_name",{
+            p_project_name:projectName,
+            p_current_progress:current,
+            p_next_goal:goal,
+            p_link_url:link_url||null,
+            p_attachment_path:attachment_path,
+            p_attachment_name:attachment_name,
+            p_attachment_size:attachment_size,
+            p_attachment_mime:attachment_mime
+          });
       if(ins.error){if(attachment_path)await supabase.storage.from("progress-files").remove([attachment_path]);throw ins.error}
       const oldAttachment=Array.isArray(ins.data)?ins.data[0]?.old_attachment_path:ins.data?.old_attachment_path;
       if(oldAttachment&&oldAttachment!==attachment_path){
@@ -1205,7 +1262,11 @@ async function initProgress(){
       const resultRow=Array.isArray(ins.data)?ins.data[0]:ins.data;
       form.reset();q("#progressFilePreview").textContent="";
       __projectDirectoryCache=[];
-      toast(resultRow?.created_project?"个人进度已更新，并自动创建新的个人项目":resultRow?.resolved_project_mode==="team"?"个人进度已同步到同名团队项目":"个人进度已同步到个人项目");
+      if(mergeChoice.mode==="team"&&mergeChoice.project){
+        toast("个人进度已合并到团队项目："+mergeChoice.project.name);
+      }else{
+        toast(resultRow?.created_project?"个人进度已更新，并自动创建新的个人项目":resultRow?.resolved_project_mode==="team"?"个人进度已同步到同名团队项目":"个人进度已同步到个人项目");
+      }
       await loadProgressPage();
     }catch(err){toast("提交失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=old}}
