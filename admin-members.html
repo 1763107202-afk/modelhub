@@ -10,7 +10,7 @@
 .wrap{width:min(1240px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;background:#07111ff2;border-bottom:1px solid #ffffff12;backdrop-filter:blur(14px)}.topin{min-height:76px;display:flex;align-items:center;gap:16px}.brand{display:flex;align-items:center;gap:12px;font-weight:900}.brand img{width:54px;height:54px;object-fit:contain;border-radius:50%}.brand span{display:flex;flex-direction:column;line-height:1.25}.brand small{font-size:11px;color:#7fa0bf;font-weight:600;margin-top:4px}.nav{margin-left:auto;display:flex;gap:8px;align-items:center}
 .btn{border:0;border-radius:12px;padding:10px 15px;cursor:pointer;font-weight:800}.pri{color:#fff;background:linear-gradient(135deg,#4f8cff,#7758ff)}.sec{color:#dfeeff;background:#11233a;border:1px solid #29415d}.ghost{color:#cad9eb;background:transparent;border:1px solid #2a3e56}.danger{color:#ffd7d7;background:#3a171b;border:1px solid #6a2930}.hidden{display:none!important}
 .hero{padding:44px 0 22px}.eyebrow{font-size:12px;letter-spacing:.15em;color:#76abff;font-weight:900}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.08;margin:8px 0 10px}.hero p{color:#8fa4bd;margin:0}.statusbar{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pill{font-size:12px;padding:7px 10px;border-radius:999px;background:#102946;color:#a5cffb;border:1px solid #274d75}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:20px 0}.stat{padding:19px;border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726)}.stat span{font-size:12px;color:#8299b3}.stat b{display:block;font-size:30px;margin-top:4px}.glass{background:linear-gradient(180deg,#14233acc,#0b1728dd);border:1px solid #ffffff14;box-shadow:0 22px 60px #0004}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:20px 0}.stat{padding:19px;border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726)}.stat span{font-size:12px;color:#8299b3}.stat b{display:block;font-size:30px;margin-top:4px}.stat small{display:block;margin-top:5px;color:#6f88a5;font-size:11px;line-height:1.45}.storageTrack{height:6px;margin-top:10px;border-radius:999px;background:#14263a;overflow:hidden}.storageTrack i{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#4f8cff,#7758ff);transition:width .25s ease}.glass{background:linear-gradient(180deg,#14233acc,#0b1728dd);border:1px solid #ffffff14;box-shadow:0 22px 60px #0004}
 .toolbar{display:grid;grid-template-columns:1fr 220px auto;gap:12px;padding:15px;border-radius:18px;margin:16px 0}input,select{width:100%;padding:11px 12px;border:1px solid #223a57;border-radius:11px;background:#081524;color:#edf6ff;outline:none}input:focus,select:focus{border-color:#5e91ff}
 .tablewrap{overflow:auto;border-radius:18px;border:1px solid #1c3049;background:#0b192a}table{width:100%;border-collapse:collapse;min-width:1490px}th,td{padding:13px 14px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:middle}th{position:sticky;top:0;background:#091625;color:#7890aa;z-index:2}.member{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#31598a,#6b4bd6);font-weight:900}.muted{color:#7890aa}.role{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#123326;color:#78ddb0}.role.admin{background:#2d234b;color:#c9b7ff}.role.super{background:#4b2b15;color:#ffd39b}.membership{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#14304a;color:#a9d6ff}.membership.freshman{background:#173f31;color:#86edba}.actions{display:flex;gap:7px;white-space:nowrap}
 .empty{padding:40px;text-align:center;color:#7890aa}.foot{padding:35px 0 50px;color:#6f849e}.loginbox{width:min(430px,calc(100% - 28px));margin:70px auto;padding:24px;border-radius:22px;display:grid;gap:14px}.loginbox h2{margin:0}.loginbox p{margin:0;color:#8fa4bd}.msg{font-size:13px;color:#92a8c0}
@@ -48,8 +48,9 @@
     <div class="stat"><span>注册成员</span><b id="memberCount">0</b></div>
     <div class="stat"><span>大一新生</span><b id="freshmanCount">0</b></div>
     <div class="stat"><span>正式成员</span><b id="formalCount">0</b></div>
-    <div class="stat"><span>专业数量</span><b id="majorCount">0</b></div>
-    <div class="stat"><span>累计作业提交</span><b id="submissionCount">0</b></div><div class="stat"><span>累计进度更新</span><b id="progressCount">0</b></div>
+    <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
+    <div class="stat"><span>累计作业提交</span><b id="submissionCount">—</b><small>全部任务累计提交记录</small></div>
+    <div class="stat"><span>空间占用率</span><b id="storagePercent">—</b><small id="storageHint">正在统计 1 GB 空间…</small><div class="storageTrack"><i id="storageBar"></i></div></div>
   </section>
 
   <section class="toolbar glass">
@@ -110,7 +111,32 @@ const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publi
 const q=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
-const state={user:null,profile:null,members:[],subs:[],progress:[],filtered:[]};
+const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MB";return (v/1024**3).toFixed(2)+" GB"};
+function renderAdminMetrics(row){
+  if(!row)return;
+  state.metrics=row;
+  const days=Number(row.period_days||14);
+  q("#periodProgressCount").textContent=String(row.progress_updated_members??0);
+  q("#periodProgressHint").textContent="最近 "+days+" 天 · 正式成员去重";
+  q("#submissionCount").textContent=String(row.submission_count??0);
+  const used=Number(row.storage_used_bytes||0),limit=Number(row.storage_limit_bytes||1073741824),remaining=Number(row.storage_remaining_bytes||Math.max(limit-used,0));
+  const pct=Math.max(0,Math.min(100,Number(row.storage_used_percent||0)));
+  q("#storagePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
+  q("#storageHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 1 GB";
+  q("#storageBar").style.width=pct+"%";
+}
+async function loadAdminMetrics(){
+  if(!state.user)return;
+  const r=await supabase.rpc("get_member_admin_metrics");
+  if(r.error){
+    console.warn("后台统计加载失败",r.error);
+    q("#storageHint").textContent="空间统计暂时不可用";
+    return;
+  }
+  const row=Array.isArray(r.data)?r.data[0]:r.data;
+  renderAdminMetrics(row);
+}
+const state={user:null,profile:null,members:[],subs:[],progress:[],filtered:[],metrics:null};
 const THEME_KEY="justLabTheme";
 function preferredTheme(){try{const saved=localStorage.getItem(THEME_KEY);if(saved==="light"||saved==="dark")return saved}catch(_e){}return matchMedia?.("(prefers-color-scheme: light)")?.matches?"light":"dark"}
 function applyTheme(theme,save=false){const next=theme==="light"?"light":"dark";document.documentElement.dataset.theme=next;document.documentElement.style.colorScheme=next;if(save){try{localStorage.setItem(THEME_KEY,next)}catch(_e){}}const btn=q("#themeToggle");if(btn)btn.innerHTML=next==="light"?'☾ <span class="themeLabel">深色</span>':'☀ <span class="themeLabel">浅色</span>'}
@@ -177,8 +203,6 @@ function render(){
   q("#memberCount").textContent=state.members.length;
   q("#freshmanCount").textContent=state.members.filter(x=>x.membership_status==="freshman").length;
   q("#formalCount").textContent=state.members.filter(x=>x.membership_status!=="freshman").length;
-  q("#majorCount").textContent=new Set(state.members.map(x=>x.major).filter(Boolean)).size;
-  q("#submissionCount").textContent=state.subs.length;q("#progressCount").textContent=state.progress.length;
   document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".resetPwdBtn").forEach(b=>b.onclick=()=>openPasswordReset(b.dataset.id));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));
 }
 function openDetail(id){
@@ -252,26 +276,39 @@ function openEdit(id){
   q("#editDialog").showModal();
 }
 async function loadAdminData(){
-  const [p,s,pr]=await Promise.all([
+  const [p,s,pr,mr]=await Promise.all([
     supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,created_at").order("created_at",{ascending:false}),
     supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").order("created_at",{ascending:false}),
-    supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,created_at").order("created_at",{ascending:false})
+    supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,created_at").order("created_at",{ascending:false}),
+    supabase.rpc("get_member_admin_metrics")
   ]);
   if(p.error)throw p.error;if(s.error)throw s.error;if(pr.error)throw pr.error;
   state.members=p.data||[];state.subs=s.data||[];state.progress=pr.data||[];
+  if(!mr.error)renderAdminMetrics(Array.isArray(mr.data)?mr.data[0]:mr.data);
   populateMajorFilter();render();
   q("#updatedAt").textContent="更新时间："+new Date().toLocaleString("zh-CN",{hour12:false});
 }
 function setupAdminRealtime(){
   if(window.__memberAdminRealtime)return;
   let timer=null;
-  const refresh=()=>{clearTimeout(timer);timer=setTimeout(()=>loadAdminData().catch(console.error),180)};
+  const refresh=()=>{clearTimeout(timer);timer=setTimeout(()=>loadAdminData().catch(console.error),250)};
+  const metricsOnly=()=>loadAdminMetrics().catch(console.error);
   const ch=supabase.channel("member-admin-live")
     .on("postgres_changes",{event:"*",schema:"public",table:"profiles"},refresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"submissions"},refresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"progress_updates"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_updates"},metricsOnly)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_members"},metricsOnly)
     .subscribe();
   window.__memberAdminRealtime=ch;
+  if(!window.__memberAdminMetricsTimer){
+    window.__memberAdminMetricsTimer=setInterval(()=>{
+      if(document.visibilityState==="visible")loadAdminMetrics().catch(console.error);
+    },30000);
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible")loadAdminMetrics().catch(console.error);
+  });
 }
 async function enter(){
   const sess=await supabase.auth.getSession();
