@@ -1079,7 +1079,24 @@ async function initProjects(){
   const renderProjects=()=>{
     const box=q("#projectGrid");
     if(!box)return;
-    box.innerHTML=projects.length?projects.map(x=>{
+    const searchInput=q("#projectDirectorySearch");
+    const meta=q("#projectSearchMeta");
+    const keyword=(searchInput?.value||"").trim().toLowerCase();
+    const visibleProjects=projects.filter(x=>{
+      if(!keyword)return true;
+      const haystack=[
+        x.name,x.leader_name,x.description,x.stage,
+        ...(x.member_names||[]),
+        ...(x.pending_member_names||[])
+      ].filter(Boolean).join(" ").toLowerCase();
+      return haystack.includes(keyword);
+    });
+    if(meta){
+      meta.textContent=keyword
+        ?"找到 "+visibleProjects.length+" 个项目"
+        :"可搜索项目、负责人、已注册成员和未注册成员";
+    }
+    box.innerHTML=visibleProjects.length?visibleProjects.map(x=>{
       const statusClass=x.status==="completed"?"completed":x.status==="paused"?"paused":x.status==="archived"?"archived":"";
       const members=(x.member_names||[]);
       const pending=(x.pending_member_names||[]);
@@ -1090,7 +1107,7 @@ async function initProjects(){
       '<div class="projectMembersV2">'+members.map(n=>'<span class="projectChip">'+esc(n)+'</span>').join("")+pending.map(n=>'<span class="projectChip pending">'+esc(n)+' · 未注册</span>').join("")+'</div>'+
       '<div class="projectStats"><div class="projectStat"><span>当前阶段</span><b>'+esc(x.stage||"未填写")+'</b></div><button class="projectStat projectProgressBtn" type="button" data-id="'+esc(x.id)+'" data-kind="personal"><span>个人进度</span><b>'+esc(x.personal_progress_count||0)+' 条</b></button><button class="projectStat projectProgressBtn" type="button" data-id="'+esc(x.id)+'" data-kind="team"><span>队伍进度</span><b>'+esc(x.team_progress_count||0)+' 条</b></button></div>'+
       '<div class="actions"><a class="btn sec" href="./progress.html?project='+encodeURIComponent(x.id)+'">更新进度</a><a class="btn ghost" href="./member.html?id='+encodeURIComponent(x.leader_id||state.user.id)+'">负责人主页</a>'+(canJoin?'<button class="btn pri joinProject" data-id="'+esc(x.id)+'">加入项目</button>':'')+(canManage(x)?'<button class="btn ghost editProject" data-id="'+esc(x.id)+'">编辑</button><button class="btn danger deleteProject" data-id="'+esc(x.id)+'">删除</button>':'')+'</div></article>';
-    }).join(""):'<div class="empty">目前还没有项目。可以新建竞赛、仿真论文、科研、专利、机械设计或课程设计项目。</div>';
+    }).join(""):(keyword?'<div class="empty">没有找到匹配“'+esc(searchInput?.value||"")+'”的项目或成员。</div>':'<div class="empty">目前还没有项目。可以新建竞赛、仿真论文、科研、专利、机械设计或课程设计项目。</div>');
 
     box.querySelectorAll(".projectProgressBtn").forEach(b=>b.onclick=async()=>{
       const projectId=b.dataset.id,kind=b.dataset.kind;
@@ -1193,6 +1210,8 @@ async function initProjects(){
     if(search){search.value="";search.oninput=()=>renderPicker(new Set([...picker.querySelectorAll(".projectMemberCheck:checked")].map(i=>i.value)))}
     q("#projectDialog").showModal();
   };
+  const projectDirectorySearch=q("#projectDirectorySearch");
+  if(projectDirectorySearch)projectDirectorySearch.oninput=renderProjects;
   q("#newProjectBtn").onclick=()=>openProjectDialog(null);
   q("#projectCancel").onclick=()=>q("#projectDialog").close();
   q("#projectForm").onsubmit=async e=>{
