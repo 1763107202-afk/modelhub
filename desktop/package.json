@@ -1,7 +1,7 @@
 {
   "name": "just-mechanical-innovation-lab-desktop",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "江苏科技大学机械创新实验室交流平台 Windows 桌面客户端",
   "scripts": {
     "tauri": "tauri",
