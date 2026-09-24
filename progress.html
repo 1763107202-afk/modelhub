@@ -21,6 +21,9 @@
 .teamMemberText b{font-size:14px;white-space:nowrap}
 .teamMemberText small{font-size:12px;color:#7890aa;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
 .teamMemberSearchEmpty{padding:18px;text-align:center;color:#7890aa}
+.teamSelectedPreview{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;min-height:26px}
+.teamSelectedChip{display:inline-flex;padding:5px 9px;border-radius:999px;background:#102b48;border:1px solid #28527b;color:#b9dcff;font-size:12px;font-weight:800}
+html[data-theme="light"] .teamSelectedChip{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
 .teamProgressCard{padding:20px;border:1px solid #1c3049;border-radius:20px;background:#0b192a}
 .teamProgressMembers{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .teamProgressMember{font-size:12px;padding:5px 8px;border-radius:999px;background:#102b48;border:1px solid #28527b;color:#b9dcff}
@@ -55,7 +58,8 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
       <div class="teamMemberHeader"><label>队伍成员</label><span id="teamMemberSelectedCount" class="pill">已选 0 人</span></div>
       <input id="teamMemberSearch" class="teamMemberSearch" type="search" placeholder="搜索姓名、年级、校区或专业">
       <div id="teamMemberOptions" class="teamMemberOptions"><div class="empty">正在加载正式成员…</div></div>
-      <small class="profileHint">这里只显示正式成员。搜索不会取消已勾选成员；提交后，所选成员都会计入“队伍进度已更新”。</small>
+      <div id="teamSelectedPreview" class="teamSelectedPreview"><span class="profileHint">本次将计入：正在加载…</span></div>
+      <small class="profileHint">这里只显示正式成员。搜索不会取消已勾选成员；上方“本次将计入”名单就是提交后进入队伍进度统计的成员。</small>
     </div>
     <label>附件（可选）<input id="teamProgressFile" type="file"></label>
     <div id="teamProgressFilePreview" class="progressFilePreview"></div>
@@ -78,4 +82,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v55.js?v=20260924-2155"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v56.js?v=20260924-2210"></script></body></html>
