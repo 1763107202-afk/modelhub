@@ -473,12 +473,10 @@ async function initHome(){
   const minePromise=state.user
     ?supabase.from("submissions").select("id",{count:"exact",head:true}).eq("user_id",state.user.id)
     :Promise.resolve({count:null,data:null,error:null});
+  const metricsPromise=supabase.rpc("get_home_operational_metrics");
 
-  const [files,shares,v,w,members,reminderReq,mineReq]=await Promise.all([
-    supabase.from("lab_files").select("id",{count:"exact",head:true}),
-    supabase.from("resource_shares").select("id",{count:"exact",head:true}),
-    supabase.from("tutorials").select("id",{count:"exact",head:true}),
-    supabase.from("past_works").select("id",{count:"exact",head:true}),
+  const [metricsReq,members,reminderReq,mineReq]=await Promise.all([
+    metricsPromise,
     supabase.rpc("get_member_count"),
     reminderPromise,
     minePromise,
@@ -494,10 +492,11 @@ async function initHome(){
     }
   }
 
-  const hf=q("#homeFiles");if(hf)hf.textContent=String((files.count||0)+(shares.count||0));
-  const hv=q("#homeVideos");if(hv)hv.textContent=String(v.count||0);
-  const hw=q("#homeWorks");if(hw)hw.textContent=String(w.count||0);
-  const hm=q("#homeMembers");if(hm)hm.textContent=members.error?"—":String(members.data??0);
+  const metrics=Array.isArray(metricsReq.data)?metricsReq.data[0]:metricsReq.data;
+  const hp=q("#homeActiveProjects");if(hp)hp.textContent=metricsReq.error?"—":String(metrics?.active_projects??0);
+  const hu=q("#homeUpdatedMembers");if(hu)hu.textContent=metricsReq.error?"—":String(metrics?.updated_members_14d??0);
+  const ho=q("#homeOverdueMembers");if(ho)ho.textContent=metricsReq.error?"—":String(metrics?.overdue_members_14d??0);
+  const hm=q("#homeMembers");if(hm)hm.textContent=metrics?.formal_members!=null?String(metrics.formal_members):(members.error?"—":String(members.data??0));
   const mine=q("#homeMine");if(mine)mine.textContent=state.user?(mineReq.error?"—":String(mineReq.count||0)):"—";
 }
 async function initWorks(){
