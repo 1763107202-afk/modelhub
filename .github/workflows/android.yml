@@ -1,0 +1,97 @@
+name: Build Android App
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "android-app/**"
+      - ".github/workflows/android.yml"
+      - "assets/lab-logo.webp"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-app-build
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        shell: bash
+        run: |
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Restore stable Android signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: just-lab-android-signing-v1
+
+      - name: Ensure signing key exists
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -v               -keystore ~/.android/debug.keystore               -storepass android               -alias androiddebugkey               -keypass android               -keyalg RSA               -keysize 2048               -validity 10000               -dname "CN=JUST Mechanical Innovation Lab, OU=Mechanical Innovation Lab, O=JUST, L=Zhenjiang, ST=Jiangsu, C=CN"
+          fi
+
+      - name: Prepare application icon
+        shell: bash
+        run: |
+          mkdir -p android-app/app/src/main/res/drawable
+          cp assets/lab-logo.webp android-app/app/src/main/res/drawable/lab_logo.webp
+
+      - name: Build signed release APK
+        shell: bash
+        run: |
+          gradle -p android-app :app:assembleRelease --no-daemon
+          test -f android-app/app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUST-Mechanical-Innovation-Lab-Android
+          path: android-app/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish APK to website
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          mkdir -p downloads
+          cp android-app/app/build/outputs/apk/release/app-release.apk downloads/JUST-Lab-Platform-Android.apk
+          git add downloads/JUST-Lab-Platform-Android.apk
+          if git diff --cached --quiet; then
+            echo "APK is unchanged."
+          else
+            git commit -m "Publish Android app APK"
+            git push origin main
+          fi
