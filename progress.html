@@ -59,7 +59,9 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <div class="progressTopGrid">
 <div class="progressDualEntry">
   <form id="progressForm" class="form glass progressForm">
-    <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">没有参加比赛，或希望单独记录自己的学习与项目进展时填写。</p></div>
+    <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">仿真、论文、科研、专利、课程设计等都可以作为个人项目；也可以不关联项目，单独记录普通个人进度。</p></div>
+    <label>关联项目（可选）<select id="progressProject"><option value="">不关联项目 / 普通个人进度</option></select></label>
+    <small class="profileHint">如果这次进度属于某个个人或团队项目，请在这里关联；项目页会自动同步显示该进度。</small>
     <label>近期个人进度<textarea id="progressCurrent" rows="6" maxlength="5000" required placeholder="这段时间个人完成了什么、目前做到哪一步、遇到哪些问题"></textarea></label>
     <label>下一时期个人目标<textarea id="progressGoal" rows="5" maxlength="5000" required placeholder="下一阶段个人准备完成哪些任务、达到什么目标"></textarea></label>
     <label>相关链接（可选）<input id="progressLink" type="url" placeholder="https://..."></label>
@@ -76,8 +78,10 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
   </form>
 
   <form id="teamProgressForm" class="form glass progressForm">
-    <div><span class="eyebrow">TEAM PROGRESS</span><h3>队伍进度</h3><p class="profileHint">参加比赛时填写比赛名称、队伍成员与当前队伍进展；所选正式成员都会计为本周期已更新。</p></div>
-    <label>比赛名称<input id="teamCompetitionName" maxlength="160" placeholder="例如：全国大学生机械创新设计大赛" required></label>
+    <div><span class="eyebrow">TEAM PROGRESS</span><h3>队伍进度</h3><p class="profileHint">可直接关联“项目 / 队伍管理”里的团队项目；也可以像以前一样临时填写比赛名称和成员。</p></div>
+    <label>关联已有团队项目（可选）<select id="teamProject"><option value="">不关联已有项目，按比赛 / 队伍填写</option></select></label>
+    <small id="teamProjectHint" class="profileHint">可关联已有团队项目；也可以直接填写新的比赛 / 队伍进度。</small>
+    <label>比赛 / 项目名称<input id="teamCompetitionName" maxlength="160" placeholder="例如：全国大学生机械创新设计大赛"></label>
     <label>队伍进度<textarea id="teamCurrentProgress" rows="6" maxlength="5000" required placeholder="本阶段队伍完成了什么、目前整体进展到哪一步"></textarea></label>
     <label>下一阶段队伍目标（可选）<textarea id="teamNextGoal" rows="5" maxlength="5000" placeholder="下一阶段队伍计划完成的工作"></textarea></label>
     <label>相关链接（可选）<input id="teamProgressLink" type="url" placeholder="https://..."></label>
@@ -93,7 +97,7 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     <button class="btn pri" type="submit">提交队伍进度</button>
   </form>
 </div>
-<div class="progressOverview"><section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div><div class="progressSubmitterCount"><b id="progressReminderCount">0</b><span>人</span></div></div><p class="progressReminderHint">超过 14 天没有新的进度记录会进入提醒区；从未提交过的成员按注册时间计算。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
+<div class="progressOverview"><section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div><div class="progressSubmitterCount"><b id="progressReminderCount">0</b><span>人</span></div></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
 <section class="progressSummary glass">
   <div class="progressSummaryHead"><div><span class="eyebrow">PERSONAL UPDATED</span><h2>个人进度已更新</h2></div><div class="progressSubmitterCount"><b id="personalUpdatedCount">0</b><span>人</span></div></div>
   <div id="personalUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有个人进度更新</span></div>
