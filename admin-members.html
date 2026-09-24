@@ -40,7 +40,7 @@
   <section class="hero">
     <span class="eyebrow">MEMBER ADMINISTRATION</span>
     <h1>实验室成员管理后台</h1>
-    <p>集中查看成员身份资料与作业提交概况。管理员可将大一新生转为正式成员；主管理员可设置副管理员并踢出成员。</p>
+    <p>集中查看成员身份资料与作业提交概况。管理员可将大一新生转为正式成员；主管理员可设置副管理员、重置成员密码并踢出成员。</p>
     <div class="statusbar"><span id="adminBadge" class="pill"></span><span id="updatedAt" class="pill"></span></div>
   </section>
 
@@ -87,6 +87,20 @@
       <label class="field">专业<input id="editMajor" maxlength="60" required></label><label class="field">电话<input id="editPhone" maxlength="30" placeholder="可选"></label><label class="field">QQ<input id="editQQ" maxlength="20" placeholder="可选"></label>
     </div>
     <div class="dialogActions"><button id="cancelEdit" type="button" class="btn ghost">取消</button><button class="btn pri">保存修改</button></div>
+  </form>
+</dialog>
+
+<dialog id="passwordDialog" class="dialog">
+  <form id="passwordForm" class="dialogbox">
+    <h2>重置成员密码</h2>
+    <input id="passwordUserId" type="hidden">
+    <p id="passwordTargetHint" class="muted" style="margin-top:-4px"></p>
+    <div class="two">
+      <label class="field">新密码<input id="passwordNew" type="password" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="至少 8 位，包含字母和数字"></label>
+      <label class="field">再次确认<input id="passwordConfirm" type="password" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="再次输入新密码"></label>
+    </div>
+    <div id="passwordMsg" class="msg"></div>
+    <div class="dialogActions"><button id="cancelPassword" type="button" class="btn ghost">取消</button><button id="passwordSubmit" class="btn pri">确认重置</button></div>
   </form>
 </dialog>
 
@@ -156,7 +170,7 @@ function render(){
       '<td>'+(latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">'+fmt(latest.created_at)+'</div>':'<span class="muted">暂无提交</span>')+'</td>'+
       '<td><b>'+parr.length+'</b></td>'+
       '<td>'+(latestProgress?'<b>'+esc(latestProgress.current_progress||"已更新进度")+'</b><div class="muted">'+fmt(latestProgress.created_at)+'</div>':'<span class="muted">暂无进度</span>')+'</td>'+
-      '<td><div class="actions"><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")+'</div></td>'+
+      '<td><div class="actions"><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为副管理员")+'</button>':"")+(state.profile?.role==="super_admin"&&m.id!==state.user?.id?'<button class="btn sec resetPwdBtn" data-id="'+esc(m.id)+'">重置密码</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")+'</div></td>'+
     '</tr>';
   }).join("");
   q("#empty").classList.toggle("hidden",state.filtered.length>0);
@@ -165,7 +179,7 @@ function render(){
   q("#formalCount").textContent=state.members.filter(x=>x.membership_status!=="freshman").length;
   q("#majorCount").textContent=new Set(state.members.map(x=>x.major).filter(Boolean)).size;
   q("#submissionCount").textContent=state.subs.length;q("#progressCount").textContent=state.progress.length;
-  document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));
+  document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".resetPwdBtn").forEach(b=>b.onclick=()=>openPasswordReset(b.dataset.id));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));
 }
 function openDetail(id){
   const m=state.members.find(x=>x.id===id), arr=state.subs.filter(x=>x.user_id===id).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
@@ -183,6 +197,40 @@ async function promoteMember(id){
   const r=await supabase.from("profiles").update({membership_status:"formal"}).eq("id",id);
   if(r.error){alert("成员状态修改失败："+r.error.message);return}
   await loadAdminData();
+}
+function openPasswordReset(id){
+  if(state.profile?.role!=="super_admin")return alert("只有主管理员可以重置成员密码");
+  const target=state.members.find(x=>x.id===id);if(!target)return;
+  if(target.id===state.user?.id)return alert("不能在成员后台重置当前登录账号自己的密码");
+  q("#passwordUserId").value=id;
+  q("#passwordNew").value="";
+  q("#passwordConfirm").value="";
+  q("#passwordMsg").textContent="";
+  q("#passwordTargetHint").textContent="正在为 "+(target.full_name||target.email||"成员")+" 重置登录密码";
+  q("#passwordDialog").showModal();
+  setTimeout(()=>q("#passwordNew")?.focus(),50);
+}
+async function resetMemberPassword(){
+  if(state.profile?.role!=="super_admin")return alert("只有主管理员可以重置成员密码");
+  const id=q("#passwordUserId").value;
+  const target=state.members.find(x=>x.id===id);if(!target)return;
+  const password=q("#passwordNew").value;
+  const confirmPassword=q("#passwordConfirm").value;
+  const msg=q("#passwordMsg"),btn=q("#passwordSubmit");
+  msg.textContent="";
+  if(password.length<8||password.length>72){msg.textContent="密码长度需为 8-72 位";return}
+  if(!/[A-Za-z]/.test(password)||!/[0-9]/.test(password)){msg.textContent="密码必须同时包含字母和数字";return}
+  if(password!==confirmPassword){msg.textContent="两次输入的密码不一致";return}
+  if(!confirm("确定重置 "+(target.full_name||target.email)+" 的登录密码吗？"))return;
+  const old=btn.textContent;btn.disabled=true;btn.textContent="正在重置…";
+  try{
+    const r=await supabase.functions.invoke("reset-member-password",{body:{user_id:id,password}});
+    if(r.error)throw r.error;
+    if(r.data?.error)throw new Error(r.data.error);
+    q("#passwordDialog").close();
+    alert("密码已重置成功。请将新的临时密码单独告知该成员。");
+  }catch(e){msg.textContent="重置失败："+(e?.message||String(e))}
+  finally{btn.disabled=false;btn.textContent=old}
 }
 async function kickMember(id){
   if(state.profile?.role!=="super_admin")return alert("只有主管理员可以踢出成员");
@@ -248,6 +296,8 @@ q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();state.user=null;
 q("#searchInput").oninput=render;q("#majorFilter").onchange=render;
 q("#closeDetail").onclick=()=>q("#detailDialog").close();
 q("#cancelEdit").onclick=()=>q("#editDialog").close();
+q("#cancelPassword").onclick=()=>q("#passwordDialog").close();
+q("#passwordForm").onsubmit=async e=>{e.preventDefault();await resetMemberPassword()};
 q("#editForm").onsubmit=async e=>{
   e.preventDefault();
   const id=q("#editId").value, full_name=q("#editName").value.trim(), major=q("#editMajor").value.trim(), phone=q("#editPhone").value.trim(), qq=q("#editQQ").value.trim();
