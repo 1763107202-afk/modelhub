@@ -5,6 +5,14 @@
 .progressDualEntry{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;min-width:0}
 .progressDualEntry>.progressForm{width:100%;min-width:0;height:100%;display:flex;flex-direction:column}
 .progressDualEntry>.progressForm>.btn[type="submit"]{width:100%;height:64px;min-height:64px;max-height:64px;flex:0 0 64px;margin-top:auto;padding:0 22px;display:flex;align-items:center;justify-content:center}
+.personalStatusPanel{flex:1;min-height:150px;margin-top:12px;padding:16px 18px;border:1px solid #1d334c;border-radius:16px;background:linear-gradient(180deg,#0b192a,#0a1726);display:flex;flex-direction:column;justify-content:center;gap:10px}
+.personalStatusPanel h4{margin:4px 0 0;font-size:17px}
+.personalStatusPanel p{margin:2px 0 0;color:#7890aa;font-size:12px;line-height:1.65}
+.personalStatusRow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid rgba(120,144,170,.15)}
+.personalStatusRow span{color:#7890aa;font-size:13px}
+.personalStatusRow b{font-size:13px}
+html[data-theme="light"] .personalStatusPanel{background:linear-gradient(180deg,#f8fbff,#f3f8fd);border-color:#d8e4ef}
+html[data-theme="light"] .personalStatusPanel p,html[data-theme="light"] .personalStatusRow span{color:#6f8296}
 .progressOverview{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:16px;min-width:0;height:100%;min-height:0}
 .progressOverview>.progressReminder,.progressOverview .progressSummary{margin:0;min-height:0;height:100%;display:flex;flex-direction:column}
 .progressStatusGrid{display:contents}
@@ -50,6 +58,12 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
     <label>附件（可选）<input id="progressFile" type="file"></label>
     <div id="progressFilePreview" class="progressFilePreview"></div>
     <small class="profileHint">支持图片、视频、PPT、PDF、Word、压缩包及其他常用文件；每次提交可附带 1 个文件和 1 个链接。</small>
+    <div class="personalStatusPanel">
+      <div><span class="eyebrow">MY STATUS</span><h4>本周期个人状态</h4></div>
+      <div class="personalStatusRow"><span>当前状态</span><b id="personalStatusLabel">正在加载…</b></div>
+      <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div>
+      <p>个人进度只保留最新一条；再次提交后会以新的提交时间重新生成记录，并自动清理上一条附件。</p>
+    </div>
     <button class="btn pri" type="submit">提交个人进度</button>
   </form>
 
@@ -87,4 +101,4 @@ html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7
 <section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
 <section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
 </div>
-<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v57.js?v=20260924-2245"></script></body></html>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main><div id="siteFooter"></div><script type="module" src="./app-v58.js?v=20260924-2300"></script></body></html>
