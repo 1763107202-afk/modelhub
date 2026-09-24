@@ -101,13 +101,44 @@ function isAdmin(){return ["admin","super_admin"].includes(state.profile?.role)}
 function roleName(r){return r==="super_admin"?"主管理员":r==="admin"?"副管理员":"普通成员"}
 function navLink(key,href,label){return '<a class="'+(page===key?"active":"")+'" href="'+href+'">'+label+'</a>'}
 function renderChrome(){
-  q("#siteHeader").innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></span></a><nav class="nav">'+
+  const globalSearchMarkup=page==="home"
+    ? '<div class="globalSearch" id="globalSearch"><div class="globalSearchInputWrap"><span class="globalSearchIcon">⌕</span><input id="globalSearchInput" type="search" autocomplete="off" placeholder="全站搜索：项目、成员、教程、资料、作品、公告…"><button id="globalSearchClear" class="globalSearchClear hidden" type="button" aria-label="清空搜索">×</button></div><div id="globalSearchResults" class="globalSearchResults hidden"></div></div>'
+    : '';
+  q("#siteHeader").innerHTML='<header class="siteHeader '+(page==="home"?"homeSearchHeader":"")+'"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><span class="brandText"><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></span></a>'+globalSearchMarkup+'<nav class="nav">'+
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
     navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html?v=20260924-2458","资料库")+navLink("projects","./projects.html","项目管理")+navLink("progress","./progress.html","近期进度")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html","个人资料")+navLink("download","./download.html","软件下载")+
     '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><button id="notifyOpen" class="btn ghost hidden" type="button" aria-label="站内通知" title="站内通知">🔔<span id="notifyDot" class="notifyDot hidden"></span></button><a id="adminQuick" class="btn sec hidden" href="./admin.html">管理后台</a><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo.webp?v=14" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
-  document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 id="authModeTitle" style="margin:0">成员登录</h2><p id="authModeHint" style="margin:0;color:#8fa4bd">已注册成员只需要邮箱和密码即可登录。</p><div id="registerFields" class="two hidden"><label>姓名（首次注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>年级 / 校区 / 专业（首次注册必填）<input id="regMajor" maxlength="60" placeholder="例如：24级东校区机械工程；苏理工机械工程"></label><label>是否为大一新生<select id="regFreshman"><option value="">请选择</option><option value="yes">是，我是大一新生</option><option value="no">否，我是正式成员</option></select></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><label id="rememberLoginWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#9db0c5;cursor:pointer"><input id="rememberLogin" type="checkbox" checked style="width:16px;height:16px;margin:0">记住登录状态 <span style="opacity:.72">（下次打开无需重新登录）</span></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="retryLogin" class="btn sec hidden" type="button">重新连接</button><button id="showRegister" class="btn sec" type="button">首次注册</button><button id="continueRegister" class="btn pri hidden" type="button">继续注册</button><button id="backLogin" class="btn ghost hidden" type="button">返回登录</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">通行证只在首次注册时验证，之后登录无需再次填写。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="notifyDialog" class="dialog"><div class="dialogbox notifyDialogBox"><div class="notifyHead"><div><span class="eyebrow">NOTIFICATIONS</span><h2 style="margin:0">站内通知</h2></div><button id="notifyClose" class="btn ghost" type="button">关闭</button></div><div class="notifyToolbar"><span id="notifySummary">正在加载…</span><button id="notifyReadAll" class="btn sec" type="button">全部标为已读</button></div><div id="notifyList" class="notifyList"><div class="empty">正在加载通知…</div></div></div></dialog><style id="notifyStyles">#notifyOpen{position:relative;min-width:44px}.notifyDot{position:absolute;right:6px;top:5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e45b66;color:white;font-size:10px;line-height:17px;text-align:center;border:2px solid rgba(15,22,32,.9)}.notifyDialogBox{width:min(720px,92vw);max-height:82vh}.notifyHead,.notifyToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.notifyToolbar{margin-top:10px;color:#8fa4bd;font-size:13px}.notifyList{display:flex;flex-direction:column;gap:10px;margin-top:14px;max-height:58vh;overflow:auto;padding-right:3px}.notifyItem{display:block;text-decoration:none;border:1px solid #26384d;border-radius:14px;padding:13px 14px;background:#101a27;color:inherit}.notifyItem.unread{border-color:#426b9e;background:#122238;box-shadow:0 0 0 1px #426b9e24}.notifyItem:hover{transform:translateY(-1px)}.notifyItemTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.notifyItem b{font-size:14px}.notifyItem p{margin:5px 0 0;color:#a9b8ca;font-size:13px;line-height:1.55}.notifyItem time{white-space:nowrap;color:#708399;font-size:11px}.notifyType{display:inline-flex;align-items:center;gap:5px;margin-bottom:5px;font-size:11px;color:#7ea8d8}.notifyUnreadMark{width:7px;height:7px;border-radius:50%;background:#5ba6ff;display:inline-block}.notifyEmpty{padding:28px 10px;text-align:center;color:#8092a7}.notifyItem[data-type="deadline"].unread,.notifyItem[data-type="progress"].unread{border-color:#8b4950;background:#2b171b}html[data-theme="light"] .notifyItem{background:#fff;border-color:#dbe4ee}html[data-theme="light"] .notifyItem.unread{background:#f2f7ff;border-color:#8db5e6}html[data-theme="light"] .notifyItem p{color:#5f6f81}html[data-theme="light"] .notifyDot{border-color:#fff}@media(max-width:620px){.notifyItemTop{flex-direction:column}.notifyToolbar{align-items:flex-start;flex-direction:column}}</style><div id="toast" class="toast"></div>');
+  document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 id="authModeTitle" style="margin:0">成员登录</h2><p id="authModeHint" style="margin:0;color:#8fa4bd">已注册成员只需要邮箱和密码即可登录。</p><div id="registerFields" class="two hidden"><label>姓名（首次注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>年级 / 校区 / 专业（首次注册必填）<input id="regMajor" maxlength="60" placeholder="例如：24级东校区机械工程；苏理工机械工程"></label><label>是否为大一新生<select id="regFreshman"><option value="">请选择</option><option value="yes">是，我是大一新生</option><option value="no">否，我是正式成员</option></select></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><label id="rememberLoginWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#9db0c5;cursor:pointer"><input id="rememberLogin" type="checkbox" checked style="width:16px;height:16px;margin:0">记住登录状态 <span style="opacity:.72">（下次打开无需重新登录）</span></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="retryLogin" class="btn sec hidden" type="button">重新连接</button><button id="showRegister" class="btn sec" type="button">首次注册</button><button id="continueRegister" class="btn pri hidden" type="button">继续注册</button><button id="backLogin" class="btn ghost hidden" type="button">返回登录</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">通行证只在首次注册时验证，之后登录无需再次填写。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="notifyDialog" class="dialog"><div class="dialogbox notifyDialogBox"><div class="notifyHead"><div><span class="eyebrow">NOTIFICATIONS</span><h2 style="margin:0">站内通知</h2></div><button id="notifyClose" class="btn ghost" type="button">关闭</button></div><div class="notifyToolbar"><span id="notifySummary">正在加载…</span><button id="notifyReadAll" class="btn sec" type="button">全部标为已读</button></div><div id="notifyList" class="notifyList"><div class="empty">正在加载通知…</div></div></div></dialog><style id="notifyStyles">#notifyOpen{position:relative;min-width:44px}.notifyDot{position:absolute;right:6px;top:5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e45b66;color:white;font-size:10px;line-height:17px;text-align:center;border:2px solid rgba(15,22,32,.9)}.notifyDialogBox{width:min(720px,92vw);max-height:82vh}.notifyHead,.notifyToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.notifyToolbar{margin-top:10px;color:#8fa4bd;font-size:13px}.notifyList{display:flex;flex-direction:column;gap:10px;margin-top:14px;max-height:58vh;overflow:auto;padding-right:3px}.notifyItem{display:block;text-decoration:none;border:1px solid #26384d;border-radius:14px;padding:13px 14px;background:#101a27;color:inherit}.notifyItem.unread{border-color:#426b9e;background:#122238;box-shadow:0 0 0 1px #426b9e24}.notifyItem:hover{transform:translateY(-1px)}.notifyItemTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.notifyItem b{font-size:14px}.notifyItem p{margin:5px 0 0;color:#a9b8ca;font-size:13px;line-height:1.55}.notifyItem time{white-space:nowrap;color:#708399;font-size:11px}.notifyType{display:inline-flex;align-items:center;gap:5px;margin-bottom:5px;font-size:11px;color:#7ea8d8}.notifyUnreadMark{width:7px;height:7px;border-radius:50%;background:#5ba6ff;display:inline-block}.notifyEmpty{padding:28px 10px;text-align:center;color:#8092a7}.notifyItem[data-type="deadline"].unread,.notifyItem[data-type="progress"].unread{border-color:#8b4950;background:#2b171b}html[data-theme="light"] .notifyItem{background:#fff;border-color:#dbe4ee}html[data-theme="light"] .notifyItem.unread{background:#f2f7ff;border-color:#8db5e6}html[data-theme="light"] .notifyItem p{color:#5f6f81}html[data-theme="light"] .notifyDot{border-color:#fff}@media(max-width:620px){.notifyItemTop{flex-direction:column}.notifyToolbar{align-items:flex-start;flex-direction:column}}
+.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(210px,255px) minmax(360px,760px) max-content;grid-template-areas:"brand search acct" "nav nav nav";row-gap:7px}
+.siteHeader.homeSearchHeader .brand{grid-area:brand}
+.siteHeader.homeSearchHeader .globalSearch{grid-area:search;position:relative;width:100%;justify-self:center;z-index:70}
+.siteHeader.homeSearchHeader .acct{grid-area:acct;justify-self:end}
+.siteHeader.homeSearchHeader .nav{grid-area:nav;justify-content:flex-start;border-top:1px solid #ffffff0d;padding:6px 0 2px}
+.globalSearchInputWrap{height:44px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid #2a4665;border-radius:14px;background:#0a192acc;box-shadow:0 7px 24px #0002}
+.globalSearchInputWrap:focus-within{border-color:#5b8bc2;box-shadow:0 0 0 3px #4c83bd20,0 8px 26px #0003}
+.globalSearchIcon{font-size:21px;color:#77a7d8;line-height:1}
+.globalSearchInputWrap input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#edf5ff;padding:0;font-size:14px}
+.globalSearchInputWrap input::placeholder{color:#7189a5}
+.globalSearchClear{width:28px;height:28px;border:0;border-radius:9px;background:#162b43;color:#9fb8d2;cursor:pointer;font-size:18px;line-height:1}
+.globalSearchResults{position:absolute;top:calc(100% + 8px);left:0;right:0;max-height:min(64vh,560px);overflow:auto;padding:7px;border:1px solid #284563;border-radius:16px;background:#081522f7;box-shadow:0 20px 60px #0008;backdrop-filter:blur(18px)}
+.globalSearchItem{display:grid;grid-template-columns:36px minmax(0,1fr) 18px;gap:10px;align-items:center;padding:10px 11px;border-radius:11px}
+.globalSearchItem:hover{background:#102941}
+.globalSearchItemIcon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#102a44;font-size:16px}
+.globalSearchItemBody{display:flex;flex-direction:column;min-width:0}
+.globalSearchItemBody b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.globalSearchItemBody small{font-size:11px;color:#8299b3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.globalSearchArrow{color:#6385a9;font-size:20px}
+.globalSearchMessage{padding:18px 14px;text-align:center;color:#8198b2;font-size:13px}
+html[data-theme="light"] .globalSearchInputWrap{background:#fff;border-color:#c8d9e8;box-shadow:0 7px 24px #31557910}
+html[data-theme="light"] .globalSearchInputWrap input{color:#18314c}
+html[data-theme="light"] .globalSearchResults{background:#fff;border-color:#ccdae7;box-shadow:0 20px 50px #28435b24}
+html[data-theme="light"] .globalSearchItem:hover{background:#f0f6fb}
+html[data-theme="light"] .globalSearchItemIcon{background:#edf5fb}
+@media(max-width:1200px){.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"brand acct" "search search" "nav nav"}.siteHeader.homeSearchHeader .globalSearch{max-width:none}}
+@media(max-width:720px){.globalSearchInputWrap{height:42px}.globalSearchInputWrap input{font-size:13px}.siteHeader.homeSearchHeader .headerInner{grid-template-areas:"brand acct" "search search" "nav nav"}}
+</style><div id="toast" class="toast"></div>');
   const themeBtn=q("#themeToggle");
   if(themeBtn){
     applyTheme(document.documentElement.dataset.theme||preferredTheme());
@@ -118,8 +149,70 @@ function renderChrome(){
   }
   bindAuth();
   bindNotifications();
+  bindGlobalSearch();
   enableNavPrefetch();
 }
+
+function bindGlobalSearch(){
+  if(page!=="home")return;
+  const root=q("#globalSearch"),input=q("#globalSearchInput"),results=q("#globalSearchResults"),clear=q("#globalSearchClear");
+  if(!root||!input||!results||!clear)return;
+
+  let timer=null;
+  let seq=0;
+  const typeMeta={
+    project:["项目","🧩"],
+    member:["成员","👤"],
+    tutorial:["教程","📚"],
+    file:["资料","🗂"],
+    share:["分享","🔗"],
+    work:["作品","🏆"],
+    announcement:["公告","📢"],
+    exam:["任务","📄"]
+  };
+  const close=()=>results.classList.add("hidden");
+  const renderMessage=(msg)=>{results.innerHTML='<div class="globalSearchMessage">'+esc(msg)+'</div>';results.classList.remove("hidden")};
+
+  const run=async()=>{
+    const keyword=input.value.trim();
+    clear.classList.toggle("hidden",!keyword);
+    const mySeq=++seq;
+    if(!keyword){close();return}
+    if(keyword.length<2){renderMessage("再输入至少 1 个字符即可搜索全站");return}
+    if(!state.user){renderMessage("登录后可搜索项目、成员、教程、资料、作品和公告");return}
+
+    results.innerHTML='<div class="globalSearchMessage">正在搜索…</div>';
+    results.classList.remove("hidden");
+    const r=await supabase.rpc("global_site_search",{p_query:keyword});
+    if(mySeq!==seq)return;
+    if(r.error){renderMessage("搜索失败："+r.error.message);return}
+    const rows=r.data||[];
+    if(!rows.length){renderMessage("没有找到与“"+keyword+"”相关的内容");return}
+
+    results.innerHTML=rows.map(x=>{
+      const meta=typeMeta[x.result_type]||["内容","⌕"];
+      const href=x.href||"#";
+      return '<a class="globalSearchItem" href="'+esc(href)+'"><span class="globalSearchItemIcon">'+meta[1]+'</span><span class="globalSearchItemBody"><b>'+esc(x.title||"未命名内容")+'</b><small>'+esc(meta[0]+(x.subtitle?" · "+x.subtitle:""))+'</small></span><span class="globalSearchArrow">›</span></a>';
+    }).join("");
+  };
+
+  input.addEventListener("input",()=>{
+    clearTimeout(timer);
+    timer=setTimeout(run,180);
+  });
+  input.addEventListener("focus",()=>{if(input.value.trim())run()});
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){input.blur();close()}
+    if(e.key==="Enter"){
+      e.preventDefault();
+      const first=results.querySelector(".globalSearchItem");
+      if(first)first.click(); else run();
+    }
+  });
+  clear.onclick=()=>{input.value="";clear.classList.add("hidden");close();input.focus()};
+  document.addEventListener("pointerdown",e=>{if(!root.contains(e.target))close()});
+}
+
 function enableNavPrefetch(){
   const seen=new Set();
   const warm=anchor=>{
