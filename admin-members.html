@@ -61,7 +61,7 @@
       <option value="freshman">大一新生</option>
       <option value="formal">正式成员</option>
     </select>
-    <button id="exportBtn" class="btn sec">导出成员 CSV</button>
+    <button id="exportBtn" class="btn sec" type="button">导出成员 CSV</button>
   </section>
 
   <section class="tablewrap">
@@ -365,15 +365,42 @@ q("#editForm").onsubmit=async e=>{
   q("#editDialog").close();await loadAdminData();
 };
 q("#exportBtn").onclick=()=>{
-  const byUser=aggregate();
-  const byProgress=aggregateProgress();const rows=[["姓名","专业","电话","QQ","邮箱","作业次数","进度次数","最近动态类型","最近动态时间"]];
-  for(const m of state.filtered){
-    const arr=byUser.get(m.id)||[];
-    const parr=byProgress.get(m.id)||[],latest=arr[0],latestProgress=parr[0],isFreshman=m.membership_status==="freshman";rows.push([m.full_name||"",m.major||"",m.phone||"",m.qq||"",m.email||"",String(arr.length),String(parr.length),isFreshman?"新生作业":"正式成员进度",isFreshman?(latest?fmt(latest.created_at):""):(latestProgress?fmt(latestProgress.created_at):"")]);
+  const btn=q("#exportBtn"),oldText=btn.textContent;
+  try{
+    const list=Array.isArray(state.filtered)&&state.filtered.length?state.filtered:state.members;
+    if(!list.length){alert("当前没有可导出的成员数据");return}
+    btn.disabled=true;btn.textContent="正在导出…";
+    const byUser=aggregate();
+    const byProgress=aggregateProgress();
+    const rows=[["姓名","专业","电话","QQ","邮箱","作业次数","进度次数","最近动态类型","最近动态时间"]];
+    for(const m of list){
+      const arr=byUser.get(m.id)||[];
+      const parr=byProgress.get(m.id)||[],latest=arr[0],latestProgress=parr[0],isFreshman=m.membership_status==="freshman";
+      rows.push([m.full_name||"",m.major||"",m.phone||"",m.qq||"",m.email||"",String(arr.length),String(parr.length),isFreshman?"新生作业":"正式成员进度",isFreshman?(latest?fmt(latest.created_at):""):(latestProgress?fmt(latestProgress.created_at):"")]);
+    }
+    const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+    const filename="实验室成员信息_"+new Date().toISOString().slice(0,10)+".csv";
+    if(typeof navigator.msSaveOrOpenBlob==="function"){
+      navigator.msSaveOrOpenBlob(blob,filename);
+    }else{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url;
+      a.download=filename;
+      a.style.display="none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),3000);
+    }
+    btn.textContent="已导出";
+    setTimeout(()=>{btn.disabled=false;btn.textContent=oldText},1200);
+  }catch(e){
+    console.error("成员导出失败",e);
+    btn.disabled=false;btn.textContent=oldText;
+    alert("导出失败："+(e?.message||String(e)));
   }
-  const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download="实验室成员信息_"+new Date().toISOString().slice(0,10)+".csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 supabase.auth.onAuthStateChange(async(_event,session)=>{state.user=session?.user||null;if(!state.user)showLogin()});
 await enter();
