@@ -212,6 +212,12 @@ function render(){
     const hay=[m.full_name,m.major].join(" ").toLowerCase();
     return (!term||hay.includes(term))&&(!mf||m.major===mf)&&(!membership||(membership==="freshman"?m.membership_status==="freshman":m.membership_status!=="freshman"));
   }).sort((a,b)=>{
+    const teacherId="cf11c958-920b-4669-8bee-1931e4585ae7";
+    const teacherDiff=(a.id===teacherId?0:1)-(b.id===teacherId?0:1);
+    if(teacherDiff)return teacherDiff;
+    const roleRank=m=>m.role==="super_admin"?0:m.role==="admin"?1:2;
+    const roleDiff=roleRank(a)-roleRank(b);
+    if(roleDiff)return roleDiff;
     const countDiff=actionCount(a)-actionCount(b);
     if(countDiff)return countDiff;
     const signatureDiff=actionSignature(a).localeCompare(actionSignature(b),"zh-CN");
