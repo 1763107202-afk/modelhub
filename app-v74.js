@@ -232,6 +232,22 @@ async function signInWithTimeout(email,password){
   const timeout=new Promise(resolve=>setTimeout(()=>resolve({error:new Error("LOGIN_TIMEOUT")}),12000));
   return Promise.race([supabase.auth.signInWithPassword({email,password}),timeout]);
 }
+function friendlySignupError(err){
+  const raw=String(err?.message||err||"").trim();
+  const low=raw.toLowerCase();
+  if(!navigator.onLine)return "当前设备似乎已断网，请检查网络后再试。";
+  if(/failed to fetch|networkerror|load failed|network request failed|fetch failed/.test(low))return "无法连接注册服务器。请切换网络，或用系统浏览器 / Chrome / Edge 打开后重试。";
+  if(/signup_timeout/.test(low))return "注册请求超时，请检查网络后重新尝试。";
+  if(/user already registered|already been registered|already exists|duplicate key|users_email_partial_key/.test(low))return "这个邮箱已经注册过，请返回并直接登录。";
+  if(/实验室通行证不正确|passcode/i.test(raw)&&/incorrect|invalid|不正确/i.test(raw))return "实验室通行证不正确，请检查大小写和字符后重试。";
+  if(/database error|unexpected_failure/i.test(raw))return "注册信息未通过验证。请检查实验室通行证；若邮箱已注册，请直接返回登录。";
+  if(/rate limit|too many requests/i.test(raw))return "尝试次数过多，请稍后再试。";
+  return raw?"注册失败："+raw:"注册失败，请稍后重试。";
+}
+async function signUpWithTimeout(payload){
+  const timeout=new Promise(resolve=>setTimeout(()=>resolve({error:new Error("SIGNUP_TIMEOUT")}),15000));
+  return Promise.race([supabase.auth.signUp(payload),timeout]);
+}
 
 function notificationTypeName(t){
   return t==="announcement"?"公告":t==="task"?"新任务":t==="deadline"?"截止提醒":t==="progress"?"进度提醒":t==="membership"?"成员状态":"通知";
@@ -358,14 +374,36 @@ function bindAuth(){
   q("#cancelPasscode").onclick=()=>{q("#passAuth").close();setAuthMode("register");q("#auth").showModal()};
   q("#confirmPasscode").onclick=async()=>{
     const full_name=q("#regName").value.trim(),major=q("#regMajor").value.trim(),email=q("#email").value.trim(),password=q("#password").value,lab_passcode=q("#passcodeConfirm").value.trim(),is_freshman=q("#regFreshman")?.value==="yes";
-    if(!lab_passcode)return q("#passMsg").textContent="请输入实验室通行证";
-    q("#passMsg").textContent="正在验证并注册…";
-    const r=await supabase.auth.signUp({email,password,options:{data:{lab_passcode,full_name,major,is_freshman}}});
-    if(r.error){q("#passMsg").textContent=/Database error|unexpected_failure/i.test(r.error.message||"")?"通行证不正确或注册失败":r.error.message;return}
-    if(r.data.session){try{localStorage.setItem(REMEMBER_LOGIN_KEY,"1");sessionStorage.removeItem(SESSION_LOGIN_KEY)}catch(_e){}q("#passMsg").textContent="注册成功，已自动登录";setTimeout(()=>q("#passAuth").close(),400);return}
-    const s=await supabase.auth.signInWithPassword({email,password});
-    q("#passMsg").textContent=s.error?s.error.message:"注册成功，已自动登录";
-    if(!s.error){try{localStorage.setItem(REMEMBER_LOGIN_KEY,"1");sessionStorage.removeItem(SESSION_LOGIN_KEY)}catch(_e){}setTimeout(()=>q("#passAuth").close(),400)}
+    const btn=q("#confirmPasscode"),msg=q("#passMsg");
+    if(!lab_passcode)return msg.textContent="请输入实验室通行证";
+    if(btn.disabled)return;
+    btn.disabled=true;
+    msg.textContent="正在验证并注册…";
+    try{
+      const r=await signUpWithTimeout({email,password,options:{data:{lab_passcode,full_name,major,is_freshman}}});
+      if(r?.error){
+        msg.textContent=friendlySignupError(r.error);
+        return;
+      }
+      if(r?.data?.session){
+        try{localStorage.setItem(REMEMBER_LOGIN_KEY,"1");sessionStorage.removeItem(SESSION_LOGIN_KEY)}catch(_e){}
+        msg.textContent="注册成功，已自动登录";
+        setTimeout(()=>q("#passAuth").close(),400);
+        return;
+      }
+      const s=await signInWithTimeout(email,password);
+      if(s?.error){
+        msg.textContent=friendlySignupError(s.error);
+        return;
+      }
+      msg.textContent="注册成功，已自动登录";
+      try{localStorage.setItem(REMEMBER_LOGIN_KEY,"1");sessionStorage.removeItem(SESSION_LOGIN_KEY)}catch(_e){}
+      setTimeout(()=>q("#passAuth").close(),400);
+    }catch(err){
+      msg.textContent=friendlySignupError(err);
+    }finally{
+      btn.disabled=false;
+    }
   };
 }
 async function loadProfile(preferCache=false){
