@@ -1901,8 +1901,137 @@ async function initMine(){
 }
 async function initProfile(){
   if(!requireLogin())return;
-  q("#profileName").value=state.profile?.full_name||"";q("#profileMajor").value=state.profile?.major||"";q("#profilePhone").value=state.profile?.phone||"";q("#profileQQ").value=state.profile?.qq||"";q("#profileEmail").textContent=state.profile?.email||state.user.email;q("#profileRole").textContent=roleName(state.profile?.role);q("#profileDisplayName").textContent=state.profile?.full_name||"未填写姓名";q("#profileDisplayMajor").textContent=state.profile?.major||"未填写专业";
-  q("#profileForm").onsubmit=async e=>{e.preventDefault();const full_name=q("#profileName").value.trim(),major=q("#profileMajor").value.trim(),phone=q("#profilePhone").value.trim(),qq=q("#profileQQ").value.trim();if(!full_name||!major)return toast("姓名和专业不能为空");if(phone&&!/^[0-9+()\-\s]{5,30}$/.test(phone))return toast("请输入有效电话号码");if(qq&&!/^\d{5,20}$/.test(qq))return toast("QQ 号应为 5-20 位数字");const r=await supabase.from("profiles").update({full_name,major,phone:phone||null,qq:qq||null}).eq("id",state.user.id).select("id,email,role,full_name,major,phone,qq,membership_status,created_at").single();if(r.error)return toast("保存失败："+r.error.message);state.profile=r.data;updateAuthUI();q("#profileDisplayName").textContent=full_name;q("#profileDisplayMajor").textContent=major;toast("个人资料已保存，并同步到管理员后台")};
+  const home=q("#profileHome");
+  if(home)home.classList.remove("hidden");
+
+  const p=state.profile||{};
+  const name=p.full_name||"未填写姓名";
+  const major=p.major||"未填写专业";
+  const email=p.email||state.user.email||"—";
+  const membership=p.membership_status==="freshman"?"大一新生":"正式成员";
+  const avatar=(name||"?").trim().slice(0,1).toUpperCase();
+
+  q("#profileAvatar")&&(q("#profileAvatar").textContent=avatar);
+  q("#profileDisplayName")&&(q("#profileDisplayName").textContent=name);
+  q("#profileDisplayMajor")&&(q("#profileDisplayMajor").textContent=major);
+  q("#profileRole")&&(q("#profileRole").textContent=roleName(p.role));
+  q("#profileMembership")&&(q("#profileMembership").textContent=membership);
+  q("#profileDisplayPhone")&&(q("#profileDisplayPhone").textContent=p.phone||"未填写");
+  q("#profileDisplayQQ")&&(q("#profileDisplayQQ").textContent=p.qq||"未填写");
+  q("#profileEmail")&&(q("#profileEmail").textContent=email);
+
+  const createdAt=p.created_at?new Date(p.created_at):null;
+  if(createdAt&&!Number.isNaN(createdAt.getTime())){
+    const days=Math.max(1,Math.floor((Date.now()-createdAt.getTime())/86400000)+1);
+    q("#profileJoinDays")&&(q("#profileJoinDays").textContent=days+" 天");
+    q("#profileJoinDate")&&(q("#profileJoinDate").textContent="注册于 "+createdAt.toLocaleDateString("zh-CN"));
+  }else{
+    q("#profileJoinDays")&&(q("#profileJoinDays").textContent="—");
+    q("#profileJoinDate")&&(q("#profileJoinDate").textContent="注册时间暂无");
+  }
+
+  let projects=[],personal=[],teamRows=[],submissions=[];
+  try{
+    const [projectReq,personalReq,membershipReq,submissionReq]=await Promise.all([
+      fetchProjectDirectory(true),
+      supabase.from("progress_updates").select("*").eq("user_id",state.user.id).order("created_at",{ascending:false}),
+      supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot").eq("member_id",state.user.id),
+      supabase.from("submissions").select("id,file_name,status,created_at,exam_id,exams(title)").eq("user_id",state.user.id).order("created_at",{ascending:false})
+    ]);
+    projects=(projectReq||[]).filter(x=>(x.member_ids||[]).includes(state.user.id));
+    personal=personalReq.error?[]:(personalReq.data||[]);
+    submissions=submissionReq.error?[]:(submissionReq.data||[]);
+    const teamIds=[...new Set((membershipReq.error?[]:(membershipReq.data||[])).map(x=>x.team_progress_id).filter(Boolean))];
+    if(teamIds.length){
+      const tr=await supabase.from("team_progress_updates").select("*").in("id",teamIds).order("created_at",{ascending:false});
+      if(!tr.error)teamRows=tr.data||[];
+    }
+  }catch(err){
+    console.warn("个人主页数据加载失败",err);
+  }
+
+  q("#profileProjectCount")&&(q("#profileProjectCount").textContent=String(projects.length));
+  q("#profileProgressCount")&&(q("#profileProgressCount").textContent=String(personal.length+teamRows.length));
+  q("#profileSubmissionCount")&&(q("#profileSubmissionCount").textContent=String(submissions.length));
+
+  const projectList=q("#profileProjectList");
+  if(projectList){
+    projectList.innerHTML=projects.length?projects.map(x=>
+      '<article class="myProjectItem"><div class="myProjectTop"><div><h4>'+esc(x.name||"未命名项目")+'</h4><div class="myProjectMeta">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="team"?"团队项目":"个人项目")+' · '+esc(x.stage||"未填写阶段")+'</div></div><span class="myStatus">'+esc(projectStatusName(x.status))+'</span></div>'+
+      (x.description?'<p class="myProjectDesc">'+esc(x.description)+'</p>':'')+
+      '<div class="actions"><a class="btn ghost" href="./progress.html?project='+encodeURIComponent(x.id)+'">查看 / 更新进度</a></div></article>'
+    ).join(""):'<div class="emptyHome">暂时还没有参与项目。可以前往项目管理创建或加入项目。</div>';
+  }
+
+  const projectMap=new Map(projects.map(x=>[x.id,x]));
+  const latestPersonal=personal[0]||null;
+  const latestTeam=teamRows[0]||null;
+  const latestProgress=[latestPersonal&&{kind:"personal",row:latestPersonal},latestTeam&&{kind:"team",row:latestTeam}]
+    .filter(Boolean).sort((a,b)=>new Date(b.row.created_at)-new Date(a.row.created_at))[0]||null;
+  const lp=q("#profileLatestProgress"),lpt=q("#profileLatestProgressTime");
+  if(latestProgress){
+    const row=latestProgress.row;
+    if(lpt)lpt.textContent=fmt(row.created_at);
+    if(lp){
+      if(latestProgress.kind==="personal"){
+        const proj=row.project_id?projectMap.get(row.project_id):null;
+        lp.innerHTML='<article class="myLatestCard"><h4>'+(proj?esc(proj.name):'个人进度')+'</h4><div class="myProjectMeta">'+fmt(row.created_at)+'</div><div class="myLatestCols"><section><span>近期进度</span><p>'+esc(row.current_progress||"暂无内容")+'</p></section><section><span>下一时期目标</span><p>'+esc(row.next_goal||"暂无内容")+'</p></section></div></article>';
+      }else{
+        lp.innerHTML='<article class="myLatestCard"><h4>'+esc(row.competition_name||"队伍进度")+'</h4><div class="myProjectMeta">'+fmt(row.created_at)+'</div><div class="myLatestCols"><section><span>队伍进度</span><p>'+esc(row.team_progress||"暂无内容")+'</p></section><section><span>下一阶段目标</span><p>'+esc(row.next_goal||"暂无内容")+'</p></section></div></article>';
+      }
+    }
+  }else{
+    if(lpt)lpt.textContent="—";
+    if(lp)lp.innerHTML='<div class="emptyHome">暂时还没有进度记录。</div>';
+  }
+
+  const activity=[
+    ...personal.map(x=>({type:"个人进度",title:x.project_id&&projectMap.get(x.project_id)?projectMap.get(x.project_id).name:"更新了个人进度",detail:x.current_progress||"",created_at:x.created_at})),
+    ...teamRows.map(x=>({type:"队伍进度",title:x.competition_name||"队伍进度",detail:x.team_progress||"",created_at:x.created_at})),
+    ...submissions.map(x=>({type:"作业提交",title:x.exams?.title||"提交作业",detail:x.file_name||"",created_at:x.created_at}))
+  ].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,8);
+  const al=q("#profileActivityList");
+  if(al){
+    al.innerHTML=activity.length?activity.map(x=>
+      '<article class="myActivityItem"><div class="myActivityTop"><div><span class="myActivityType">'+esc(x.type)+'</span><b>'+esc(x.title)+'</b></div><time class="myActivityMeta">'+fmt(x.created_at)+'</time></div>'+(x.detail?'<p>'+esc(x.detail.length>100?x.detail.slice(0,100)+"…":x.detail)+'</p>':'')+'</article>'
+    ).join(""):'<div class="emptyHome">暂时还没有近期动态。</div>';
+  }
+
+  const edit=q("#profileEditDialog"),open=q("#openProfileEdit"),close=q("#closeProfileEdit");
+  const fillEdit=()=>{
+    q("#profileName").value=state.profile?.full_name||"";
+    q("#profileMajor").value=state.profile?.major||"";
+    q("#profilePhone").value=state.profile?.phone||"";
+    q("#profileQQ").value=state.profile?.qq||"";
+    q("#profileEditEmail").textContent=state.profile?.email||state.user.email||"—";
+  };
+  if(open)open.onclick=()=>{fillEdit();edit?.showModal()};
+  if(close)close.onclick=()=>edit?.close();
+
+  q("#profileForm").onsubmit=async e=>{
+    e.preventDefault();
+    const full_name=q("#profileName").value.trim(),major=q("#profileMajor").value.trim(),phone=q("#profilePhone").value.trim(),qq=q("#profileQQ").value.trim();
+    if(!full_name||!major)return toast("姓名和专业不能为空");
+    if(phone&&!/^[0-9+()\-\s]{5,30}$/.test(phone))return toast("请输入有效电话号码");
+    if(qq&&!/^\d{5,20}$/.test(qq))return toast("QQ 号应为 5-20 位数字");
+    const btn=e.submitter;
+    const oldText=btn?.textContent||"保存个人资料";
+    if(btn){btn.disabled=true;btn.textContent="正在保存…"}
+    try{
+      const r=await supabase.from("profiles").update({full_name,major,phone:phone||null,qq:qq||null}).eq("id",state.user.id).select("id,email,role,full_name,major,phone,qq,membership_status,created_at").single();
+      if(r.error)throw r.error;
+      state.profile=r.data;
+      try{sessionStorage.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()}))}catch(_e){}
+      updateAuthUI();
+      edit?.close();
+      toast("个人资料已保存，并同步到管理员后台");
+      await initProfile();
+    }catch(err){
+      toast("保存失败："+(err?.message||String(err)));
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent=oldText}
+    }
+  };
 }
 async function loadAdminDashboard(){
   if(!state.user||!isAdmin())return;
