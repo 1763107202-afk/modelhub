@@ -1,1 +1,23 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><title>往届作品 | 江苏科技大学机械创新实验室交流平台</title><link rel="stylesheet" href="./styles-v43.css?v=20260925-0028"><link rel="stylesheet" href="./theme-v3.css?v=20260924-1925"><script src="./theme-init-v2.js?v=20260924-1910"></script></head><body data-page="works"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">PAST WORKS</span><h1>往届作品展示</h1><p>历届优秀项目、竞赛作品与代表性设计成果独立展示。</p></section><section class="section wrap"><div id="worksGrid" class="worksGrid"></div><div id="worksEmpty" class="empty hidden">暂时还没有发布往届作品。</div></section></main><div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-1905"></script></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><title>往届作品 | 江苏科技大学机械创新实验室交流平台</title><link rel="stylesheet" href="./styles-v43.css?v=20260925-0028"><link rel="stylesheet" href="./theme-v3.css?v=20260924-1925"><script src="./theme-init-v2.js?v=20260924-1910"></script><style>.workEditGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.workEditGrid label,.workEditDialog label{display:grid;gap:6px}.workEditDialog textarea{width:100%;resize:vertical}@media(max-width:650px){.workEditGrid{grid-template-columns:1fr}}</style></head><body data-page="works"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">PAST WORKS</span><h1>往届作品展示</h1><p>历届优秀项目、竞赛作品与代表性设计成果独立展示。</p></section><section class="section wrap"><div id="worksGrid" class="worksGrid"></div><div id="worksEmpty" class="empty hidden">暂时还没有发布往届作品。</div></section></main><dialog id="workEditDialog" class="dialog">
+  <form id="workEditForm" class="dialogbox workEditDialog">
+    <span class="eyebrow">EDIT WORK</span>
+    <h2 style="margin:4px 0 12px">编辑往届作品</h2>
+    <input id="workEditId" type="hidden">
+    <input id="workEditOldPath" type="hidden">
+    <input id="workEditOldCover" type="hidden">
+    <div class="workEditGrid">
+      <label>作品名称<input id="workEditTitle" maxlength="160" required></label>
+      <label>届别 / 年份<input id="workEditYear" type="number" min="2000" max="2100" placeholder="例如：2026"></label>
+    </div>
+    <label>作者 / 团队成员<input id="workEditTeam" maxlength="300" placeholder="例如：张三、李四、王五"></label>
+    <label>作品简介<textarea id="workEditDesc" rows="4" maxlength="3000"></textarea></label>
+    <label>详情链接（可选）<input id="workEditUrl" type="url" placeholder="https://..."></label>
+    <label>更换封面（可选）<input id="workEditCover" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label>
+    <small class="profileHint">不选择新图片时会保留原封面；选择新图片后，保存成功会自动清理旧封面文件。</small>
+    <div class="actions">
+      <button id="workEditSave" class="btn pri" type="submit">保存修改</button>
+      <button id="workEditCancel" class="btn ghost" type="button">取消</button>
+    </div>
+  </form>
+</dialog>
+<div id="siteFooter"></div><script type="module" src="./app-v74.js?v=20260925-2010"></script></body></html>
