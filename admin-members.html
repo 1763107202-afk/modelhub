@@ -228,7 +228,7 @@ function render(){
     const arr=byUser.get(m.id)||[], latest=arr[0], parr=byProgress.get(m.id)||[], latestProgress=parr[0];
     const initial=(m.full_name||m.email||"?").trim().slice(0,1).toUpperCase();
     return '<tr>'+
-      '<td><div class="member"><div class="avatar">'+esc(initial)+'</div><div><b>'+esc(m.full_name||"未填写姓名")+'</b><div class="muted">'+esc(m.id.slice(0,8))+'…</div></div></div></td>'+
+      '<td><div class="member"><div class="avatar">'+esc(initial)+'</div><div><b>'+esc(m.full_name||"未填写姓名")+'</b>'+(m.progress_exempt?'<div class="muted" style="color:#ffd39b">教师 · 两周进度考核豁免</div>':'')+'<div class="muted">'+esc(m.id.slice(0,8))+'…</div></div></div></td>'+
       '<td>'+esc(m.major||"未填写")+'</td>'+
       '<td><b>'+arr.length+'</b></td>'+
       '<td><b>'+parr.length+'</b></td>'+
@@ -316,7 +316,7 @@ function openEdit(id){
 }
 async function loadAdminData(){
   const [p,s,pr,tp,tm,mr]=await Promise.all([
-    supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,created_at").order("created_at",{ascending:false}),
+    supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,progress_exempt,created_at").order("created_at",{ascending:false}),
     supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").order("created_at",{ascending:false}),
     supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
     supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
