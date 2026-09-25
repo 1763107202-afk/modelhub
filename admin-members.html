@@ -364,7 +364,7 @@ q("#editForm").onsubmit=async e=>{
   if(r.error){alert("保存失败："+r.error.message);return}
   q("#editDialog").close();await loadAdminData();
 };
-q("#exportBtn").onclick=()=>{
+q("#exportBtn").onclick=async()=>{
   const btn=q("#exportBtn"),oldText=btn.textContent;
   try{
     const list=Array.isArray(state.filtered)&&state.filtered.length?state.filtered:state.members;
@@ -381,8 +381,29 @@ q("#exportBtn").onclick=()=>{
     const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
     const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
     const filename="实验室成员信息_"+new Date().toISOString().slice(0,10)+".csv";
-    if(typeof navigator.msSaveOrOpenBlob==="function"){
+
+    if(typeof window.showSaveFilePicker==="function"){
+      try{
+        const handle=await window.showSaveFilePicker({
+          suggestedName:filename,
+          types:[{description:"CSV 表格文件",accept:{"text/csv":[".csv"]}}]
+        });
+        const writable=await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        btn.textContent="保存成功";
+        alert("成员名单已保存到你刚刚选择的位置。\n文件名："+filename);
+      }catch(saveError){
+        if(saveError?.name==="AbortError"){
+          btn.textContent="已取消";
+          return;
+        }
+        throw saveError;
+      }
+    }else if(typeof navigator.msSaveOrOpenBlob==="function"){
       navigator.msSaveOrOpenBlob(blob,filename);
+      btn.textContent="已开始下载";
+      alert("成员名单已交给浏览器下载。\n文件名："+filename+"\n如果没有弹出保存窗口，请按 Ctrl + J 查看下载记录。");
     }else{
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -393,13 +414,15 @@ q("#exportBtn").onclick=()=>{
       a.click();
       a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),3000);
+      btn.textContent="已开始下载";
+      alert("成员名单已开始下载。\n文件名："+filename+"\n通常保存在浏览器默认“下载”文件夹；可按 Ctrl + J 查看下载记录并定位文件。");
     }
-    btn.textContent="已导出";
-    setTimeout(()=>{btn.disabled=false;btn.textContent=oldText},1200);
   }catch(e){
     console.error("成员导出失败",e);
-    btn.disabled=false;btn.textContent=oldText;
+    btn.textContent="导出失败";
     alert("导出失败："+(e?.message||String(e)));
+  }finally{
+    setTimeout(()=>{btn.disabled=false;btn.textContent=oldText},1500);
   }
 };
 supabase.auth.onAuthStateChange(async(_event,session)=>{state.user=session?.user||null;if(!state.user)showLogin()});
