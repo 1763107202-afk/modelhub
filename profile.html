@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>个人主页 | 江苏科技大学机械创新实验室交流平台</title>
-  <link rel="stylesheet" href="./styles-v43.css?v=20260925-profilehome6">
+  <link rel="stylesheet" href="./styles-v43.css?v=20260925-profilehome7">
   <link rel="stylesheet" href="./theme-v3.css?v=20260924-1925">
   <style>
-    .myHome{display:grid;gap:18px}
-    .myHero{display:grid;grid-template-columns:auto minmax(220px,1fr) minmax(280px,.72fr) auto;gap:22px;align-items:center;padding:28px;border-radius:26px}
-    .myAvatar{width:96px;height:96px;border-radius:28px;display:grid;place-items:center;font-size:38px;font-weight:950;background:linear-gradient(135deg,#4d8cff,#7658ff);color:#fff;box-shadow:0 18px 42px rgba(69,101,220,.22)}
-    .myIdentity h2{margin:5px 0 4px;font-size:clamp(28px,5vw,42px)}
+    body[data-page="profile"] .pageHero{padding-top:22px;padding-bottom:14px}
+    body[data-page="profile"] .pageHero h1{margin-top:5px;margin-bottom:8px}
+    body[data-page="profile"] .pageHero p{margin-bottom:0;max-width:880px;line-height:1.6}
+    body[data-page="profile"] main>.section{padding-top:10px}
+    .myHome{display:grid;gap:14px}
+    .myHero{display:grid;grid-template-columns:auto minmax(220px,1fr) minmax(280px,.72fr) auto;gap:18px;align-items:center;padding:22px 24px;border-radius:24px}
+    .myAvatar{width:88px;height:88px;border-radius:25px;display:grid;place-items:center;font-size:35px;font-weight:950;background:linear-gradient(135deg,#4d8cff,#7658ff);color:#fff;box-shadow:0 16px 36px rgba(69,101,220,.20)}
+    .myIdentity h2{margin:3px 0 3px;font-size:clamp(28px,5vw,40px)}
     .myIdentity p{margin:0;color:#7188a4}
-    .myBadges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .myBadges{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
     .myHeroInfo{padding:14px 16px;border:1px solid rgba(110,142,176,.22);border-radius:16px;background:rgba(88,130,177,.045)}
     .myHeroInfoTitle{font-size:10px;font-weight:900;letter-spacing:.12em;color:#4d83bd;margin-bottom:6px}
     .myHeroInfoRow{display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;padding:5px 0;border-top:1px solid rgba(110,142,176,.12);font-size:12px}
@@ -21,15 +25,15 @@
     .myHeroInfoRow span{color:#7188a4}
     .myHeroInfoRow b{overflow-wrap:anywhere}
     .myHeroActions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-    .myStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-    .myStat{padding:20px;border-radius:20px;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+    .myStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .myStat{padding:16px 18px;border-radius:18px;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
     .myStatLink{display:block;color:inherit;text-decoration:none;cursor:pointer}
     .myStatLink:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(52,86,130,.10);border-color:rgba(83,127,191,.30)}
     .myStatLink:active{transform:translateY(0)}
     .myStatTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
     .myStat span{display:block;color:#7188a4;font-size:12px}
     .myStatArrow{font-size:18px;color:#6d8db3;line-height:1}
-    .myStat b{display:block;margin-top:7px;font-size:34px;line-height:1.05;letter-spacing:-.02em}
+    .myStat b{display:block;margin-top:5px;font-size:32px;line-height:1.05;letter-spacing:-.02em}
     .myStat small{display:block;margin-top:8px;color:#8ca0b8;font-size:11px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .myGrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(310px,.75fr);gap:18px;align-items:start}
     .myPanel{padding:22px;border-radius:22px}
@@ -65,7 +69,7 @@
     .emptyHome{padding:24px;border:1px dashed rgba(110,142,176,.3);border-radius:15px;text-align:center;color:#7188a4}
     @media(max-width:1050px){.myHero{grid-template-columns:auto minmax(0,1fr) minmax(260px,.85fr)}.myHeroActions{grid-column:1/-1;justify-content:flex-start}}
     @media(max-width:900px){.myHero{grid-template-columns:auto 1fr}.myHeroInfo{grid-column:1/-1}.myHeroActions{grid-column:1/-1;justify-content:flex-start}.myStats{grid-template-columns:1fr 1fr}.myGrid{grid-template-columns:1fr}}
-    @media(max-width:600px){.myHero{grid-template-columns:1fr;text-align:center}.myAvatar{margin:auto}.myBadges,.myHeroActions{justify-content:center}.myHeroInfo{text-align:left;width:100%}.myStats{grid-template-columns:1fr 1fr}.profileEditGrid{grid-template-columns:1fr}.profileEditFull{grid-column:auto}.myLatestCols{grid-template-columns:1fr}.myProjectTop,.myActivityTop{display:block}.myStatus{margin-top:8px}}
+    @media(max-width:600px){body[data-page="profile"] .pageHero{padding-top:16px;padding-bottom:10px}body[data-page="profile"] main>.section{padding-top:6px}.myHome{gap:10px}.myHero{grid-template-columns:1fr;text-align:center;padding:18px 16px;gap:14px}.myAvatar{width:80px;height:80px;margin:auto;font-size:32px}.myBadges,.myHeroActions{justify-content:center}.myHeroInfo{text-align:left;width:100%}.myStats{grid-template-columns:1fr 1fr;gap:10px}.myStat{padding:14px 15px}.profileEditGrid{grid-template-columns:1fr}.profileEditFull{grid-column:auto}.myLatestCols{grid-template-columns:1fr}.myProjectTop,.myActivityTop{display:block}.myStatus{margin-top:8px}}
   </style>
   <script src="./theme-init-v2.js?v=20260924-1910"></script>
 </head>
@@ -176,6 +180,6 @@
   </dialog>
 
   <div id="siteFooter"></div>
-  <script type="module" src="./app-v74.js?v=20260925-profilehome6"></script>
+  <script type="module" src="./app-v74.js?v=20260925-profilehome7"></script>
 </body>
 </html>
