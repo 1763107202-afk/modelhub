@@ -200,14 +200,22 @@ function render(){
     if(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id)count+=1; // 踢出成员
     return count;
   };
+  const actionSignature=m=>{
+    const parts=[
+      m.membership_status==="freshman"?"freshman":"formal",
+      m.role==="super_admin"?"super":m.role==="admin"?"admin":"student",
+      m.id===state.user?.id?"self":"other"
+    ];
+    return parts.join("|");
+  };
   state.filtered=state.members.filter(m=>{
     const hay=[m.full_name,m.major].join(" ").toLowerCase();
     return (!term||hay.includes(term))&&(!mf||m.major===mf)&&(!membership||(membership==="freshman"?m.membership_status==="freshman":m.membership_status!=="freshman"));
   }).sort((a,b)=>{
-    const countDiff=actionCount(b)-actionCount(a);
+    const countDiff=actionCount(a)-actionCount(b);
     if(countDiff)return countDiff;
-    const typeDiff=(a.membership_status==="freshman"?0:1)-(b.membership_status==="freshman"?0:1);
-    if(typeDiff)return typeDiff;
+    const signatureDiff=actionSignature(a).localeCompare(actionSignature(b),"zh-CN");
+    if(signatureDiff)return signatureDiff;
     return (a.full_name||a.email||"").localeCompare(b.full_name||b.email||"","zh-CN");
   });
   q("#memberBody").innerHTML=state.filtered.map(m=>{
