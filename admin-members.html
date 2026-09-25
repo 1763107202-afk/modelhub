@@ -192,9 +192,23 @@ function populateMajorFilter(){
 }
 function render(){
   const byUser=aggregate(), byProgress=aggregateProgress(), term=q("#searchInput").value.trim().toLowerCase(), mf=q("#majorFilter").value, membership=q("#membershipFilter").value;
+  const actionCount=m=>{
+    let count=3; // 主页 + 作业/进度 + 编辑资料
+    if(m.membership_status==="freshman")count+=1; // 转为正式成员
+    if(state.profile?.role==="super_admin"&&m.role!=="super_admin")count+=1; // 设为/取消管理
+    if(state.profile?.role==="super_admin"&&m.id!==state.user?.id)count+=1; // 重置密码
+    if(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id)count+=1; // 踢出成员
+    return count;
+  };
   state.filtered=state.members.filter(m=>{
     const hay=[m.full_name,m.major].join(" ").toLowerCase();
     return (!term||hay.includes(term))&&(!mf||m.major===mf)&&(!membership||(membership==="freshman"?m.membership_status==="freshman":m.membership_status!=="freshman"));
+  }).sort((a,b)=>{
+    const countDiff=actionCount(b)-actionCount(a);
+    if(countDiff)return countDiff;
+    const typeDiff=(a.membership_status==="freshman"?0:1)-(b.membership_status==="freshman"?0:1);
+    if(typeDiff)return typeDiff;
+    return (a.full_name||a.email||"").localeCompare(b.full_name||b.email||"","zh-CN");
   });
   q("#memberBody").innerHTML=state.filtered.map(m=>{
     const arr=byUser.get(m.id)||[], latest=arr[0], parr=byProgress.get(m.id)||[], latestProgress=parr[0];
