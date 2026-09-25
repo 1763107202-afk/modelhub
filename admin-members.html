@@ -50,7 +50,7 @@
     <div class="stat"><span>正式成员</span><b id="formalCount">0</b></div>
     <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
     <div class="stat"><span>累计作业提交</span><b id="submissionCount">—</b><small>全部任务累计提交记录</small></div>
-    <div class="stat"><span>空间占用率</span><b id="storagePercent">—</b><small id="storageHint">正在统计 1 GB 空间…</small><div class="storageTrack"><i id="storageBar"></i></div></div>
+    <div class="stat"><span>文件存储占用率</span><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间…</small><div class="storageTrack"><i id="storageBar"></i></div></div>
   </section>
 
   <section class="toolbar glass">
@@ -116,7 +116,7 @@ const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publi
 const q=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
-const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MB";return (v/1024**3).toFixed(2)+" GB"};
+const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KiB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MiB";return (v/1024**3).toFixed(2)+" GiB"};
 function renderAdminMetrics(row){
   if(!row)return;
   state.metrics=row;
@@ -127,7 +127,7 @@ function renderAdminMetrics(row){
   const used=Number(row.storage_used_bytes||0),limit=Number(row.storage_limit_bytes||1073741824),remaining=Number(row.storage_remaining_bytes||Math.max(limit-used,0));
   const pct=Math.max(0,Math.min(100,Number(row.storage_used_percent||0)));
   q("#storagePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
-  q("#storageHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 1 GB";
+  q("#storageHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 1 GiB";
   q("#storageBar").style.width=pct+"%";
 }
 async function loadAdminMetrics(){
