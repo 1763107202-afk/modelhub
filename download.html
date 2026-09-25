@@ -23,6 +23,11 @@
     .iosStep{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:rgba(51,116,255,.055)}
     .iosStep b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(51,116,255,.12);color:#2767b8}
     .iosStep span{line-height:1.65;color:#5f7896}
+    .officialCard{margin-top:18px;grid-template-columns:92px 1fr}
+    .biliLogo{width:84px;height:84px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(145deg,#32b5e8,#fb7299);box-shadow:0 12px 30px rgba(251,114,153,.18)}
+    .biliLogo svg{width:52px;height:52px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .officialBadge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(251,114,153,.10);color:#d85c82;font-size:12px;font-weight:700;margin-bottom:10px}
+    .officialCard p{margin:6px 0 14px;line-height:1.75;color:#617b99}
     @media(max-width:720px){
       .downloadCard{grid-template-columns:1fr;text-align:center;padding:24px}
       .downloadLogo{margin:0 auto}
@@ -98,6 +103,23 @@
             <a class="btn pri" href="./index.html">打开平台主页</a>
           </div>
           <div class="downloadNote">以后直接点击桌面图标即可进入平台。若分享菜单里暂时没有“添加到主屏幕”，可向下滚动菜单查找该选项。</div>
+        </div>
+      </article>
+      <article class="glass downloadCard officialCard">
+        <div class="biliLogo" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M21 13l7 8M43 13l-7 8"></path>
+            <rect x="10" y="20" width="44" height="32" rx="8"></rect>
+            <path d="M22 34v5M42 34v5M25 45c4 2 10 2 14 0"></path>
+          </svg>
+        </div>
+        <div>
+          <span class="officialBadge">BILIBILI 官方账号</span>
+          <h2 class="downloadTitle">江科大港区机创协会</h2>
+          <p>关注实验室官方 Bilibili 账号，可查看实验室动态、作品展示及相关视频内容。</p>
+          <div class="downloadActions">
+            <a class="btn pri" href="https://b23.tv/Ytwdcco" target="_blank" rel="noopener noreferrer">进入 Bilibili 官方主页</a>
+          </div>
         </div>
       </article>
       <div class="downloadFeatures">
