@@ -565,10 +565,102 @@ async function initHome(){
   const mine=q("#homeMine");if(mine)mine.textContent=state.user?(mineReq.error?"—":String(mineReq.count||0)):"—";
 }
 async function initWorks(){
-  const r=await supabase.from("past_works").select("*").order("year",{ascending:false}).order("created_at",{ascending:false});const data=r.data||[];
-  q("#worksGrid").innerHTML=data.map(x=>'<article class="workCard"><div class="workCover">'+(x.cover_url?'<img src="'+esc(x.cover_url)+'" alt="'+esc(x.title)+'">':'<div class="workFallback">⚙</div>')+'</div><div class="workBody"><div class="workTop"><h3>'+esc(x.title)+'</h3>'+(x.year?'<span class="workYear">'+esc(x.year)+' 届</span>':'')+'</div><div class="workMeta">'+esc(x.team_name||"机械创新实验室")+'</div><p>'+esc(x.description||"暂无作品简介")+'</p><div class="actions">'+(x.detail_url?'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.detail_url)+'">查看详情</a>':'')+(isAdmin()?'<button class="btn danger delWork" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除作品</button>':'')+'</div></div></article>').join("");
+  const r=await supabase.from("past_works").select("*").order("year",{ascending:false}).order("created_at",{ascending:false});
+  if(r.error){
+    q("#worksGrid").innerHTML='<div class="empty">往届作品加载失败：'+esc(r.error.message)+'</div>';
+    q("#worksEmpty").classList.add("hidden");
+    return;
+  }
+  const data=r.data||[];
+  q("#worksGrid").innerHTML=data.map(x=>'<article class="workCard"><div class="workCover">'+(x.cover_url?'<img src="'+esc(x.cover_url)+'" alt="'+esc(x.title)+'">':'<div class="workFallback">⚙</div>')+'</div><div class="workBody"><div class="workTop"><h3>'+esc(x.title)+'</h3>'+(x.year?'<span class="workYear">'+esc(x.year)+' 届</span>':'')+'</div><div class="workMeta">'+esc(x.team_name||"机械创新实验室")+'</div><p>'+esc(x.description||"暂无作品简介")+'</p><div class="actions">'+(x.detail_url?'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.detail_url)+'">查看详情</a>':'')+(isAdmin()?'<button class="btn ghost editWork" data-id="'+esc(x.id)+'">编辑作品</button><button class="btn danger delWork" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除作品</button>':'')+'</div></div></article>').join("");
   q("#worksEmpty").classList.toggle("hidden",data.length>0);
-  document.querySelectorAll(".delWork").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这个作品吗？"))return;if(b.dataset.path){const rm=await supabase.storage.from("works").remove([b.dataset.path]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("past_works").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("作品已删除");await initWorks()});
+
+  document.querySelectorAll(".editWork").forEach(b=>b.onclick=()=>{
+    const x=data.find(v=>v.id===b.dataset.id);
+    if(!x)return;
+    q("#workEditId").value=x.id;
+    q("#workEditOldPath").value=x.storage_path||"";
+    q("#workEditOldCover").value=x.cover_url||"";
+    q("#workEditTitle").value=x.title||"";
+    q("#workEditYear").value=x.year||"";
+    q("#workEditTeam").value=x.team_name||"";
+    q("#workEditDesc").value=x.description||"";
+    q("#workEditUrl").value=x.detail_url||"";
+    q("#workEditCover").value="";
+    q("#workEditDialog").showModal();
+  });
+
+  document.querySelectorAll(".delWork").forEach(b=>b.onclick=async()=>{
+    if(!confirm("确定删除这个作品吗？"))return;
+    if(b.dataset.path){
+      const rm=await supabase.storage.from("works").remove([b.dataset.path]);
+      if(rm.error)return toast(rm.error.message);
+    }
+    const d=await supabase.from("past_works").delete().eq("id",b.dataset.id);
+    if(d.error)return toast(d.error.message);
+    toast("作品已删除");
+    await initWorks();
+  });
+
+  const cancel=q("#workEditCancel");
+  if(cancel)cancel.onclick=()=>q("#workEditDialog")?.close();
+
+  const form=q("#workEditForm");
+  if(form)form.onsubmit=async e=>{
+    e.preventDefault();
+    const id=q("#workEditId").value;
+    const title=q("#workEditTitle").value.trim();
+    const yearRaw=q("#workEditYear").value;
+    const team=q("#workEditTeam").value.trim();
+    const desc=q("#workEditDesc").value.trim();
+    const detail=q("#workEditUrl").value.trim();
+    const file=q("#workEditCover")?.files?.[0]||null;
+    const oldPath=q("#workEditOldPath").value||null;
+    const oldCover=q("#workEditOldCover").value||null;
+    if(!title)return toast("请填写作品名称");
+    if(detail){
+      try{new URL(detail)}catch(_e){return toast("详情链接格式不正确")}
+    }
+
+    let storage_path=oldPath,cover_url=oldCover;
+    const btn=e.submitter||q("#workEditSave");
+    const oldText=btn?.textContent||"保存修改";
+    let newPath=null;
+    try{
+      if(file){
+        newPath=storageObjectPath("covers",file.name);
+        if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}
+        await uploadStorageFile("works",newPath,file,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});
+        storage_path=newPath;
+        cover_url=supabase.storage.from("works").getPublicUrl(newPath).data.publicUrl;
+      }
+      if(btn){btn.disabled=true;btn.textContent="正在保存…"}
+      const u=await supabase.from("past_works").update({
+        title,
+        year:yearRaw?Number(yearRaw):null,
+        team_name:team||null,
+        description:desc||null,
+        detail_url:detail||null,
+        storage_path,
+        cover_url
+      }).eq("id",id);
+      if(u.error){
+        if(newPath)await supabase.storage.from("works").remove([newPath]);
+        throw u.error;
+      }
+      if(newPath&&oldPath&&oldPath!==newPath){
+        const rm=await supabase.storage.from("works").remove([oldPath]);
+        if(rm.error)console.warn("旧作品封面清理失败",rm.error);
+      }
+      q("#workEditDialog").close();
+      toast("作品信息已更新");
+      await initWorks();
+    }catch(err){
+      toast("作品修改失败："+(err?.message||String(err)));
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent=oldText}
+    }
+  };
 }
 async function initExams(){
   const r=await supabase.from("exams").select("*").order("created_at",{ascending:false});const data=r.data||[];
