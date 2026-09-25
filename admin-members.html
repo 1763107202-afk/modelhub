@@ -381,20 +381,55 @@ q("#editForm").onsubmit=async e=>{
 q("#exportBtn").onclick=async()=>{
   const btn=q("#exportBtn"),oldText=btn.textContent;
   try{
-    const list=Array.isArray(state.filtered)&&state.filtered.length?state.filtered:state.members;
-    if(!list.length){alert("当前没有可导出的成员数据");return}
+    const list=Array.isArray(state.filtered)?state.filtered:[];
+    if(!list.length){alert("当前筛选条件下没有可导出的成员数据");return}
     btn.disabled=true;btn.textContent="正在导出…";
+
     const byUser=aggregate();
     const byProgress=aggregateProgress();
-    const rows=[["姓名","专业","电话","QQ","邮箱","作业次数","进度次数","最近动态类型","最近动态时间"]];
+    const periodDays=Number(state.metrics?.period_days||14);
+    const cutoff=Date.now()-periodDays*24*60*60*1000;
+    let overdueCount=0;
+
+    const rows=[["姓名","专业","成员分类","电话","QQ","邮箱","作业次数","进度次数","进度状态","最近动态类型","最近动态时间"]];
     for(const m of list){
       const arr=byUser.get(m.id)||[];
-      const parr=byProgress.get(m.id)||[],latest=arr[0],latestProgress=parr[0],isFreshman=m.membership_status==="freshman";
-      rows.push([m.full_name||"",m.major||"",m.phone||"",m.qq||"",m.email||"",String(arr.length),String(parr.length),isFreshman?"新生作业":"正式成员进度",isFreshman?(latest?fmt(latest.created_at):""):(latestProgress?fmt(latestProgress.created_at):"")]);
+      const parr=byProgress.get(m.id)||[];
+      const latest=arr[0],latestProgress=parr[0],isFreshman=m.membership_status==="freshman";
+      const overdue=!isFreshman&&(!latestProgress||new Date(latestProgress.created_at).getTime()<cutoff);
+      if(overdue)overdueCount+=1;
+      const progressStatus=isFreshman?"新生（不纳入进度提醒）":overdue?"【两周未更新】":"周期内已更新";
+      rows.push([
+        m.full_name||"",
+        m.major||"",
+        isFreshman?"大一新生":"正式成员",
+        m.phone||"",
+        m.qq||"",
+        m.email||"",
+        String(arr.length),
+        String(parr.length),
+        progressStatus,
+        isFreshman?"新生作业":"正式成员进度",
+        isFreshman?(latest?fmt(latest.created_at):""):(latestProgress?fmt(latestProgress.created_at):"")
+      ]);
     }
+
     const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
     const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
-    const filename="实验室成员信息_"+new Date().toISOString().slice(0,10)+".csv";
+
+    const membership=q("#membershipFilter").value;
+    const major=q("#majorFilter").value.trim();
+    const term=q("#searchInput").value.trim();
+    const membershipLabel=membership==="freshman"?"大一新生":membership==="formal"?"正式成员":"全部成员";
+    const safe=s=>String(s).replace(/[\\/:*?"<>|]/g,"-").replace(/\s+/g," ").trim();
+    const now=new Date();
+    const localDate=[now.getFullYear(),String(now.getMonth()+1).padStart(2,"0"),String(now.getDate()).padStart(2,"0")].join("-");
+    const nameParts=["实验室成员名单",membershipLabel];
+    if(major)nameParts.push(major);
+    if(term)nameParts.push("搜索-"+term);
+    const filename=nameParts.map(safe).filter(Boolean).join("_")+"_"+localDate+".csv";
+
+    const summary="\n导出人数："+list.length+" 人"+(overdueCount?"\n其中两周未更新："+overdueCount+" 人（已在“进度状态”列标记）":"\n两周未更新：0 人");
 
     if(typeof window.showSaveFilePicker==="function"){
       try{
@@ -406,7 +441,7 @@ q("#exportBtn").onclick=async()=>{
         await writable.write(blob);
         await writable.close();
         btn.textContent="保存成功";
-        alert("成员名单已保存到你刚刚选择的位置。\n文件名："+filename);
+        alert("成员名单已保存到你刚刚选择的位置。\n文件名："+filename+summary);
       }catch(saveError){
         if(saveError?.name==="AbortError"){
           btn.textContent="已取消";
@@ -417,7 +452,7 @@ q("#exportBtn").onclick=async()=>{
     }else if(typeof navigator.msSaveOrOpenBlob==="function"){
       navigator.msSaveOrOpenBlob(blob,filename);
       btn.textContent="已开始下载";
-      alert("成员名单已交给浏览器下载。\n文件名："+filename+"\n如果没有弹出保存窗口，请按 Ctrl + J 查看下载记录。");
+      alert("成员名单已交给浏览器下载。\n文件名："+filename+summary+"\n如果没有弹出保存窗口，请按 Ctrl + J 查看下载记录。");
     }else{
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -429,7 +464,7 @@ q("#exportBtn").onclick=async()=>{
       a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),3000);
       btn.textContent="已开始下载";
-      alert("成员名单已开始下载。\n文件名："+filename+"\n通常保存在浏览器默认“下载”文件夹；可按 Ctrl + J 查看下载记录并定位文件。");
+      alert("成员名单已开始下载。\n文件名："+filename+summary+"\n通常保存在浏览器默认“下载”文件夹；可按 Ctrl + J 查看下载记录并定位文件。");
     }
   }catch(e){
     console.error("成员导出失败",e);
