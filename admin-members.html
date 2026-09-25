@@ -228,7 +228,7 @@ function render(){
     const arr=byUser.get(m.id)||[], latest=arr[0], parr=byProgress.get(m.id)||[], latestProgress=parr[0];
     const initial=(m.full_name||m.email||"?").trim().slice(0,1).toUpperCase();
     return '<tr>'+
-      '<td><div class="member"><div class="avatar">'+esc(initial)+'</div><div><b>'+esc(m.full_name||"未填写姓名")+'</b>'+(m.progress_exempt?'<div class="muted" style="color:#ffd39b">教师 · 两周进度考核豁免</div>':'')+'<div class="muted">'+esc(m.id.slice(0,8))+'…</div></div></div></td>'+
+      '<td><div class="member"><div class="avatar">'+esc(initial)+'</div><div><b>'+esc(m.full_name||"未填写姓名")+'</b>'+(m.progress_exempt?'<div class="muted" style="color:#ffd39b">指导老师</div>':'')+'<div class="muted">'+esc(m.id.slice(0,8))+'…</div></div></div></td>'+
       '<td>'+esc(m.major||"未填写")+'</td>'+
       '<td><b>'+arr.length+'</b></td>'+
       '<td><b>'+parr.length+'</b></td>'+
