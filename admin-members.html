@@ -190,6 +190,12 @@ function populateMajorFilter(){
   const majors=[...new Set(state.members.map(x=>(x.major||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"zh-CN"));
   q("#majorFilter").innerHTML='<option value="">全部专业</option>'+majors.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join("");
 }
+function initialProgressReference(m){
+  const created=m?.created_at?new Date(m.created_at):null;
+  const formal=m?.formal_since?new Date(m.formal_since):null;
+  const promotedLater=created&&formal&&(formal-created)>60000;
+  return promotedLater?formal:new Date("2026-09-21T00:00:00+08:00");
+}
 function render(){
   const byUser=aggregate(), byProgress=aggregateProgress(), term=q("#searchInput").value.trim().toLowerCase(), mf=q("#majorFilter").value, membership=q("#membershipFilter").value;
   const actionCount=m=>{
@@ -234,7 +240,7 @@ function render(){
       '<td><b>'+parr.length+'</b></td>'+
       '<td>'+(m.membership_status==="freshman"
         ? (latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">新生作业 · '+fmt(latest.created_at)+'</div>':'<span class="muted">暂无作业</span>')
-        : (latestProgress?'<b>'+esc(latestProgress._kind==="team"?(latestProgress.competition_name||"队伍进度已更新"):(latestProgress.current_progress||"个人进度已更新"))+'</b><div class="muted">'+(latestProgress._kind==="team"?"队伍进度 · ":"个人进度 · ")+fmt(latestProgress.created_at)+'</div>':'<b>初始进度周期</b><div class="muted">2026/9/21 00:00</div>'))+'</td>'+
+        : (latestProgress?'<b>'+esc(latestProgress._kind==="team"?(latestProgress.competition_name||"队伍进度已更新"):(latestProgress.current_progress||"个人进度已更新"))+'</b><div class="muted">'+(latestProgress._kind==="team"?"队伍进度 · ":"个人进度 · ")+fmt(latestProgress.created_at)+'</div>':'<b>初始进度周期</b><div class="muted">'+fmt(initialProgressReference(m))+'</div>'))+'</td>'+
       '<td><div class="actions"><a class="btn ghost" href="./member.html?id='+encodeURIComponent(m.id)+'">主页</a>'+(m.membership_status==="freshman"?'<a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a>':'<a class="btn pri" href="./member.html?id='+encodeURIComponent(m.id)+'#personalProgressSection">进度</a>')+'<button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为管理")+'</button>':"")+(state.profile?.role==="super_admin"&&m.id!==state.user?.id?'<button class="btn sec resetPwdBtn" data-id="'+esc(m.id)+'">重置密码</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")+'</div></td>'+
     '</tr>';
   }).join("");
@@ -316,7 +322,7 @@ function openEdit(id){
 }
 async function loadAdminData(){
   const [p,s,pr,tp,tm,mr]=await Promise.all([
-    supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,progress_exempt,created_at").order("created_at",{ascending:false}),
+    supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,progress_exempt,created_at,formal_since").order("created_at",{ascending:false}),
     supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").order("created_at",{ascending:false}),
     supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
     supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
@@ -410,7 +416,7 @@ q("#exportBtn").onclick=async()=>{
       const arr=byUser.get(m.id)||[];
       const parr=byProgress.get(m.id)||[];
       const latest=arr[0],latestProgress=parr[0],isFreshman=m.membership_status==="freshman";
-      const initialProgressAt=new Date("2026-09-21T00:00:00+08:00");
+      const initialProgressAt=initialProgressReference(m);
       const progressReference=latestProgress?new Date(latestProgress.created_at):initialProgressAt;
       const overdue=!isFreshman&&progressReference.getTime()<cutoff;
       if(overdue)overdueCount+=1;
