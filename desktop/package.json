@@ -5,7 +5,7 @@
   "description": "江苏科技大学机械创新实验室交流平台 Windows 桌面客户端",
   "scripts": {
     "tauri": "tauri",
-    "icons": "tauri icon ../lab-logo.svg",
+    "icons": "tauri icon ../assets/lab-logo-transparent.svg",
     "dev": "tauri dev",
     "build": "tauri build",
     "build:windows": "tauri build --bundles nsis"
