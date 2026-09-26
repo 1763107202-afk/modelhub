@@ -2565,6 +2565,104 @@ async function initProfile(){
     }
   };
 }
+const STORAGE_HEALTH_PLAN_BYTES=1024*1024*1024;
+let __storageHealthRows=[];
+function storageHealthPathDetails(paths=[]){
+  const rows=Array.isArray(paths)?paths:[];
+  if(!rows.length)return "—";
+  const visible=rows.slice(0,20);
+  return '<div class="storagePathList"><details><summary>'+rows.length+' 个路径</summary>'+visible.map(x=>'<div>'+esc(x)+'</div>').join("")+(rows.length>visible.length?'<div>…其余 '+(rows.length-visible.length)+' 个</div>':'')+'</details></div>';
+}
+function renderStorageHealth(rows=[]){
+  __storageHealthRows=rows;
+  const totals=rows.reduce((a,x)=>{
+    a.objects+=Number(x.object_count||0);
+    a.bytes+=Number(x.total_bytes||0);
+    a.orphans+=Number(x.orphan_count||0);
+    a.orphanBytes+=Number(x.orphan_bytes||0);
+    a.missing+=Number(x.missing_reference_count||0);
+    return a;
+  },{objects:0,bytes:0,orphans:0,orphanBytes:0,missing:0});
+  const used=q("#storageUsed"),objects=q("#storageObjectCount"),orphans=q("#storageOrphanCount"),orphanBytes=q("#storageOrphanBytes"),missing=q("#storageMissingCount"),bar=q("#storageUsageBar"),body=q("#storageHealthBody"),clean=q("#storageHealthClean"),updated=q("#storageHealthUpdated"),status=q("#storageHealthStatus");
+  if(used)used.textContent=bytesText(totals.bytes);
+  if(objects)objects.textContent=String(totals.objects);
+  if(orphans)orphans.textContent=String(totals.orphans);
+  if(orphanBytes)orphanBytes.textContent="可释放 "+bytesText(totals.orphanBytes);
+  if(missing)missing.textContent=String(totals.missing);
+  if(bar)bar.style.width=Math.min(100,Math.max(0,totals.bytes/STORAGE_HEALTH_PLAN_BYTES*100)).toFixed(1)+"%";
+  if(updated)updated.textContent="扫描于 "+new Date().toLocaleString("zh-CN",{hour12:false});
+  if(clean)clean.disabled=totals.orphans===0;
+  if(status){
+    if(totals.orphans||totals.missing)status.textContent="发现 "+totals.orphans+" 个孤立文件、"+totals.missing+" 个失效引用。";
+    else status.textContent="Storage 与数据库引用目前一致。";
+  }
+  if(body){
+    body.innerHTML=rows.map(x=>{
+      const orphanN=Number(x.orphan_count||0),missingN=Number(x.missing_reference_count||0);
+      const stateClass=missingN?"bad":orphanN?"warn":"ok";
+      const stateText=missingN?"需检查":orphanN?"可清理":"正常";
+      return '<tr><td><b>'+esc(x.bucket_name)+'</b></td><td>'+esc(x.object_count||0)+' 个<br><small>'+bytesText(Number(x.total_bytes||0))+'</small></td><td>'+esc(x.referenced_object_count||0)+'</td><td>'+esc(orphanN)+'<br><small>'+bytesText(Number(x.orphan_bytes||0))+'</small>'+storageHealthPathDetails(x.orphan_paths)+'</td><td>'+esc(missingN)+storageHealthPathDetails(x.missing_reference_paths)+'</td><td><span class="storageHealthStatus '+stateClass+'">'+stateText+'</span></td></tr>';
+    }).join("")||'<tr><td colspan="6">没有可显示的数据。</td></tr>';
+  }
+}
+async function loadStorageHealth(){
+  if(page!=="admin"||!state.user||!isAdmin())return;
+  const scan=q("#storageHealthScan"),clean=q("#storageHealthClean"),status=q("#storageHealthStatus");
+  const old=scan?.textContent||"重新扫描";
+  if(scan){scan.disabled=true;scan.textContent="扫描中…"}
+  if(clean)clean.disabled=true;
+  if(status)status.textContent="正在核对 Storage 对象与数据库引用…";
+  try{
+    const r=await supabase.rpc("get_storage_health");
+    if(r.error)throw r.error;
+    renderStorageHealth(r.data||[]);
+  }catch(err){
+    console.error("存储健康扫描失败",err);
+    if(status)showModuleRetry(status,"存储健康扫描失败："+(err?.message||String(err)),"storage-health",()=>loadStorageHealth());
+    const body=q("#storageHealthBody");if(body)body.innerHTML='<tr><td colspan="6">扫描失败。</td></tr>';
+  }finally{
+    if(scan){scan.disabled=false;scan.textContent=old}
+  }
+}
+async function cleanStorageOrphans(){
+  if(page!=="admin"||!state.user||!isAdmin())return;
+  const clean=q("#storageHealthClean"),scan=q("#storageHealthScan"),status=q("#storageHealthStatus");
+  if(clean)clean.disabled=true;
+  if(scan)scan.disabled=true;
+  try{
+    if(status)status.textContent="正在重新核对孤立文件，防止删除刚被引用的对象…";
+    const fresh=await supabase.rpc("get_storage_health");
+    if(fresh.error)throw fresh.error;
+    const rows=fresh.data||[];
+    const totalCount=rows.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const totalBytes=rows.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    if(!totalCount){
+      toast("当前没有孤立文件需要清理");
+      renderStorageHealth(rows);
+      return;
+    }
+    if(!confirm("确认安全清理 "+totalCount+" 个孤立文件吗？\n\n预计释放 "+bytesText(totalBytes)+"。\n只会删除当前扫描确认没有数据库引用的文件。"))return;
+    if(status)status.textContent="正在清理孤立文件…";
+    let removed=0,failed=0;
+    for(const row of rows){
+      const paths=Array.isArray(row.orphan_paths)?row.orphan_paths:[];
+      if(!paths.length)continue;
+      const rr=await removeStorageObjectsSafe(row.bucket_name,paths,{queueOnFail:true});
+      if(rr?.error)failed+=paths.length;
+      else removed+=paths.length;
+    }
+    toast(failed?"已清理 "+removed+" 个文件，部分失败项已进入待清理队列":"已安全清理 "+removed+" 个孤立文件");
+    await loadStorageHealth();
+  }catch(err){
+    console.error("孤立文件清理失败",err);
+    toast("清理失败："+(err?.message||String(err)));
+    if(status)status.textContent="清理失败，请重新扫描后再试。";
+  }finally{
+    if(scan)scan.disabled=false;
+    if(clean)clean.disabled=false;
+  }
+}
+
 async function loadAdminDashboard(){
   if(!state.user||!isAdmin())return;
   const r=await supabase.rpc("get_admin_dashboard_stats");
@@ -2592,6 +2690,9 @@ async function initAdmin(){
   if(!state.user||!isAdmin()){q("#adminGate").innerHTML='<div class="notice">当前账号没有管理权限。</div>';q("#adminContent").classList.add("hidden");return}
   q("#adminContent").classList.remove("hidden");
   loadAdminDashboard();
+  loadStorageHealth();
+  const storageScan=q("#storageHealthScan");if(storageScan)storageScan.onclick=()=>loadStorageHealth();
+  const storageClean=q("#storageHealthClean");if(storageClean)storageClean.onclick=()=>cleanStorageOrphans();
   q("#announcementForm").onsubmit=async e=>{
     e.preventDefault();
     const title=q("#announcementTitle").value.trim(),content=q("#announcementContent").value.trim(),level=q("#announcementLevel").value,file=q("#announcementImage").files[0];
