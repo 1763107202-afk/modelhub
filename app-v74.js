@@ -1439,17 +1439,36 @@ async function initFiles(){
     document.querySelectorAll(".delUnifiedResource").forEach(b=>b.onclick=async()=>{
       if(!confirm("确定删除这条资料吗？删除后无法恢复。"))return;
       const source=b.dataset.source,backend=b.dataset.backend||"supabase",path=b.dataset.path||"",filePath=b.dataset.filepath||"",imagePath=b.dataset.imagepath||"";
+      const oldText=b.textContent||"删除";
+      b.disabled=true;
+      b.textContent="删除中…";
+      const card=b.closest(".fileCard");
       const d=source==="lab"
         ?await supabase.from("lab_files").delete().eq("id",b.dataset.id)
         :await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
-      if(d.error)return toast((source==="lab"?"记录":"分享")+"删除失败："+d.error.message);
-      const cleanupResults=[];
-      if(source==="lab"&&path)cleanupResults.push(backend==="qiniu"?await removeQiniuObjectSafe(path):await removeStorageObjectSafe("lab-files",path,{queueOnFail:true}));
-      if(source!=="lab"&&filePath)cleanupResults.push(backend==="qiniu"?await removeQiniuObjectSafe(filePath):await removeStorageObjectSafe("resource-share-files",filePath,{queueOnFail:true}));
-      if(source!=="lab"&&imagePath)cleanupResults.push(await removeStorageObjectSafe("resource-share-images",imagePath,{queueOnFail:true}));
-      const cleanupFailed=cleanupResults.some(x=>x?.error);
-      toast(cleanupFailed?"资料记录已删除，部分文件已加入待清理队列":"资料已删除");
-      await initFiles();
+      if(d.error){
+        b.disabled=false;
+        b.textContent=oldText;
+        return toast((source==="lab"?"记录":"分享")+"删除失败："+d.error.message);
+      }
+
+      // 数据库删除完成后立即更新界面，云端对象清理放到后台执行，避免七牛接口延迟阻塞用户。
+      if(card)card.remove();
+      const countEl=q("#fileCount");
+      if(countEl){
+        const n=Number(countEl.textContent||0);
+        if(Number.isFinite(n)&&n>0)countEl.textContent=String(n-1);
+      }
+      toast(backend==="qiniu"?"资料已删除，七牛云文件正在后台清理…":"资料已删除");
+
+      void (async()=>{
+        const cleanupResults=[];
+        if(source==="lab"&&path)cleanupResults.push(backend==="qiniu"?await removeQiniuObjectSafe(path):await removeStorageObjectSafe("lab-files",path,{queueOnFail:true}));
+        if(source!=="lab"&&filePath)cleanupResults.push(backend==="qiniu"?await removeQiniuObjectSafe(filePath):await removeStorageObjectSafe("resource-share-files",filePath,{queueOnFail:true}));
+        if(source!=="lab"&&imagePath)cleanupResults.push(await removeStorageObjectSafe("resource-share-images",imagePath,{queueOnFail:true}));
+        const cleanupFailed=cleanupResults.some(x=>x?.error);
+        if(cleanupFailed)toast("资料记录已删除，但部分云端文件清理失败，可稍后再清理");
+      })();
     });
   };
   if(select)select.onchange=render;
