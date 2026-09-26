@@ -35,6 +35,14 @@ const PROFILE_CACHE_LEGACY_KEYS=["justLabProfileCacheV2","justLabProfileCacheV1"
 const PROFILE_CACHE_TTL=30*24*60*60*1000;
 const STARTUP_SPLASH_STARTED=performance.now();
 let __startupSplashDone=false;
+let __authBootstrapDone=false;
+let __resolveAuthBootstrap;
+const __authBootstrapReady=new Promise(resolve=>{__resolveAuthBootstrap=resolve});
+function finishAuthBootstrap(){
+  if(__authBootstrapDone)return;
+  __authBootstrapDone=true;
+  try{__resolveAuthBootstrap?.()}catch(_e){}
+}
 function setStartupSplashStatus(message){
   const el=q("#startupSplashStatus");
   if(el&&message)el.textContent=message;
@@ -355,12 +363,36 @@ function bindAuth(){
     retry?.classList.add("hidden");
     msg.textContent="正在连接登录服务器…";
     try{
+      if(!__authBootstrapDone){
+        msg.textContent="正在恢复已有登录状态…";
+        await Promise.race([
+          __authBootstrapReady,
+          new Promise(resolve=>setTimeout(resolve,5000))
+        ]);
+        if(state.user){
+          msg.textContent="已恢复登录状态";
+          updateAuthUI();
+          q("#auth").close();
+          return;
+        }
+        msg.textContent="正在连接登录服务器…";
+      }
+
       const r=await signInWithTimeout(email,password);
       if(r?.error){
         const message=r.error.message==="LOGIN_TIMEOUT"?"登录请求超时，请检查网络后重新尝试。":friendlyAuthError(r.error);
         msg.textContent=message;
         if(/无法连接|超时|断网|暂时异常/.test(message))retry?.classList.remove("hidden");
         return;
+      }
+      if(r?.data?.session?.user){
+        state.user=r.data.session.user;
+        const usedCache=await loadProfile(true);
+        updateAuthUI();
+        if(!usedCache){
+          await loadProfile(false);
+          updateAuthUI();
+        }
       }
       try{
         localStorage.setItem(REMEMBER_LOGIN_KEY,remember?"1":"0");
@@ -2385,8 +2417,16 @@ async function runPage(){if(page==="home")return initHome();if(page==="works")re
 renderChrome();
 setStartupSplashStatus("正在恢复账号状态…");
 await enforceRememberLoginPolicy();
-const s=await supabase.auth.getSession();
-state.user=s.data.session?.user||null;
+let s;
+try{
+  s=await supabase.auth.getSession();
+  state.user=s.data.session?.user||null;
+}catch(err){
+  console.warn("初始登录状态恢复失败",err);
+  state.user=null;
+}finally{
+  finishAuthBootstrap();
+}
 
 // 会话本身来自本地存储，先立即反映“已登录”，不要等待 profiles 网络请求。
 updateAuthUI();
