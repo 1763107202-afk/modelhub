@@ -132,7 +132,7 @@ async function load(){
   q("#memberEmail").innerHTML=target.email?'<a href="mailto:'+esc(target.email)+'">'+esc(target.email)+'</a>':"未填写";
   q("#memberAvatar").textContent=(target.full_name||"?").trim().slice(0,1).toUpperCase();
   document.title=(target.full_name||"成员")+" · 成员个人主页 | 机械创新实验室";
-  if(roleIsAdmin(me.role)){q("#backBtn").href="./admin-members.html";q("#backBtn").textContent="返回成员后台";}
+  if(roleIsAdmin(me.role)){q("#backBtn").href="./admin-members.html?v=2026.09.27.8";q("#backBtn").textContent="返回成员后台";}
 
   const [personalReq,membershipReq,projectReq]=await Promise.all([
     supabase.from("progress_updates").select("*").eq("user_id",targetId).order("created_at",{ascending:false}),
