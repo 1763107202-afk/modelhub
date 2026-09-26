@@ -3,9 +3,10 @@
 
   const script=document.currentScript;
   const base=new URL("./",script?.src||document.baseURI);
+  const loadMainApp=script?.dataset.app!=="false";
   const VERSION_KEY="justLabSiteVersionV1";
   const VERSION_CHECK_KEY="justLabSiteVersionCheckedAtV1";
-  const BOOTSTRAP_VERSION="2026.09.26.2";
+  const BOOTSTRAP_VERSION="2026.09.26.7";
   const VERSION_CHECK_INTERVAL=2*60*1000;
   let routeVersion=BOOTSTRAP_VERSION;
 
@@ -66,7 +67,7 @@
 
   function prefetchVersion(version){
     const assets=[
-      {href:withVersion(new URL("app-v74.js",base).href,version),as:"script"},
+      ...(loadMainApp?[{href:withVersion(new URL("app-v74.js",base).href,version),as:"script"}]:[]),
       ...[...document.querySelectorAll('link[data-cache-managed][href]')].map(link=>({
         href:withVersion(link.getAttribute("href"),version),
         as:"style"
@@ -148,6 +149,7 @@
     routeVersion=version;
 
     globalThis.JUST_APP_VERSION=version;
+    globalThis.JUST_CACHE_MODE=loadMainApp?"app":"standalone";
     globalThis.JUST_LATEST_VERSION=version;
     globalThis.JUSTVersionUrl=raw=>withVersion(raw,globalThis.JUST_LATEST_VERSION||version);
 
@@ -156,7 +158,8 @@
     refreshInternalRoutes(version);
 
     // 版本检查与主程序加载并行进行，不再增加首屏网络串行等待。
-    const appPromise=loadApp(version);
+    // standalone 页面只使用统一版本/路由管理，不重复加载 app-v74.js。
+    const appPromise=loadMainApp?loadApp(version):Promise.resolve();
     void checkRemoteVersion(version);
 
     await appPromise;
