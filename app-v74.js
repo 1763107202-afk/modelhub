@@ -58,7 +58,7 @@ function fetchProgressMemberStatusOnce(){
   return singleFlight(authScopedKey("rpc:get_progress_member_status"),()=>supabase.rpc("get_progress_member_status"));
 }
 function fetchFormalMemberDirectoryOnce(){
-  return singleFlight(authScopedKey("rpc:get_formal_member_directory"),()=>fetchFormalMemberDirectoryOnce());
+  return singleFlight(authScopedKey("rpc:get_formal_member_directory"),()=>supabase.rpc("get_formal_member_directory"));
 }
 function fetchSiteNotificationsOnce(){
   return singleFlight(authScopedKey("rpc:get_site_notifications"),()=>supabase.rpc("get_site_notifications"));
