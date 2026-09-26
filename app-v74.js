@@ -802,6 +802,32 @@ function embed(u){
 }
 function resourceTypeName(t){return t==="pdf"?"PDF 文档":t==="word"?"Word 文档":t==="ppt"?"PPT 演示文稿":t==="archive"?"压缩包教程":"视频教程"}
 function bytesText(n){if(n<1024)return n+" B";if(n<1024*1024)return (n/1024).toFixed(1)+" KB";if(n<1024*1024*1024)return (n/1024/1024).toFixed(1)+" MB";return (n/1024/1024/1024).toFixed(2)+" GB"}
+let __activeUploadCount=0;
+function setUploadActive(active){
+  __activeUploadCount=Math.max(0,__activeUploadCount+(active?1:-1));
+  document.documentElement.classList.toggle("uploadInProgress",__activeUploadCount>0);
+}
+window.addEventListener("beforeunload",event=>{
+  if(__activeUploadCount<=0)return;
+  event.preventDefault();
+  event.returnValue="";
+});
+function sleepMs(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+async function removeStorageObjectSafe(bucket,path){
+  if(!bucket||!path)return {data:null,error:null};
+  let last={data:null,error:null};
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      last=await supabase.storage.from(bucket).remove([path]);
+      if(!last?.error)return last;
+    }catch(error){
+      last={data:null,error};
+    }
+    if(attempt<2)await sleepMs(attempt===0?700:1600);
+  }
+  console.warn("Storage 文件清理失败，已重试",bucket,path,last?.error);
+  return last;
+}
 function storageObjectPath(prefix,fileName){
   const ext=(fileName.match(/\.[A-Za-z0-9]{1,10}$/)||[""])[0].toLowerCase();
   const id=(globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2)+Date.now().toString(36)).replace(/[^a-zA-Z0-9-]/g,"");
@@ -813,7 +839,9 @@ async function uploadStorageFile(bucket,path,file,onProgress){
   const token=sess.data.session?.access_token;
   if(!token)throw new Error("登录状态已失效，请重新登录后再上传");
   const tus=await getTusModule();
-  await new Promise((resolve,reject)=>{
+  setUploadActive(true);
+  try{
+    await new Promise((resolve,reject)=>{
     const upload=new tus.Upload(file,{
       endpoint:`https://${PROJECT_REF}.storage.supabase.co/storage/v1/upload/resumable`,
       retryDelays:[0,3000,5000,10000,20000],
@@ -835,7 +863,10 @@ async function uploadStorageFile(bucket,path,file,onProgress){
       if(previous.length)upload.resumeFromPreviousUpload(previous[0]);
       upload.start();
     }).catch(reject);
-  });
+    });
+  }finally{
+    setUploadActive(false);
+  }
 }
 async function uploadTutorialFile(path,file,onProgress){return uploadStorageFile("tutorials",path,file,onProgress)}
 function resourcePreview(x){
@@ -896,7 +927,7 @@ async function loadAnnouncements(adminMode=false){
     });
     document.querySelectorAll(".delAnnouncement").forEach(b=>b.onclick=async()=>{
       if(!confirm("确定删除这条公告吗？"))return;
-      if(b.dataset.path){const rm=await supabase.storage.from("announcement-images").remove([b.dataset.path]);if(rm.error)return toast("公告图片删除失败："+rm.error.message)}
+      if(b.dataset.path){const rm=await removeStorageObjectSafe("announcement-images",b.dataset.path);if(rm.error)return toast("公告图片删除失败："+rm.error.message)}
       const d=await supabase.from("announcements").delete().eq("id",b.dataset.id);
       if(d.error)return toast("删除失败："+d.error.message);
       toast("公告已删除");
@@ -979,7 +1010,7 @@ async function initWorks(){
   document.querySelectorAll(".delWork").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这个作品吗？"))return;
     if(b.dataset.path){
-      const rm=await supabase.storage.from("works").remove([b.dataset.path]);
+      const rm=await removeStorageObjectSafe("works",b.dataset.path);
       if(rm.error)return toast(rm.error.message);
     }
     const d=await supabase.from("past_works").delete().eq("id",b.dataset.id);
@@ -1031,11 +1062,11 @@ async function initWorks(){
         cover_url
       }).eq("id",id);
       if(u.error){
-        if(newPath)await supabase.storage.from("works").remove([newPath]);
+        if(newPath)await removeStorageObjectSafe("works",newPath);
         throw u.error;
       }
       if(newPath&&oldPath&&oldPath!==newPath){
-        const rm=await supabase.storage.from("works").remove([oldPath]);
+        const rm=await removeStorageObjectSafe("works",oldPath);
         if(rm.error)console.warn("旧作品封面清理失败",rm.error);
       }
       q("#workEditDialog").close();
@@ -1052,7 +1083,7 @@ async function initExams(){
   const r=await supabase.from("exams").select("*").order("created_at",{ascending:false});const data=r.data||[];
   q("#examGrid").innerHTML=data.map(x=>'<article class="card"><span class="tag">PDF 试卷 / 任务</span><h3>'+esc(x.title)+'</h3><p>'+esc(x.description||"暂无说明")+'</p><div class="meta">截止：'+fmt(x.deadline)+'</div><div class="actions"><a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.file_url)+'">查看 / 下载 PDF</a>'+(isAdmin()?'<button class="btn danger delExam" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除</button>':'')+'</div></article>').join("");
   q("#examEmpty").classList.toggle("hidden",data.length>0);
-  document.querySelectorAll(".delExam").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除该试卷及关联提交吗？"))return;const rel=await supabase.from("submissions").select("storage_path").eq("exam_id",b.dataset.id);if(rel.error)return toast(rel.error.message);const paths=(rel.data||[]).map(x=>x.storage_path).filter(Boolean);if(paths.length){const rm=await supabase.storage.from("submissions").remove(paths);if(rm.error)return toast(rm.error.message);await supabase.from("submissions").delete().eq("exam_id",b.dataset.id)}if(b.dataset.path){const rm2=await supabase.storage.from("exams").remove([b.dataset.path]);if(rm2.error)return toast(rm2.error.message)}const d=await supabase.from("exams").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("试卷已删除");await initExams()});
+  document.querySelectorAll(".delExam").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除该试卷及关联提交吗？"))return;const rel=await supabase.from("submissions").select("storage_path").eq("exam_id",b.dataset.id);if(rel.error)return toast(rel.error.message);const paths=(rel.data||[]).map(x=>x.storage_path).filter(Boolean);if(paths.length){const rm=await supabase.storage.from("submissions").remove(paths);if(rm.error)return toast(rm.error.message);await supabase.from("submissions").delete().eq("exam_id",b.dataset.id)}if(b.dataset.path){const rm2=await removeStorageObjectSafe("exams",b.dataset.path);if(rm2.error)return toast(rm2.error.message)}const d=await supabase.from("exams").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("试卷已删除");await initExams()});
 }
 async function initTutorials(){
   const r=await supabase.from("tutorials").select("*").order("created_at",{ascending:false});
@@ -1097,7 +1128,7 @@ async function initTutorials(){
         const u=b.dataset.url||"",key="/storage/v1/object/public/tutorials/";
         if(u.includes(key)){try{p=decodeURIComponent(u.split(key)[1].split("?")[0])}catch(_e){}}
       }
-      if(p){const rm=await supabase.storage.from("tutorials").remove([p]);if(rm.error)return toast(rm.error.message)}
+      if(p){const rm=await removeStorageObjectSafe("tutorials",p);if(rm.error)return toast(rm.error.message)}
       const d=await supabase.from("tutorials").delete().eq("id",b.dataset.id);
       if(d.error)return toast(d.error.message);
       toast("教程资料已删除");await initTutorials();
@@ -1132,7 +1163,7 @@ async function loadResourceShares(){
   }).join(""):'<div class="empty">暂时还没有资料分享。</div>';
   document.querySelectorAll(".delResourceShare").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条资料分享吗？"))return;
-    if(b.dataset.path){const rm=await supabase.storage.from("resource-share-images").remove([b.dataset.path]);if(rm.error)return toast("图片删除失败："+rm.error.message)}
+    if(b.dataset.path){const rm=await removeStorageObjectSafe("resource-share-images",b.dataset.path);if(rm.error)return toast("图片删除失败："+rm.error.message)}
     const d=await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除失败："+d.error.message);
     toast("资料分享已删除");await loadResourceShares();
@@ -1221,7 +1252,7 @@ async function initFiles(){
           await uploadStorageFile("resource-share-files",path,f);
           const url=supabase.storage.from("resource-share-files").getPublicUrl(path).data.publicUrl;
           const u=await supabase.from("resource_shares").update({file_url:url,file_path:path,file_name:f.name,file_size:f.size,file_mime:f.type||null}).eq("id",b.dataset.id);
-          if(u.error){await supabase.storage.from("resource-share-files").remove([path]);throw u.error}
+          if(u.error){await removeStorageObjectSafe("resource-share-files",path);throw u.error}
           toast("附件已补传");await initFiles();
         }catch(err){toast("附件上传失败："+(err?.message||String(err)))}
       };
@@ -1232,14 +1263,14 @@ async function initFiles(){
       const source=b.dataset.source,path=b.dataset.path||"",filePath=b.dataset.filepath||"",imagePath=b.dataset.imagepath||"";
       if(source==="lab"){
         if(path){
-          const rm=await supabase.storage.from("lab-files").remove([path]);
+          const rm=await removeStorageObjectSafe("lab-files",path);
           if(rm.error)return toast("文件删除失败："+rm.error.message);
         }
         const d=await supabase.from("lab_files").delete().eq("id",b.dataset.id);
         if(d.error)return toast("记录删除失败："+d.error.message);
       }else{
-        if(filePath){const rm=await supabase.storage.from("resource-share-files").remove([filePath]);if(rm.error)return toast("附件删除失败："+rm.error.message)}
-        if(imagePath){const rm=await supabase.storage.from("resource-share-images").remove([imagePath]);if(rm.error)return toast("图片删除失败："+rm.error.message)}
+        if(filePath){const rm=await removeStorageObjectSafe("resource-share-files",filePath);if(rm.error)return toast("附件删除失败："+rm.error.message)}
+        if(imagePath){const rm=await removeStorageObjectSafe("resource-share-images",imagePath);if(rm.error)return toast("图片删除失败："+rm.error.message)}
         const d=await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
         if(d.error)return toast("分享删除失败："+d.error.message);
       }
@@ -1321,7 +1352,7 @@ async function renderProgressList(rows,box,adminMode=false){
   box.querySelectorAll(".delProgress").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条进度记录吗？"))return;
     if(b.dataset.path){
-      const rm=await supabase.storage.from("progress-files").remove([b.dataset.path]);
+      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path);
       if(rm.error)return toast("附件删除失败："+rm.error.message);
     }
     const d=await supabase.from("progress_updates").delete().eq("id",b.dataset.id);
@@ -1461,7 +1492,7 @@ async function loadTeamProgressFeed(){
     const d=await supabase.from("team_progress_updates").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除失败："+d.error.message);
     if(b.dataset.path){
-      const rm=await supabase.storage.from("progress-files").remove([b.dataset.path]);
+      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path);
       if(rm.error)console.warn("队伍附件清理失败",rm.error);
     }
     toast("队伍进度已删除");
@@ -1958,10 +1989,10 @@ async function initProgress(){
             p_attachment_size:attachment_size,
             p_attachment_mime:attachment_mime
           });
-      if(ins.error){if(attachment_path)await supabase.storage.from("progress-files").remove([attachment_path]);throw ins.error}
+      if(ins.error){if(attachment_path)await removeStorageObjectSafe("progress-files",attachment_path);throw ins.error}
       const oldAttachment=Array.isArray(ins.data)?ins.data[0]?.old_attachment_path:ins.data?.old_attachment_path;
       if(oldAttachment&&oldAttachment!==attachment_path){
-        const rm=await supabase.storage.from("progress-files").remove([oldAttachment]);
+        const rm=await removeStorageObjectSafe("progress-files",oldAttachment);
         if(rm.error)console.warn("旧个人进度附件清理失败",rm.error);
       }
       const resultRow=Array.isArray(ins.data)?ins.data[0]:ins.data;
@@ -2025,7 +2056,7 @@ async function initProgress(){
         p_attachment_size:attachment_size,
         p_attachment_mime:attachment_mime
       });
-      if(rr.error){if(attachment_path)await supabase.storage.from("progress-files").remove([attachment_path]);throw rr.error}
+      if(rr.error){if(attachment_path)await removeStorageObjectSafe("progress-files",attachment_path);throw rr.error}
       const resultRow=Array.isArray(rr.data)?rr.data[0]:rr.data;
       const teamId=resultRow?.team_progress_id;
       if(file&&teamId){
@@ -2035,13 +2066,13 @@ async function initProgress(){
           .maybeSingle();
         const saved=verify.data;
         if(verify.error||!saved?.attachment_path){
-          if(attachment_path)await supabase.storage.from("progress-files").remove([attachment_path]);
+          if(attachment_path)await removeStorageObjectSafe("progress-files",attachment_path);
           throw new Error("队伍附件保存校验失败，请重新选择附件后再提交");
         }
       }
       const oldTeamAttachment=resultRow?.old_attachment_path;
       if(oldTeamAttachment&&oldTeamAttachment!==attachment_path){
-        const rm=await supabase.storage.from("progress-files").remove([oldTeamAttachment]);
+        const rm=await removeStorageObjectSafe("progress-files",oldTeamAttachment);
         if(rm.error)console.warn("旧队伍进度附件清理失败",rm.error);
       }
       teamForm.reset();
@@ -2164,7 +2195,7 @@ async function initSubmit(){
           status:"已提交"
         });
         if(ins.error){
-          await supabase.storage.from("submissions").remove([p]);
+          await removeStorageObjectSafe("submissions",p);
           throw ins.error;
         }
         q("#subForm").reset();
@@ -2241,8 +2272,8 @@ async function initMine(){
       const payload={exam_id,submitter_name,note};
       if(newFile){payload.file_name=newFile.name;payload.storage_path=newPath}
       const u=await supabase.from("submissions").update(payload).eq("id",id).eq("user_id",state.user.id);
-      if(u.error){if(newPath)await supabase.storage.from("submissions").remove([newPath]);throw u.error}
-      if(newFile&&old.storage_path&&old.storage_path!==newPath)await supabase.storage.from("submissions").remove([old.storage_path]);
+      if(u.error){if(newPath)await removeStorageObjectSafe("submissions",newPath);throw u.error}
+      if(newFile&&old.storage_path&&old.storage_path!==newPath)await removeStorageObjectSafe("submissions",old.storage_path);
       toast("提交记录已修改");
       editDialog.close();
       await initMine();
@@ -2263,7 +2294,7 @@ async function initMine(){
       const d=await supabase.from("submissions").delete().eq("id",x.id).eq("user_id",state.user.id);
       if(d.error)throw d.error;
       if(x.storage_path){
-        const rm=await supabase.storage.from("submissions").remove([x.storage_path]);
+        const rm=await removeStorageObjectSafe("submissions",x.storage_path);
         if(rm.error)console.warn("提交记录已删除，但文件清理失败",rm.error);
       }
       toast("已取消提交");
@@ -2448,7 +2479,7 @@ async function initAdmin(){
       }
       if(btn){btn.disabled=true;btn.textContent="正在发布…"}
       const ins=await supabase.from("announcements").insert({title,content:content||null,level,image_url,image_path,image_name,created_by:state.user.id});
-      if(ins.error){if(image_path)await supabase.storage.from("announcement-images").remove([image_path]);throw ins.error}
+      if(ins.error){if(image_path)await removeStorageObjectSafe("announcement-images",image_path);throw ins.error}
       e.target.reset();q("#announcementImagePreview").innerHTML="";toast("公告发布成功");await loadAnnouncements(true);
     }catch(err){toast("公告发布失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=oldText}}
@@ -2489,8 +2520,8 @@ async function initAdmin(){
       if(btn){btn.disabled=true;btn.textContent="正在发布…"}
       const ins=await supabase.from("resource_shares").insert({title,content:content||null,link_url,image_url,image_path,image_name,file_url,file_path,file_name,file_size,file_mime,created_by:state.user.id});
       if(ins.error){
-        if(image_path)await supabase.storage.from("resource-share-images").remove([image_path]);
-        if(file_path)await supabase.storage.from("resource-share-files").remove([file_path]);
+        if(image_path)await removeStorageObjectSafe("resource-share-images",image_path);
+        if(file_path)await removeStorageObjectSafe("resource-share-files",file_path);
         throw ins.error;
       }
       e.target.reset();q("#resourceShareImagePreview").innerHTML="";q("#resourceShareFilePreview").textContent="";toast("资料分享发布成功");
@@ -2534,7 +2565,7 @@ async function initAdmin(){
       }
       if(btn){btn.disabled=true;btn.textContent="正在保存资料信息…"}
       const ins=await supabase.from("lab_files").insert({title,description:description||null,category,resource_mode:mode,external_url,file_name,storage_path,file_size,mime_type,created_by:state.user.id});
-      if(ins.error){if(storage_path)await supabase.storage.from("lab-files").remove([storage_path]);throw ins.error}
+      if(ins.error){if(storage_path)await removeStorageObjectSafe("lab-files",storage_path);throw ins.error}
       e.target.reset();toggleLabFileMode();toast(mode==="file"?"文件已发布到资料库":mode==="link"?"链接已发布到资料库":"文字资料已发布");
     }catch(err){console.error("资料库发布失败",err);toast("发布失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=oldText}}
@@ -2548,9 +2579,9 @@ async function initAdmin(){
     q("#labFileDesc").placeholder=mode==="text"?"直接填写要分享的文字内容":mode==="link"?"可补充链接说明":"说明文件用途、版本、适用对象等";
   };
   q("#labFileMode").onchange=toggleLabFileMode;toggleLabFileMode();
-  q("#workForm").onsubmit=async e=>{e.preventDefault();const title=q("#workTitle").value.trim();if(!title)return toast("请填写作品名称");let cover_url="",storage_path=null;const f=q("#workCover").files[0];const btn=e.submitter||q("#workForm button");const oldText=btn?.textContent||"发布作品";try{if(f){storage_path=storageObjectPath("covers",f.name);if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}await uploadStorageFile("works",storage_path,f,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});cover_url=supabase.storage.from("works").getPublicUrl(storage_path).data.publicUrl}if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("past_works").insert({title,year:q("#workYear").value?Number(q("#workYear").value):null,team_name:q("#workTeam").value.trim(),description:q("#workDesc").value.trim(),cover_url:cover_url||null,storage_path,detail_url:q("#workUrl").value.trim()||null,created_by:state.user.id});if(ins.error){if(storage_path)await supabase.storage.from("works").remove([storage_path]);throw ins.error}e.target.reset();toast("往届作品发布成功");setTimeout(()=>location.href="./works.html",450)}catch(err){console.error("作品发布失败",err);toast("作品发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
-  q("#examForm").onsubmit=async e=>{e.preventDefault();const title=q("#examTitle").value.trim(),f=q("#pdf").files[0];if(!title)return toast("请填写任务标题");if(!f)return toast("请选择 PDF 文件");if(!/\.pdf$/i.test(f.name))return toast("任务文件必须是 PDF");const p=storageObjectPath("pdf",f.name);const btn=e.submitter||q("#examForm button");const oldText=btn?.textContent||"发布任务";try{if(btn){btn.disabled=true;btn.textContent="PDF 上传中 0% · "+bytesText(f.size)}await uploadStorageFile("exams",p,f,x=>{if(btn)btn.textContent="PDF 上传中 "+x+"% · "+bytesText(f.size)});const url=supabase.storage.from("exams").getPublicUrl(p).data.publicUrl;if(btn)btn.textContent="正在发布任务…";const ins=await supabase.from("exams").insert({title,description:q("#examDesc").value.trim(),deadline:q("#deadline").value?new Date(q("#deadline").value).toISOString():null,file_url:url,storage_path:p,created_by:state.user.id});if(ins.error){await supabase.storage.from("exams").remove([p]);throw ins.error}e.target.reset();toast("试卷 / 任务发布成功");setTimeout(()=>location.href="./exams.html",450)}catch(err){console.error("任务发布失败",err);toast("任务发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
-  q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null;if(mode==="url"){url=normalizeExternalUrl(url);if(!url)return toast("请输入正确的外部链接");if(isOwnPlatformUrl(url))return toast("你填的是本站首页/后台地址，请粘贴真正的视频或资料链接");}const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="archive"&&!/\.(zip|rar|7z)$/i.test(f.name))return toast("压缩包教程请选择 .zip、.rar 或 .7z 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v)$/i.test(f.name))return toast("请选择视频文件");storage_path=tutorialStoragePath(type,f.name);file_name=f.name;if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,created_by:state.user.id});if(ins.error){if(storage_path)await supabase.storage.from("tutorials").remove([storage_path]);throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前存储上传上限，请压缩视频或改用外部链接");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
+  q("#workForm").onsubmit=async e=>{e.preventDefault();const title=q("#workTitle").value.trim();if(!title)return toast("请填写作品名称");let cover_url="",storage_path=null;const f=q("#workCover").files[0];const btn=e.submitter||q("#workForm button");const oldText=btn?.textContent||"发布作品";try{if(f){storage_path=storageObjectPath("covers",f.name);if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}await uploadStorageFile("works",storage_path,f,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});cover_url=supabase.storage.from("works").getPublicUrl(storage_path).data.publicUrl}if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("past_works").insert({title,year:q("#workYear").value?Number(q("#workYear").value):null,team_name:q("#workTeam").value.trim(),description:q("#workDesc").value.trim(),cover_url:cover_url||null,storage_path,detail_url:q("#workUrl").value.trim()||null,created_by:state.user.id});if(ins.error){if(storage_path)await removeStorageObjectSafe("works",storage_path);throw ins.error}e.target.reset();toast("往届作品发布成功");setTimeout(()=>location.href="./works.html",450)}catch(err){console.error("作品发布失败",err);toast("作品发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
+  q("#examForm").onsubmit=async e=>{e.preventDefault();const title=q("#examTitle").value.trim(),f=q("#pdf").files[0];if(!title)return toast("请填写任务标题");if(!f)return toast("请选择 PDF 文件");if(!/\.pdf$/i.test(f.name))return toast("任务文件必须是 PDF");const p=storageObjectPath("pdf",f.name);const btn=e.submitter||q("#examForm button");const oldText=btn?.textContent||"发布任务";try{if(btn){btn.disabled=true;btn.textContent="PDF 上传中 0% · "+bytesText(f.size)}await uploadStorageFile("exams",p,f,x=>{if(btn)btn.textContent="PDF 上传中 "+x+"% · "+bytesText(f.size)});const url=supabase.storage.from("exams").getPublicUrl(p).data.publicUrl;if(btn)btn.textContent="正在发布任务…";const ins=await supabase.from("exams").insert({title,description:q("#examDesc").value.trim(),deadline:q("#deadline").value?new Date(q("#deadline").value).toISOString():null,file_url:url,storage_path:p,created_by:state.user.id});if(ins.error){await removeStorageObjectSafe("exams",p);throw ins.error}e.target.reset();toast("试卷 / 任务发布成功");setTimeout(()=>location.href="./exams.html",450)}catch(err){console.error("任务发布失败",err);toast("任务发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
+  q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null;if(mode==="url"){url=normalizeExternalUrl(url);if(!url)return toast("请输入正确的外部链接");if(isOwnPlatformUrl(url))return toast("你填的是本站首页/后台地址，请粘贴真正的视频或资料链接");}const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="archive"&&!/\.(zip|rar|7z)$/i.test(f.name))return toast("压缩包教程请选择 .zip、.rar 或 .7z 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v)$/i.test(f.name))return toast("请选择视频文件");storage_path=tutorialStoragePath(type,f.name);file_name=f.name;if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,created_by:state.user.id});if(ins.error){if(storage_path)await removeStorageObjectSafe("tutorials",storage_path);throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前存储上传上限，请压缩视频或改用外部链接");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   function toggleResourceForm(){const type=q("#resourceType").value,mode=q("#resourceMode").value,isFile=mode==="file";q("#resourceUrlWrap").classList.toggle("hidden",isFile);q("#resourceFileWrap").classList.toggle("hidden",!isFile);q("#resourceUrlLabel").textContent=type==="video"?"视频链接":type==="pdf"?"PDF 链接":type==="word"?"Word 链接":type==="archive"?"压缩包链接":"PPT 链接";q("#resourceFileLabel").textContent=type==="video"?"视频文件":type==="pdf"?"PDF 文件":type==="word"?"Word 文件":type==="archive"?"压缩包文件":"PPT 文件";q("#resourceFile").accept=type==="video"?"video/*":type==="pdf"?".pdf,application/pdf":type==="word"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":type==="archive"?".zip,.rar,.7z,application/zip,application/x-rar-compressed,application/x-7z-compressed":".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"}q("#resourceType").onchange=toggleResourceForm;q("#resourceMode").onchange=toggleResourceForm;toggleResourceForm();
   loadAllSubmissions();
 }
@@ -2558,7 +2589,7 @@ async function loadAllSubmissions(){
   const r=await supabase.from("submissions").select("*,exams(title),profiles(email,full_name,major)").order("created_at",{ascending:false});const data=r.data||[];
   q("#allBody").innerHTML=data.length?data.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join(""):'<tr><td colspan="7">暂无提交。</td></tr>';
   document.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{const s=await supabase.storage.from("submissions").createSignedUrl(b.dataset.p,120);if(s.error)return toast(s.error.message);window.open(s.data.signedUrl,"_blank")});
-  document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这条提交吗？"))return;if(b.dataset.p){const rm=await supabase.storage.from("submissions").remove([b.dataset.p]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("提交已删除");await loadAllSubmissions()});
+  document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这条提交吗？"))return;if(b.dataset.p){const rm=await removeStorageObjectSafe("submissions",b.dataset.p);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("提交已删除");await loadAllSubmissions()});
 }
 let __siteRealtimeTimer=null;
 const __siteRealtimePendingTables=new Set();
