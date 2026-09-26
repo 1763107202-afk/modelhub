@@ -342,7 +342,8 @@ html[data-theme="light"] .empty{color:#526b84!important}
   text-align:center;transform:translateY(-2vh)
 }
 .startupSplashLogo{
-  width:92px;height:92px;border-radius:24px;object-fit:cover;
+  width:92px;height:92px;border-radius:50%!important;object-fit:contain!important;
+  background:#fff!important;padding:5px!important;overflow:hidden!important;clip-path:circle(50%)!important;
   box-shadow:0 18px 55px rgba(0,0,0,.28),0 0 0 1px rgba(160,202,255,.20)
 }
 .startupSplashTitle{
@@ -377,6 +378,20 @@ html[data-theme="light"] .startupSplashSub{color:#60768d}
 html[data-theme="light"] .startupSplashTrack{background:rgba(63,105,151,.14)}
 html[data-theme="light"] .startupSplashStatus{color:#71869b}
 @media(max-width:600px){
-  .startupSplashLogo{width:82px;height:82px;border-radius:22px}
+  .startupSplashLogo{width:82px;height:82px;border-radius:50%!important}
   .startupSplashInner{transform:translateY(-4vh)}
+}
+
+
+/* Homepage logo hard-circle fix v4 */
+body[data-page="home"] .brand img,
+body[data-page="home"] .labHero img,
+body[data-page="home"] .startupSplashLogo{
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  overflow:hidden!important;
+  object-fit:contain!important;
+  background:#fff!important;
+  padding:5px!important;
+  border:1px solid rgba(86,121,158,.18)!important;
 }
