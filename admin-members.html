@@ -467,7 +467,7 @@ async function promoteMember(id){
   if(!canFullyManageMembers())return alert("只有主管理员或指导老师可以修改成员状态");
   if(target.membership_status!=="freshman")return;
   if(!confirm("确定将 "+(target.full_name||target.email)+" 转为正式成员吗？"))return;
-  const r=await supabase.from("profiles").update({membership_status:"formal"}).eq("id",id);
+  const r=await supabase.from("profiles").update({membership_status:"formal",formal_since:new Date().toISOString()}).eq("id",id);
   if(r.error){alert("成员状态修改失败："+r.error.message);return}
   await loadAdminData();
 }
