@@ -946,12 +946,64 @@ async function uploadStorageFile(bucket,path,file,onProgress){
   }
 }
 async function uploadTutorialFile(path,file,onProgress){return uploadStorageFile("tutorials",path,file,onProgress)}
+function qiniuFileCategory(file,resourceType=""){
+  const n=(file?.name||"").toLowerCase();
+  if(resourceType==="video"||/\.(mp4|webm|ogg|mov|m4v|avi|mkv)$/i.test(n))return "video";
+  if(resourceType==="archive"||/\.(zip|rar|7z)$/i.test(n))return "archive";
+  return "";
+}
+async function uploadQiniuFile(file,category,onProgress){
+  const sess=await supabase.auth.getSession();
+  if(!sess.data.session?.access_token)throw new Error("登录状态已失效，请重新登录后再上传");
+  const tokenReq=await supabase.functions.invoke("qiniu-upload-token",{body:{fileName:file.name,fileSize:file.size,category}});
+  if(tokenReq.error)throw new Error(tokenReq.error.message||"七牛上传凭证获取失败");
+  const cfg=tokenReq.data||{};
+  if(!cfg.token||!cfg.key||!cfg.uploadUrl)throw new Error(cfg.error||"七牛上传凭证无效");
+  setUploadActive(true);
+  try{
+    await new Promise((resolve,reject)=>{
+      const xhr=new XMLHttpRequest();
+      xhr.open("POST",cfg.uploadUrl,true);
+      xhr.upload.onprogress=e=>{if(onProgress&&e.lengthComputable)onProgress(Math.round(e.loaded/e.total*100))};
+      xhr.onerror=()=>reject(new Error("七牛上传网络异常"));
+      xhr.onload=()=>{
+        if(xhr.status>=200&&xhr.status<300)return resolve();
+        let msg="七牛上传失败";
+        try{msg=JSON.parse(xhr.responseText||"{}")?.error||msg}catch(_e){}
+        reject(new Error(msg+"（HTTP "+xhr.status+"）"));
+      };
+      const form=new FormData();
+      form.append("token",cfg.token);
+      form.append("key",cfg.key);
+      form.append("file",file,file.name);
+      xhr.send(form);
+    });
+    return {key:cfg.key,url:cfg.publicUrl||null,storage_backend:"qiniu"};
+  }finally{
+    setUploadActive(false);
+  }
+}
+async function removeQiniuObjectSafe(key){
+  if(!key)return {data:null,error:null};
+  try{
+    const r=await supabase.functions.invoke("qiniu-object",{body:{key}});
+    if(r.error)return {data:null,error:r.error};
+    if(r.data?.error)return {data:null,error:new Error(r.data.error)};
+    return {data:r.data,error:null};
+  }catch(error){
+    console.warn("七牛文件清理失败",key,error);
+    return {data:null,error};
+  }
+}
 function resourcePreview(x){
   const type=x.resource_type||"video",url=x.video_url||"";
   if(type==="video"&&isOwnPlatformUrl(url)){
     return '<div class="notice" style="margin:18px">视频链接设置错误。'+(isAdmin()?'<div class="actions" style="margin-top:12px"><button class="btn pri editTutorialUrl" type="button" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">立即修改视频链接</button></div>':' 请联系管理员修改外部视频地址。')+'</div>';
   }
-  if(type==="video")return embed(url);
+  if(type==="video"){
+    if(/^http:\/\//i.test(url))return '<div class="docPreview"><div class="docIcon video">VID</div><strong>'+esc(x.file_name||"视频教程")+'</strong><span>当前使用七牛测试域名，点击下方按钮打开或下载；绑定正式 HTTPS 域名后可恢复网页内播放。</span></div>';
+    return embed(url);
+  }
   const icon=type==="pdf"?"PDF":type==="word"?"DOCX":type==="archive"?"ZIP":"PPTX";
   const hint=type==="pdf"?"点击下方按钮在线查看或下载 PDF":type==="word"?"点击下方按钮打开或下载 Word 文档":type==="archive"?"点击下方按钮下载压缩包教程":"点击下方按钮打开或下载 PPT 演示文稿";
   return '<div class="docPreview"><div class="docIcon '+esc(type)+'">'+icon+'</div><strong>'+esc(x.file_name||resourceTypeName(type))+'</strong><span>'+hint+'</span></div>';
@@ -1203,7 +1255,7 @@ async function initTutorials(){
     if(count)count.textContent=String(data.length);
     q("#videoGrid").innerHTML=data.map(x=>{
       const type=x.resource_type||"video",url=x.video_url||"",action=type==="video"?"打开 / 播放视频":type==="pdf"?"查看 / 下载 PDF":type==="word"?"打开 / 下载 Word":type==="archive"?"下载压缩包":"打开 / 下载 PPT";
-      return '<article class="video"><div class="frame '+(type!=="video"?"docFrame":"")+'">'+resourcePreview(x)+'</div><div class="info"><span class="resourceType">'+resourceTypeName(type)+'</span><h3>'+esc(x.title)+'</h3><p style="color:#8fa4bd">'+esc(x.description||"暂无简介")+'</p><div class="actions">'+((type==="video"&&(!/^https?:/i.test(url)||isOwnPlatformUrl(url)))?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>')+(isAdmin()&&!x.storage_path&&!isOwnPlatformUrl(url)?'<button class="btn ghost editTutorialUrl" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">修改链接</button>':'')+(isAdmin()?'<button class="btn danger delTutorial" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'" data-path="'+esc(x.storage_path||"")+'">删除教程</button>':'')+'</div></div></article>';
+      return '<article class="video"><div class="frame '+(type!=="video"?"docFrame":"")+'">'+resourcePreview(x)+'</div><div class="info"><span class="resourceType">'+resourceTypeName(type)+'</span><h3>'+esc(x.title)+'</h3><p style="color:#8fa4bd">'+esc(x.description||"暂无简介")+'</p><div class="actions">'+((type==="video"&&(!/^https?:/i.test(url)||isOwnPlatformUrl(url)))?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>')+(isAdmin()&&!x.storage_path&&!isOwnPlatformUrl(url)?'<button class="btn ghost editTutorialUrl" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">修改链接</button>':'')+(isAdmin()?'<button class="btn danger delTutorial" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'" data-path="'+esc(x.storage_path||"")+'" data-backend="'+esc(x.storage_backend||"supabase")+'">删除教程</button>':'')+'</div></div></article>';
     }).join("");
     q("#videoEmpty").classList.toggle("hidden",data.length>0);
     q("#videoEmpty").textContent=all.length?"没有找到符合条件的教程资料。":"暂时还没有教程。";
@@ -1228,7 +1280,9 @@ async function initTutorials(){
       if(d.error)return toast(d.error.message);
       let cleanupError=null;
       if(p){
-        const rm=await removeStorageObjectSafe("tutorials",p,{queueOnFail:true});
+        const rm=b.dataset.backend==="qiniu"
+          ?await removeQiniuObjectSafe(p)
+          :await removeStorageObjectSafe("tutorials",p,{queueOnFail:true});
         cleanupError=rm.error||null;
       }
       toast(cleanupError?"教程记录已删除，文件已加入待清理队列":"教程资料已删除");
@@ -2279,16 +2333,17 @@ async function initSubmit(){
       if(!submitter){setStatus("请填写姓名 / 队伍名称。","error");toast("请填写姓名 / 队伍名称");return}
       if(!f){setStatus("请先选择 ZIP / RAR / 7Z 建模压缩包。","error");toast("请选择建模压缩包");return}
       if(!/\.(zip|rar|7z)$/i.test(f.name)){setStatus("文件格式不正确，仅支持 ZIP / RAR / 7Z。","error");toast("仅支持 ZIP / RAR / 7Z");return}
-      const p=state.user.id+"/"+exam+"/"+storageObjectPath("files",f.name);
+      let p=null,fileUrl=null;
       const oldText=btn.textContent||"提交文件";
       try{
         btn.disabled=true;
-        btn.textContent="上传中 0% · "+bytesText(f.size);
-        setStatus("正在上传文件，请不要关闭页面…","info");
-        await uploadStorageFile("submissions",p,f,x=>{
-          btn.textContent="上传中 "+x+"% · "+bytesText(f.size);
+        btn.textContent="七牛云上传中 0% · "+bytesText(f.size);
+        setStatus("正在直传七牛云，请不要关闭页面…","info");
+        const uploaded=await uploadQiniuFile(f,"submission",x=>{
+          btn.textContent="七牛云上传中 "+x+"% · "+bytesText(f.size);
           setStatus("正在上传："+x+"%","info");
         });
+        p=uploaded.key;fileUrl=uploaded.url;
         btn.textContent="正在保存提交记录…";
         setStatus("文件上传完成，正在保存提交记录…","info");
         const ins=await supabase.from("submissions").insert({
@@ -2298,10 +2353,14 @@ async function initSubmit(){
           note,
           file_name:f.name,
           storage_path:p,
+          storage_backend:"qiniu",
+          file_url:fileUrl,
+          file_size:f.size,
+          file_mime:f.type||null,
           status:"已提交"
         });
         if(ins.error){
-          await removeStorageObjectSafe("submissions",p);
+          if(p)await removeQiniuObjectSafe(p);
           throw ins.error;
         }
         q("#subForm").reset();
@@ -2375,20 +2434,30 @@ async function initMine(){
     if(!submitter_name)return toast("请填写姓名 / 队伍名称");
     if(newFile&&!/\.(zip|rar|7z)$/i.test(newFile.name))return toast("替换文件仅支持 ZIP / RAR / 7Z");
     const saveBtn=q("#saveSubmissionEdit"), oldText=saveBtn.textContent;
-    let newPath=null;
+    let newPath=null,newUrl=null;
     try{
       saveBtn.disabled=true;
       if(newFile){
-        newPath=state.user.id+"/"+exam_id+"/"+storageObjectPath("files",newFile.name);
-        saveBtn.textContent="上传新文件 0%";
-        await uploadStorageFile("submissions",newPath,newFile,p=>{saveBtn.textContent="上传新文件 "+p+"%"});
+        saveBtn.textContent="七牛云上传新文件 0%";
+        const uploaded=await uploadQiniuFile(newFile,"submission",p=>{saveBtn.textContent="七牛云上传新文件 "+p+"%"});
+        newPath=uploaded.key;newUrl=uploaded.url;
       }
       saveBtn.textContent="正在保存修改…";
       const payload={exam_id,submitter_name,note};
-      if(newFile){payload.file_name=newFile.name;payload.storage_path=newPath}
+      if(newFile){
+        payload.file_name=newFile.name;
+        payload.storage_path=newPath;
+        payload.storage_backend="qiniu";
+        payload.file_url=newUrl;
+        payload.file_size=newFile.size;
+        payload.file_mime=newFile.type||null;
+      }
       const u=await supabase.from("submissions").update(payload).eq("id",id).eq("user_id",state.user.id);
-      if(u.error){if(newPath)await removeStorageObjectSafe("submissions",newPath);throw u.error}
-      if(newFile&&old.storage_path&&old.storage_path!==newPath)await removeStorageObjectSafe("submissions",old.storage_path);
+      if(u.error){if(newPath)await removeQiniuObjectSafe(newPath);throw u.error}
+      if(newFile&&old.storage_path&&old.storage_path!==newPath){
+        if(old.storage_backend==="qiniu")await removeQiniuObjectSafe(old.storage_path);
+        else await removeStorageObjectSafe("submissions",old.storage_path);
+      }
       toast("提交记录已修改");
       editDialog.close();
       await initMine();
@@ -2409,8 +2478,10 @@ async function initMine(){
       const d=await supabase.from("submissions").delete().eq("id",x.id).eq("user_id",state.user.id);
       if(d.error)throw d.error;
       if(x.storage_path){
-        const rm=await removeStorageObjectSafe("submissions",x.storage_path,{queueOnFail:true});
-        if(rm.error)console.warn("提交记录已删除，文件已加入待清理队列",rm.error);
+        const rm=x.storage_backend==="qiniu"
+          ?await removeQiniuObjectSafe(x.storage_path)
+          :await removeStorageObjectSafe("submissions",x.storage_path,{queueOnFail:true});
+        if(rm.error)console.warn("提交记录已删除，但云端文件清理失败",rm.error);
       }
       toast("已取消提交");
       await initMine();
@@ -2833,7 +2904,7 @@ async function initAdmin(){
   q("#labFileMode").onchange=toggleLabFileMode;toggleLabFileMode();
   q("#workForm").onsubmit=async e=>{e.preventDefault();const title=q("#workTitle").value.trim();if(!title)return toast("请填写作品名称");let cover_url="",storage_path=null;const f=q("#workCover").files[0];const btn=e.submitter||q("#workForm button");const oldText=btn?.textContent||"发布作品";try{if(f){storage_path=storageObjectPath("covers",f.name);if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}await uploadStorageFile("works",storage_path,f,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});cover_url=supabase.storage.from("works").getPublicUrl(storage_path).data.publicUrl}if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("past_works").insert({title,year:q("#workYear").value?Number(q("#workYear").value):null,team_name:q("#workTeam").value.trim(),description:q("#workDesc").value.trim(),cover_url:cover_url||null,storage_path,detail_url:q("#workUrl").value.trim()||null,created_by:state.user.id});if(ins.error){if(storage_path)await removeStorageObjectSafe("works",storage_path);throw ins.error}e.target.reset();toast("往届作品发布成功");setTimeout(()=>location.href="./works.html",450)}catch(err){console.error("作品发布失败",err);toast("作品发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   q("#examForm").onsubmit=async e=>{e.preventDefault();const title=q("#examTitle").value.trim(),f=q("#pdf").files[0];if(!title)return toast("请填写任务标题");if(!f)return toast("请选择 PDF 文件");if(!/\.pdf$/i.test(f.name))return toast("任务文件必须是 PDF");const p=storageObjectPath("pdf",f.name);const btn=e.submitter||q("#examForm button");const oldText=btn?.textContent||"发布任务";try{if(btn){btn.disabled=true;btn.textContent="PDF 上传中 0% · "+bytesText(f.size)}await uploadStorageFile("exams",p,f,x=>{if(btn)btn.textContent="PDF 上传中 "+x+"% · "+bytesText(f.size)});const url=supabase.storage.from("exams").getPublicUrl(p).data.publicUrl;if(btn)btn.textContent="正在发布任务…";const ins=await supabase.from("exams").insert({title,description:q("#examDesc").value.trim(),deadline:q("#deadline").value?new Date(q("#deadline").value).toISOString():null,file_url:url,storage_path:p,created_by:state.user.id});if(ins.error){await removeStorageObjectSafe("exams",p);throw ins.error}e.target.reset();toast("试卷 / 任务发布成功");setTimeout(()=>location.href="./exams.html",450)}catch(err){console.error("任务发布失败",err);toast("任务发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
-  q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null;if(mode==="url"){url=normalizeExternalUrl(url);if(!url)return toast("请输入正确的外部链接");if(isOwnPlatformUrl(url))return toast("你填的是本站首页/后台地址，请粘贴真正的视频或资料链接");}const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="archive"&&!/\.(zip|rar|7z)$/i.test(f.name))return toast("压缩包教程请选择 .zip、.rar 或 .7z 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v)$/i.test(f.name))return toast("请选择视频文件");storage_path=tutorialStoragePath(type,f.name);file_name=f.name;if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,created_by:state.user.id});if(ins.error){if(storage_path)await removeStorageObjectSafe("tutorials",storage_path);throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前存储上传上限，请压缩视频或改用外部链接");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
+  q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null,storage_backend="supabase";if(mode==="url"){url=normalizeExternalUrl(url);if(!url)return toast("请输入正确的外部链接");if(isOwnPlatformUrl(url))return toast("你填的是本站首页/后台地址，请粘贴真正的视频或资料链接");}const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="archive"&&!/\.(zip|rar|7z)$/i.test(f.name))return toast("压缩包教程请选择 .zip、.rar 或 .7z 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v|avi|mkv)$/i.test(f.name))return toast("请选择视频文件");file_name=f.name;const cloudCategory=qiniuFileCategory(f,type);if(cloudCategory){if(btn){btn.disabled=true;btn.textContent="七牛云上传中 0% · "+bytesText(f.size)}const uploaded=await uploadQiniuFile(f,cloudCategory,p=>{if(btn)btn.textContent="七牛云上传中 "+p+"% · "+bytesText(f.size)});storage_path=uploaded.key;url=uploaded.url;storage_backend="qiniu";}else{storage_path=tutorialStoragePath(type,f.name);if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,storage_backend,created_by:state.user.id});if(ins.error){if(storage_path){if(storage_backend==="qiniu")await removeQiniuObjectSafe(storage_path);else await removeStorageObjectSafe("tutorials",storage_path)}throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前上传上限，请压缩后重试");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   function toggleResourceForm(){const type=q("#resourceType").value,mode=q("#resourceMode").value,isFile=mode==="file";q("#resourceUrlWrap").classList.toggle("hidden",isFile);q("#resourceFileWrap").classList.toggle("hidden",!isFile);q("#resourceUrlLabel").textContent=type==="video"?"视频链接":type==="pdf"?"PDF 链接":type==="word"?"Word 链接":type==="archive"?"压缩包链接":"PPT 链接";q("#resourceFileLabel").textContent=type==="video"?"视频文件":type==="pdf"?"PDF 文件":type==="word"?"Word 文件":type==="archive"?"压缩包文件":"PPT 文件";q("#resourceFile").accept=type==="video"?"video/*":type==="pdf"?".pdf,application/pdf":type==="word"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":type==="archive"?".zip,.rar,.7z,application/zip,application/x-rar-compressed,application/x-7z-compressed":".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"}q("#resourceType").onchange=toggleResourceForm;q("#resourceMode").onchange=toggleResourceForm;toggleResourceForm();
   loadAllSubmissions();
 }
