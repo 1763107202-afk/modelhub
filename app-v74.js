@@ -30,8 +30,9 @@ const REMEMBER_LOGIN_KEY="justLabRememberLogin";
 const SESSION_LOGIN_KEY="justLabSessionLogin";
 const progressSignedUrlCache=new Map();
 const PROGRESS_SIGNED_URL_TTL=50*60*1000;
-const PROFILE_CACHE_KEY="justLabProfileCacheV2";
-const PROFILE_CACHE_TTL=7*24*60*60*1000;
+const PROFILE_CACHE_KEY="justLabProfileCache";
+const PROFILE_CACHE_LEGACY_KEYS=["justLabProfileCacheV2","justLabProfileCacheV1"];
+const PROFILE_CACHE_TTL=30*24*60*60*1000;
 function runWhenIdle(fn,timeout=1400){
   const task=()=>Promise.resolve().then(fn).catch(err=>console.warn("后台延迟任务失败",err));
   if("requestIdleCallback" in globalThis)globalThis.requestIdleCallback(task,{timeout});
@@ -409,14 +410,20 @@ function bindAuth(){
 async function loadProfile(preferCache=false){
   if(!state.user){state.profile=null;return false}
   if(preferCache){
-    for(const store of [sessionStorage,localStorage]){
-      try{
-        const cached=JSON.parse(store.getItem(PROFILE_CACHE_KEY)||"null");
-        if(cached?.uid===state.user.id&&cached.profile&&Date.now()-Number(cached.savedAt||0)<PROFILE_CACHE_TTL){
-          state.profile=cached.profile;
-          return true;
-        }
-      }catch(_e){}
+    const keys=[PROFILE_CACHE_KEY,...PROFILE_CACHE_LEGACY_KEYS];
+    for(const store of [localStorage,sessionStorage]){
+      for(const key of keys){
+        try{
+          const cached=JSON.parse(store.getItem(key)||"null");
+          if(cached?.uid===state.user.id&&cached.profile&&Date.now()-Number(cached.savedAt||0)<PROFILE_CACHE_TTL){
+            state.profile=cached.profile;
+            const payload=JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()});
+            try{localStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
+            try{sessionStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
+            return true;
+          }
+        }catch(_e){}
+      }
     }
     return false;
   }
@@ -425,7 +432,7 @@ async function loadProfile(preferCache=false){
     console.warn("成员资料刷新失败",r.error);
     return false;
   }
-  state.profile=r.data||null;
+  if(r.data)state.profile=r.data;
   if(state.profile){
     const payload=JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()});
     try{sessionStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
