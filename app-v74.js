@@ -41,10 +41,15 @@ const __authBootstrapReady=new Promise(resolve=>{__resolveAuthBootstrap=resolve}
 let __authLoginBusy=false;
 let __authLoginSeq=0;
 let __manualLoginEpoch=0;
+let __authRegisterBusy=false;
+let __authRegisterSeq=0;
+let __authRegisterEpoch=0;
 let __ignoreAuthEventsUntil=0;
 const AUTH_RESTORE_TIMEOUT=4000;
 const LOGIN_SLOW_NOTICE_MS=8000;
 const LOGIN_HARD_TIMEOUT_MS=20000;
+const SIGNUP_SLOW_NOTICE_MS=10000;
+const SIGNUP_HARD_TIMEOUT_MS=25000;
 function finishAuthBootstrap(){
   if(__authBootstrapDone)return;
   __authBootstrapDone=true;
@@ -308,16 +313,69 @@ function friendlySignupError(err){
   const low=raw.toLowerCase();
   if(!navigator.onLine)return "当前设备似乎已断网，请检查网络后再试。";
   if(/failed to fetch|networkerror|load failed|network request failed|fetch failed/.test(low))return "无法连接注册服务器。请切换网络，或用系统浏览器 / Chrome / Edge 打开后重试。";
-  if(/signup_timeout/.test(low))return "注册请求超时，请检查网络后重新尝试。";
-  if(/user already registered|already been registered|already exists|duplicate key|users_email_partial_key/.test(low))return "这个邮箱已经注册过，请返回并直接登录。";
+  if(/signup_timeout/.test(low))return "注册服务器长时间未响应。本次界面请求已结束；如果刚才其实已完成注册，可直接返回登录尝试。";
+  if(/signup_stale/.test(low))return "注册状态已经变化，请重新确认当前账号状态。";
+  if(/user already registered|already been registered|already exists|duplicate key|users_email_partial_key/.test(low))return "这个邮箱已经注册过，正在尝试直接登录…";
   if(/实验室通行证不正确|passcode/i.test(raw)&&/incorrect|invalid|不正确/i.test(raw))return "实验室通行证不正确，请检查大小写和字符后重试。";
   if(/database error|unexpected_failure/i.test(raw))return "注册信息未通过验证。请检查实验室通行证；若邮箱已注册，请直接返回登录。";
   if(/rate limit|too many requests/i.test(raw))return "尝试次数过多，请稍后再试。";
   return raw?"注册失败："+raw:"注册失败，请稍后重试。";
 }
-async function signUpWithTimeout(payload){
-  const timeout=new Promise(resolve=>setTimeout(()=>resolve({error:new Error("SIGNUP_TIMEOUT")}),15000));
-  return Promise.race([supabase.auth.signUp(payload),timeout]);
+function isAlreadyRegisteredError(err){
+  const raw=String(err?.message||err||"").toLowerCase();
+  return /user already registered|already been registered|already exists|duplicate key|users_email_partial_key/.test(raw);
+}
+async function signUpWithTimeout(payload,onSlow){
+  const attempt=++__authRegisterSeq;
+  const epoch=++__authRegisterEpoch;
+  let hardTimedOut=false;
+  let slowTimer=null;
+  let hardTimer=null;
+
+  const request=supabase.auth.signUp(payload);
+  const guarded=request.then(async result=>{
+    if(hardTimedOut||epoch!==__authRegisterEpoch){
+      const token=result?.data?.session?.access_token||null;
+      if(token){
+        try{
+          const current=await supabase.auth.getSession();
+          if(current?.data?.session?.access_token===token){
+            await supabase.auth.signOut({scope:"local"});
+          }
+        }catch(_e){}
+      }
+      return {error:new Error("SIGNUP_STALE"),stale:true,attempt};
+    }
+    return {...result,attempt};
+  }).catch(error=>({error,attempt}));
+
+  const hardTimeout=new Promise(resolve=>{
+    slowTimer=setTimeout(()=>{
+      try{onSlow?.()}catch(_e){}
+    },SIGNUP_SLOW_NOTICE_MS);
+    hardTimer=setTimeout(()=>{
+      hardTimedOut=true;
+      __ignoreAuthEventsUntil=Date.now()+60000;
+      resolve({error:new Error("SIGNUP_TIMEOUT"),timedOut:true,attempt});
+    },SIGNUP_HARD_TIMEOUT_MS);
+  });
+
+  const result=await Promise.race([guarded,hardTimeout]);
+  clearTimeout(slowTimer);
+  clearTimeout(hardTimer);
+  return result;
+}
+async function applyRegisteredSession(session){
+  if(!session?.user)return false;
+  state.user=session.user;
+  updateAuthUI();
+  await loadProfile(false);
+  updateAuthUI();
+  try{
+    localStorage.setItem(REMEMBER_LOGIN_KEY,"1");
+    sessionStorage.removeItem(SESSION_LOGIN_KEY);
+  }catch(_e){}
+  return true;
 }
 
 function notificationTypeName(t){
@@ -471,47 +529,111 @@ function bindAuth(){
   q("#password").addEventListener("keydown",e=>{if(e.key==="Enter"&&!q("#login").classList.contains("hidden")&&!__authLoginBusy)performLogin()});
 
   q("#continueRegister").onclick=()=>{
-    const n=q("#regName").value.trim(),m=q("#regMajor").value.trim(),e=q("#email").value.trim(),p=q("#password").value;
+    if(__authRegisterBusy)return;
+    const n=q("#regName").value.trim(),m=q("#regMajor").value.trim(),e=q("#email").value.trim().toLowerCase(),p=q("#password").value;
+    q("#email").value=e;
     if(!n)return q("#authMsg").textContent="首次注册请填写姓名";
     if(!m)return q("#authMsg").textContent="首次注册请填写年级、校区和专业信息";
     const freshman=q("#regFreshman")?.value||"";
     if(!freshman)return q("#authMsg").textContent="请选择是否为大一新生";
-    if(!e||p.length<6)return q("#authMsg").textContent="请输入有效邮箱，密码至少 6 位";
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return q("#authMsg").textContent="请输入有效邮箱地址";
+    if(p.length<6)return q("#authMsg").textContent="密码至少需要 6 位";
     q("#authMsg").textContent="";q("#passMsg").textContent="";q("#passcodeConfirm").value="";
     q("#auth").close();q("#passAuth").showModal();
   };
-  q("#cancelPasscode").onclick=()=>{q("#passAuth").close();setAuthMode("register");q("#auth").showModal()};
+  q("#cancelPasscode").onclick=()=>{
+    if(__authRegisterBusy){
+      q("#passMsg").textContent="注册正在处理中，请等待当前请求结束。";
+      return;
+    }
+    q("#passAuth").close();
+    setAuthMode("register");
+    q("#auth").showModal();
+  };
   q("#confirmPasscode").onclick=async()=>{
-    const full_name=q("#regName").value.trim(),major=q("#regMajor").value.trim(),email=q("#email").value.trim(),password=q("#password").value,lab_passcode=q("#passcodeConfirm").value.trim(),is_freshman=q("#regFreshman")?.value==="yes";
-    const btn=q("#confirmPasscode"),msg=q("#passMsg");
+    const full_name=q("#regName").value.trim();
+    const major=q("#regMajor").value.trim();
+    const email=q("#email").value.trim().toLowerCase();
+    const password=q("#password").value;
+    const lab_passcode=q("#passcodeConfirm").value.trim();
+    const is_freshman=q("#regFreshman")?.value==="yes";
+    const btn=q("#confirmPasscode"),cancel=q("#cancelPasscode"),msg=q("#passMsg");
+
+    if(__authRegisterBusy){
+      msg.textContent="注册请求正在处理中，请稍候…";
+      return;
+    }
     if(!lab_passcode)return msg.textContent="请输入实验室通行证";
-    if(btn.disabled)return;
+    if(!navigator.onLine)return msg.textContent="当前设备似乎已断网，请连接网络后重试。";
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return msg.textContent="邮箱格式不正确，请返回检查。";
+    if(password.length<6)return msg.textContent="密码至少需要 6 位，请返回修改。";
+
+    __authRegisterBusy=true;
     btn.disabled=true;
-    msg.textContent="正在验证并注册…";
+    if(cancel)cancel.disabled=true;
+    msg.textContent="正在验证通行证并创建账号…";
+
     try{
-      const r=await signUpWithTimeout({email,password,options:{data:{lab_passcode,full_name,major,is_freshman}}});
+      const r=await signUpWithTimeout(
+        {email,password,options:{data:{lab_passcode,full_name,major,is_freshman}}},
+        ()=>{msg.textContent="当前网络响应较慢，注册仍在处理中，请不要重复点击或退出页面…";}
+      );
+
       if(r?.error){
+        if(isAlreadyRegisteredError(r.error)){
+          msg.textContent="检测到该邮箱已经注册，正在尝试直接登录…";
+          const s=await signInWithTimeout(email,password,()=>{
+            msg.textContent="账号已存在，当前网络较慢，仍在尝试登录…";
+          });
+          if(s?.error){
+            msg.textContent=s.error.message==="LOGIN_TIMEOUT"
+              ?"账号已存在，但自动登录超时。请返回登录页重新登录。"
+              :friendlyAuthError(s.error);
+            return;
+          }
+          if(await applyRegisteredSession(s?.data?.session)){
+            msg.textContent="账号已存在，已使用当前密码登录";
+            setTimeout(()=>q("#passAuth").close(),350);
+            return;
+          }
+          msg.textContent="账号已存在，请返回登录页直接登录。";
+          return;
+        }
+
         msg.textContent=friendlySignupError(r.error);
         return;
       }
-      if(r?.data?.session){
-        try{localStorage.setItem(REMEMBER_LOGIN_KEY,"1");sessionStorage.removeItem(SESSION_LOGIN_KEY)}catch(_e){}
+
+      if(r?.data?.session?.user){
+        msg.textContent="账号创建成功，正在同步成员资料…";
+        await applyRegisteredSession(r.data.session);
         msg.textContent="注册成功，已自动登录";
-        setTimeout(()=>q("#passAuth").close(),400);
+        setTimeout(()=>q("#passAuth").close(),350);
         return;
       }
-      const s=await signInWithTimeout(email,password);
+
+      // 某些 Supabase 配置注册成功后不直接返回 session，受控执行一次登录。
+      msg.textContent="账号创建成功，正在建立登录会话…";
+      const s=await signInWithTimeout(email,password,()=>{
+        msg.textContent="账号已经创建，当前网络较慢，仍在建立登录会话…";
+      });
       if(s?.error){
-        msg.textContent=friendlySignupError(s.error);
+        msg.textContent=s.error.message==="LOGIN_TIMEOUT"
+          ?"账号已经创建成功，但自动登录超时。请返回登录页直接登录。"
+          :friendlyAuthError(s.error);
         return;
       }
+
+      msg.textContent="正在同步成员资料…";
+      await applyRegisteredSession(s?.data?.session);
       msg.textContent="注册成功，已自动登录";
-      try{localStorage.setItem(REMEMBER_LOGIN_KEY,"1");sessionStorage.removeItem(SESSION_LOGIN_KEY)}catch(_e){}
-      setTimeout(()=>q("#passAuth").close(),400);
+      setTimeout(()=>q("#passAuth").close(),350);
     }catch(err){
       msg.textContent=friendlySignupError(err);
     }finally{
+      __authRegisterBusy=false;
       btn.disabled=false;
+      if(cancel)cancel.disabled=false;
     }
   };
 }
@@ -2537,7 +2659,10 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   if(Date.now()<__ignoreAuthEventsUntil&&event==="SIGNED_IN"){
     return;
   }
-  if(__authLoginBusy&&event==="TOKEN_REFRESHED"){
+  if(__authRegisterBusy&&event==="SIGNED_IN"){
+    return;
+  }
+  if((__authLoginBusy||__authRegisterBusy)&&event==="TOKEN_REFRESHED"){
     return;
   }
 
