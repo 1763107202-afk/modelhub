@@ -38,6 +38,13 @@ let __startupSplashDone=false;
 let __authBootstrapDone=false;
 let __resolveAuthBootstrap;
 const __authBootstrapReady=new Promise(resolve=>{__resolveAuthBootstrap=resolve});
+let __authLoginBusy=false;
+let __authLoginSeq=0;
+let __manualLoginEpoch=0;
+let __ignoreAuthEventsUntil=0;
+const AUTH_RESTORE_TIMEOUT=4000;
+const LOGIN_SLOW_NOTICE_MS=8000;
+const LOGIN_HARD_TIMEOUT_MS=20000;
 function finishAuthBootstrap(){
   if(__authBootstrapDone)return;
   __authBootstrapDone=true;
@@ -256,9 +263,45 @@ function friendlyAuthError(err){
   if(/database error|unexpected_failure/.test(low))return "账号服务暂时异常，请稍后重试；若持续出现请联系管理员。";
   return raw?"登录失败："+raw:"登录失败，请稍后重试。";
 }
-async function signInWithTimeout(email,password){
-  const timeout=new Promise(resolve=>setTimeout(()=>resolve({error:new Error("LOGIN_TIMEOUT")}),12000));
-  return Promise.race([supabase.auth.signInWithPassword({email,password}),timeout]);
+async function signInWithTimeout(email,password,onSlow){
+  const attempt=++__authLoginSeq;
+  const epoch=++__manualLoginEpoch;
+  let hardTimedOut=false;
+  let slowTimer=null;
+  let hardTimer=null;
+
+  const request=supabase.auth.signInWithPassword({email,password});
+  const guarded=request.then(async result=>{
+    if(hardTimedOut||epoch!==__manualLoginEpoch){
+      const token=result?.data?.session?.access_token||null;
+      if(token){
+        try{
+          const current=await supabase.auth.getSession();
+          if(current?.data?.session?.access_token===token){
+            await supabase.auth.signOut({scope:"local"});
+          }
+        }catch(_e){}
+      }
+      return {error:new Error("LOGIN_STALE"),stale:true,attempt};
+    }
+    return {...result,attempt};
+  }).catch(error=>({error,attempt}));
+
+  const hardTimeout=new Promise(resolve=>{
+    slowTimer=setTimeout(()=>{
+      try{onSlow?.()}catch(_e){}
+    },LOGIN_SLOW_NOTICE_MS);
+    hardTimer=setTimeout(()=>{
+      hardTimedOut=true;
+      __ignoreAuthEventsUntil=Date.now()+45000;
+      resolve({error:new Error("LOGIN_TIMEOUT"),timedOut:true,attempt});
+    },LOGIN_HARD_TIMEOUT_MS);
+  });
+
+  const result=await Promise.race([guarded,hardTimeout]);
+  clearTimeout(slowTimer);
+  clearTimeout(hardTimer);
+  return result;
 }
 function friendlySignupError(err){
   const raw=String(err?.message||err||"").trim();
@@ -357,9 +400,15 @@ function bindAuth(){
   const performLogin=async()=>{
     const email=q("#email").value.trim(),password=q("#password").value;
     const btn=q("#login"),retry=q("#retryLogin"),msg=q("#authMsg"),remember=q("#rememberLogin")?.checked!==false;
+    if(__authLoginBusy){
+      msg.textContent="登录请求正在处理中，请稍候…";
+      return;
+    }
     if(!email||!password){msg.textContent="请输入邮箱和密码";return}
     if(!navigator.onLine){msg.textContent="当前设备似乎已断网，请连接网络后重试。";retry?.classList.remove("hidden");return}
+    __authLoginBusy=true;
     btn.disabled=true;
+    if(retry)retry.disabled=true;
     retry?.classList.add("hidden");
     msg.textContent="正在连接登录服务器…";
     try{
@@ -378,9 +427,15 @@ function bindAuth(){
         msg.textContent="正在连接登录服务器…";
       }
 
-      const r=await signInWithTimeout(email,password);
+      const r=await signInWithTimeout(email,password,()=>{
+        msg.textContent="当前网络响应较慢，仍在等待登录结果，请不要重复点击…";
+      });
       if(r?.error){
-        const message=r.error.message==="LOGIN_TIMEOUT"?"登录请求超时，请检查网络后重新尝试。":friendlyAuthError(r.error);
+        const message=r.error.message==="LOGIN_TIMEOUT"
+          ?"登录服务器长时间未响应，本次请求已失效，请检查网络后重试。"
+          :r.error.message==="LOGIN_STALE"
+            ?"登录状态已经变化，请重新确认当前账号状态。"
+            :friendlyAuthError(r.error);
         msg.textContent=message;
         if(/无法连接|超时|断网|暂时异常/.test(message))retry?.classList.remove("hidden");
         return;
@@ -406,12 +461,14 @@ function bindAuth(){
       msg.textContent=message;
       if(/无法连接|超时|断网|暂时异常/.test(message))retry?.classList.remove("hidden");
     }finally{
+      __authLoginBusy=false;
       btn.disabled=false;
+      if(retry)retry.disabled=false;
     }
   };
   q("#login").onclick=performLogin;
   q("#retryLogin")&&(q("#retryLogin").onclick=performLogin);
-  q("#password").addEventListener("keydown",e=>{if(e.key==="Enter"&&!q("#login").classList.contains("hidden"))performLogin()});
+  q("#password").addEventListener("keydown",e=>{if(e.key==="Enter"&&!q("#login").classList.contains("hidden")&&!__authLoginBusy)performLogin()});
 
   q("#continueRegister").onclick=()=>{
     const n=q("#regName").value.trim(),m=q("#regMajor").value.trim(),e=q("#email").value.trim(),p=q("#password").value;
@@ -2417,17 +2474,40 @@ async function runPage(){if(page==="home")return initHome();if(page==="works")re
 renderChrome();
 setStartupSplashStatus("正在恢复账号状态…");
 await enforceRememberLoginPolicy();
-let s;
+let s={data:{session:null},error:null};
+const bootstrapLoginEpoch=__manualLoginEpoch;
+let bootstrapTimedOut=false;
 try{
-  s=await supabase.auth.getSession();
-  state.user=s.data.session?.user||null;
+  const sessionPromise=supabase.auth.getSession();
+  const timeoutPromise=new Promise(resolve=>setTimeout(()=>{
+    bootstrapTimedOut=true;
+    resolve({data:{session:null},error:new Error("SESSION_RESTORE_TIMEOUT")});
+  },AUTH_RESTORE_TIMEOUT));
+  s=await Promise.race([sessionPromise,timeoutPromise]);
+  state.user=s?.data?.session?.user||null;
+
+  if(bootstrapTimedOut){
+    console.warn("登录状态恢复超过 4 秒，先进入页面并在后台继续校准");
+    sessionPromise.then(late=>{
+      if(__manualLoginEpoch!==bootstrapLoginEpoch||__authLoginBusy)return;
+      const lateUser=late?.data?.session?.user||null;
+      if((lateUser?.id||null)===(state.user?.id||null))return;
+      state.user=lateUser;
+      updateAuthUI();
+      if(lateUser){
+        loadProfile(true).then(hit=>{
+          if(hit)updateAuthUI();
+          return loadProfile(false);
+        }).then(()=>updateAuthUI()).catch(()=>{});
+      }
+    }).catch(()=>{});
+  }
 }catch(err){
   console.warn("初始登录状态恢复失败",err);
   state.user=null;
 }finally{
   finishAuthBootstrap();
 }
-
 // 会话本身来自本地存储，先立即反映“已登录”，不要等待 profiles 网络请求。
 updateAuthUI();
 const usedProfileCache=await loadProfile(true);
@@ -2453,6 +2533,13 @@ if(state.user){
 
 supabase.auth.onAuthStateChange(async(event,session)=>{
   const nextUser=session?.user||null;
+
+  if(Date.now()<__ignoreAuthEventsUntil&&event==="SIGNED_IN"){
+    return;
+  }
+  if(__authLoginBusy&&event==="TOKEN_REFRESHED"){
+    return;
+  }
 
   // getSession() 已完成首屏恢复，Supabase 随后的 INITIAL_SESSION 不再重复整页加载。
   if(event==="INITIAL_SESSION"&&(nextUser?.id||null)===bootUserId)return;
