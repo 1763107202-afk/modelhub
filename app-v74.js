@@ -22,7 +22,7 @@ const PROJECT_REF="yodtphuzgngxpihnfwop";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const page=document.body.dataset.page||"home";
 const q=s=>document.querySelector(s);
-const state={user:null,profile:null};
+const state={user:null,profile:null,authz:null};
 const teamMemberSelection=new Set();
 const teamMemberDirectory=new Map();
 const THEME_KEY="justLabTheme";
@@ -33,6 +33,8 @@ const PROGRESS_SIGNED_URL_TTL=50*60*1000;
 const PROFILE_CACHE_KEY="justLabProfileCache";
 const PROFILE_CACHE_LEGACY_KEYS=["justLabProfileCacheV2","justLabProfileCacheV1"];
 const PROFILE_CACHE_TTL=30*24*60*60*1000;
+const AUTHZ_CACHE_KEY="justLabAuthzCacheV1";
+const AUTHZ_CACHE_TTL=10*60*1000;
 const STARTUP_SPLASH_STARTED=performance.now();
 let __startupSplashDone=false;
 let __authBootstrapDone=false;
@@ -137,7 +139,28 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"未设置";
 const safe=n=>n.replace(/[^\w.\-\u4e00-\u9fff]/g,"_");
 function toast(m){const t=q("#toast");if(!t)return;t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2500)}
-function isAdmin(){return ["admin","super_admin"].includes(state.profile?.role)}
+function profileDisplayOnly(row){
+  if(!row)return null;
+  return {
+    id:row.id||null,
+    email:row.email||null,
+    full_name:row.full_name||null,
+    major:row.major||null,
+    phone:row.phone||null,
+    qq:row.qq||null,
+    created_at:row.created_at||null
+  };
+}
+function profileAuthzOnly(row){
+  if(!row)return null;
+  return {
+    role:row.role||"member",
+    membership_status:row.membership_status||"formal"
+  };
+}
+function authzRole(){return state.authz?.role||"member"}
+function membershipStatus(){return state.authz?.membership_status||null}
+function isAdmin(){return ["admin","super_admin"].includes(authzRole())}
 function roleName(r){return r==="super_admin"?"主管理员":r==="admin"?"副管理员":"普通成员"}
 function navLink(key,href,label){return '<a class="'+(page===key?"active":"")+'" href="'+href+'">'+label+'</a>'}
 function renderChrome(){
@@ -249,9 +272,10 @@ function updateAuthUI(){
   const on=!!state.user;
   q("#authOpen").classList.toggle("hidden",on);q("#logout").classList.toggle("hidden",!on);q("#badge").classList.toggle("hidden",!on);const no=q("#notifyOpen");if(no)no.classList.toggle("hidden",!on);
   const who=state.profile?.full_name||state.user?.email||"";
-  q("#badge").textContent=on?who+(state.profile?.major?" · "+state.profile.major:"")+(state.profile?.membership_status==="freshman"&&!isAdmin()?" · 大一新生":"")+(isAdmin()?" · "+roleName(state.profile.role):""):"";
+  const memberStatus=membershipStatus();
+  q("#badge").textContent=on?who+(state.profile?.major?" · "+state.profile.major:"")+(memberStatus==="freshman"&&!isAdmin()?" · 大一新生":"")+(isAdmin()?" · "+roleName(authzRole()):""):"";
   q("#adminNav").classList.toggle("hidden",!isAdmin());const aq=q("#adminQuick");if(aq)aq.classList.toggle("hidden",!isAdmin());document.querySelectorAll(".adminSep").forEach(x=>x.classList.toggle("hidden",!isAdmin()));
-  const freshmanRestricted=on&&state.profile?.membership_status==="freshman"&&!isAdmin();
+  const freshmanRestricted=on&&memberStatus==="freshman"&&!isAdmin();
   document.querySelectorAll('a[href="./progress.html"],a[href$="/progress.html"],a[href="./projects.html"],a[href$="/projects.html"]').forEach(a=>a.classList.toggle("hidden",freshmanRestricted));
 }
 function friendlyAuthError(err){
@@ -638,38 +662,81 @@ function bindAuth(){
   };
 }
 async function loadProfile(preferCache=false){
-  if(!state.user){state.profile=null;return false}
+  if(!state.user){
+    state.profile=null;
+    state.authz=null;
+    return false;
+  }
+
   if(preferCache){
+    let usedDisplayCache=false;
     const keys=[PROFILE_CACHE_KEY,...PROFILE_CACHE_LEGACY_KEYS];
     for(const store of [localStorage,sessionStorage]){
       for(const key of keys){
         try{
           const cached=JSON.parse(store.getItem(key)||"null");
           if(cached?.uid===state.user.id&&cached.profile&&Date.now()-Number(cached.savedAt||0)<PROFILE_CACHE_TTL){
-            state.profile=cached.profile;
+            state.profile=profileDisplayOnly(cached.profile);
             const payload=JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()});
             try{localStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
             try{sessionStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
-            return true;
+            usedDisplayCache=true;
+            break;
           }
         }catch(_e){}
       }
+      if(usedDisplayCache)break;
     }
-    return false;
+
+    try{
+      const cachedAuthz=JSON.parse(sessionStorage.getItem(AUTHZ_CACHE_KEY)||"null");
+      if(cachedAuthz?.uid===state.user.id&&cachedAuthz.authz&&Date.now()-Number(cachedAuthz.savedAt||0)<AUTHZ_CACHE_TTL){
+        state.authz={
+          role:cachedAuthz.authz.role||"member",
+          membership_status:cachedAuthz.authz.membership_status||"formal"
+        };
+      }else{
+        state.authz=null;
+      }
+    }catch(_e){
+      state.authz=null;
+    }
+
+    return usedDisplayCache;
   }
-  const r=await supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,created_at").eq("id",state.user.id).maybeSingle();
+
+  const r=await supabase.from("profiles")
+    .select("id,email,role,full_name,major,phone,qq,membership_status,created_at")
+    .eq("id",state.user.id)
+    .maybeSingle();
   if(r.error){
-    console.warn("成员资料刷新失败",r.error);
+    console.warn("成员资料/权限刷新失败",r.error);
     return false;
   }
-  if(r.data)state.profile=r.data;
+
+  if(r.data){
+    state.profile=profileDisplayOnly(r.data);
+    state.authz=profileAuthzOnly(r.data);
+  }
+
   if(state.profile){
     const payload=JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()});
     try{sessionStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
     try{localStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
   }
+
+  if(state.authz){
+    try{
+      sessionStorage.setItem(AUTHZ_CACHE_KEY,JSON.stringify({
+        uid:state.user.id,
+        authz:state.authz,
+        savedAt:Date.now()
+      }));
+    }catch(_e){}
+  }
   return false;
 }
+
 function requireLogin(box="#pageGate"){
   if(state.user)return true;
   const el=q(box);if(el)el.innerHTML='<div class="notice">此页面需要登录后使用。 <button id="gateLogin" class="btn sec" type="button">立即登录</button></div>';
@@ -816,7 +883,7 @@ async function refreshHomeSummary(){
   if(progressModule)progressModule.classList.remove("progressOverdue");
   if(alertText)alertText.textContent="请尽快更新个人进度，或由所在队伍提交队伍进度并将你加入成员名单。";
 
-  const reminderPromise=(state.user&&state.profile?.membership_status==="formal")
+  const reminderPromise=(state.user&&membershipStatus()==="formal")
     ?supabase.rpc("get_progress_reminders")
     :Promise.resolve({data:[],error:null});
   const minePromise=state.user
@@ -1523,7 +1590,7 @@ async function refreshProjectProgressCounts(){
 }
 async function initProjects(){
   const gate=q("#projectGate"),content=q("#projectContent");
-  if(state.user&&state.profile?.membership_status==="freshman"&&!isAdmin()){
+  if(state.user&&membershipStatus()==="freshman"&&!isAdmin()){
     if(content)content.classList.add("hidden");
     if(gate)gate.innerHTML='<div class="notice"><b>项目管理仅对正式成员开放。</b><br>转为正式成员后即可创建或加入项目。</div>';
     return;
@@ -1795,7 +1862,7 @@ async function chooseExistingTeamProjectForTeamProgress(teamName){
 }
 async function initProgress(){
   const gate=q("#progressGate"),content=q("#progressContent");
-  if(state.user&&state.profile?.membership_status==="freshman"&&!isAdmin()){
+  if(state.user&&membershipStatus()==="freshman"&&!isAdmin()){
     if(content)content.classList.add("hidden");
     if(gate)gate.innerHTML='<div class="notice"><b>近期进度仅对正式成员开放。</b><br>大一新生阶段可正常查看任务、提交作业并在“我的提交”中查看提交情况；转为正式成员后将自动开放进度查看与更新功能。</div>';
     return;
@@ -2175,13 +2242,13 @@ function renderOwnProfileIdentity(){
   const name=p.full_name||"未填写姓名";
   const major=p.major||"未填写专业";
   const email=p.email||state.user?.email||"—";
-  const membership=p.membership_status==="freshman"?"大一新生":"正式成员";
+  const membership=membershipStatus()==="freshman"?"大一新生":"正式成员";
   const avatar=(name||"?").trim().slice(0,1).toUpperCase();
 
   q("#profileAvatar")&&(q("#profileAvatar").textContent=avatar);
   q("#profileDisplayName")&&(q("#profileDisplayName").textContent=name);
   q("#profileDisplayMajor")&&(q("#profileDisplayMajor").textContent=major);
-  q("#profileRole")&&(q("#profileRole").textContent=roleName(p.role));
+  q("#profileRole")&&(q("#profileRole").textContent=roleName(authzRole()));
   q("#profileMembership")&&(q("#profileMembership").textContent=membership);
   q("#profileDisplayPhone")&&(q("#profileDisplayPhone").textContent=p.phone||"未填写");
   q("#profileDisplayQQ")&&(q("#profileDisplayQQ").textContent=p.qq||"未填写");
@@ -2293,8 +2360,12 @@ async function initProfile(){
     try{
       const r=await supabase.from("profiles").update({full_name,major,phone:phone||null,qq:qq||null}).eq("id",state.user.id).select("id,email,role,full_name,major,phone,qq,membership_status,created_at").single();
       if(r.error)throw r.error;
-      state.profile=r.data;
-      try{sessionStorage.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()}))}catch(_e){}
+      state.profile=profileDisplayOnly(r.data);
+      state.authz=profileAuthzOnly(r.data);
+      const profilePayload=JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()});
+      try{sessionStorage.setItem(PROFILE_CACHE_KEY,profilePayload)}catch(_e){}
+      try{localStorage.setItem(PROFILE_CACHE_KEY,profilePayload)}catch(_e){}
+      try{sessionStorage.setItem(AUTHZ_CACHE_KEY,JSON.stringify({uid:state.user.id,authz:state.authz,savedAt:Date.now()}))}catch(_e){}
       updateAuthUI();
       edit?.close();
       toast("个人资料已保存，并同步到管理员后台");
@@ -2636,9 +2707,9 @@ const usedProfileCache=await loadProfile(true);
 if(usedProfileCache)updateAuthUI();
 
 const bootUserId=state.user?.id||null;
-if(state.user&&!usedProfileCache){
-  // 首次无资料缓存时仍需取资料，但登录状态已经先显示出来。
-  setStartupSplashStatus("正在同步成员身份…");
+if(state.user&&(!usedProfileCache||!state.authz)){
+  // 资料可长期缓存，但权限缓存缺失/过期时必须先校准权限再进入受限页面。
+  setStartupSplashStatus(state.authz?"正在同步成员资料…":"正在校准成员权限…");
   await loadProfile(false);
   updateAuthUI();
 }
@@ -2648,7 +2719,7 @@ await runPage();
 runWhenIdle(()=>loadSiteNotifications(false),1000);
 runWhenIdle(()=>setupSiteRealtime(),1800);
 
-// 每次启动都在后台刷新成员资料，缓存只负责首屏速度，不作为长期事实来源。
+// 每次启动都在后台刷新成员资料和权限；资料缓存用于首屏速度，权限以服务器为准。
 if(state.user){
   runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},usedProfileCache?450:1200);
 }
@@ -2678,7 +2749,9 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   state.user=nextUser;
   if(!state.user){
     state.profile=null;
+    state.authz=null;
     try{sessionStorage.removeItem(PROFILE_CACHE_KEY)}catch(_e){}
+    try{sessionStorage.removeItem(AUTHZ_CACHE_KEY)}catch(_e){}
   }
 
   try{
@@ -2693,8 +2766,8 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   const usedCache=await loadProfile(true);
   if(usedCache)updateAuthUI();
 
-  if(state.user&&!usedCache){
-    setStartupSplashStatus("正在同步成员身份…");
+  if(state.user&&(!usedCache||!state.authz)){
+    setStartupSplashStatus(state.authz?"正在同步成员资料…":"正在校准成员权限…");
     await loadProfile(false);
     updateAuthUI();
   }
