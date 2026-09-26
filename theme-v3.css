@@ -321,3 +321,62 @@ html[data-theme="light"] .tutorialFilterBtn{color:#405e78!important}
 
 /* Empty states should remain clearly readable */
 html[data-theme="light"] .empty{color:#526b84!important}
+
+
+/* ===== Startup splash ===== */
+#startupSplash{
+  position:fixed;inset:0;z-index:2147483000;
+  display:grid;place-items:center;
+  background:
+    radial-gradient(circle at 50% 38%,rgba(62,119,196,.10),transparent 34%),
+    #08111e;
+  color:#eaf3ff;
+  opacity:1;visibility:visible;
+  transition:opacity .32s ease,visibility .32s ease;
+  animation:startupSplashFailsafe 0s linear 5s forwards;
+}
+#startupSplash.startupSplashSkip{display:none!important}
+#startupSplash.isLeaving{opacity:0;visibility:hidden;pointer-events:none}
+.startupSplashInner{
+  width:min(420px,82vw);display:flex;flex-direction:column;align-items:center;
+  text-align:center;transform:translateY(-2vh)
+}
+.startupSplashLogo{
+  width:92px;height:92px;border-radius:24px;object-fit:cover;
+  box-shadow:0 18px 55px rgba(0,0,0,.28),0 0 0 1px rgba(160,202,255,.20)
+}
+.startupSplashTitle{
+  margin-top:20px;font-size:clamp(20px,4vw,28px);font-weight:900;
+  letter-spacing:.02em;line-height:1.3
+}
+.startupSplashSub{margin-top:7px;font-size:12px;letter-spacing:.08em;color:#8fa7c2}
+.startupSplashTrack{
+  width:min(250px,64vw);height:3px;margin-top:28px;border-radius:999px;
+  overflow:hidden;background:rgba(130,166,207,.18)
+}
+.startupSplashBar{
+  display:block;width:42%;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,transparent,#63a4ff,#7f6cff,transparent);
+  animation:startupSplashMove 1.05s ease-in-out infinite
+}
+.startupSplashStatus{margin-top:12px;font-size:11px;color:#7890aa}
+@keyframes startupSplashMove{
+  0%{transform:translateX(-120%)}
+  100%{transform:translateX(340%)}
+}
+@keyframes startupSplashFailsafe{
+  to{opacity:0;visibility:hidden;pointer-events:none}
+}
+html[data-theme="light"] #startupSplash{
+  background:
+    radial-gradient(circle at 50% 38%,rgba(70,126,201,.10),transparent 34%),
+    #f5f8fc;
+  color:#1c334b;
+}
+html[data-theme="light"] .startupSplashSub{color:#60768d}
+html[data-theme="light"] .startupSplashTrack{background:rgba(63,105,151,.14)}
+html[data-theme="light"] .startupSplashStatus{color:#71869b}
+@media(max-width:600px){
+  .startupSplashLogo{width:82px;height:82px;border-radius:22px}
+  .startupSplashInner{transform:translateY(-4vh)}
+}
