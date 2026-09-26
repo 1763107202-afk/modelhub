@@ -90,7 +90,7 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
     <div class="stat"><span>正式成员</span><b id="formalCount">0</b></div>
     <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
     <div class="stat"><span>累计作业提交</span><b id="submissionCount">—</b><small>全部任务累计提交记录</small></div>
-    <div class="stat storageStat"><div class="storageStatTop"><span>文件存储占用率</span><button id="storageHealthOpen" class="storageDetailBtn" type="button">查看详情 ›</button></div><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间…</small><div class="storageTrack"><i id="storageBar"></i></div></div>
+    <div class="stat storageStat"><div class="storageStatTop"><span>Supabase 存储占用率</span><button id="storageHealthOpen" class="storageDetailBtn" type="button">查看双存储 ›</button></div><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage；视频与压缩包由七牛云承载。</small><div class="storageTrack"><i id="storageBar"></i></div></div>
   </section>
 
   <section class="toolbar glass">
@@ -161,24 +161,28 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
     <div class="storageHealthHead">
       <div>
         <span class="eyebrow">STORAGE HEALTH</span>
-        <h2>文件存储健康</h2>
+        <h2>双存储管理</h2>
         <small id="storageHealthUpdated" class="muted">打开后自动扫描</small>
       </div>
       <button id="storageHealthClose" class="btn ghost" type="button">关闭</button>
     </div>
     <div class="storageHealthGrid">
-      <article class="storageHealthCard"><span>已用空间</span><b id="storageUsed">—</b><small>Supabase Storage · 1 GiB</small><div class="storageTrack"><i id="storageUsageBar"></i></div></article>
-      <article class="storageHealthCard"><span>Storage 文件</span><b id="storageObjectCount">—</b><small>所有受管存储桶文件总数</small></article>
-      <article class="storageHealthCard"><span>孤立文件</span><b id="storageOrphanCount">—</b><small id="storageOrphanBytes">可释放 —</small></article>
-      <article class="storageHealthCard"><span>失效引用</span><b id="storageMissingCount">—</b><small>数据库有记录，但 Storage 文件缺失</small></article>
+      <article class="storageHealthCard"><span>Supabase 已用</span><b id="storageUsed">—</b><small>Storage · 1 GiB 配额</small><div class="storageTrack"><i id="storageUsageBar"></i></div></article>
+      <article class="storageHealthCard"><span>Supabase 文件</span><b id="storageObjectCount">—</b><small>图片、PDF、Word、PPT 等常规文件</small></article>
+      <article class="storageHealthCard"><span>七牛云已用</span><b id="qiniuStorageUsed">—</b><small id="qiniuBucketHint">Bucket：justjxcxsys</small></article>
+      <article class="storageHealthCard"><span>七牛云文件</span><b id="qiniuObjectCount">—</b><small>视频、ZIP / RAR / 7Z 等大文件</small></article>
+      <article class="storageHealthCard"><span>七牛视频</span><b id="qiniuVideoCount">—</b><small id="qiniuVideoBytes">占用 —</small></article>
+      <article class="storageHealthCard"><span>七牛压缩包</span><b id="qiniuArchiveCount">—</b><small id="qiniuArchiveBytes">占用 —</small></article>
+      <article class="storageHealthCard"><span>Supabase 孤立文件</span><b id="storageOrphanCount">—</b><small id="storageOrphanBytes">可释放 —</small></article>
+      <article class="storageHealthCard"><span>Supabase 失效引用</span><b id="storageMissingCount">—</b><small>数据库有记录，但 Storage 文件缺失</small></article>
     </div>
     <div class="storageHealthActions">
       <button id="storageHealthScan" class="btn sec" type="button">重新扫描</button>
       <button id="storageHealthClean" class="btn danger" type="button" disabled>安全清理孤立文件</button>
     </div>
-    <div id="storageHealthStatus" class="msg">点击“重新扫描”可再次核对文件与数据库引用。</div>
+    <div id="storageHealthStatus" class="msg">点击“重新扫描”会同时读取 Supabase 与七牛云存储状态。</div>
     <details class="storageHealthDetails">
-      <summary>查看各存储桶详细状态</summary>
+      <summary>查看 Supabase 各存储桶详细状态</summary>
       <div class="storageHealthTableWrap">
         <table class="storageHealthTable">
           <thead><tr><th>存储桶</th><th>文件 / 占用</th><th>已引用</th><th>孤立文件</th><th>失效引用</th><th>状态</th></tr></thead>
@@ -186,7 +190,7 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
         </table>
       </div>
     </details>
-    <p class="storageHealthNote">安全清理只删除扫描时确认没有任何数据库记录引用的 Storage 对象；失效引用只提示，不会自动修改数据库。</p>
+    <p class="storageHealthNote">“安全清理孤立文件”目前只作用于 Supabase Storage。七牛云区域为实时只读统计；视频和压缩包的删除由各业务页面按记录同步清理。</p>
   </div>
 </dialog>
 
@@ -207,7 +211,7 @@ function renderAdminMetrics(row){
   const used=Number(row.storage_used_bytes||0),limit=Number(row.storage_limit_bytes||1073741824),remaining=Number(row.storage_remaining_bytes||Math.max(limit-used,0));
   const pct=Math.max(0,Math.min(100,Number(row.storage_used_percent||0)));
   q("#storagePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
-  q("#storageHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 1 GiB";
+  q("#storageHint").textContent="Supabase 已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 1 GiB · 视频/压缩包走七牛云";
   q("#storageBar").style.width=pct+"%";const storageOpen=q("#storageHealthOpen");if(storageOpen)storageOpen.classList.toggle("hidden",isDeputyAdmin());
 }
 async function loadAdminMetrics(){
@@ -230,7 +234,7 @@ function storageHealthPathDetails(paths=[]){
   const visible=rows.slice(0,15);
   return '<div class="storagePathList"><details><summary>'+rows.length+' 个路径</summary>'+visible.map(x=>'<div>'+esc(x)+'</div>').join("")+(rows.length>visible.length?'<div>…其余 '+(rows.length-visible.length)+' 个</div>':'')+'</details></div>';
 }
-function renderStorageHealth(rows=[]){
+function renderStorageHealth(rows=[],qiniu=null){
   storageHealthRows=rows;
   const totals=rows.reduce((a,x)=>{
     a.objects+=Number(x.object_count||0);
@@ -248,9 +252,29 @@ function renderStorageHealth(rows=[]){
   q("#storageUsageBar").style.width=Math.min(100,Math.max(0,totals.bytes/STORAGE_HEALTH_PLAN_BYTES*100)).toFixed(1)+"%";
   q("#storageHealthUpdated").textContent="扫描于 "+new Date().toLocaleString("zh-CN",{hour12:false});
   q("#storageHealthClean").disabled=totals.orphans===0;
-  q("#storageHealthStatus").textContent=(totals.orphans||totals.missing)
-    ?"发现 "+totals.orphans+" 个孤立文件、"+totals.missing+" 个失效引用。"
-    :"Storage 与数据库引用目前一致。";
+  if(qiniu){
+    q("#qiniuStorageUsed").textContent=bytes(Number(qiniu.totalBytes||0));
+    q("#qiniuObjectCount").textContent=String(qiniu.objectCount??0);
+    q("#qiniuVideoCount").textContent=String(qiniu.videoCount??0);
+    q("#qiniuVideoBytes").textContent="占用 "+bytes(Number(qiniu.videoBytes||0));
+    q("#qiniuArchiveCount").textContent=String(qiniu.archiveCount??0);
+    q("#qiniuArchiveBytes").textContent="占用 "+bytes(Number(qiniu.archiveBytes||0));
+    q("#qiniuBucketHint").textContent="Bucket："+(qiniu.bucket||"justjxcxsys");
+  }else{
+    q("#qiniuStorageUsed").textContent="—";
+    q("#qiniuObjectCount").textContent="—";
+    q("#qiniuVideoCount").textContent="—";
+    q("#qiniuVideoBytes").textContent="占用 —";
+    q("#qiniuArchiveCount").textContent="—";
+    q("#qiniuArchiveBytes").textContent="占用 —";
+  }
+  const supabaseText=(totals.orphans||totals.missing)
+    ?"Supabase：发现 "+totals.orphans+" 个孤立文件、"+totals.missing+" 个失效引用。"
+    :"Supabase：数据库引用正常。";
+  const qiniuText=qiniu
+    ?" 七牛云："+String(qiniu.objectCount??0)+" 个文件，共 "+bytes(Number(qiniu.totalBytes||0))+"。"
+    :" 七牛云统计暂时不可用。";
+  q("#storageHealthStatus").textContent=supabaseText+qiniuText;
   q("#storageHealthBody").innerHTML=rows.map(x=>{
     const orphanN=Number(x.orphan_count||0),missingN=Number(x.missing_reference_count||0);
     const cls=missingN?"bad":orphanN?"warn":"ok";
@@ -263,14 +287,22 @@ async function loadStorageHealth(){
   const scan=q("#storageHealthScan"),clean=q("#storageHealthClean"),status=q("#storageHealthStatus");
   const old=scan.textContent;
   scan.disabled=true;scan.textContent="扫描中…";clean.disabled=true;
-  status.textContent="正在核对 Storage 对象与数据库引用…";
+  status.textContent="正在同时读取 Supabase 与七牛云存储状态…";
   try{
-    const r=await supabase.rpc("get_storage_health");
-    if(r.error)throw r.error;
-    renderStorageHealth(r.data||[]);
+    const [storageReq,qiniuReq]=await Promise.allSettled([
+      supabase.rpc("get_storage_health"),
+      supabase.functions.invoke("qiniu-storage-stats",{body:{}})
+    ]);
+    if(storageReq.status!=="fulfilled"||storageReq.value.error)throw (storageReq.status==="fulfilled"?storageReq.value.error:storageReq.reason);
+    const qiniu=qiniuReq.status==="fulfilled"&&!qiniuReq.value.error&&!qiniuReq.value.data?.error
+      ?qiniuReq.value.data
+      :null;
+    if(!qiniu&&qiniuReq.status==="fulfilled")console.warn("七牛云统计失败",qiniuReq.value.error||qiniuReq.value.data?.error);
+    if(qiniuReq.status==="rejected")console.warn("七牛云统计失败",qiniuReq.reason);
+    renderStorageHealth(storageReq.value.data||[],qiniu);
   }catch(err){
     console.error("存储健康扫描失败",err);
-    status.textContent="扫描失败："+(err?.message||String(err));
+    status.textContent="Supabase 扫描失败："+(err?.message||String(err));
     q("#storageHealthBody").innerHTML='<tr><td colspan="6">扫描失败。</td></tr>';
   }finally{
     scan.disabled=false;scan.textContent=old;
