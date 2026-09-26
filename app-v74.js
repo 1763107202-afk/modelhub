@@ -172,6 +172,36 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"未设置";
 const safe=n=>n.replace(/[^\w.\-\u4e00-\u9fff]/g,"_");
 function toast(m){const t=q("#toast");if(!t)return;t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2500)}
+const __moduleRetryHandlers=new Map();
+function moduleRetryMarkup(message,key){
+  return '<div class="empty moduleRetryBox"><div>'+esc(message||"模块加载失败，请稍后重试。")+'</div><div class="actions" style="justify-content:center;margin-top:12px"><button class="btn sec moduleRetryBtn" type="button" data-retry-key="'+esc(key)+'">重新加载</button></div></div>';
+}
+function registerModuleRetry(key,handler){
+  if(!key||typeof handler!=="function")return;
+  __moduleRetryHandlers.set(key,handler);
+  setTimeout(()=>{
+    document.querySelectorAll('.moduleRetryBtn[data-retry-key="'+CSS.escape(key)+'"]').forEach(btn=>{
+      btn.onclick=async()=>{
+        if(btn.disabled)return;
+        const old=btn.textContent;
+        btn.disabled=true;
+        btn.textContent="正在重试…";
+        try{await handler()}
+        catch(err){
+          console.warn("模块重试失败",key,err);
+          btn.disabled=false;
+          btn.textContent=old;
+        }
+      };
+    });
+  },0);
+}
+function showModuleRetry(target,message,key,handler){
+  const el=typeof target==="string"?q(target):target;
+  if(!el)return;
+  el.innerHTML=moduleRetryMarkup(message,key);
+  registerModuleRetry(key,handler);
+}
 function profileDisplayOnly(row){
   if(!row)return null;
   return {
@@ -909,7 +939,7 @@ async function loadAnnouncements(adminMode=false){
     console.error("公告加载失败",r.error);
     const box=q("#announcementList"),section=q("#announcementSection");
     if(section)section.classList.remove("hidden");
-    if(box)box.innerHTML='<div class="empty">公告暂时加载失败，请稍后刷新。</div>';
+    if(box)showModuleRetry(box,"公告暂时加载失败："+(r.error?.message||"网络异常"),"announcements",()=>loadAnnouncements(adminMode));
     return;
   }
   const data=r.data||[];
@@ -984,7 +1014,7 @@ async function initHome(){
 async function initWorks(){
   const r=await supabase.from("past_works").select("*").order("year",{ascending:false}).order("created_at",{ascending:false});
   if(r.error){
-    q("#worksGrid").innerHTML='<div class="empty">往届作品加载失败：'+esc(r.error.message)+'</div>';
+    showModuleRetry("#worksGrid","往届作品加载失败："+r.error.message,"works",()=>initWorks());
     q("#worksEmpty").classList.add("hidden");
     return;
   }
@@ -1088,7 +1118,7 @@ async function initExams(){
 async function initTutorials(){
   const r=await supabase.from("tutorials").select("*").order("created_at",{ascending:false});
   if(r.error){
-    q("#videoGrid").innerHTML='<div class="empty">教程资料加载失败：'+esc(r.error.message)+'</div>';
+    showModuleRetry("#videoGrid","教程资料加载失败："+r.error.message,"tutorials",()=>initTutorials());
     q("#videoEmpty").classList.add("hidden");
     return;
   }
@@ -1154,7 +1184,7 @@ async function loadResourceShares(){
   const box=q("#resourceShareGrid");
   if(!box)return;
   const r=await supabase.from("resource_shares").select("*").order("created_at",{ascending:false});
-  if(r.error){box.innerHTML='<div class="empty">资料分享加载失败：'+esc(r.error.message)+'</div>';return}
+  if(r.error){showModuleRetry(box,"资料分享加载失败："+r.error.message,"resource-shares",()=>loadResourceShares());return}
   const data=r.data||[];
   q("#resourceShareCount")&&(q("#resourceShareCount").textContent=String(data.length));
   box.innerHTML=data.length?data.map(x=>{
@@ -1185,7 +1215,7 @@ async function initFiles(){
   if(loadSeq!==__fileLibraryLoadSeq)return;
   if(filesReq.error||sharesReq.error){
     const msg=filesReq.error?.message||sharesReq.error?.message||"未知错误";
-    q("#fileGrid").innerHTML='<div class="empty">资料库加载失败：'+esc(msg)+'</div>';
+    showModuleRetry("#fileGrid","资料库加载失败："+msg,"files",()=>initFiles());
     if(refreshBtn){refreshBtn.disabled=false;refreshBtn.textContent="刷新资料";}
     return;
   }
@@ -1463,8 +1493,8 @@ async function loadTeamProgressFeed(){
     supabase.from("team_progress_updates").select("*").order("created_at",{ascending:false}),
     supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot")
   ]);
-  if(t.error){box.innerHTML='<div class="empty">队伍进度加载失败：'+esc(t.error.message)+'</div>';return}
-  if(m.error){box.innerHTML='<div class="empty">队伍成员加载失败：'+esc(m.error.message)+'</div>';return}
+  if(t.error){showModuleRetry(box,"队伍进度加载失败："+t.error.message,"team-progress",()=>loadTeamProgressFeed());return}
+  if(m.error){showModuleRetry(box,"队伍成员加载失败："+m.error.message,"team-progress-members",()=>loadTeamProgressFeed());return}
   const membersBy=new Map();
   (m.data||[]).forEach(x=>{if(!membersBy.has(x.team_progress_id))membersBy.set(x.team_progress_id,[]);membersBy.get(x.team_progress_id).push(x)});
   const rows=t.data||[];
@@ -1504,7 +1534,7 @@ async function loadPersonalProgressFeed(){
   if(!state.user)return;
   const r=await supabase.from("progress_updates").select("*").order("created_at",{ascending:false});
   if(r.error){
-    const box=q("#progressFeed");if(box)box.innerHTML='<div class="empty">进度加载失败：'+esc(r.error.message)+'</div>';
+    const box=q("#progressFeed");if(box)showModuleRetry(box,"个人进度加载失败："+r.error.message,"personal-progress",()=>loadPersonalProgressFeed());
     return;
   }
   const all=r.data||[],own=all.filter(x=>x.user_id===state.user.id);
@@ -1562,7 +1592,9 @@ async function loadProgressOverview(){
   const rc=q("#progressReminderCount");if(rc)rc.textContent=String(reminders.length);
   const rb=q("#progressReminderList");
   if(rb){
-    rb.innerHTML=reminderReq.error?'<div class="empty">提醒区加载失败：'+esc(reminderReq.error.message)+'</div>':reminders.length?reminders.map(x=>'<article class="progressReminderItem"><div><b>'+esc(x.member_name||"成员")+'</b>'+(x.member_major?'<span>'+esc(x.member_major)+'</span>':'')+'</div><div class="progressReminderMeta">'+(x.last_progress_at?'最近进度：'+fmt(x.last_progress_at):'尚未提交过进度')+' · 已 '+esc(x.days_since)+' 天</div></article>').join(""):'<div class="progressReminderOk">当前没有超过两周未更新的成员。</div>';
+    if(reminderReq.error){
+      showModuleRetry(rb,"提醒区加载失败："+reminderReq.error.message,"progress-overview",()=>loadProgressOverview());
+    }else rb.innerHTML=reminders.length?reminders.map(x=>'<article class="progressReminderItem"><div><b>'+esc(x.member_name||"成员")+'</b>'+(x.member_major?'<span>'+esc(x.member_major)+'</span>':'')+'</div><div class="progressReminderMeta">'+(x.last_progress_at?'最近进度：'+fmt(x.last_progress_at):'尚未提交过进度')+' · 已 '+esc(x.days_since)+' 天</div></article>').join(""):'<div class="progressReminderOk">当前没有超过两周未更新的成员。</div>';
   }
 }
 async function loadProgressPage(){
@@ -1680,7 +1712,7 @@ async function initProjects(){
     ]);
   }catch(err){
     const box=q("#projectGrid");
-    if(box)box.innerHTML='<div class="empty">项目加载失败：'+esc(err?.message||String(err))+'<br>请稍后刷新页面重试。</div>';
+    if(box)showModuleRetry(box,"项目加载失败："+(err?.message||String(err)),"projects",()=>initProjects());
     return;
   }
   const memberRows=membersReq.error?[]:(membersReq.data||[]);
@@ -2220,7 +2252,7 @@ async function initSubmit(){
   }catch(err){
     const msg=err?.message||String(err);
     console.error("提交页面初始化失败",err);
-    if(gate)gate.innerHTML='<div class="notice">提交页面加载失败：'+esc(msg)+'。请刷新页面或重新登录后再试。</div>';
+    if(gate)showModuleRetry(gate,"提交页面加载失败："+msg,"submit-init",()=>initSubmit());
     if(form)form.classList.add("hidden");
   }
 }
@@ -2230,7 +2262,11 @@ async function initMine(){
     supabase.from("submissions").select("*,exams(title)").eq("user_id",state.user.id).order("created_at",{ascending:false}),
     supabase.from("exams").select("id,title").order("created_at",{ascending:false})
   ]);
-  if(r.error)return toast("加载提交记录失败："+r.error.message);
+  if(r.error){
+    const body=q("#mineBody");
+    if(body)showModuleRetry(body,"提交记录加载失败："+r.error.message,"mine",()=>initMine());
+    return;
+  }
   const data=r.data||[], exams=e.data||[];
   const body=q("#mineBody");
   body.innerHTML=data.length?data.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.file_name)+'</td><td><span class="status">'+esc(x.status)+'</span></td><td>'+fmt(x.created_at)+'</td><td><div class="rowActions"><button class="btn sec editSub" data-id="'+esc(x.id)+'">修改</button><button class="btn danger cancelSub" data-id="'+esc(x.id)+'">取消提交</button></div></td></tr>').join(""):'<tr><td colspan="5" style="color:#7890aa">暂无提交记录。</td></tr>';
@@ -2356,6 +2392,8 @@ async function initProfile(){
     }
   }catch(err){
     console.warn("个人主页数据加载失败",err);
+    const target=q("#profileProjectList")||q("#profileHome");
+    if(target)showModuleRetry(target,"个人主页数据加载失败："+(err?.message||String(err)),"profile",()=>initProfile());
   }
 
   q("#profileProjectCount")&&(q("#profileProjectCount").textContent=String(projects.length));
@@ -2452,6 +2490,16 @@ async function loadAdminDashboard(){
   const map=[["#dashFreshman","freshman_count"],["#dashFormal","formal_count"],["#dashUpdated","progress_updated_count"],["#dashOverdue","overdue_count"]];
   if(r.error||!vals){
     map.forEach(([sel])=>{const el=q(sel);if(el)el.textContent="—"});
+    const target=q("#dashFreshman")?.closest?.(".stat")||q("#adminContent");
+    if(target){
+      const oldRetry=target.querySelector?.(".moduleRetryBox");
+      if(!oldRetry){
+        const box=document.createElement("div");
+        box.innerHTML=moduleRetryMarkup("后台统计加载失败："+(r.error?.message||"未知错误"),"admin-dashboard");
+        target.appendChild(box.firstElementChild);
+      }
+      registerModuleRetry("admin-dashboard",()=>loadAdminDashboard());
+    }
     return;
   }
   map.forEach(([sel,key])=>{const el=q(sel);if(el)el.textContent=String(vals[key]??0)});
