@@ -70,14 +70,10 @@ jobs:
       - name: Prepare application icon
         shell: bash
         run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin
           mkdir -p android-app/app/src/main/res/drawable
-          python - <<'PY'
-from pathlib import Path
-import cairosvg
-src = Path("assets/lab-logo-transparent.svg")
-out = Path("android-app/app/src/main/res/drawable/lab_logo.png")
-cairosvg.svg2png(url=str(src), write_to=str(out), output_width=512, output_height=512)
-PY
+          rsvg-convert -w 512 -h 512 assets/lab-logo-transparent.svg -o android-app/app/src/main/res/drawable/lab_logo.png
 
       - name: Build signed release APK
         shell: bash
