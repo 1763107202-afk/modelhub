@@ -612,3 +612,14 @@ html[data-theme="light"] .startupSplashLogo{
   .labHero img{width:100px;height:100px}
   .labIntroTop img{width:126px;height:126px}
 }
+
+
+/* Homepage true-circle reinforcement v45 */
+body[data-page="home"] .brand img,
+body[data-page="home"] .labHero img,
+body[data-page="home"] .startupSplashLogo{
+  border-radius:50%!important;
+  clip-path:circle(50%)!important;
+  overflow:hidden!important;
+  object-fit:contain!important;
+}
