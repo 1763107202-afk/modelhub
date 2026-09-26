@@ -2262,6 +2262,11 @@ async function initMine(){
     supabase.from("submissions").select("*,exams(title)").eq("user_id",state.user.id).order("created_at",{ascending:false}),
     supabase.from("exams").select("id,title").order("created_at",{ascending:false})
   ]);
+  if(e.error){
+    const body=q("#mineBody");
+    if(body)showModuleRetry(body,"任务列表加载失败："+e.error.message,"mine-exams",()=>initMine());
+    return;
+  }
   if(r.error){
     const body=q("#mineBody");
     if(body)showModuleRetry(body,"提交记录加载失败："+r.error.message,"mine",()=>initMine());
@@ -2394,6 +2399,10 @@ async function initProfile(){
     console.warn("个人主页数据加载失败",err);
     const target=q("#profileProjectList")||q("#profileHome");
     if(target)showModuleRetry(target,"个人主页数据加载失败："+(err?.message||String(err)),"profile",()=>initProfile());
+    q("#profileProjectCount")&&(q("#profileProjectCount").textContent="—");
+    q("#profileProgressCount")&&(q("#profileProgressCount").textContent="—");
+    q("#profileSubmissionCount")&&(q("#profileSubmissionCount").textContent="—");
+    return;
   }
 
   q("#profileProjectCount")&&(q("#profileProjectCount").textContent=String(projects.length));
@@ -2502,6 +2511,8 @@ async function loadAdminDashboard(){
     }
     return;
   }
+  const retryBox=q("#dashFreshman")?.closest?.(".stat")?.querySelector?.(".moduleRetryBox");
+  if(retryBox)retryBox.remove();
   map.forEach(([sel,key])=>{const el=q(sel);if(el)el.textContent=String(vals[key]??0)});
 }
 async function initAdmin(){
