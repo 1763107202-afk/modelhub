@@ -9,7 +9,8 @@
   <style>
     .downloadShell{max-width:920px;margin:0 auto}
     .downloadCard{display:grid;grid-template-columns:120px 1fr;gap:28px;align-items:center;padding:30px}
-    .downloadLogo{width:112px;height:112px;border-radius:26px;object-fit:cover;box-shadow:0 12px 34px rgba(17,45,77,.15)}
+    .downloadLogoFrame{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid rgba(55,103,150,.14);box-shadow:0 12px 32px rgba(17,45,77,.11);padding:6px;box-sizing:border-box}
+    .downloadLogo{width:100%;height:100%;display:block;border-radius:50%;object-fit:contain}
     .downloadTitle{margin:0 0 8px;font-size:28px}
     .downloadMeta{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 18px}
     .downloadMeta span{padding:6px 10px;border-radius:999px;background:rgba(51,116,255,.08);color:#54708f;font-size:12px}
@@ -33,7 +34,7 @@
     .officialCard .downloadActions{justify-content:center}
     @media(max-width:720px){
       .downloadCard{grid-template-columns:1fr;text-align:center;padding:24px}
-      .downloadLogo{margin:0 auto}
+      .downloadLogoFrame{margin:0 auto}
       .downloadActions,.downloadMeta{justify-content:center}
       .downloadFeatures{grid-template-columns:1fr}
       .downloadTitle{font-size:23px}
@@ -50,7 +51,7 @@
     </section>
     <section class="section wrap downloadShell">
       <article class="glass downloadCard">
-        <img class="downloadLogo" src="./assets/lab-logo.webp?v=14" alt="机械创新实验室">
+        <div class="downloadLogoFrame"><img class="downloadLogo" src="./assets/lab-logo-transparent.svg?v=1" alt="机械创新实验室"></div>
         <div>
           <span class="eyebrow">WINDOWS CLIENT</span>
           <h2 class="downloadTitle">江苏科技大学机械创新实验室交流平台</h2>
@@ -68,7 +69,7 @@
         </div>
       </article>
       <article class="glass downloadCard" style="margin-top:18px">
-        <img class="downloadLogo" src="./assets/lab-logo.webp?v=14" alt="机械创新实验室">
+        <div class="downloadLogoFrame"><img class="downloadLogo" src="./assets/lab-logo-transparent.svg?v=1" alt="机械创新实验室"></div>
         <div>
           <span class="eyebrow">ANDROID CLIENT</span>
           <h2 class="downloadTitle">Android 手机版</h2>
@@ -86,7 +87,7 @@
         </div>
       </article>
       <article class="glass downloadCard" style="margin-top:18px">
-        <img class="downloadLogo" src="./assets/lab-logo.webp?v=14" alt="机械创新实验室">
+        <div class="downloadLogoFrame"><img class="downloadLogo" src="./assets/lab-logo-transparent.svg?v=1" alt="机械创新实验室"></div>
         <div>
           <span class="eyebrow">IPHONE / IPAD</span>
           <h2 class="downloadTitle">苹果用户添加到主屏幕</h2>
