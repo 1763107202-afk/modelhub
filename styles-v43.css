@@ -583,3 +583,32 @@ html[data-theme="light"] .fileToolbar #fileRefresh:hover{background:#e5eff8}
   .fileToolbarIntro,.fileSearchWrap,.fileToolbar select,.fileToolbar #fileRefresh{grid-column:1}
   .fileToolbar #fileRefresh{width:100%}
 }
+
+
+/* Unified lab logo treatment v44 */
+.brand img,.labHero img,.labIntroTop img,.footInner img,.startupSplashLogo{
+  background:#fff!important;
+  border-radius:50%!important;
+  border:1px solid rgba(86,121,158,.18)!important;
+  box-shadow:0 10px 28px rgba(4,17,31,.18),0 0 0 4px rgba(255,255,255,.025)!important;
+  padding:5px!important;
+  object-fit:contain!important;
+}
+.brand img{width:58px;height:58px}
+.footInner img{width:54px;height:54px}
+.labHero img{width:112px;height:112px}
+.labIntroTop img{width:150px;height:150px}
+.startupSplashLogo{width:104px!important;height:104px!important}
+html[data-theme="light"] .brand img,
+html[data-theme="light"] .labHero img,
+html[data-theme="light"] .labIntroTop img,
+html[data-theme="light"] .footInner img,
+html[data-theme="light"] .startupSplashLogo{
+  border-color:rgba(63,103,145,.16)!important;
+  box-shadow:0 10px 28px rgba(43,75,107,.12)!important;
+}
+@media(max-width:650px){
+  .brand img{width:52px;height:52px}
+  .labHero img{width:100px;height:100px}
+  .labIntroTop img{width:126px;height:126px}
+}
