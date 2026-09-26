@@ -33,6 +33,25 @@ const PROGRESS_SIGNED_URL_TTL=50*60*1000;
 const PROFILE_CACHE_KEY="justLabProfileCache";
 const PROFILE_CACHE_LEGACY_KEYS=["justLabProfileCacheV2","justLabProfileCacheV1"];
 const PROFILE_CACHE_TTL=30*24*60*60*1000;
+const STARTUP_SPLASH_STARTED=performance.now();
+let __startupSplashDone=false;
+function setStartupSplashStatus(message){
+  const el=q("#startupSplashStatus");
+  if(el&&message)el.textContent=message;
+}
+function finishStartupSplash(message){
+  if(__startupSplashDone)return;
+  const splash=q("#startupSplash");
+  if(!splash){__startupSplashDone=true;return}
+  __startupSplashDone=true;
+  if(message)setStartupSplashStatus(message);
+  try{sessionStorage.setItem("justLabSplashSeen","1")}catch(_e){}
+  const wait=Math.max(0,520-(performance.now()-STARTUP_SPLASH_STARTED));
+  setTimeout(()=>{
+    splash.classList.add("isLeaving");
+    setTimeout(()=>splash.remove(),360);
+  },wait);
+}
 function runWhenIdle(fn,timeout=1400){
   const task=()=>Promise.resolve().then(fn).catch(err=>console.warn("后台延迟任务失败",err));
   if("requestIdleCallback" in globalThis)globalThis.requestIdleCallback(task,{timeout});
@@ -2259,6 +2278,7 @@ async function enforceRememberLoginPolicy(){
 }
 async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
 renderChrome();
+setStartupSplashStatus("正在恢复账号状态…");
 await enforceRememberLoginPolicy();
 const s=await supabase.auth.getSession();
 state.user=s.data.session?.user||null;
@@ -2271,10 +2291,12 @@ if(usedProfileCache)updateAuthUI();
 const bootUserId=state.user?.id||null;
 if(state.user&&!usedProfileCache){
   // 首次无资料缓存时仍需取资料，但登录状态已经先显示出来。
+  setStartupSplashStatus("正在同步成员身份…");
   await loadProfile(false);
   updateAuthUI();
 }
 
+finishStartupSplash(state.user?"账号状态已恢复":"正在进入平台…");
 await runPage();
 runWhenIdle(()=>loadSiteNotifications(false),1000);
 runWhenIdle(()=>setupSiteRealtime(),1800);
@@ -2315,10 +2337,12 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   if(usedCache)updateAuthUI();
 
   if(state.user&&!usedCache){
+    setStartupSplashStatus("正在同步成员身份…");
     await loadProfile(false);
     updateAuthUI();
   }
 
+  finishStartupSplash(state.user?"账号状态已恢复":"正在进入平台…");
   await runPage();
   runWhenIdle(()=>loadSiteNotifications(false),900);
   runWhenIdle(()=>setupSiteRealtime(),1500);
