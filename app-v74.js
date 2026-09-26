@@ -1364,6 +1364,8 @@ async function initFiles(){
     file_path:x.file_path||null,
     file_name:x.file_name||null,
     storage_path:x.file_path||null,
+    storage_backend:x.file_storage_backend||"supabase",
+    file_storage_backend:x.file_storage_backend||"supabase",
     file_size:Number(x.file_size||0),
     file_mime:x.file_mime||null,
     publisher_name:x.publisher_name||"管理员",
@@ -1384,7 +1386,11 @@ async function initFiles(){
       const mode=x.resource_mode||"file";
       let action="";
       if(mode==="file"&&x.storage_path){
-        const url=x._source==="share"&&x.file_url?x.file_url:supabase.storage.from("lab-files").getPublicUrl(x.storage_path).data.publicUrl;
+        const url=x._source==="share"&&x.file_url
+          ?x.file_url
+          :x.storage_backend==="qiniu"&&x.external_url
+            ?x.external_url
+            :supabase.storage.from("lab-files").getPublicUrl(x.storage_path).data.publicUrl;
         action='<a class="btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开 / 下载</a>';
       }else if(mode==="link"&&x.external_url){
         action='<a class="btn sec" href="'+esc(x.external_url)+'" target="_blank" rel="noopener noreferrer">打开链接</a>';
@@ -1397,7 +1403,7 @@ async function initFiles(){
         '<h3>'+esc(x.title)+'</h3>'+image+(x.description?'<p>'+esc(x.description)+'</p>':'')+
         '<div class="fileMeta">'+meta+'</div><div class="publisherMeta">发布人：'+esc(x.publisher_name||"管理员")+'</div><div class="actions">'+action+
         (isAdmin()&&x._source==="share"&&!x.file_path?'<button class="btn ghost attachShareFile" data-id="'+esc(x.id)+'">补传文件</button>':'')+
-        (isAdmin()?'<button class="btn danger delUnifiedResource" data-id="'+esc(x.id)+'" data-source="'+esc(x._source)+'" data-path="'+esc(x.storage_path||x.file_path||x.image_path||"")+'" data-filepath="'+esc(x.file_path||"")+'" data-imagepath="'+esc(x.image_path||"")+'">删除</button>':'')+
+        (isAdmin()?'<button class="btn danger delUnifiedResource" data-id="'+esc(x.id)+'" data-source="'+esc(x._source)+'" data-backend="'+esc(x._source==="share"?(x.file_storage_backend||"supabase"):(x.storage_backend||"supabase"))+'" data-path="'+esc(x.storage_path||x.file_path||x.image_path||"")+'" data-filepath="'+esc(x.file_path||"")+'" data-imagepath="'+esc(x.image_path||"")+'">删除</button>':'')+
         '</div></div></article>';
     }).join(""):'<div class="empty">'+(term?"没有找到匹配的资料。":"当前分类暂无资料。")+'</div>';
     document.querySelectorAll(".attachShareFile").forEach(b=>b.onclick=()=>{
@@ -1406,13 +1412,25 @@ async function initFiles(){
       input.accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.zip,.rar,.7z,video/*,audio/*";
       input.onchange=async()=>{
         const f=input.files[0];if(!f)return;
-        const path=state.user.id+"/"+storageObjectPath("share-files",f.name);
+        let path=null,url=null,backend="supabase";
         try{
-          toast("正在上传附件…");
-          await uploadStorageFile("resource-share-files",path,f);
-          const url=supabase.storage.from("resource-share-files").getPublicUrl(path).data.publicUrl;
-          const u=await supabase.from("resource_shares").update({file_url:url,file_path:path,file_name:f.name,file_size:f.size,file_mime:f.type||null}).eq("id",b.dataset.id);
-          if(u.error){await removeStorageObjectSafe("resource-share-files",path);throw u.error}
+          const cloudCategory=qiniuFileCategory(f);
+          if(cloudCategory){
+            toast("正在直传七牛云…");
+            const uploaded=await uploadQiniuFile(f,cloudCategory);
+            path=uploaded.key;url=uploaded.url;backend="qiniu";
+          }else{
+            path=state.user.id+"/"+storageObjectPath("share-files",f.name);
+            toast("正在上传附件…");
+            await uploadStorageFile("resource-share-files",path,f);
+            url=supabase.storage.from("resource-share-files").getPublicUrl(path).data.publicUrl;
+          }
+          const u=await supabase.from("resource_shares").update({file_url:url,file_path:path,file_name:f.name,file_size:f.size,file_mime:f.type||null,file_storage_backend:backend}).eq("id",b.dataset.id);
+          if(u.error){
+            if(backend==="qiniu")await removeQiniuObjectSafe(path);
+            else await removeStorageObjectSafe("resource-share-files",path);
+            throw u.error
+          }
           toast("附件已补传");await initFiles();
         }catch(err){toast("附件上传失败："+(err?.message||String(err)))}
       };
@@ -1420,14 +1438,14 @@ async function initFiles(){
     });
     document.querySelectorAll(".delUnifiedResource").forEach(b=>b.onclick=async()=>{
       if(!confirm("确定删除这条资料吗？删除后无法恢复。"))return;
-      const source=b.dataset.source,path=b.dataset.path||"",filePath=b.dataset.filepath||"",imagePath=b.dataset.imagepath||"";
+      const source=b.dataset.source,backend=b.dataset.backend||"supabase",path=b.dataset.path||"",filePath=b.dataset.filepath||"",imagePath=b.dataset.imagepath||"";
       const d=source==="lab"
         ?await supabase.from("lab_files").delete().eq("id",b.dataset.id)
         :await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
       if(d.error)return toast((source==="lab"?"记录":"分享")+"删除失败："+d.error.message);
       const cleanupResults=[];
-      if(source==="lab"&&path)cleanupResults.push(await removeStorageObjectSafe("lab-files",path,{queueOnFail:true}));
-      if(source!=="lab"&&filePath)cleanupResults.push(await removeStorageObjectSafe("resource-share-files",filePath,{queueOnFail:true}));
+      if(source==="lab"&&path)cleanupResults.push(backend==="qiniu"?await removeQiniuObjectSafe(path):await removeStorageObjectSafe("lab-files",path,{queueOnFail:true}));
+      if(source!=="lab"&&filePath)cleanupResults.push(backend==="qiniu"?await removeQiniuObjectSafe(filePath):await removeStorageObjectSafe("resource-share-files",filePath,{queueOnFail:true}));
       if(source!=="lab"&&imagePath)cleanupResults.push(await removeStorageObjectSafe("resource-share-images",imagePath,{queueOnFail:true}));
       const cleanupFailed=cleanupResults.some(x=>x?.error);
       toast(cleanupFailed?"资料记录已删除，部分文件已加入待清理队列":"资料已删除");
@@ -2824,7 +2842,7 @@ async function initAdmin(){
     if(imageFile&&!(imageFile.type||"").startsWith("image/")&&!/\.(png|jpe?g|webp|gif)$/i.test(imageFile.name))return toast("图片请选择 PNG、JPG、WEBP 或 GIF");
     const btn=e.submitter||q("#resourceShareForm button");
     const oldText=btn?.textContent||"发布资料分享";
-    let image_path=null,image_url=null,image_name=null,file_path=null,file_url=null,file_name=null,file_size=0,file_mime=null;
+    let image_path=null,image_url=null,image_name=null,file_path=null,file_url=null,file_name=null,file_size=0,file_mime=null,file_storage_backend="supabase";
     try{
       if(imageFile){
         image_path=state.user.id+"/"+storageObjectPath("shares",imageFile.name);
@@ -2834,17 +2852,27 @@ async function initAdmin(){
         image_url=supabase.storage.from("resource-share-images").getPublicUrl(image_path).data.publicUrl;
       }
       if(attachFile){
-        file_path=state.user.id+"/"+storageObjectPath("share-files",attachFile.name);
         file_name=attachFile.name;file_size=attachFile.size;file_mime=attachFile.type||null;
-        if(btn){btn.disabled=true;btn.textContent="附件上传中 0% · "+bytesText(attachFile.size)}
-        await uploadStorageFile("resource-share-files",file_path,attachFile,p=>{if(btn)btn.textContent="附件上传中 "+p+"% · "+bytesText(attachFile.size)});
-        file_url=supabase.storage.from("resource-share-files").getPublicUrl(file_path).data.publicUrl;
+        const cloudCategory=qiniuFileCategory(attachFile);
+        if(cloudCategory){
+          if(btn){btn.disabled=true;btn.textContent="七牛云上传中 0% · "+bytesText(attachFile.size)}
+          const uploaded=await uploadQiniuFile(attachFile,cloudCategory,p=>{if(btn)btn.textContent="七牛云上传中 "+p+"% · "+bytesText(attachFile.size)});
+          file_path=uploaded.key;file_url=uploaded.url;file_storage_backend="qiniu";
+        }else{
+          file_path=state.user.id+"/"+storageObjectPath("share-files",attachFile.name);
+          if(btn){btn.disabled=true;btn.textContent="附件上传中 0% · "+bytesText(attachFile.size)}
+          await uploadStorageFile("resource-share-files",file_path,attachFile,p=>{if(btn)btn.textContent="附件上传中 "+p+"% · "+bytesText(attachFile.size)});
+          file_url=supabase.storage.from("resource-share-files").getPublicUrl(file_path).data.publicUrl;
+        }
       }
       if(btn){btn.disabled=true;btn.textContent="正在发布…"}
-      const ins=await supabase.from("resource_shares").insert({title,content:content||null,link_url,image_url,image_path,image_name,file_url,file_path,file_name,file_size,file_mime,created_by:state.user.id});
+      const ins=await supabase.from("resource_shares").insert({title,content:content||null,link_url,image_url,image_path,image_name,file_url,file_path,file_name,file_size,file_mime,file_storage_backend,created_by:state.user.id});
       if(ins.error){
         if(image_path)await removeStorageObjectSafe("resource-share-images",image_path);
-        if(file_path)await removeStorageObjectSafe("resource-share-files",file_path);
+        if(file_path){
+          if(file_storage_backend==="qiniu")await removeQiniuObjectSafe(file_path);
+          else await removeStorageObjectSafe("resource-share-files",file_path);
+        }
         throw ins.error;
       }
       e.target.reset();q("#resourceShareImagePreview").innerHTML="";q("#resourceShareFilePreview").textContent="";toast("资料分享发布成功");
@@ -2864,7 +2892,7 @@ async function initAdmin(){
   q("#labFileForm").onsubmit=async e=>{
     e.preventDefault();
     const title=q("#labFileTitle").value.trim(),mode=q("#labFileMode").value,description=q("#labFileDesc").value.trim();
-    let category=q("#labFileCategory").value,external_url=null,file_name=null,storage_path=null,file_size=0,mime_type=null;
+    let category=q("#labFileCategory").value,external_url=null,file_name=null,storage_path=null,file_size=0,mime_type=null,storage_backend="supabase";
     const f=q("#labFileInput").files[0];
     if(!title)return toast("请填写资料标题");
     if(mode==="file"&&!f)return toast("请选择要上传的文件");
@@ -2881,14 +2909,27 @@ async function initAdmin(){
     const oldText=btn?.textContent||"发布到资料库";
     try{
       if(mode==="file"){
-        storage_path=state.user.id+"/"+category+"/"+storageObjectPath("files",f.name);
         file_name=f.name;file_size=f.size;mime_type=f.type||null;
-        if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}
-        await uploadStorageFile("lab-files",storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});
+        const cloudCategory=qiniuFileCategory(f,category);
+        if(cloudCategory){
+          if(btn){btn.disabled=true;btn.textContent="七牛云上传中 0% · "+bytesText(f.size)}
+          const uploaded=await uploadQiniuFile(f,cloudCategory,p=>{if(btn)btn.textContent="七牛云上传中 "+p+"% · "+bytesText(f.size)});
+          storage_path=uploaded.key;external_url=uploaded.url;storage_backend="qiniu";
+        }else{
+          storage_path=state.user.id+"/"+category+"/"+storageObjectPath("files",f.name);
+          if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}
+          await uploadStorageFile("lab-files",storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});
+        }
       }
       if(btn){btn.disabled=true;btn.textContent="正在保存资料信息…"}
-      const ins=await supabase.from("lab_files").insert({title,description:description||null,category,resource_mode:mode,external_url,file_name,storage_path,file_size,mime_type,created_by:state.user.id});
-      if(ins.error){if(storage_path)await removeStorageObjectSafe("lab-files",storage_path);throw ins.error}
+      const ins=await supabase.from("lab_files").insert({title,description:description||null,category,resource_mode:mode,external_url,file_name,storage_path,file_size,mime_type,storage_backend,created_by:state.user.id});
+      if(ins.error){
+        if(storage_path){
+          if(storage_backend==="qiniu")await removeQiniuObjectSafe(storage_path);
+          else await removeStorageObjectSafe("lab-files",storage_path);
+        }
+        throw ins.error
+      }
       e.target.reset();toggleLabFileMode();toast(mode==="file"?"文件已发布到资料库":mode==="link"?"链接已发布到资料库":"文字资料已发布");
     }catch(err){console.error("资料库发布失败",err);toast("发布失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=oldText}}
