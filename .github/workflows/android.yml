@@ -8,7 +8,7 @@ on:
     paths:
       - "android-app/**"
       - ".github/workflows/android.yml"
-      - "assets/lab-logo.webp"
+      - "assets/lab-logo-transparent.svg"
 
 permissions:
   contents: write
@@ -71,7 +71,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p android-app/app/src/main/res/drawable
-          cp assets/lab-logo.webp android-app/app/src/main/res/drawable/lab_logo.webp
+          python - <<'PY'
+from pathlib import Path
+import cairosvg
+src = Path("assets/lab-logo-transparent.svg")
+out = Path("android-app/app/src/main/res/drawable/lab_logo.png")
+cairosvg.svg2png(url=str(src), write_to=str(out), output_width=512, output_height=512)
+PY
 
       - name: Build signed release APK
         shell: bash
