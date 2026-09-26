@@ -17,6 +17,43 @@
 .dialog{border:0;background:transparent}.dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}.dialogbox{width:min(720px,calc(100vw - 28px));padding:22px;border:1px solid #29415e;border-radius:20px;background:#0c1929;color:#eef6ff}.dialogbox h2{margin:0 0 14px}.detailList{display:grid;gap:9px;max-height:55vh;overflow:auto}.detailItem{padding:14px;border-radius:13px;background:#091625;border:1px solid #1b3048}.detailItem b{display:block}.detailItem small{color:#7890aa}.detailTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.detailActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.memberMetaGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.memberMetaCell{padding:10px 12px;border-radius:11px;background:#081524;border:1px solid #1b3048}.memberMetaCell small{display:block;color:#7890aa}.memberMetaCell b{display:block;margin-top:2px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;font-size:13px;color:#cbd9ea}.dialogActions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 @media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.topin{align-items:flex-start;padding:10px 0;flex-wrap:wrap}.nav{width:100%;margin-left:0}.brand small{display:none}}@media(max-width:520px){.stats{grid-template-columns:1fr}.two,.memberMetaGrid{grid-template-columns:1fr}.brand span b{font-size:14px}}
 
+
+.storageStatTop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.storageDetailBtn{border:0;background:transparent;color:#86b8ef;font-size:11px;font-weight:800;padding:3px 0;cursor:pointer;white-space:nowrap}
+.storageDetailBtn:hover{color:#c9e4ff}
+.storageHealthDialog{padding:0;max-width:none;max-height:none}
+.storageHealthBox{width:min(980px,calc(100vw - 28px));max-height:min(88vh,900px);overflow:auto}
+.storageHealthHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.storageHealthHead h2{margin:2px 0 2px!important}
+.storageHealthGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.storageHealthCard{padding:16px;border:1px solid #213850;border-radius:15px;background:#091625}
+.storageHealthCard span{display:block;font-size:12px;color:#8299b3}
+.storageHealthCard b{display:block;font-size:27px;line-height:1.05;margin:8px 0 6px}
+.storageHealthCard small{display:block;color:#6f88a5;font-size:11px;line-height:1.4}
+.storageHealthActions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 10px}
+.storageHealthDetails{margin-top:14px}.storageHealthDetails>summary{cursor:pointer;font-weight:800;color:#9db4cc}
+.storageHealthTableWrap{overflow:auto;margin-top:10px;border:1px solid #1c3049;border-radius:14px}
+.storageHealthTable{min-width:760px!important}
+.storageHealthTable th,.storageHealthTable td{min-width:0!important;max-width:none!important;text-align:left!important;padding:11px 12px!important}
+.storageHealthTable th{position:static!important}
+.storagePathList{max-width:280px;white-space:normal;word-break:break-all;color:#7890aa}
+.storagePathList details{margin-top:5px}.storagePathList summary{cursor:pointer}
+.storageHealthStatus.ok{color:#74c69d}.storageHealthStatus.warn{color:#f6bd60}.storageHealthStatus.bad{color:#ef8a91}
+.storageHealthNote{margin:12px 0 0;color:#71869e;font-size:12px;line-height:1.6}
+html[data-theme="light"] .storageDetailBtn{color:#3f78ac}
+html[data-theme="light"] .storageHealthCard{background:#f6f9fd;border-color:#d9e4ef}
+html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
+@media(max-width:760px){
+  .storageHealthGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .storageHealthBox{width:calc(100vw - 18px);max-height:92vh;padding:17px}
+}
+@media(max-width:480px){
+  .storageHealthGrid{grid-template-columns:1fr 1fr;gap:8px}
+  .storageHealthCard{padding:12px}.storageHealthCard b{font-size:22px}
+  .storageHealthActions{display:grid;grid-template-columns:1fr 1fr}
+  .storageHealthActions .btn{padding:9px 8px;font-size:13px}
+}
+
 /* Unified standalone logo frame */
 .brand img{background:#fff!important;border:1px solid rgba(86,121,158,.18)!important;box-shadow:0 8px 22px rgba(4,17,31,.18)!important;padding:4px!important}
 </style><link rel="stylesheet" data-cache-managed href="./theme-v3.css">
@@ -53,7 +90,7 @@
     <div class="stat"><span>正式成员</span><b id="formalCount">0</b></div>
     <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
     <div class="stat"><span>累计作业提交</span><b id="submissionCount">—</b><small>全部任务累计提交记录</small></div>
-    <div class="stat"><span>文件存储占用率</span><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间…</small><div class="storageTrack"><i id="storageBar"></i></div></div>
+    <div class="stat storageStat"><div class="storageStatTop"><span>文件存储占用率</span><button id="storageHealthOpen" class="storageDetailBtn" type="button">查看详情 ›</button></div><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间…</small><div class="storageTrack"><i id="storageBar"></i></div></div>
   </section>
 
   <section class="toolbar glass">
@@ -113,6 +150,41 @@
   </form>
 </dialog>
 
+
+<dialog id="storageHealthDialog" class="dialog storageHealthDialog">
+  <div class="dialogbox storageHealthBox">
+    <div class="storageHealthHead">
+      <div>
+        <span class="eyebrow">STORAGE HEALTH</span>
+        <h2>文件存储健康</h2>
+        <small id="storageHealthUpdated" class="muted">打开后自动扫描</small>
+      </div>
+      <button id="storageHealthClose" class="btn ghost" type="button">关闭</button>
+    </div>
+    <div class="storageHealthGrid">
+      <article class="storageHealthCard"><span>已用空间</span><b id="storageUsed">—</b><small>Supabase Storage · 1 GiB</small><div class="storageTrack"><i id="storageUsageBar"></i></div></article>
+      <article class="storageHealthCard"><span>Storage 文件</span><b id="storageObjectCount">—</b><small>所有受管存储桶文件总数</small></article>
+      <article class="storageHealthCard"><span>孤立文件</span><b id="storageOrphanCount">—</b><small id="storageOrphanBytes">可释放 —</small></article>
+      <article class="storageHealthCard"><span>失效引用</span><b id="storageMissingCount">—</b><small>数据库有记录，但 Storage 文件缺失</small></article>
+    </div>
+    <div class="storageHealthActions">
+      <button id="storageHealthScan" class="btn sec" type="button">重新扫描</button>
+      <button id="storageHealthClean" class="btn danger" type="button" disabled>安全清理孤立文件</button>
+    </div>
+    <div id="storageHealthStatus" class="msg">点击“重新扫描”可再次核对文件与数据库引用。</div>
+    <details class="storageHealthDetails">
+      <summary>查看各存储桶详细状态</summary>
+      <div class="storageHealthTableWrap">
+        <table class="storageHealthTable">
+          <thead><tr><th>存储桶</th><th>文件 / 占用</th><th>已引用</th><th>孤立文件</th><th>失效引用</th><th>状态</th></tr></thead>
+          <tbody id="storageHealthBody"><tr><td colspan="6">尚未扫描。</td></tr></tbody>
+        </table>
+      </div>
+    </details>
+    <p class="storageHealthNote">安全清理只删除扫描时确认没有任何数据库记录引用的 Storage 对象；失效引用只提示，不会自动修改数据库。</p>
+  </div>
+</dialog>
+
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
@@ -144,6 +216,112 @@ async function loadAdminMetrics(){
   const row=Array.isArray(r.data)?r.data[0]:r.data;
   renderAdminMetrics(row);
 }
+
+const STORAGE_HEALTH_PLAN_BYTES=1024*1024*1024;
+let storageHealthRows=[];
+function storageHealthPathDetails(paths=[]){
+  const rows=Array.isArray(paths)?paths:[];
+  if(!rows.length)return "—";
+  const visible=rows.slice(0,15);
+  return '<div class="storagePathList"><details><summary>'+rows.length+' 个路径</summary>'+visible.map(x=>'<div>'+esc(x)+'</div>').join("")+(rows.length>visible.length?'<div>…其余 '+(rows.length-visible.length)+' 个</div>':'')+'</details></div>';
+}
+function renderStorageHealth(rows=[]){
+  storageHealthRows=rows;
+  const totals=rows.reduce((a,x)=>{
+    a.objects+=Number(x.object_count||0);
+    a.bytes+=Number(x.total_bytes||0);
+    a.orphans+=Number(x.orphan_count||0);
+    a.orphanBytes+=Number(x.orphan_bytes||0);
+    a.missing+=Number(x.missing_reference_count||0);
+    return a;
+  },{objects:0,bytes:0,orphans:0,orphanBytes:0,missing:0});
+  q("#storageUsed").textContent=bytes(totals.bytes);
+  q("#storageObjectCount").textContent=String(totals.objects);
+  q("#storageOrphanCount").textContent=String(totals.orphans);
+  q("#storageOrphanBytes").textContent="可释放 "+bytes(totals.orphanBytes);
+  q("#storageMissingCount").textContent=String(totals.missing);
+  q("#storageUsageBar").style.width=Math.min(100,Math.max(0,totals.bytes/STORAGE_HEALTH_PLAN_BYTES*100)).toFixed(1)+"%";
+  q("#storageHealthUpdated").textContent="扫描于 "+new Date().toLocaleString("zh-CN",{hour12:false});
+  q("#storageHealthClean").disabled=totals.orphans===0;
+  q("#storageHealthStatus").textContent=(totals.orphans||totals.missing)
+    ?"发现 "+totals.orphans+" 个孤立文件、"+totals.missing+" 个失效引用。"
+    :"Storage 与数据库引用目前一致。";
+  q("#storageHealthBody").innerHTML=rows.map(x=>{
+    const orphanN=Number(x.orphan_count||0),missingN=Number(x.missing_reference_count||0);
+    const cls=missingN?"bad":orphanN?"warn":"ok";
+    const label=missingN?"需检查":orphanN?"可清理":"正常";
+    return '<tr><td><b>'+esc(x.bucket_name)+'</b></td><td>'+esc(x.object_count||0)+' 个<br><small>'+bytes(Number(x.total_bytes||0))+'</small></td><td>'+esc(x.referenced_object_count||0)+'</td><td>'+esc(orphanN)+'<br><small>'+bytes(Number(x.orphan_bytes||0))+'</small>'+storageHealthPathDetails(x.orphan_paths)+'</td><td>'+esc(missingN)+storageHealthPathDetails(x.missing_reference_paths)+'</td><td><span class="storageHealthStatus '+cls+'">'+label+'</span></td></tr>';
+  }).join("")||'<tr><td colspan="6">没有可显示的数据。</td></tr>';
+}
+async function loadStorageHealth(){
+  if(!state.user||!["admin","super_admin"].includes(state.profile?.role))return;
+  const scan=q("#storageHealthScan"),clean=q("#storageHealthClean"),status=q("#storageHealthStatus");
+  const old=scan.textContent;
+  scan.disabled=true;scan.textContent="扫描中…";clean.disabled=true;
+  status.textContent="正在核对 Storage 对象与数据库引用…";
+  try{
+    const r=await supabase.rpc("get_storage_health");
+    if(r.error)throw r.error;
+    renderStorageHealth(r.data||[]);
+  }catch(err){
+    console.error("存储健康扫描失败",err);
+    status.textContent="扫描失败："+(err?.message||String(err));
+    q("#storageHealthBody").innerHTML='<tr><td colspan="6">扫描失败。</td></tr>';
+  }finally{
+    scan.disabled=false;scan.textContent=old;
+  }
+}
+async function removeStorageBatch(bucket,paths=[]){
+  const unique=[...new Set((paths||[]).filter(Boolean))];
+  if(!bucket||!unique.length)return {error:null};
+  let result={error:null};
+  for(let i=0;i<3;i++){
+    try{result=await supabase.storage.from(bucket).remove(unique)}catch(error){result={error}}
+    if(!result?.error)return result;
+    if(i<2)await new Promise(resolve=>setTimeout(resolve,i===0?700:1500));
+  }
+  return result;
+}
+async function cleanStorageOrphans(){
+  if(!state.user||!["admin","super_admin"].includes(state.profile?.role))return;
+  const clean=q("#storageHealthClean"),scan=q("#storageHealthScan"),status=q("#storageHealthStatus");
+  clean.disabled=true;scan.disabled=true;
+  try{
+    status.textContent="正在重新核对孤立文件…";
+    const fresh=await supabase.rpc("get_storage_health");
+    if(fresh.error)throw fresh.error;
+    const rows=fresh.data||[];
+    const beforeCount=rows.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const beforeBytes=rows.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    if(!beforeCount){renderStorageHealth(rows);alert("当前没有孤立文件需要清理。");return}
+    if(!confirm("确认安全清理 "+beforeCount+" 个孤立文件吗？\n\n预计释放 "+bytes(beforeBytes)+"。\n只会删除当前扫描确认没有数据库引用的文件。"))return;
+    status.textContent="正在清理孤立文件…";
+    for(const row of rows){
+      const paths=Array.isArray(row.orphan_paths)?row.orphan_paths:[];
+      if(!paths.length)continue;
+      const rm=await removeStorageBatch(row.bucket_name,paths);
+      if(rm?.error)console.warn("Storage 批量清理失败",row.bucket_name,rm.error);
+    }
+    const verify=await supabase.rpc("get_storage_health");
+    if(verify.error)throw verify.error;
+    const after=verify.data||[];
+    const afterCount=after.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const afterBytes=after.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    renderStorageHealth(after);
+    await loadAdminMetrics();
+    const removed=Math.max(0,beforeCount-afterCount),released=Math.max(0,beforeBytes-afterBytes);
+    if(afterCount===0)alert("清理完成：已删除 "+removed+" 个孤立文件，释放 "+bytes(released)+"。");
+    else alert("已清理 "+removed+" 个，仍有 "+afterCount+" 个未清理。");
+  }catch(err){
+    console.error("孤立文件清理失败",err);
+    status.textContent="清理失败："+(err?.message||String(err));
+    alert("清理失败："+(err?.message||String(err)));
+  }finally{
+    scan.disabled=false;
+    clean.disabled=storageHealthRows.reduce((n,x)=>n+Number(x.orphan_count||0),0)===0;
+  }
+}
+
 const state={user:null,profile:null,members:[],subs:[],progress:[],teamProgress:[],teamMembers:[],filtered:[],metrics:null};
 const THEME_KEY="justLabTheme";
 function preferredTheme(){try{const saved=localStorage.getItem(THEME_KEY);if(saved==="light"||saved==="dark")return saved}catch(_e){}return matchMedia?.("(prefers-color-scheme: light)")?.matches?"light":"dark"}
@@ -390,6 +568,17 @@ q("#searchInput").oninput=render;q("#majorFilter").onchange=render;q("#membershi
 q("#closeDetail").onclick=()=>q("#detailDialog").close();
 q("#cancelEdit").onclick=()=>q("#editDialog").close();
 q("#cancelPassword").onclick=()=>q("#passwordDialog").close();
+
+q("#storageHealthOpen").onclick=async()=>{
+  const d=q("#storageHealthDialog");
+  if(!d.open)d.showModal();
+  await loadStorageHealth();
+};
+q("#storageHealthClose").onclick=()=>q("#storageHealthDialog").close();
+q("#storageHealthScan").onclick=()=>loadStorageHealth();
+q("#storageHealthClean").onclick=()=>cleanStorageOrphans();
+q("#storageHealthDialog").addEventListener("click",e=>{if(e.target===q("#storageHealthDialog"))q("#storageHealthDialog").close()});
+
 q("#passwordForm").onsubmit=async e=>{e.preventDefault();await resetMemberPassword()};
 q("#editForm").onsubmit=async e=>{
   e.preventDefault();
