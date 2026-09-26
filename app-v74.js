@@ -843,7 +843,25 @@ window.addEventListener("beforeunload",event=>{
   event.returnValue="";
 });
 function sleepMs(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
-async function removeStorageObjectSafe(bucket,path){
+const STORAGE_CLEANUP_QUEUE_KEY="justLabStorageCleanupQueueV1";
+function readStorageCleanupQueue(){
+  try{
+    const rows=JSON.parse(localStorage.getItem(STORAGE_CLEANUP_QUEUE_KEY)||"[]");
+    return Array.isArray(rows)?rows.filter(x=>x?.bucket&&x?.path):[];
+  }catch(_e){return []}
+}
+function writeStorageCleanupQueue(rows){
+  try{localStorage.setItem(STORAGE_CLEANUP_QUEUE_KEY,JSON.stringify(rows.slice(-300)))}catch(_e){}
+}
+function queueStorageCleanup(bucket,path){
+  if(!bucket||!path)return;
+  const rows=readStorageCleanupQueue();
+  if(!rows.some(x=>x.bucket===bucket&&x.path===path)){
+    rows.push({bucket,path,queued_at:new Date().toISOString()});
+    writeStorageCleanupQueue(rows);
+  }
+}
+async function removeStorageObjectSafe(bucket,path,{queueOnFail=false}={}){
   if(!bucket||!path)return {data:null,error:null};
   let last={data:null,error:null};
   for(let attempt=0;attempt<3;attempt++){
@@ -855,8 +873,37 @@ async function removeStorageObjectSafe(bucket,path){
     }
     if(attempt<2)await sleepMs(attempt===0?700:1600);
   }
+  if(queueOnFail)queueStorageCleanup(bucket,path);
   console.warn("Storage 文件清理失败，已重试",bucket,path,last?.error);
   return last;
+}
+async function removeStorageObjectsSafe(bucket,paths=[],{queueOnFail=false}={}){
+  const unique=[...new Set((paths||[]).filter(Boolean))];
+  if(!bucket||!unique.length)return {data:null,error:null};
+  let last={data:null,error:null};
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      last=await supabase.storage.from(bucket).remove(unique);
+      if(!last?.error)return last;
+    }catch(error){
+      last={data:null,error};
+    }
+    if(attempt<2)await sleepMs(attempt===0?700:1600);
+  }
+  if(queueOnFail)unique.forEach(path=>queueStorageCleanup(bucket,path));
+  console.warn("Storage 批量清理失败，已重试",bucket,unique,last?.error);
+  return last;
+}
+async function flushStorageCleanupQueue(){
+  if(!navigator.onLine)return;
+  const rows=readStorageCleanupQueue();
+  if(!rows.length)return;
+  const keep=[];
+  for(const item of rows){
+    const r=await removeStorageObjectSafe(item.bucket,item.path);
+    if(r?.error)keep.push(item);
+  }
+  writeStorageCleanupQueue(keep);
 }
 function storageObjectPath(prefix,fileName){
   const ext=(fileName.match(/\.[A-Za-z0-9]{1,10}$/)||[""])[0].toLowerCase();
@@ -957,10 +1004,14 @@ async function loadAnnouncements(adminMode=false){
     });
     document.querySelectorAll(".delAnnouncement").forEach(b=>b.onclick=async()=>{
       if(!confirm("确定删除这条公告吗？"))return;
-      if(b.dataset.path){const rm=await removeStorageObjectSafe("announcement-images",b.dataset.path);if(rm.error)return toast("公告图片删除失败："+rm.error.message)}
       const d=await supabase.from("announcements").delete().eq("id",b.dataset.id);
       if(d.error)return toast("删除失败："+d.error.message);
-      toast("公告已删除");
+      let cleanupError=null;
+      if(b.dataset.path){
+        const rm=await removeStorageObjectSafe("announcement-images",b.dataset.path,{queueOnFail:true});
+        cleanupError=rm.error||null;
+      }
+      toast(cleanupError?"公告已删除，图片文件已加入待清理队列":"公告已删除");
       await loadAnnouncements(true);
     });
   }else{
@@ -1039,13 +1090,14 @@ async function initWorks(){
 
   document.querySelectorAll(".delWork").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这个作品吗？"))return;
-    if(b.dataset.path){
-      const rm=await removeStorageObjectSafe("works",b.dataset.path);
-      if(rm.error)return toast(rm.error.message);
-    }
     const d=await supabase.from("past_works").delete().eq("id",b.dataset.id);
     if(d.error)return toast(d.error.message);
-    toast("作品已删除");
+    let cleanupError=null;
+    if(b.dataset.path){
+      const rm=await removeStorageObjectSafe("works",b.dataset.path,{queueOnFail:true});
+      cleanupError=rm.error||null;
+    }
+    toast(cleanupError?"作品记录已删除，封面已加入待清理队列":"作品已删除");
     await initWorks();
   });
 
@@ -1113,7 +1165,20 @@ async function initExams(){
   const r=await supabase.from("exams").select("*").order("created_at",{ascending:false});const data=r.data||[];
   q("#examGrid").innerHTML=data.map(x=>'<article class="card"><span class="tag">PDF 试卷 / 任务</span><h3>'+esc(x.title)+'</h3><p>'+esc(x.description||"暂无说明")+'</p><div class="meta">截止：'+fmt(x.deadline)+'</div><div class="actions"><a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.file_url)+'">查看 / 下载 PDF</a>'+(isAdmin()?'<button class="btn danger delExam" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除</button>':'')+'</div></article>').join("");
   q("#examEmpty").classList.toggle("hidden",data.length>0);
-  document.querySelectorAll(".delExam").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除该试卷及关联提交吗？"))return;const rel=await supabase.from("submissions").select("storage_path").eq("exam_id",b.dataset.id);if(rel.error)return toast(rel.error.message);const paths=(rel.data||[]).map(x=>x.storage_path).filter(Boolean);if(paths.length){const rm=await supabase.storage.from("submissions").remove(paths);if(rm.error)return toast(rm.error.message);await supabase.from("submissions").delete().eq("exam_id",b.dataset.id)}if(b.dataset.path){const rm2=await removeStorageObjectSafe("exams",b.dataset.path);if(rm2.error)return toast(rm2.error.message)}const d=await supabase.from("exams").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("试卷已删除");await initExams()});
+  document.querySelectorAll(".delExam").forEach(b=>b.onclick=async()=>{
+    if(!confirm("确定删除该试卷及关联提交吗？"))return;
+    const rel=await supabase.from("submissions").select("storage_path").eq("exam_id",b.dataset.id);
+    if(rel.error)return toast("关联提交读取失败："+rel.error.message);
+    const paths=(rel.data||[]).map(x=>x.storage_path).filter(Boolean);
+    const d=await supabase.from("exams").delete().eq("id",b.dataset.id);
+    if(d.error)return toast("删除任务失败："+d.error.message);
+    const cleanupResults=[];
+    if(paths.length)cleanupResults.push(await removeStorageObjectsSafe("submissions",paths,{queueOnFail:true}));
+    if(b.dataset.path)cleanupResults.push(await removeStorageObjectSafe("exams",b.dataset.path,{queueOnFail:true}));
+    const cleanupFailed=cleanupResults.some(x=>x?.error);
+    toast(cleanupFailed?"任务及关联记录已删除，部分文件已加入待清理队列":"试卷 / 任务及关联提交已删除");
+    await initExams();
+  });
 }
 async function initTutorials(){
   const r=await supabase.from("tutorials").select("*").order("created_at",{ascending:false});
@@ -1158,10 +1223,15 @@ async function initTutorials(){
         const u=b.dataset.url||"",key="/storage/v1/object/public/tutorials/";
         if(u.includes(key)){try{p=decodeURIComponent(u.split(key)[1].split("?")[0])}catch(_e){}}
       }
-      if(p){const rm=await removeStorageObjectSafe("tutorials",p);if(rm.error)return toast(rm.error.message)}
       const d=await supabase.from("tutorials").delete().eq("id",b.dataset.id);
       if(d.error)return toast(d.error.message);
-      toast("教程资料已删除");await initTutorials();
+      let cleanupError=null;
+      if(p){
+        const rm=await removeStorageObjectSafe("tutorials",p,{queueOnFail:true});
+        cleanupError=rm.error||null;
+      }
+      toast(cleanupError?"教程记录已删除，文件已加入待清理队列":"教程资料已删除");
+      await initTutorials();
     });
   };
   document.querySelectorAll(".tutorialFilterBtn").forEach(btn=>btn.onclick=()=>{
@@ -1193,10 +1263,15 @@ async function loadResourceShares(){
   }).join(""):'<div class="empty">暂时还没有资料分享。</div>';
   document.querySelectorAll(".delResourceShare").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条资料分享吗？"))return;
-    if(b.dataset.path){const rm=await removeStorageObjectSafe("resource-share-images",b.dataset.path);if(rm.error)return toast("图片删除失败："+rm.error.message)}
     const d=await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除失败："+d.error.message);
-    toast("资料分享已删除");await loadResourceShares();
+    let cleanupError=null;
+    if(b.dataset.path){
+      const rm=await removeStorageObjectSafe("resource-share-images",b.dataset.path,{queueOnFail:true});
+      cleanupError=rm.error||null;
+    }
+    toast(cleanupError?"资料分享已删除，图片已加入待清理队列":"资料分享已删除");
+    await loadResourceShares();
   });
 }
 let __fileLibraryLoadSeq=0;
@@ -1291,20 +1366,17 @@ async function initFiles(){
     document.querySelectorAll(".delUnifiedResource").forEach(b=>b.onclick=async()=>{
       if(!confirm("确定删除这条资料吗？删除后无法恢复。"))return;
       const source=b.dataset.source,path=b.dataset.path||"",filePath=b.dataset.filepath||"",imagePath=b.dataset.imagepath||"";
-      if(source==="lab"){
-        if(path){
-          const rm=await removeStorageObjectSafe("lab-files",path);
-          if(rm.error)return toast("文件删除失败："+rm.error.message);
-        }
-        const d=await supabase.from("lab_files").delete().eq("id",b.dataset.id);
-        if(d.error)return toast("记录删除失败："+d.error.message);
-      }else{
-        if(filePath){const rm=await removeStorageObjectSafe("resource-share-files",filePath);if(rm.error)return toast("附件删除失败："+rm.error.message)}
-        if(imagePath){const rm=await removeStorageObjectSafe("resource-share-images",imagePath);if(rm.error)return toast("图片删除失败："+rm.error.message)}
-        const d=await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
-        if(d.error)return toast("分享删除失败："+d.error.message);
-      }
-      toast("资料已删除");await initFiles();
+      const d=source==="lab"
+        ?await supabase.from("lab_files").delete().eq("id",b.dataset.id)
+        :await supabase.from("resource_shares").delete().eq("id",b.dataset.id);
+      if(d.error)return toast((source==="lab"?"记录":"分享")+"删除失败："+d.error.message);
+      const cleanupResults=[];
+      if(source==="lab"&&path)cleanupResults.push(await removeStorageObjectSafe("lab-files",path,{queueOnFail:true}));
+      if(source!=="lab"&&filePath)cleanupResults.push(await removeStorageObjectSafe("resource-share-files",filePath,{queueOnFail:true}));
+      if(source!=="lab"&&imagePath)cleanupResults.push(await removeStorageObjectSafe("resource-share-images",imagePath,{queueOnFail:true}));
+      const cleanupFailed=cleanupResults.some(x=>x?.error);
+      toast(cleanupFailed?"资料记录已删除，部分文件已加入待清理队列":"资料已删除");
+      await initFiles();
     });
   };
   if(select)select.onchange=render;
@@ -1381,13 +1453,14 @@ async function renderProgressList(rows,box,adminMode=false){
   box.innerHTML=(await Promise.all(rows.map(x=>progressCardHtml(x,adminMode)))).join("");
   box.querySelectorAll(".delProgress").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条进度记录吗？"))return;
-    if(b.dataset.path){
-      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path);
-      if(rm.error)return toast("附件删除失败："+rm.error.message);
-    }
     const d=await supabase.from("progress_updates").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除失败："+d.error.message);
-    toast("进度记录已删除");
+    let cleanupError=null;
+    if(b.dataset.path){
+      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path,{queueOnFail:true});
+      cleanupError=rm.error||null;
+    }
+    toast(cleanupError?"进度记录已删除，附件已加入待清理队列":"进度记录已删除");
     await loadProgressPage();
   });
 }
@@ -1522,8 +1595,8 @@ async function loadTeamProgressFeed(){
     const d=await supabase.from("team_progress_updates").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除失败："+d.error.message);
     if(b.dataset.path){
-      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path);
-      if(rm.error)console.warn("队伍附件清理失败",rm.error);
+      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path,{queueOnFail:true});
+      if(rm.error)console.warn("队伍附件清理失败，已加入待清理队列",rm.error);
     }
     toast("队伍进度已删除");
     await loadProgressPage();
@@ -2335,8 +2408,8 @@ async function initMine(){
       const d=await supabase.from("submissions").delete().eq("id",x.id).eq("user_id",state.user.id);
       if(d.error)throw d.error;
       if(x.storage_path){
-        const rm=await removeStorageObjectSafe("submissions",x.storage_path);
-        if(rm.error)console.warn("提交记录已删除，但文件清理失败",rm.error);
+        const rm=await removeStorageObjectSafe("submissions",x.storage_path,{queueOnFail:true});
+        if(rm.error)console.warn("提交记录已删除，文件已加入待清理队列",rm.error);
       }
       toast("已取消提交");
       await initMine();
@@ -2648,7 +2721,18 @@ async function loadAllSubmissions(){
   const r=await supabase.from("submissions").select("*,exams(title),profiles(email,full_name,major)").order("created_at",{ascending:false});const data=r.data||[];
   q("#allBody").innerHTML=data.length?data.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join(""):'<tr><td colspan="7">暂无提交。</td></tr>';
   document.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{const s=await supabase.storage.from("submissions").createSignedUrl(b.dataset.p,120);if(s.error)return toast(s.error.message);window.open(s.data.signedUrl,"_blank")});
-  document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这条提交吗？"))return;if(b.dataset.p){const rm=await removeStorageObjectSafe("submissions",b.dataset.p);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("提交已删除");await loadAllSubmissions()});
+  document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{
+    if(!confirm("确定删除这条提交吗？"))return;
+    const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);
+    if(d.error)return toast(d.error.message);
+    let cleanupError=null;
+    if(b.dataset.p){
+      const rm=await removeStorageObjectSafe("submissions",b.dataset.p,{queueOnFail:true});
+      cleanupError=rm.error||null;
+    }
+    toast(cleanupError?"提交记录已删除，文件已加入待清理队列":"提交已删除");
+    await loadAllSubmissions();
+  });
 }
 let __siteRealtimeTimer=null;
 const __siteRealtimePendingTables=new Set();
@@ -2792,6 +2876,8 @@ async function enforceRememberLoginPolicy(){
 }
 async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
 renderChrome();
+void flushStorageCleanupQueue();
+window.addEventListener("online",()=>{void flushStorageCleanupQueue()});
 setStartupSplashStatus("正在恢复账号状态…");
 await enforceRememberLoginPolicy();
 let s={data:{session:null},error:null};
