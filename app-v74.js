@@ -30,8 +30,8 @@ const REMEMBER_LOGIN_KEY="justLabRememberLogin";
 const SESSION_LOGIN_KEY="justLabSessionLogin";
 const progressSignedUrlCache=new Map();
 const PROGRESS_SIGNED_URL_TTL=50*60*1000;
-const PROFILE_CACHE_KEY="justLabProfileCacheV1";
-const PROFILE_CACHE_TTL=2*60*1000;
+const PROFILE_CACHE_KEY="justLabProfileCacheV2";
+const PROFILE_CACHE_TTL=7*24*60*60*1000;
 function runWhenIdle(fn,timeout=1400){
   const task=()=>Promise.resolve().then(fn).catch(err=>console.warn("后台延迟任务失败",err));
   if("requestIdleCallback" in globalThis)globalThis.requestIdleCallback(task,{timeout});
@@ -409,18 +409,27 @@ function bindAuth(){
 async function loadProfile(preferCache=false){
   if(!state.user){state.profile=null;return false}
   if(preferCache){
-    try{
-      const cached=JSON.parse(sessionStorage.getItem(PROFILE_CACHE_KEY)||"null");
-      if(cached?.uid===state.user.id&&cached.profile&&Date.now()-Number(cached.savedAt||0)<PROFILE_CACHE_TTL){
-        state.profile=cached.profile;
-        return true;
-      }
-    }catch(_e){}
+    for(const store of [sessionStorage,localStorage]){
+      try{
+        const cached=JSON.parse(store.getItem(PROFILE_CACHE_KEY)||"null");
+        if(cached?.uid===state.user.id&&cached.profile&&Date.now()-Number(cached.savedAt||0)<PROFILE_CACHE_TTL){
+          state.profile=cached.profile;
+          return true;
+        }
+      }catch(_e){}
+    }
+    return false;
   }
   const r=await supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,created_at").eq("id",state.user.id).maybeSingle();
+  if(r.error){
+    console.warn("成员资料刷新失败",r.error);
+    return false;
+  }
   state.profile=r.data||null;
   if(state.profile){
-    try{sessionStorage.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()}))}catch(_e){}
+    const payload=JSON.stringify({uid:state.user.id,profile:state.profile,savedAt:Date.now()});
+    try{sessionStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
+    try{localStorage.setItem(PROFILE_CACHE_KEY,payload)}catch(_e){}
   }
   return false;
 }
@@ -2246,26 +2255,65 @@ renderChrome();
 await enforceRememberLoginPolicy();
 const s=await supabase.auth.getSession();
 state.user=s.data.session?.user||null;
-const usedProfileCache=await loadProfile(true);
+
+// 会话本身来自本地存储，先立即反映“已登录”，不要等待 profiles 网络请求。
 updateAuthUI();
+const usedProfileCache=await loadProfile(true);
+if(usedProfileCache)updateAuthUI();
+
+const bootUserId=state.user?.id||null;
+if(state.user&&!usedProfileCache){
+  // 首次无资料缓存时仍需取资料，但登录状态已经先显示出来。
+  await loadProfile(false);
+  updateAuthUI();
+}
+
 await runPage();
 runWhenIdle(()=>loadSiteNotifications(false),1000);
 runWhenIdle(()=>setupSiteRealtime(),1800);
-if(usedProfileCache){
-  runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},1300);
+
+// 每次启动都在后台刷新成员资料，缓存只负责首屏速度，不作为长期事实来源。
+if(state.user){
+  runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},usedProfileCache?450:1200);
 }
-supabase.auth.onAuthStateChange(async(_e,session)=>{
-  state.user=session?.user||null;
+
+supabase.auth.onAuthStateChange(async(event,session)=>{
+  const nextUser=session?.user||null;
+
+  // getSession() 已完成首屏恢复，Supabase 随后的 INITIAL_SESSION 不再重复整页加载。
+  if(event==="INITIAL_SESSION"&&(nextUser?.id||null)===bootUserId)return;
+
+  // Token 自动续期不应触发整页重载。
+  if(event==="TOKEN_REFRESHED"){
+    state.user=nextUser;
+    return;
+  }
+
+  state.user=nextUser;
+  if(!state.user){
+    state.profile=null;
+    try{sessionStorage.removeItem(PROFILE_CACHE_KEY)}catch(_e){}
+  }
+
   try{
     if(globalThis.__siteRealtimeChannel){
       await supabase.removeChannel(globalThis.__siteRealtimeChannel);
       globalThis.__siteRealtimeChannel=null;
     }
   }catch(_e){}
-  const usedCache=await loadProfile(true);
+
+  // 登录后先显示会话，再用缓存补姓名/身份，最后后台校准资料。
   updateAuthUI();
+  const usedCache=await loadProfile(true);
+  if(usedCache)updateAuthUI();
+
+  if(state.user&&!usedCache){
+    await loadProfile(false);
+    updateAuthUI();
+  }
+
   await runPage();
   runWhenIdle(()=>loadSiteNotifications(false),900);
   runWhenIdle(()=>setupSiteRealtime(),1500);
-  if(usedCache)runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},1200);
+  if(state.user&&usedCache)runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},450);
 });
