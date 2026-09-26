@@ -8,7 +8,7 @@ on:
     paths:
       - "desktop/**"
       - ".github/workflows/desktop-windows.yml"
-      - "lab-logo.svg"
+      - "assets/lab-logo-transparent.svg"
 
 permissions:
   contents: write
