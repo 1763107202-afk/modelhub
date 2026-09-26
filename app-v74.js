@@ -2242,49 +2242,127 @@ async function loadAllSubmissions(){
   document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除这条提交吗？"))return;if(b.dataset.p){const rm=await supabase.storage.from("submissions").remove([b.dataset.p]);if(rm.error)return toast(rm.error.message)}const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);if(d.error)return toast(d.error.message);toast("提交已删除");await loadAllSubmissions()});
 }
 let __siteRealtimeTimer=null;
+const __siteRealtimePendingTables=new Set();
+let __siteRealtimeBusy=false;
+
+async function refreshRealtimeBatch(tables){
+  if(!tables.size)return;
+
+  const has=(...names)=>names.some(name=>tables.has(name));
+
+  // 当前账号资料只在 profiles 变化时校准一次，避免其他实时事件重复查 profiles。
+  if(tables.has("profiles")&&state.user){
+    await loadProfile(false);
+    updateAuthUI();
+    if(page==="profile")renderOwnProfileIdentity();
+  }
+
+  // 通知独立刷新，不再和页面模块刷新绑定。
+  if(state.user&&has("announcements","exams","progress_updates","team_progress_updates","team_progress_members","submissions","profiles")){
+    loadSiteNotifications(false);
+  }
+
+  if(page==="home"){
+    const jobs=[];
+    if(tables.has("announcements"))jobs.push(loadAnnouncements(false));
+    if(has("profiles","projects","progress_updates","team_progress_updates","team_progress_members","submissions"))jobs.push(refreshHomeSummary());
+    if(jobs.length)await Promise.all(jobs);
+    return;
+  }
+
+  if(page==="works"&&tables.has("past_works"))return initWorks();
+  if(page==="exams"&&tables.has("exams"))return initExams();
+  if(page==="tutorials"&&tables.has("tutorials"))return initTutorials();
+  if(page==="files"&&has("lab_files","resource_shares"))return initFiles();
+
+  if(page==="progress"){
+    const jobs=[];
+    if(has("projects","project_members")){
+      __projectDirectoryCache=[];
+      jobs.push(populateProgressProjectOptions());
+    }
+    if(tables.has("profiles"))jobs.push(loadTeamMemberOptions(false));
+    if(tables.has("progress_updates")){
+      progressSignedUrlCache.clear();
+      jobs.push(loadPersonalProgressFeed());
+      jobs.push(loadProgressOverview());
+    }
+    if(has("team_progress_updates","team_progress_members")){
+      progressSignedUrlCache.clear();
+      jobs.push(loadTeamProgressFeed());
+      jobs.push(loadProgressOverview());
+    }
+    if(jobs.length)await Promise.allSettled(jobs);
+    applyProgressFeedSearch();
+    return;
+  }
+
+  if(page==="submit"&&tables.has("exams"))return initSubmit();
+  if(page==="mine"&&has("submissions","exams"))return initMine();
+
+  if(page==="profile"){
+    // 身份区在上面已经处理；下面仅刷新真正受影响的数据模块。
+    if(has("projects","project_members","progress_updates","team_progress_updates","team_progress_members","submissions")){
+      __projectDirectoryCache=[];
+      return initProfile();
+    }
+    return;
+  }
+
+  if(page==="projects"){
+    if(has("projects","project_members","project_pending_members","profiles")){
+      __projectDirectoryCache=[];
+      return initProjects();
+    }
+    if(has("progress_updates","team_progress_updates")){
+      __projectDirectoryCache=[];
+      return refreshProjectProgressCounts();
+    }
+    return;
+  }
+
+  if(page==="admin"){
+    const jobs=[];
+    if(has("profiles","progress_updates","team_progress_updates","team_progress_members"))jobs.push(loadAdminDashboard());
+    if(tables.has("announcements"))jobs.push(loadAnnouncements(true));
+    if(tables.has("submissions")&&typeof loadAllSubmissions==="function")jobs.push(loadAllSubmissions());
+    if(jobs.length)await Promise.allSettled(jobs);
+  }
+}
+
 function scheduleRealtimeRefresh(table){
+  __siteRealtimePendingTables.add(table);
   clearTimeout(__siteRealtimeTimer);
   __siteRealtimeTimer=setTimeout(async()=>{
+    if(__siteRealtimeBusy)return;
+    __siteRealtimeBusy=true;
+    const tables=new Set(__siteRealtimePendingTables);
+    __siteRealtimePendingTables.clear();
     try{
-      if(table==="profiles"&&state.user){await loadProfile();updateAuthUI()}
-      if(state.user&&["announcements","exams","progress_updates","team_progress_updates","team_progress_members","submissions","profiles"].includes(table)){
-        loadSiteNotifications(false);
+      await refreshRealtimeBatch(tables);
+    }catch(err){
+      console.error("实时刷新失败",[...tables].join(","),err);
+    }finally{
+      __siteRealtimeBusy=false;
+      if(__siteRealtimePendingTables.size){
+        scheduleRealtimeRefresh([...__siteRealtimePendingTables][0]);
       }
-      if(page==="home"&&["lab_files","resource_shares","tutorials","past_works","announcements","profiles","projects","progress_updates","team_progress_updates","team_progress_members"].includes(table))return initHome();
-      if(page==="works"&&table==="past_works")return initWorks();
-      if(page==="exams"&&table==="exams")return initExams();
-      if(page==="tutorials"&&table==="tutorials")return initTutorials();
-      if(page==="files"&&["lab_files","resource_shares"].includes(table))return initFiles();
-      if(page==="progress"&&["progress_updates","team_progress_updates","team_progress_members","projects","project_members","profiles"].includes(table)){
-        progressSignedUrlCache.clear();
-        return loadProgressPage();
-      }
-      if(page==="submit"&&["exams","profiles"].includes(table))return initSubmit();
-      if(page==="mine"&&["submissions","exams","profiles"].includes(table))return initMine();
-      if(page==="profile"&&["profiles","projects","project_members","progress_updates","team_progress_updates","team_progress_members","submissions"].includes(table)){__projectDirectoryCache=[];return initProfile();}
-      if(page==="projects"&&["projects","project_members","project_pending_members","progress_updates","team_progress_updates"].includes(table)){__projectDirectoryCache=[];return initProjects();}
-      if(page==="admin"){
-        if(["profiles","progress_updates","team_progress_updates","team_progress_members"].includes(table))await loadAdminDashboard();
-        if(table==="announcements")return loadAnnouncements(true);
-        if(table==="submissions"&&typeof loadAllSubmissions==="function")return loadAllSubmissions();
-        return;
-      }
-    }catch(err){console.error("实时刷新失败",table,err)}
-  },350);
+    }
+  },420);
 }
 function setupSiteRealtime(){
   if(globalThis.__siteRealtimeChannel)return;
   const notificationTables=state.user?["announcements","exams","progress_updates","team_progress_updates","team_progress_members","submissions","profiles"]:[];
   const pageTables={
-    home:["lab_files","resource_shares","tutorials","past_works","announcements","profiles","projects","progress_updates","team_progress_updates","team_progress_members"],
+    home:["announcements","profiles","projects","progress_updates","team_progress_updates","team_progress_members","submissions"],
     works:["past_works"],
     exams:["exams"],
     tutorials:["tutorials"],
     files:["lab_files","resource_shares"],
     progress:["progress_updates","team_progress_updates","team_progress_members","projects","project_members","profiles"],
     projects:["projects","project_members","project_pending_members","progress_updates","team_progress_updates","profiles"],
-    submit:["exams","profiles","submissions"],
-    mine:["submissions","exams","profiles"],
+    submit:["exams"],
+    mine:["submissions","exams"],
     profile:["profiles","projects","project_members","progress_updates","team_progress_updates","team_progress_members","submissions"],
     admin:["profiles","progress_updates","team_progress_updates","team_progress_members","announcements","submissions"]
   }[page]||[];
