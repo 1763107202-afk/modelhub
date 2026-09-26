@@ -30,6 +30,39 @@ const REMEMBER_LOGIN_KEY="justLabRememberLogin";
 const SESSION_LOGIN_KEY="justLabSessionLogin";
 const progressSignedUrlCache=new Map();
 const PROGRESS_SIGNED_URL_TTL=50*60*1000;
+const __inflightRequests=new Map();
+function singleFlight(key,factory){
+  const existing=__inflightRequests.get(key);
+  if(existing)return existing;
+  const promise=Promise.resolve()
+    .then(factory)
+    .finally(()=>{
+      if(__inflightRequests.get(key)===promise)__inflightRequests.delete(key);
+    });
+  __inflightRequests.set(key,promise);
+  return promise;
+}
+function authScopedKey(key){
+  return key+":"+(state.user?.id||"anon");
+}
+function fetchHomeMetricsOnce(){
+  return singleFlight("rpc:get_home_operational_metrics",()=>supabase.rpc("get_home_operational_metrics"));
+}
+function fetchMemberCountOnce(){
+  return singleFlight("rpc:get_member_count",()=>supabase.rpc("get_member_count"));
+}
+function fetchProgressRemindersOnce(){
+  return singleFlight(authScopedKey("rpc:get_progress_reminders"),()=>supabase.rpc("get_progress_reminders"));
+}
+function fetchProgressMemberStatusOnce(){
+  return singleFlight(authScopedKey("rpc:get_progress_member_status"),()=>supabase.rpc("get_progress_member_status"));
+}
+function fetchFormalMemberDirectoryOnce(){
+  return singleFlight(authScopedKey("rpc:get_formal_member_directory"),()=>fetchFormalMemberDirectoryOnce());
+}
+function fetchSiteNotificationsOnce(){
+  return singleFlight(authScopedKey("rpc:get_site_notifications"),()=>supabase.rpc("get_site_notifications"));
+}
 const PROFILE_CACHE_KEY="justLabProfileCache";
 const PROFILE_CACHE_LEGACY_KEYS=["justLabProfileCacheV2","justLabProfileCacheV1"];
 const PROFILE_CACHE_TTL=30*24*60*60*1000;
@@ -418,7 +451,7 @@ async function loadSiteNotifications(openDialog=false){
   if(!openDialog&&globalThis.__notifyCache?.rows&&now-globalThis.__notifyCache.at<15000){
     return globalThis.__notifyCache.rows;
   }
-  const r=await supabase.rpc("get_site_notifications");
+  const r=await fetchSiteNotificationsOnce();
   if(r.error){
     if(openDialog&&list)list.innerHTML='<div class="notifyEmpty">通知加载失败：'+esc(r.error.message)+'</div>';
     return [];
@@ -705,10 +738,11 @@ async function loadProfile(preferCache=false){
     return usedDisplayCache;
   }
 
-  const r=await supabase.from("profiles")
+  const profileKey=authScopedKey("profile:current");
+  const r=await singleFlight(profileKey,()=>supabase.from("profiles")
     .select("id,email,role,full_name,major,phone,qq,membership_status,created_at")
     .eq("id",state.user.id)
-    .maybeSingle();
+    .maybeSingle());
   if(r.error){
     console.warn("成员资料/权限刷新失败",r.error);
     return false;
@@ -884,15 +918,15 @@ async function refreshHomeSummary(){
   if(alertText)alertText.textContent="请尽快更新个人进度，或由所在队伍提交队伍进度并将你加入成员名单。";
 
   const reminderPromise=(state.user&&membershipStatus()==="formal")
-    ?supabase.rpc("get_progress_reminders")
+    ?fetchProgressRemindersOnce()
     :Promise.resolve({data:[],error:null});
   const minePromise=state.user
     ?supabase.from("submissions").select("id",{count:"exact",head:true}).eq("user_id",state.user.id)
     :Promise.resolve({count:null,data:null,error:null});
 
   const [metricsReq,members,reminderReq,mineReq]=await Promise.all([
-    supabase.rpc("get_home_operational_metrics"),
-    supabase.rpc("get_member_count"),
+    fetchHomeMetricsOnce(),
+    fetchMemberCountOnce(),
     reminderPromise,
     minePromise
   ]);
@@ -1299,7 +1333,7 @@ async function renderProgressList(rows,box,adminMode=false){
 async function loadTeamMemberOptions(resetSelection=false){
   const box=q("#teamMemberOptions");if(!box||!state.user)return;
   const search=q("#teamMemberSearch"),selected=q("#teamMemberSelectedCount"),preview=q("#teamSelectedPreview");
-  const r=await supabase.rpc("get_formal_member_directory");
+  const r=await fetchFormalMemberDirectoryOnce();
   if(r.error){box.innerHTML='<div class="empty">正式成员加载失败：'+esc(r.error.message)+'</div>';return}
   const rows=r.data||[];
   teamMemberDirectory.clear();
@@ -1459,10 +1493,10 @@ async function loadPersonalProgressFeed(){
 async function loadProgressOverview(){
   if(!state.user)return;
   const [statusReq,teamMemberReq,teamProgressReq,reminderReq]=await Promise.all([
-    supabase.rpc("get_progress_member_status"),
+    fetchProgressMemberStatusOnce(),
     supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot"),
     supabase.from("team_progress_updates").select("id,competition_name,created_at"),
-    supabase.rpc("get_progress_reminders")
+    fetchProgressRemindersOnce()
   ]);
 
   const statuses=statusReq.error?[]:(statusReq.data||[]);
@@ -1519,10 +1553,13 @@ function projectStatusName(s){
 let __projectDirectoryCache=[];
 async function fetchProjectDirectory(force=false){
   if(!force&&__projectDirectoryCache.length)return __projectDirectoryCache;
-  const r=await supabase.rpc("get_project_directory_v2");
-  if(r.error)throw r.error;
-  __projectDirectoryCache=r.data||[];
-  return __projectDirectoryCache;
+  return singleFlight(authScopedKey("rpc:get_project_directory_v2"),async()=>{
+    if(!force&&__projectDirectoryCache.length)return __projectDirectoryCache;
+    const r=await supabase.rpc("get_project_directory_v2");
+    if(r.error)throw r.error;
+    __projectDirectoryCache=r.data||[];
+    return __projectDirectoryCache;
+  });
 }
 async function populateProgressProjectOptions(){
   if(!state.user)return;
@@ -1608,7 +1645,7 @@ async function initProjects(){
   try{
     [projects,membersReq]=await Promise.all([
       fetchProjectDirectory(true),
-      supabase.rpc("get_formal_member_directory")
+      fetchFormalMemberDirectoryOnce()
     ]);
   }catch(err){
     const box=q("#projectGrid");
@@ -2750,6 +2787,7 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   if(!state.user){
     state.profile=null;
     state.authz=null;
+    __inflightRequests.clear();
     try{sessionStorage.removeItem(PROFILE_CACHE_KEY)}catch(_e){}
     try{sessionStorage.removeItem(AUTHZ_CACHE_KEY)}catch(_e){}
   }
