@@ -2634,32 +2634,50 @@ async function cleanStorageOrphans(){
     const fresh=await supabase.rpc("get_storage_health");
     if(fresh.error)throw fresh.error;
     const rows=fresh.data||[];
-    const totalCount=rows.reduce((n,x)=>n+Number(x.orphan_count||0),0);
-    const totalBytes=rows.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
-    if(!totalCount){
+    const beforeCount=rows.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const beforeBytes=rows.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    if(!beforeCount){
       toast("当前没有孤立文件需要清理");
       renderStorageHealth(rows);
       return;
     }
-    if(!confirm("确认安全清理 "+totalCount+" 个孤立文件吗？\n\n预计释放 "+bytesText(totalBytes)+"。\n只会删除当前扫描确认没有数据库引用的文件。"))return;
+    if(!confirm("确认安全清理 "+beforeCount+" 个孤立文件吗？\n\n预计释放 "+bytesText(beforeBytes)+"。\n只会删除当前扫描确认没有数据库引用的文件。"))return;
+
     if(status)status.textContent="正在清理孤立文件…";
-    let removed=0,failed=0;
     for(const row of rows){
       const paths=Array.isArray(row.orphan_paths)?row.orphan_paths:[];
       if(!paths.length)continue;
-      const rr=await removeStorageObjectsSafe(row.bucket_name,paths,{queueOnFail:true});
-      if(rr?.error)failed+=paths.length;
-      else removed+=paths.length;
+      await removeStorageObjectsSafe(row.bucket_name,paths,{queueOnFail:true});
     }
-    toast(failed?"已清理 "+removed+" 个文件，部分失败项已进入待清理队列":"已安全清理 "+removed+" 个孤立文件");
-    await loadStorageHealth();
+
+    if(status)status.textContent="正在复核实际清理结果…";
+    const verify=await supabase.rpc("get_storage_health");
+    if(verify.error)throw verify.error;
+    const verifiedRows=verify.data||[];
+    const afterCount=verifiedRows.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const afterBytes=verifiedRows.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    const removedCount=Math.max(0,beforeCount-afterCount);
+    const releasedBytes=Math.max(0,beforeBytes-afterBytes);
+
+    renderStorageHealth(verifiedRows);
+
+    if(afterCount===0){
+      toast("清理完成：已删除 "+removedCount+" 个孤立文件，释放 "+bytesText(releasedBytes));
+      if(status)status.textContent="Storage 与数据库引用目前一致。";
+    }else if(removedCount>0){
+      toast("已清理 "+removedCount+" 个，仍有 "+afterCount+" 个未清理");
+      if(status)status.textContent="仍有 "+afterCount+" 个孤立文件未清理，请稍后重试。";
+    }else{
+      toast("未清理掉任何文件，请检查 Storage 权限后重试");
+      if(status)status.textContent="清理请求已发送，但实际孤立文件数量没有下降。";
+    }
   }catch(err){
     console.error("孤立文件清理失败",err);
     toast("清理失败："+(err?.message||String(err)));
     if(status)status.textContent="清理失败，请重新扫描后再试。";
   }finally{
     if(scan)scan.disabled=false;
-    if(clean)clean.disabled=false;
+    if(clean)clean.disabled=__storageHealthRows.reduce((n,x)=>n+Number(x.orphan_count||0),0)===0;
   }
 }
 
