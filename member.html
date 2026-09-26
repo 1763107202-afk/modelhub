@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>成员个人主页 | 江苏科技大学机械创新实验室</title>
+<link rel="stylesheet" data-cache-managed href="./theme-v3.css">
 <script src="./theme-init-v2.js?v=20260924-1910"></script>
 <style>
 *{box-sizing:border-box}html{color-scheme:dark}body{margin:0;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#07111f;color:#edf5ff;line-height:1.65}a{color:inherit;text-decoration:none}button{font:inherit}.hidden{display:none!important}.wrap{width:min(1160px,calc(100% - 28px));margin:auto}
@@ -128,7 +129,7 @@ async function load(){
   q("#memberEmail").innerHTML=target.email?'<a href="mailto:'+esc(target.email)+'">'+esc(target.email)+'</a>':"未填写";
   q("#memberAvatar").textContent=(target.full_name||"?").trim().slice(0,1).toUpperCase();
   document.title=(target.full_name||"成员")+" · 成员个人主页 | 机械创新实验室";
-  if(roleIsAdmin(me.role)){q("#backBtn").href="./admin-members.html?v=20260925-1955";q("#backBtn").textContent="返回成员后台";}
+  if(roleIsAdmin(me.role)){q("#backBtn").href="./admin-members.html";q("#backBtn").textContent="返回成员后台";}
 
   const [personalReq,membershipReq,projectReq]=await Promise.all([
     supabase.from("progress_updates").select("*").eq("user_id",targetId).order("created_at",{ascending:false}),
@@ -222,5 +223,6 @@ function setupMemberRealtime(){
 await load();
 setupMemberRealtime();
 </script>
+<script src="./cache-loader.js?v=3" data-app="false"></script>
 </body>
 </html>
