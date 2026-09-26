@@ -912,6 +912,7 @@ function storageObjectPath(prefix,fileName){
 }
 function tutorialStoragePath(type,fileName){return storageObjectPath(type,fileName)}
 async function uploadStorageFile(bucket,path,file,onProgress){
+  if(qiniuFileCategory(file))throw new Error("视频和压缩包已强制使用七牛云存储，不能写入 Supabase Storage");
   const sess=await supabase.auth.getSession();
   const token=sess.data.session?.access_token;
   if(!token)throw new Error("登录状态已失效，请重新登录后再上传");
@@ -946,11 +947,19 @@ async function uploadStorageFile(bucket,path,file,onProgress){
   }
 }
 async function uploadTutorialFile(path,file,onProgress){return uploadStorageFile("tutorials",path,file,onProgress)}
+const QINIU_PUBLIC_DOMAIN="http://tlzdmew9r.hd-bkt.clouddn.com";
 function qiniuFileCategory(file,resourceType=""){
   const n=(file?.name||"").toLowerCase();
   if(resourceType==="video"||/\.(mp4|webm|ogg|mov|m4v|avi|mkv)$/i.test(n))return "video";
   if(resourceType==="archive"||/\.(zip|rar|7z)$/i.test(n))return "archive";
   return "";
+}
+function isQiniuStorageKey(path=""){
+  return /^(?:videos|archives|submissions)\//.test(String(path||""));
+}
+function qiniuPublicUrlFromKey(key=""){
+  if(!key)return "";
+  return QINIU_PUBLIC_DOMAIN.replace(/\/$/,"")+"/"+String(key).split("/").map(encodeURIComponent).join("/");
 }
 async function uploadQiniuFile(file,category,onProgress){
   const sess=await supabase.auth.getSession();
@@ -1490,7 +1499,7 @@ function progressFileKind(name="",mime=""){
 }
 async function preloadProgressSignedUrls(rows=[]){
   const now=Date.now();
-  const paths=[...new Set(rows.map(x=>x?.attachment_path).filter(Boolean))];
+  const paths=[...new Set(rows.map(x=>x?.attachment_path).filter(path=>path&&!isQiniuStorageKey(path)))];
   const needed=paths.filter(path=>{
     const hit=progressSignedUrlCache.get(path);
     return !hit||hit.expiresAt<=now;
@@ -1515,13 +1524,19 @@ async function preloadProgressSignedUrls(rows=[]){
 }
 async function progressAttachmentHtml(x){
   if(!x.attachment_path)return "";
+  const kind=progressFileKind(x.attachment_name,x.attachment_mime);
+  if(isQiniuStorageKey(x.attachment_path)){
+    const url=qiniuPublicUrlFromKey(x.attachment_path);
+    const label=kind==="video"?"打开 / 下载视频":"打开附件";
+    return '<a class="progressAttachment btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">'+label+' · '+esc(x.attachment_name||"文件")+'</a>';
+  }
   let hit=progressSignedUrlCache.get(x.attachment_path);
   if(!hit||hit.expiresAt<=Date.now()){
     await preloadProgressSignedUrls([x]);
     hit=progressSignedUrlCache.get(x.attachment_path);
   }
   if(!hit?.url)return '<div class="progressFileMeta">附件暂时无法打开</div>';
-  const url=hit.url,kind=progressFileKind(x.attachment_name,x.attachment_mime);
+  const url=hit.url;
   if(kind==="image")return '<a href="'+esc(url)+'" target="_blank" rel="noopener"><img class="progressMedia progressImage" loading="lazy" decoding="async" src="'+esc(url)+'" alt="'+esc(x.attachment_name||"进度图片")+'"></a>';
   if(kind==="video")return '<video class="progressMedia progressVideo" controls preload="metadata" playsinline src="'+esc(url)+'"></video>';
   return '<a class="progressAttachment btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开附件 · '+esc(x.attachment_name||"文件")+'</a>';
@@ -1549,7 +1564,9 @@ async function renderProgressList(rows,box,adminMode=false){
     if(d.error)return toast("删除失败："+d.error.message);
     let cleanupError=null;
     if(b.dataset.path){
-      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path,{queueOnFail:true});
+      const rm=isQiniuStorageKey(b.dataset.path)
+        ?await removeQiniuObjectSafe(b.dataset.path)
+        :await removeStorageObjectSafe("progress-files",b.dataset.path,{queueOnFail:true});
       cleanupError=rm.error||null;
     }
     toast(cleanupError?"进度记录已删除，附件已加入待清理队列":"进度记录已删除");
@@ -1687,8 +1704,10 @@ async function loadTeamProgressFeed(){
     const d=await supabase.from("team_progress_updates").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除失败："+d.error.message);
     if(b.dataset.path){
-      const rm=await removeStorageObjectSafe("progress-files",b.dataset.path,{queueOnFail:true});
-      if(rm.error)console.warn("队伍附件清理失败，已加入待清理队列",rm.error);
+      const rm=isQiniuStorageKey(b.dataset.path)
+        ?await removeQiniuObjectSafe(b.dataset.path)
+        :await removeStorageObjectSafe("progress-files",b.dataset.path,{queueOnFail:true});
+      if(rm.error)console.warn("队伍附件清理失败",rm.error);
     }
     toast("队伍进度已删除");
     await loadProgressPage();
@@ -2157,12 +2176,20 @@ async function initProgress(){
 
     const btn=e.submitter||form.querySelector("button[type=submit]"),old=btn?.textContent||"提交近期进度";
     let attachment_path=null,attachment_url=null,attachment_name=null,attachment_size=0,attachment_mime=null;
+    let attachment_backend="supabase";
     try{
       if(file){
-        attachment_path=state.user.id+"/"+storageObjectPath("progress",file.name);
         attachment_name=file.name;attachment_size=file.size;attachment_mime=file.type||null;
-        if(btn){btn.disabled=true;btn.textContent="附件上传中 0%"}
-        await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
+        const cloudCategory=qiniuFileCategory(file);
+        if(cloudCategory){
+          if(btn){btn.disabled=true;btn.textContent="七牛云上传中 0%"}
+          const uploaded=await uploadQiniuFile(file,cloudCategory,p=>{if(btn)btn.textContent="七牛云上传中 "+p+"%"});
+          attachment_path=uploaded.key;attachment_url=uploaded.url;attachment_backend="qiniu";
+        }else{
+          attachment_path=state.user.id+"/"+storageObjectPath("progress",file.name);
+          if(btn){btn.disabled=true;btn.textContent="附件上传中 0%"}
+          await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
+        }
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
       const ins=mergeChoice.mode==="existing"&&mergeChoice.project
@@ -2186,10 +2213,18 @@ async function initProgress(){
             p_attachment_size:attachment_size,
             p_attachment_mime:attachment_mime
           });
-      if(ins.error){if(attachment_path)await removeStorageObjectSafe("progress-files",attachment_path);throw ins.error}
+      if(ins.error){
+        if(attachment_path){
+          if(attachment_backend==="qiniu")await removeQiniuObjectSafe(attachment_path);
+          else await removeStorageObjectSafe("progress-files",attachment_path);
+        }
+        throw ins.error
+      }
       const oldAttachment=Array.isArray(ins.data)?ins.data[0]?.old_attachment_path:ins.data?.old_attachment_path;
       if(oldAttachment&&oldAttachment!==attachment_path){
-        const rm=await removeStorageObjectSafe("progress-files",oldAttachment);
+        const rm=isQiniuStorageKey(oldAttachment)
+          ?await removeQiniuObjectSafe(oldAttachment)
+          :await removeStorageObjectSafe("progress-files",oldAttachment);
         if(rm.error)console.warn("旧个人进度附件清理失败",rm.error);
       }
       const resultRow=Array.isArray(ins.data)?ins.data[0]:ins.data;
@@ -2232,12 +2267,20 @@ async function initProgress(){
     const btn=e.submitter||teamForm.querySelector("button[type=submit]");
     const old=btn?.textContent||"提交队伍进度";
     let attachment_path=null,attachment_name=null,attachment_size=0,attachment_mime=null;
+    let attachment_backend="supabase";
     try{
       if(file){
-        attachment_path=state.user.id+"/"+storageObjectPath("team-progress",file.name);
         attachment_name=file.name;attachment_size=file.size;attachment_mime=file.type||null;
-        if(btn){btn.disabled=true;btn.textContent="附件上传中 0%"}
-        await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
+        const cloudCategory=qiniuFileCategory(file);
+        if(cloudCategory){
+          if(btn){btn.disabled=true;btn.textContent="七牛云上传中 0%"}
+          const uploaded=await uploadQiniuFile(file,cloudCategory,p=>{if(btn)btn.textContent="七牛云上传中 "+p+"%"});
+          attachment_path=uploaded.key;attachment_backend="qiniu";
+        }else{
+          attachment_path=state.user.id+"/"+storageObjectPath("team-progress",file.name);
+          if(btn){btn.disabled=true;btn.textContent="附件上传中 0%"}
+          await uploadStorageFile("progress-files",attachment_path,file,p=>{if(btn)btn.textContent="附件上传中 "+p+"%"});
+        }
       }
       if(btn){btn.disabled=true;btn.textContent="正在提交…"}
       const rr=await supabase.rpc("upsert_team_progress_v4",{
@@ -2253,7 +2296,13 @@ async function initProgress(){
         p_attachment_size:attachment_size,
         p_attachment_mime:attachment_mime
       });
-      if(rr.error){if(attachment_path)await removeStorageObjectSafe("progress-files",attachment_path);throw rr.error}
+      if(rr.error){
+        if(attachment_path){
+          if(attachment_backend==="qiniu")await removeQiniuObjectSafe(attachment_path);
+          else await removeStorageObjectSafe("progress-files",attachment_path);
+        }
+        throw rr.error
+      }
       const resultRow=Array.isArray(rr.data)?rr.data[0]:rr.data;
       const teamId=resultRow?.team_progress_id;
       if(file&&teamId){
@@ -2263,13 +2312,18 @@ async function initProgress(){
           .maybeSingle();
         const saved=verify.data;
         if(verify.error||!saved?.attachment_path){
-          if(attachment_path)await removeStorageObjectSafe("progress-files",attachment_path);
+          if(attachment_path){
+            if(attachment_backend==="qiniu")await removeQiniuObjectSafe(attachment_path);
+            else await removeStorageObjectSafe("progress-files",attachment_path);
+          }
           throw new Error("队伍附件保存校验失败，请重新选择附件后再提交");
         }
       }
       const oldTeamAttachment=resultRow?.old_attachment_path;
       if(oldTeamAttachment&&oldTeamAttachment!==attachment_path){
-        const rm=await removeStorageObjectSafe("progress-files",oldTeamAttachment);
+        const rm=isQiniuStorageKey(oldTeamAttachment)
+          ?await removeQiniuObjectSafe(oldTeamAttachment)
+          :await removeStorageObjectSafe("progress-files",oldTeamAttachment);
         if(rm.error)console.warn("旧队伍进度附件清理失败",rm.error);
       }
       teamForm.reset();
