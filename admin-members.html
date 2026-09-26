@@ -89,7 +89,7 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
     <div class="stat"><span>大一新生</span><b id="freshmanCount">0</b></div>
     <div class="stat"><span>正式成员</span><b id="formalCount">0</b></div>
     <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
-    <div class="stat storageStat"><div class="storageStatTop"><span>七牛云实时存储</span><button id="qiniuStorageOpen" class="storageDetailBtn" type="button">管理 ›</button></div><b id="qiniuRealtimeUsed">—</b><small id="qiniuRealtimeHint">正在读取七牛云实时用量…</small></div>
+    <div class="stat storageStat"><div class="storageStatTop"><span>七牛云实时存储</span><button id="qiniuStorageOpen" class="storageDetailBtn" type="button">管理 ›</button></div><b id="qiniuRealtimePercent">—</b><small id="qiniuRealtimeHint">正在读取七牛云实时用量…</small><div class="storageTrack"><i id="qiniuRealtimeBar"></i></div></div>
     <div class="stat storageStat"><div class="storageStatTop"><span>Supabase 存储占用率</span><button id="storageHealthOpen" class="storageDetailBtn" type="button">查看详情 ›</button></div><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间。</small><div class="storageTrack"><i id="storageBar"></i></div></div>
   </section>
 
@@ -201,7 +201,7 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
       <button id="qiniuStorageClose" class="btn ghost" type="button">关闭</button>
     </div>
     <div class="storageHealthGrid">
-      <article class="storageHealthCard"><span>实时已用空间</span><b id="qiniuStorageUsed">—</b><small id="qiniuBucketHint">Bucket：justjxcxsys</small></article>
+      <article class="storageHealthCard"><span>实时占用率</span><b id="qiniuStoragePercent">—</b><small id="qiniuStorageUsedHint">正在计算七牛云容量…</small><div class="storageTrack"><i id="qiniuStorageUsageBar"></i></div></article>
       <article class="storageHealthCard"><span>对象总数</span><b id="qiniuObjectCount">—</b><small>七牛 Kodo 当前对象数量</small></article>
       <article class="storageHealthCard"><span>视频文件</span><b id="qiniuVideoCount">—</b><small id="qiniuVideoBytes">占用 —</small></article>
       <article class="storageHealthCard"><span>压缩包</span><b id="qiniuArchiveCount">—</b><small id="qiniuArchiveBytes">占用 —</small></article>
@@ -308,14 +308,21 @@ let qiniuRealtimeData=null;
 function renderQiniuStorage(data){
   qiniuRealtimeData=data||null;
   if(!data){
-    q("#qiniuRealtimeUsed").textContent="—";
+    q("#qiniuRealtimePercent").textContent="—";
     q("#qiniuRealtimeHint").textContent="七牛云实时统计暂时不可用";
+    q("#qiniuRealtimeBar").style.width="0%";
     return;
   }
   const used=Number(data.totalBytes||0),objects=Number(data.objectCount||0);
-  q("#qiniuRealtimeUsed").textContent=bytes(used);
-  q("#qiniuRealtimeHint").textContent=objects+" 个文件 · 视频 "+Number(data.videoCount||0)+" · 压缩包 "+Number(data.archiveCount||0);
-  q("#qiniuStorageUsed").textContent=bytes(used);
+  const limit=Number(data.displayLimitBytes||10*1024*1024*1024);
+  const remaining=Number(data.remainingBytes??Math.max(limit-used,0));
+  const pct=Math.max(0,Math.min(100,Number(data.usedPercent??(used/Math.max(limit,1)*100))));
+  q("#qiniuRealtimePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
+  q("#qiniuRealtimeHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 10 GiB";
+  q("#qiniuRealtimeBar").style.width=pct+"%";
+  q("#qiniuStoragePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
+  q("#qiniuStorageUsedHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 10 GiB";
+  q("#qiniuStorageUsageBar").style.width=pct+"%";
   q("#qiniuObjectCount").textContent=String(objects);
   q("#qiniuVideoCount").textContent=String(data.videoCount??0);
   q("#qiniuVideoBytes").textContent="占用 "+bytes(Number(data.videoBytes||0));
@@ -342,8 +349,9 @@ async function loadQiniuStorage(){
     renderQiniuStorage(r.data||{});
   }catch(err){
     console.error("七牛云实时统计失败",err);
-    q("#qiniuRealtimeUsed").textContent="—";
+    q("#qiniuRealtimePercent").textContent="—";
     q("#qiniuRealtimeHint").textContent="实时统计失败，点击“管理”重试";
+    q("#qiniuRealtimeBar").style.width="0%";
     if(status)status.textContent="读取失败："+(err?.message||String(err));
   }finally{
     if(refresh){refresh.disabled=false;refresh.textContent=old}
