@@ -599,7 +599,7 @@ async function loadAnnouncements(adminMode=false){
     else showImportantAnnouncement((important?.data||[])[0]);
   }
 }
-async function initHome(){
+async function refreshHomeSummary(){
   const alertBox=q("#homeProgressAlert"),progressModule=q("#homeProgressModule"),alertText=q("#homeProgressAlertText");
   if(alertBox){alertBox.hidden=true;alertBox.classList.remove("show")}
   if(progressModule)progressModule.classList.remove("progressOverdue");
@@ -611,14 +611,12 @@ async function initHome(){
   const minePromise=state.user
     ?supabase.from("submissions").select("id",{count:"exact",head:true}).eq("user_id",state.user.id)
     :Promise.resolve({count:null,data:null,error:null});
-  const metricsPromise=supabase.rpc("get_home_operational_metrics");
 
   const [metricsReq,members,reminderReq,mineReq]=await Promise.all([
-    metricsPromise,
+    supabase.rpc("get_home_operational_metrics"),
     supabase.rpc("get_member_count"),
     reminderPromise,
-    minePromise,
-    loadAnnouncements(false)
+    minePromise
   ]);
 
   if(!reminderReq.error){
@@ -636,6 +634,9 @@ async function initHome(){
   const ho=q("#homeOverdueMembers");if(ho)ho.textContent=metricsReq.error?"—":String(metrics?.overdue_members_14d??0);
   const hm=q("#homeMembers");if(hm)hm.textContent=metrics?.formal_members!=null?String(metrics.formal_members):(members.error?"—":String(members.data??0));
   const mine=q("#homeMine");if(mine)mine.textContent=state.user?(mineReq.error?"—":String(mineReq.count||0)):"—";
+}
+async function initHome(){
+  await Promise.all([refreshHomeSummary(),loadAnnouncements(false)]);
 }
 async function initWorks(){
   const r=await supabase.from("past_works").select("*").order("year",{ascending:false}).order("created_at",{ascending:false});
@@ -1156,13 +1157,13 @@ async function loadTeamProgressFeed(){
   });
   applyProgressFeedSearch();
 }
-async function loadProgressPage(){
+async function loadPersonalProgressFeed(){
   if(!state.user)return;
-  const [r,statusReq]=await Promise.all([
-    supabase.from("progress_updates").select("*").order("created_at",{ascending:false}),
-    supabase.rpc("get_progress_member_status")
-  ]);
-  if(r.error){q("#progressFeed").innerHTML='<div class="empty">进度加载失败：'+esc(r.error.message)+'</div>';return}
+  const r=await supabase.from("progress_updates").select("*").order("created_at",{ascending:false});
+  if(r.error){
+    const box=q("#progressFeed");if(box)box.innerHTML='<div class="empty">进度加载失败：'+esc(r.error.message)+'</div>';
+    return;
+  }
   const all=r.data||[],own=all.filter(x=>x.user_id===state.user.id);
   const c=q("#progressAllCount");if(c)c.textContent=String(all.length);
   const m=q("#progressMineCount");if(m)m.textContent=String(own.length);
@@ -1171,15 +1172,23 @@ async function loadProgressPage(){
   const latestOwn=own[0]||null;
   if(personalStatusLabel)personalStatusLabel.textContent=latestOwn?"已更新":"尚未更新";
   if(personalStatusTime)personalStatusTime.textContent=latestOwn?fmt(latestOwn.created_at):"—";
+  await Promise.all([
+    renderProgressList(all,q("#progressFeed"),false),
+    renderProgressList(own,q("#myProgressList"),false)
+  ]);
+  applyProgressFeedSearch();
+}
+async function loadProgressOverview(){
+  if(!state.user)return;
+  const [statusReq,teamMemberReq,teamProgressReq,reminderReq]=await Promise.all([
+    supabase.rpc("get_progress_member_status"),
+    supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot"),
+    supabase.from("team_progress_updates").select("id,competition_name,created_at"),
+    supabase.rpc("get_progress_reminders")
+  ]);
 
   const statuses=statusReq.error?[]:(statusReq.data||[]);
   const personal=statuses.filter(x=>x.personal_updated);
-
-  // 队伍已更新名单直接以当前队伍成员关联表为准，避免状态函数/缓存不同步。
-  const [teamMemberReq,teamProgressReq]=await Promise.all([
-    supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot"),
-    supabase.from("team_progress_updates").select("id,competition_name,created_at")
-  ]);
   const progressByTeam=new Map((teamProgressReq.data||[]).map(x=>[x.id,x]));
   const teamMap=new Map();
   if(!teamMemberReq.error&&!teamProgressReq.error){
@@ -1206,16 +1215,18 @@ async function loadProgressPage(){
   const tn=q("#teamUpdatedNames");
   if(tn)tn.innerHTML=team.length?team.map(x=>'<span class="progressNameChip">'+esc(x.member_name||"成员")+(x.competition_name?' · '+esc(x.competition_name):'')+'</span>').join(""):'<span class="progressNoSubmitter">暂时还没有队伍进度更新</span>';
 
-  const reminderReq=await supabase.rpc("get_progress_reminders");
   const reminders=reminderReq.error?[]:(reminderReq.data||[]);
   const rc=q("#progressReminderCount");if(rc)rc.textContent=String(reminders.length);
   const rb=q("#progressReminderList");
   if(rb){
     rb.innerHTML=reminderReq.error?'<div class="empty">提醒区加载失败：'+esc(reminderReq.error.message)+'</div>':reminders.length?reminders.map(x=>'<article class="progressReminderItem"><div><b>'+esc(x.member_name||"成员")+'</b>'+(x.member_major?'<span>'+esc(x.member_major)+'</span>':'')+'</div><div class="progressReminderMeta">'+(x.last_progress_at?'最近进度：'+fmt(x.last_progress_at):'尚未提交过进度')+' · 已 '+esc(x.days_since)+' 天</div></article>').join(""):'<div class="progressReminderOk">当前没有超过两周未更新的成员。</div>';
   }
+}
+async function loadProgressPage(){
+  if(!state.user)return;
   await Promise.all([
-    renderProgressList(all,q("#progressFeed"),false),
-    renderProgressList(own,q("#myProgressList"),false),
+    loadPersonalProgressFeed(),
+    loadProgressOverview(),
     loadTeamProgressFeed()
   ]);
   applyProgressFeedSearch();
@@ -1283,6 +1294,20 @@ async function populateProgressProjectOptions(){
         if(hint)hint.textContent="负责人必须从已选队伍成员中选择；提交后会同步到项目负责人。";
       }
     };
+  }
+}
+async function refreshProjectProgressCounts(){
+  if(page!=="projects"||!state.user)return;
+  try{
+    const rows=await fetchProjectDirectory(true);
+    rows.forEach(x=>{
+      const personal=q('.projectProgressBtn[data-id="'+CSS.escape(x.id)+'"][data-kind="personal"] b');
+      const team=q('.projectProgressBtn[data-id="'+CSS.escape(x.id)+'"][data-kind="team"] b');
+      if(personal)personal.textContent=String(x.personal_progress_count||0)+" 条";
+      if(team)team.textContent=String(x.team_progress_count||0)+" 条";
+    });
+  }catch(err){
+    console.warn("项目进度计数刷新失败",err);
   }
 }
 async function initProjects(){
@@ -1934,15 +1959,11 @@ async function initMine(){
     }
   });
 }
-async function initProfile(){
-  if(!requireLogin())return;
-  const home=q("#profileHome");
-  if(home)home.classList.remove("hidden");
-
+function renderOwnProfileIdentity(){
   const p=state.profile||{};
   const name=p.full_name||"未填写姓名";
   const major=p.major||"未填写专业";
-  const email=p.email||state.user.email||"—";
+  const email=p.email||state.user?.email||"—";
   const membership=p.membership_status==="freshman"?"大一新生":"正式成员";
   const avatar=(name||"?").trim().slice(0,1).toUpperCase();
 
@@ -1964,6 +1985,12 @@ async function initProfile(){
     q("#profileJoinDays")&&(q("#profileJoinDays").textContent="—");
     q("#profileJoinDate")&&(q("#profileJoinDate").textContent="注册时间暂无");
   }
+}
+async function initProfile(){
+  if(!requireLogin())return;
+  const home=q("#profileHome");
+  if(home)home.classList.remove("hidden");
+  renderOwnProfileIdentity();
 
   let projects=[],personal=[],teamRows=[],submissions=[];
   try{
