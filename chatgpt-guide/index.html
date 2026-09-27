@@ -205,7 +205,7 @@ cs.forEach((c,i)=>{c.checked=!!s[i];c.onchange=()=>{s[i]=c.checked;localStorage.
 <script>
 (async()=>{
   const G=document.getElementById('gate'),N=document.getElementById('gateName'),I=document.getElementById('gateInput'),B=document.getElementById('gateButton'),E=document.getElementById('gateError');
-  const LOG_URL='https://yodtphuzgngxpihnfwop.supabase.co/rest/v1/chatgpt_guide_simple_access_logs';
+  const LOG_URL='https://yodtphuzgngxpihnfwop.supabase.co/rest/v1/rpc/log_chatgpt_guide_visit';
   const LOG_KEY='sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX';
   const H='e9bc253bd6b620762ef8128ec5188f47a3f1d5d026a44754f3441a1e7b301879';
   const hex=a=>Array.from(new Uint8Array(a)).map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -217,11 +217,10 @@ cs.forEach((c,i)=>{c.checked=!!s[i];c.onchange=()=>{s[i]=c.checked;localStorage.
         method:'POST',
         headers:{'apikey':LOG_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
         body:JSON.stringify({
-          visitor_name:name,
-          visited_at:new Date().toISOString(),
-          user_agent:navigator.userAgent||'',
-          referrer:document.referrer||'',
-          session_id:sid
+          p_visitor_name:name,
+          p_user_agent:navigator.userAgent||'',
+          p_referrer:document.referrer||'',
+          p_session_id:sid
         })
       });
       if(res.ok) sessionStorage.setItem('guide-log-sent','1');
