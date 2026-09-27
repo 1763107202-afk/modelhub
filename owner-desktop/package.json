@@ -1,0 +1,16 @@
+{
+  "name": "just-lab-owner-ops-desktop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "江苏科技大学机械创新实验室私人状态中心 Windows 客户端",
+  "scripts": {
+    "tauri": "tauri",
+    "icons": "tauri icon ../assets/lab-logo-transparent.svg",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "build:windows": "tauri build --bundles nsis"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}
