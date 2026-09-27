@@ -10,7 +10,7 @@
 .wrap{width:min(1240px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;background:#07111ff2;border-bottom:1px solid #ffffff12;backdrop-filter:blur(14px)}.topin{min-height:76px;display:flex;align-items:center;gap:16px}.brand{display:flex;align-items:center;gap:12px;font-weight:900}.brand img{width:54px;height:54px;object-fit:contain;border-radius:50%}.brand span{display:flex;flex-direction:column;line-height:1.25}.brand small{font-size:11px;color:#7fa0bf;font-weight:600;margin-top:4px}.nav{margin-left:auto;display:flex;gap:8px;align-items:center}
 .btn{border:0;border-radius:12px;padding:10px 15px;cursor:pointer;font-weight:800}.pri{color:#fff;background:linear-gradient(135deg,#4f8cff,#7758ff)}.sec{color:#dfeeff;background:#11233a;border:1px solid #29415d}.ghost{color:#cad9eb;background:transparent;border:1px solid #2a3e56}.danger{color:#ffd7d7;background:#3a171b;border:1px solid #6a2930}.hidden{display:none!important}
 .hero{padding:44px 0 22px}.eyebrow{font-size:12px;letter-spacing:.15em;color:#76abff;font-weight:900}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.08;margin:8px 0 10px}.hero p{color:#8fa4bd;margin:0}.statusbar{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pill{font-size:12px;padding:7px 10px;border-radius:999px;background:#102946;color:#a5cffb;border:1px solid #274d75}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:20px 0}.stat{padding:19px;border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726)}.stat span{font-size:12px;color:#8299b3}.stat b{display:block;font-size:30px;margin-top:4px}.stat small{display:block;margin-top:5px;color:#6f88a5;font-size:11px;line-height:1.45}.storageTrack{height:6px;margin-top:10px;border-radius:999px;background:#14263a;overflow:hidden}.storageTrack i{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#4f8cff,#7758ff);transition:width .25s ease}.glass{background:linear-gradient(180deg,#14233acc,#0b1728dd);border:1px solid #ffffff14;box-shadow:0 22px 60px #0004}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:20px 0;align-items:stretch}.stat{padding:16px 18px;border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726);display:flex;flex-direction:column;min-height:156px}.stat span{font-size:12px;color:#8299b3}.stat b{display:block;font-size:30px;margin-top:4px;line-height:1.12}.stat small{display:block;margin-top:auto;padding-top:10px;color:#6f88a5;font-size:11px;line-height:1.45}.storageTrack{height:6px;margin-top:10px;border-radius:999px;background:#14263a;overflow:hidden}.storageTrack i{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#4f8cff,#7758ff);transition:width .25s ease}.glass{background:linear-gradient(180deg,#14233acc,#0b1728dd);border:1px solid #ffffff14;box-shadow:0 22px 60px #0004}
 .toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 190px 160px 180px auto;gap:12px;padding:15px;border-radius:18px;margin:16px 0}input,select{width:100%;padding:11px 12px;border:1px solid #223a57;border-radius:11px;background:#081524;color:#edf6ff;outline:none}input:focus,select:focus{border-color:#5e91ff}
 .tablewrap{overflow:auto;border-radius:18px;border:1px solid #1c3049;background:#0b192a}table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:13px 14px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:middle}th{position:sticky;top:0;background:#091625;color:#7890aa;z-index:2;white-space:nowrap}th:nth-child(1),td:nth-child(1){min-width:170px}th:nth-child(2),td:nth-child(2){min-width:160px}th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4){min-width:68px;text-align:center}th:nth-child(5),td:nth-child(5){min-width:160px;max-width:190px}th:nth-child(6),td:nth-child(6){min-width:300px;padding-left:8px}.actions{margin-left:0}.member{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#31598a,#6b4bd6);font-weight:900}.muted{color:#7890aa}.role{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#123326;color:#78ddb0}.role.admin{background:#2d234b;color:#c9b7ff}.role.super{background:#4b2b15;color:#ffd39b}.membership{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#14304a;color:#a9d6ff}.membership.freshman{background:#173f31;color:#86edba}.actions{display:flex;gap:7px;white-space:nowrap}
 .empty{padding:40px;text-align:center;color:#7890aa}.foot{padding:35px 0 50px;color:#6f849e}.loginbox{width:min(430px,calc(100% - 28px));margin:70px auto;padding:24px;border-radius:22px;display:grid;gap:14px}.loginbox h2{margin:0}.loginbox p{margin:0;color:#8fa4bd}.msg{font-size:13px;color:#92a8c0}
@@ -85,9 +85,9 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
   </section>
 
   <section class="stats">
-    <div class="stat"><span>注册成员</span><b id="memberCount">0</b></div>
-    <div class="stat"><span>大一新生</span><b id="freshmanCount">0</b></div>
-    <div class="stat"><span>正式成员</span><b id="formalCount">0</b></div>
+    <div class="stat"><span>注册成员</span><b id="memberCount">0</b><small id="memberCountHint">成员结构正在统计…</small></div>
+    <div class="stat"><span>大一新生</span><b id="freshmanCount">0</b><small id="freshmanCountHint">占全部成员 —</small></div>
+    <div class="stat"><span>正式成员</span><b id="formalCount">0</b><small id="formalCountHint">占全部成员 —</small></div>
     <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
     <div class="stat storageStat"><div class="storageStatTop"><span>七牛云实时存储</span><button id="qiniuStorageOpen" class="storageDetailBtn" type="button">管理 ›</button></div><b id="qiniuRealtimePercent">—</b><small id="qiniuRealtimeHint">正在读取七牛云实时用量…</small></div>
     <div class="stat storageStat"><div class="storageStatTop"><span>Supabase 存储占用率</span><button id="storageHealthOpen" class="storageDetailBtn" type="button">查看详情 ›</button></div><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间。</small><div class="storageTrack"><i id="storageBar"></i></div></div>
@@ -228,8 +228,10 @@ function renderAdminMetrics(row){
   if(!row)return;
   state.metrics=row;
   const days=Number(row.period_days||14);
-  q("#periodProgressCount").textContent=String(row.progress_updated_members??0);
-  q("#periodProgressHint").textContent="最近 "+days+" 天 · 正式成员去重";
+  const updatedMembers=Number(row.progress_updated_members||0);
+  const formalMembers=state.members?.filter(x=>x.membership_status!=="freshman").length||0;
+  q("#periodProgressCount").textContent=String(updatedMembers);
+  q("#periodProgressHint").textContent="最近 "+days+" 天 · 更新率 "+(formalMembers?(updatedMembers/formalMembers*100).toFixed(1):"—")+"%";
   const used=Number(row.storage_used_bytes||0),limit=Number(row.storage_limit_bytes||1073741824),remaining=Number(row.storage_remaining_bytes||Math.max(limit-used,0));
   const pct=Math.max(0,Math.min(100,Number(row.storage_used_percent||0)));
   q("#storagePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
@@ -534,9 +536,19 @@ function render(){
     '</tr>';
   }).join("");
   q("#empty").classList.toggle("hidden",state.filtered.length>0);
-  q("#memberCount").textContent=state.members.length;
-  q("#freshmanCount").textContent=state.members.filter(x=>x.membership_status==="freshman").length;
-  q("#formalCount").textContent=state.members.filter(x=>x.membership_status!=="freshman").length;
+  const totalMembers=state.members.length;
+  const freshmanMembers=state.members.filter(x=>x.membership_status==="freshman").length;
+  const formalMembers=state.members.filter(x=>x.membership_status!=="freshman").length;
+  q("#memberCount").textContent=totalMembers;
+  q("#freshmanCount").textContent=freshmanMembers;
+  q("#formalCount").textContent=formalMembers;
+  q("#memberCountHint").textContent="大一新生 "+freshmanMembers+" · 正式成员 "+formalMembers;
+  q("#freshmanCountHint").textContent="占全部成员 "+(totalMembers?(freshmanMembers/totalMembers*100).toFixed(1):"0.0")+"%";
+  q("#formalCountHint").textContent="占全部成员 "+(totalMembers?(formalMembers/totalMembers*100).toFixed(1):"0.0")+"%";
+  if(state.metrics){
+    const updated=Number(state.metrics.progress_updated_members||0);
+    q("#periodProgressHint").textContent="最近 "+Number(state.metrics.period_days||14)+" 天 · 更新率 "+(formalMembers?(updated/formalMembers*100).toFixed(1):"0.0")+"%";
+  }
   document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".resetPwdBtn").forEach(b=>b.onclick=()=>openPasswordReset(b.dataset.id));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));
 }
 function openDetail(id){
@@ -824,6 +836,6 @@ q("#exportBtn").onclick=async()=>{
 supabase.auth.onAuthStateChange(async(_event,session)=>{state.user=session?.user||null;if(!state.user)showLogin()});
 await enter();
 </script>
-<script src="./cache-loader.js?v=2026.09.27.14" data-app="false"></script>
+<script src="./cache-loader.js?v=2026.09.27.15" data-app="false"></script>
 </body>
 </html>
