@@ -20,9 +20,33 @@ h1{font-size:clamp(34px,5vw,62px);line-height:1.07;letter-spacing:-.04em;margin:
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.box{background:var(--soft);border-radius:13px;padding:14px}.box h3{margin:0 0 6px}.check{border-top:1px solid var(--line);padding-top:14px;margin-top:18px;color:var(--muted)}
 code{background:var(--soft);padding:2px 6px;border-radius:6px}footer{color:var(--muted);font-size:13px;margin-top:26px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.card{padding:18px}h1{font-size:39px}.hero p{font-size:16px}}
+
+body.gate-locked{overflow:hidden}
+#gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;background:var(--bg)}
+#gate.off{display:none}
+#gate .panel{width:min(92vw,420px);background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.18)}
+#gate h2{margin:0 0 8px;font-size:28px}
+#gate p{margin:0 0 16px;color:var(--muted)}
+#gate input{width:100%;height:48px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--text);padding:0 14px;font:inherit;outline:none}
+#gate button{width:100%;height:48px;margin-top:10px;border:0;border-radius:12px;background:var(--green);color:white;font:inherit;font-weight:750;cursor:pointer}
+#gate .err{min-height:22px;margin-top:8px;color:#d64545;font-size:13px}
+#gate .tip{margin-top:10px;color:var(--muted);font-size:12px}
+
 </style>
 </head>
-<body>
+<body class="gate-locked">
+
+<div id="gate">
+  <div class="panel">
+    <h2>你是谁？</h2>
+    <p>请输入通行证后进入教程。</p>
+    <input id="gateInput" type="password" placeholder="请输入通行证" aria-label="通行证">
+    <button id="gateButton" type="button">进入教程</button>
+    <div id="gateError" class="err"></div>
+    <div class="tip">同一浏览器会话验证一次；关闭浏览器后需要重新输入。</div>
+  </div>
+</div>
+
 <header><div class="in"><div class="brand">ChatGPT 新手教程</div><div class="progress" id="prog">0 / 9 已完成</div></div></header>
 <main>
 <section class="hero" id="top">
@@ -155,5 +179,34 @@ code{background:var(--soft);padding:2px 6px;border-radius:6px}footer{color:var(-
 const cs=[...document.querySelectorAll('[data-done]')],key='chatgptGuideDone';let s={};try{s=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
 cs.forEach((c,i)=>{c.checked=!!s[i];c.onchange=()=>{s[i]=c.checked;localStorage.setItem(key,JSON.stringify(s));up()}});function up(){document.getElementById('prog').textContent=cs.filter(x=>x.checked).length+' / '+cs.length+' 已完成'}up();
 </script>
+
+<script>
+(async()=>{
+  const G=document.getElementById('gate'),I=document.getElementById('gateInput'),B=document.getElementById('gateButton'),E=document.getElementById('gateError');
+  const H='e9bc253bd6b620762ef8128ec5188f47a3f1d5d026a44754f3441a1e7b301879';
+  const hex=a=>Array.from(new Uint8Array(a)).map(x=>x.toString(16).padStart(2,'0')).join('');
+  async function check(){
+    const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(I.value));
+    if(hex(d)===H){
+      sessionStorage.setItem('guide-ok','1');
+      G.classList.add('off');
+      document.body.classList.remove('gate-locked');
+    }else{
+      E.textContent='通行证不正确，请重新输入。';
+      I.value='';
+      I.focus();
+    }
+  }
+  if(sessionStorage.getItem('guide-ok')==='1'){
+    G.classList.add('off');
+    document.body.classList.remove('gate-locked');
+  }else{
+    setTimeout(()=>I.focus(),50);
+  }
+  B.addEventListener('click',check);
+  I.addEventListener('keydown',e=>{if(e.key==='Enter')check()});
+})();
+</script>
+
 </body>
 </html>
