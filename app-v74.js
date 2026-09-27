@@ -986,6 +986,35 @@ function qiniuPublicUrlFromKey(key=""){
   if(!key)return "";
   return QINIU_PUBLIC_DOMAIN.replace(/\/$/,"")+"/"+String(key).split("/").map(encodeURIComponent).join("/");
 }
+async function qiniuSignedUrl(key,expiresIn=3600){
+  if(!key)throw new Error("缺少七牛云文件路径");
+  const r=await supabase.functions.invoke("qiniu-download-url",{body:{key,expiresIn}});
+  if(r.error)throw new Error(r.error.message||"七牛私有下载链接生成失败");
+  if(r.data?.error)throw new Error(r.data.error);
+  if(!r.data?.url)throw new Error("七牛私有下载链接为空");
+  return r.data.url;
+}
+async function openQiniuKey(key,button=null){
+  const old=button?.textContent||"";
+  let popup=null;
+  try{
+    if(button){button.disabled=true;button.textContent="正在生成安全链接…";}
+    try{popup=window.open("about:blank","_blank")}catch(_e){}
+    const url=await qiniuSignedUrl(key,3600);
+    if(popup&&!popup.closed)popup.location.replace(url);
+    else window.location.href=url;
+  }catch(err){
+    try{popup?.close()}catch(_e){}
+    toast("文件打开失败："+(err?.message||String(err)));
+  }finally{
+    if(button){button.disabled=false;button.textContent=old;}
+  }
+}
+function bindQiniuOpenButtons(scope=document){
+  scope.querySelectorAll(".qiniuOpenBtn").forEach(btn=>{
+    btn.onclick=()=>openQiniuKey(btn.dataset.key||"",btn);
+  });
+}
 async function uploadQiniuFile(file,category,onProgress){
   const sess=await supabase.auth.getSession();
   if(!sess.data.session?.access_token)throw new Error("登录状态已失效，请重新登录后再上传");
@@ -1031,6 +1060,10 @@ async function removeQiniuObjectSafe(key){
 }
 function resourcePreview(x){
   const type=x.resource_type||"video",url=x.video_url||"";
+  if(x.storage_backend==="qiniu"&&x.storage_path){
+    const icon=type==="video"?"VID":type==="archive"?"ZIP":type==="pdf"?"PDF":type==="word"?"DOCX":"FILE";
+    return '<div class="docPreview"><div class="docIcon '+esc(type)+'">'+icon+'</div><strong>'+esc(x.file_name||resourceTypeName(type))+'</strong><span>七牛私有存储 · 点击下方按钮生成临时安全访问链接</span></div>';
+  }
   if(type==="video"&&isOwnPlatformUrl(url)){
     return '<div class="notice" style="margin:18px">视频链接设置错误。'+(isAdmin()?'<div class="actions" style="margin-top:12px"><button class="btn pri editTutorialUrl" type="button" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">立即修改视频链接</button></div>':' 请联系管理员修改外部视频地址。')+'</div>';
   }
@@ -1289,10 +1322,15 @@ async function initTutorials(){
     if(count)count.textContent=String(data.length);
     q("#videoGrid").innerHTML=data.map(x=>{
       const type=x.resource_type||"video",url=x.video_url||"",action=type==="video"?"打开 / 播放视频":type==="pdf"?"查看 / 下载 PDF":type==="word"?"打开 / 下载 Word":type==="archive"?"下载压缩包":"打开 / 下载 PPT";
-      return '<article class="video"><div class="frame '+(type!=="video"?"docFrame":"")+'">'+resourcePreview(x)+'</div><div class="info"><span class="resourceType">'+resourceTypeName(type)+'</span><h3>'+esc(x.title)+'</h3><p style="color:#8fa4bd">'+esc(x.description||"暂无简介")+'</p><div class="actions">'+((type==="video"&&(!/^https?:/i.test(url)||isOwnPlatformUrl(url)))?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>')+(isAdmin()&&!x.storage_path&&!isOwnPlatformUrl(url)?'<button class="btn ghost editTutorialUrl" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">修改链接</button>':'')+(isAdmin()?'<button class="btn danger delTutorial" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'" data-path="'+esc(x.storage_path||"")+'" data-backend="'+esc(x.storage_backend||"supabase")+'">删除教程</button>':'')+'</div></div></article>';
+      const qiniuAction=x.storage_backend==="qiniu"&&x.storage_path
+        ?'<button class="btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.storage_path)+'">'+action+'</button>'
+        :"";
+      const normalAction=qiniuAction?"":((type==="video"&&(!/^https?:/i.test(url)||isOwnPlatformUrl(url)))?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>');
+      return '<article class="video"><div class="frame '+(type!=="video"?"docFrame":"")+'">'+resourcePreview(x)+'</div><div class="info"><span class="resourceType">'+resourceTypeName(type)+'</span><h3>'+esc(x.title)+'</h3><p style="color:#8fa4bd">'+esc(x.description||"暂无简介")+'</p><div class="actions">'+qiniuAction+normalAction+(isAdmin()&&!x.storage_path&&!isOwnPlatformUrl(url)?'<button class="btn ghost editTutorialUrl" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">修改链接</button>':'')+(isAdmin()?'<button class="btn danger delTutorial" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'" data-path="'+esc(x.storage_path||"")+'" data-backend="'+esc(x.storage_backend||"supabase")+'">删除教程</button>':'')+'</div></div></article>';
     }).join("");
     q("#videoEmpty").classList.toggle("hidden",data.length>0);
     q("#videoEmpty").textContent=all.length?"没有找到符合条件的教程资料。":"暂时还没有教程。";
+    bindQiniuOpenButtons(q("#videoGrid"));
     document.querySelectorAll(".editTutorialUrl").forEach(b=>b.onclick=async()=>{
       const raw=prompt("请输入正确的外部视频 / 资料链接：",b.dataset.url||"");
       if(raw===null)return;
@@ -1420,12 +1458,14 @@ async function initFiles(){
       const mode=x.resource_mode||"file";
       let action="";
       if(mode==="file"&&x.storage_path){
-        const url=x._source==="share"&&x.file_url
-          ?x.file_url
-          :x.storage_backend==="qiniu"&&x.external_url
-            ?x.external_url
+        if(x.storage_backend==="qiniu"){
+          action='<button class="btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.storage_path)+'">打开 / 下载</button>';
+        }else{
+          const url=x._source==="share"&&x.file_url
+            ?x.file_url
             :supabase.storage.from("lab-files").getPublicUrl(x.storage_path).data.publicUrl;
-        action='<a class="btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开 / 下载</a>';
+          action='<a class="btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开 / 下载</a>';
+        }
       }else if(mode==="link"&&x.external_url){
         action='<a class="btn sec" href="'+esc(x.external_url)+'" target="_blank" rel="noopener noreferrer">打开链接</a>';
       }
@@ -1440,6 +1480,7 @@ async function initFiles(){
         (isAdmin()?'<button class="btn danger delUnifiedResource" data-id="'+esc(x.id)+'" data-source="'+esc(x._source)+'" data-backend="'+esc(x._source==="share"?(x.file_storage_backend||"supabase"):(x.storage_backend||"supabase"))+'" data-path="'+esc(x.storage_path||x.file_path||x.image_path||"")+'" data-filepath="'+esc(x.file_path||"")+'" data-imagepath="'+esc(x.image_path||"")+'">删除</button>':'')+
         '</div></div></article>';
     }).join(""):'<div class="empty">'+(term?"没有找到匹配的资料。":"当前分类暂无资料。")+'</div>';
+    bindQiniuOpenButtons(q("#fileGrid"));
     document.querySelectorAll(".attachShareFile").forEach(b=>b.onclick=()=>{
       const input=document.createElement("input");
       input.type="file";
@@ -1551,9 +1592,8 @@ async function progressAttachmentHtml(x){
   if(!x.attachment_path)return "";
   const kind=progressFileKind(x.attachment_name,x.attachment_mime);
   if(isQiniuStorageKey(x.attachment_path)){
-    const url=qiniuPublicUrlFromKey(x.attachment_path);
     const label=kind==="video"?"打开 / 下载视频":"打开附件";
-    return '<a class="progressAttachment btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">'+label+' · '+esc(x.attachment_name||"文件")+'</a>';
+    return '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'">'+label+' · '+esc(x.attachment_name||"文件")+'</button>';
   }
   let hit=progressSignedUrlCache.get(x.attachment_path);
   if(!hit||hit.expiresAt<=Date.now()){
@@ -1583,6 +1623,7 @@ async function renderProgressList(rows,box,adminMode=false){
   if(!rows.length){box.innerHTML='<div class="empty">暂时还没有进度更新。</div>';return}
   await preloadProgressSignedUrls(rows);
   box.innerHTML=(await Promise.all(rows.map(x=>progressCardHtml(x,adminMode)))).join("");
+  bindQiniuOpenButtons(box);
   box.querySelectorAll(".delProgress").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条进度记录吗？"))return;
     const d=await supabase.from("progress_updates").delete().eq("id",b.dataset.id);
