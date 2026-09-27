@@ -1,0 +1,59 @@
+name: Build Private Owner Ops Windows App
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "owner-desktop/**"
+      - ".github/workflows/owner-desktop-windows.yml"
+      - "assets/lab-logo-transparent.svg"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build private owner installer
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: owner-desktop/src-tauri
+
+      - name: Install Tauri CLI
+        working-directory: owner-desktop
+        run: npm install
+
+      - name: Generate application icons
+        working-directory: owner-desktop
+        run: npm run icons
+
+      - name: Build Windows NSIS installer
+        working-directory: owner-desktop
+        run: npm run build:windows
+
+      - name: Upload private installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUST-Lab-Owner-Ops-Windows
+          path: owner-desktop/src-tauri/target/release/bundle/nsis/*.exe
+          if-no-files-found: error
+          retention-days: 7
