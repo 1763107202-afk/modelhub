@@ -32,6 +32,13 @@ body.gate-locked{overflow:hidden}
 #gate .err{min-height:22px;margin-top:8px;color:#d64545;font-size:13px}
 #gate .tip{margin-top:10px;color:var(--muted);font-size:12px}
 
+
+.casegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.casecard{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:17px}
+.casecard .tag{display:inline-block;font-size:12px;font-weight:750;color:var(--green);margin-bottom:7px}
+.casecard h3{margin:0 0 7px;font-size:18px}.casecard p{margin:0;color:var(--muted);font-size:14px}
+.caseflow{margin-top:10px;font-size:13px;color:var(--text)}
+@media(max-width:700px){.casegrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="gate-locked">
@@ -54,7 +61,7 @@ body.gate-locked{overflow:hidden}
 <h1>ChatGPT 从零注册、安装与使用教程</h1>
 <p>从准备网络环境、注册邮箱、创建 ChatGPT 账号，到苹果用户 App Store 路线、桌面端 Codex、充值入口和实际使用经验，都集中在这一页。</p>
 <div class="nav">
-<a href="#s1">01 网络环境</a><a href="#s4">04 邮箱</a><a href="#s5">05 ChatGPT</a><a href="#s7">07 苹果用户</a><a href="#s8">08 充值</a><a href="#s9">09 使用技巧</a>
+<a href="#s1">01 网络环境</a><a href="#s4">04 邮箱</a><a href="#s5">05 ChatGPT</a><a href="#s7">07 苹果用户</a><a href="#s8">08 充值</a><a href="#s9">09 使用技巧</a><a href="#cases">案例参考</a>
 </div>
 <div class="note warn"><b>说明：</b>第三方网络服务、套餐、节点和价格可能随时变化，请以实时页面为准。OpenAI、Apple、Proton 对地区、账户与付款方式都有各自规则，请自行确认当前条件是否符合官方要求。</div>
 <div class="note info"><b>账号安全：</b>Proton、ChatGPT 和 Apple 账户的账号密码一定保存好，建议使用可信密码管理器。不要把密码放进群聊、公开文档或教程截图。</div>
@@ -164,6 +171,20 @@ body.gate-locked{overflow:hidden}
 <div class="note warn"><b>Skill / 教程 / 参考资料：</b>需要更专业时，可以给它高质量教程、规范、操作手册、示例文件、工作流程或可用 Skill / 工具说明。但不要随便安装来源不明的脚本、插件或工具。</div>
 <div class="note danger"><b>长时间没有输出或没有进度：</b>如果明显卡住，不要无限等待。可以停止生成/停止任务，然后继续问：<br><br><b>“刚才是不是卡住了？请从中断的位置继续，并先告诉我目前已经完成到哪里。”</b><br><br>复杂任务本来可能需要更久，所以不要几秒钟没反应就停止；只有明显长时间无输出、无进度时再这样做。</div>
 <label class="check"><input type="checkbox" data-done> 教程全部完成</label>
+</section>
+
+
+<section class="card" id="cases">
+  <div class="head"><div class="num">例</div><div><h2>实际案例：ChatGPT 能帮你做到什么</h2><p>下面这些都属于“先说需求 → 给资料 → 让 AI 调研 → 做第一版 → 逐步修改”的典型用法。</p></div></div>
+  <div class="casegrid">
+    <article class="casecard"><span class="tag">网站 / 平台</span><h3>实验室交流平台</h3><p>从主页、成员资料、教程、资料库、项目管理、进度更新，到管理员后台、权限与云存储，适合边使用边发现问题，再让 AI 一项项迭代。</p><div class="caseflow"><b>适合流程：</b>先给现有网站截图和功能 → 指出问题 → 增加模块 → 修复 Bug → 再优化手机端和视觉。</div></article>
+    <article class="casecard"><span class="tag">电子设计 / 仿真</span><h3>ESP32 三路混音实验台</h3><p>可以把原理图、器件清单和目标功能交给 AI，让它分析电路、整理 BOM、生成代码，并制作一个可交互的网页原型来演示旋钮、音量、波形和不同声源。</p><div class="caseflow"><b>适合流程：</b>原理图 → 功能要求 → 电路校核 → 网页仿真 → 固件代码 → 再做实物验证。</div></article>
+    <article class="casecard"><span class="tag">复杂长任务 / Work</span><h3>从资料到完整可烧录工程</h3><p>复杂项目可以先把原理图、资料、代码和已有文件全部交给 ChatGPT，再让它分阶段检查、编译、修正并最终输出完整工程，而不是一开始就要求“一次生成最终包”。</p><div class="caseflow"><b>关键：</b>长时间无输出时及时停止并追问当前进度，从中断位置继续。</div></article>
+    <article class="casecard"><span class="tag">PPT / 文档</span><h3>主题班会与正式汇报材料</h3><p>给出主题、对象、已有素材和审美要求后，可以先让 AI 规划内容结构，再生成 PPT，之后根据“质感、字体、照片、留白、页面节奏”等具体反馈继续优化。</p><div class="caseflow"><b>比“帮我做个 PPT”更有效：</b>明确受众、场景、页数、风格、配图和哪些内容不要出现。</div></article>
+    <article class="casecard"><span class="tag">3D / 可视化</span><h3>校园或厂区三维展示</h3><p>先提供总平面图、照片、尺寸和方位关系，让 AI 搭建第一版，再逐项校正建筑位置、道路、围墙、绿化、交互按钮、天气和光照等细节。</p><div class="caseflow"><b>关键：</b>模型类任务最好不断用截图指出“哪里不像”，比只用文字重复描述更高效。</div></article>
+    <article class="casecard"><span class="tag">工程分析</span><h3>有限元、机械结构与技术报告</h3><p>把模型、载荷条件、材料、边界条件和课程模板给 AI，可以先让它规划分析项目，再做强度、变形、网格收敛或结构优化，最后再整理报告。</p><div class="caseflow"><b>不要倒过来：</b>先确定分析逻辑和工况，再生成最终 Word / PDF。</div></article>
+  </div>
+  <div class="note info"><b>这些案例共同的规律：</b>AI 最强的地方不是“第一次就完美”，而是你可以把已有资料、截图和反馈不断给它，让它在同一个任务里持续改进。要求越具体，结果通常越接近你真正想要的样子。</div>
 </section>
 
 <footer>
