@@ -6,7 +6,7 @@
   const loadMainApp=script?.dataset.app!=="false";
   const VERSION_KEY="justLabSiteVersionV1";
   const VERSION_CHECK_KEY="justLabSiteVersionCheckedAtV1";
-  const BOOTSTRAP_VERSION="2026.09.27.12";
+  const BOOTSTRAP_VERSION="2026.09.27.13";
   const VERSION_CHECK_INTERVAL=2*60*1000;
   let routeVersion=BOOTSTRAP_VERSION;
 
@@ -145,7 +145,8 @@
   }
 
   async function start(){
-    const version=readLocalVersion()||BOOTSTRAP_VERSION;
+    const version=BOOTSTRAP_VERSION;
+    saveLocalVersion(version);
     routeVersion=version;
 
     globalThis.JUST_APP_VERSION=version;
