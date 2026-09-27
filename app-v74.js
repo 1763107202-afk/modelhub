@@ -1012,7 +1012,7 @@ async function uploadQiniuFile(file,category,onProgress){
       form.append("file",file,file.name);
       xhr.send(form);
     });
-    return {key:cfg.key,url:cfg.publicUrl||null,storage_backend:"qiniu"};
+    return {key:cfg.key,url:qiniuPublicUrlFromKey(cfg.key),storage_backend:"qiniu"};
   }finally{
     setUploadActive(false);
   }
