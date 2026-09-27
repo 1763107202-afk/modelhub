@@ -81,8 +81,8 @@ let __authRegisterSeq=0;
 let __authRegisterEpoch=0;
 let __ignoreAuthEventsUntil=0;
 const AUTH_RESTORE_TIMEOUT=4000;
-const LOGIN_SLOW_NOTICE_MS=8000;
-const LOGIN_HARD_TIMEOUT_MS=20000;
+const LOGIN_SLOW_NOTICE_MS=6000;
+const LOGIN_HARD_TIMEOUT_MS=30000;
 const SIGNUP_SLOW_NOTICE_MS=10000;
 const SIGNUP_HARD_TIMEOUT_MS=25000;
 function finishAuthBootstrap(){
@@ -355,27 +355,29 @@ function friendlyAuthError(err){
   if(/database error|unexpected_failure/.test(low))return "账号服务暂时异常，请稍后重试；若持续出现请联系管理员。";
   return raw?"登录失败："+raw:"登录失败，请稍后重试。";
 }
+function isAuthNetworkError(err){
+  const low=String(err?.message||err||"").toLowerCase();
+  return /failed to fetch|networkerror|load failed|network request failed|fetch failed/.test(low);
+}
+async function getSessionQuick(timeout=3500){
+  try{
+    return await Promise.race([
+      supabase.auth.getSession(),
+      new Promise(resolve=>setTimeout(()=>resolve({data:{session:null},error:new Error("SESSION_CHECK_TIMEOUT")}),timeout))
+    ]);
+  }catch(error){
+    return {data:{session:null},error};
+  }
+}
 async function signInWithTimeout(email,password,onSlow){
   const attempt=++__authLoginSeq;
   const epoch=++__manualLoginEpoch;
-  let hardTimedOut=false;
   let slowTimer=null;
   let hardTimer=null;
 
   const request=supabase.auth.signInWithPassword({email,password});
-  const guarded=request.then(async result=>{
-    if(hardTimedOut||epoch!==__manualLoginEpoch){
-      const token=result?.data?.session?.access_token||null;
-      if(token){
-        try{
-          const current=await supabase.auth.getSession();
-          if(current?.data?.session?.access_token===token){
-            await supabase.auth.signOut({scope:"local"});
-          }
-        }catch(_e){}
-      }
-      return {error:new Error("LOGIN_STALE"),stale:true,attempt};
-    }
+  const guarded=request.then(result=>{
+    if(epoch!==__manualLoginEpoch)return {error:new Error("LOGIN_STALE"),stale:true,attempt};
     return {...result,attempt};
   }).catch(error=>({error,attempt}));
 
@@ -384,8 +386,6 @@ async function signInWithTimeout(email,password,onSlow){
       try{onSlow?.()}catch(_e){}
     },LOGIN_SLOW_NOTICE_MS);
     hardTimer=setTimeout(()=>{
-      hardTimedOut=true;
-      __ignoreAuthEventsUntil=Date.now()+45000;
       resolve({error:new Error("LOGIN_TIMEOUT"),timedOut:true,attempt});
     },LOGIN_HARD_TIMEOUT_MS);
   });
@@ -393,6 +393,19 @@ async function signInWithTimeout(email,password,onSlow){
   const result=await Promise.race([guarded,hardTimeout]);
   clearTimeout(slowTimer);
   clearTimeout(hardTimer);
+  return result;
+}
+async function resilientPasswordLogin(email,password,onSlow,onRetry){
+  let result=await signInWithTimeout(email,password,onSlow);
+  if(result?.error&&isAuthNetworkError(result.error)){
+    try{onRetry?.()}catch(_e){}
+    await new Promise(resolve=>setTimeout(resolve,900));
+    result=await signInWithTimeout(email,password,onSlow);
+  }
+  if(result?.error&&result.error.message==="LOGIN_TIMEOUT"){
+    const late=await getSessionQuick(2500);
+    if(late?.data?.session?.user)return {data:late.data,error:null,recovered:true};
+  }
   return result;
 }
 function friendlySignupError(err){
@@ -572,17 +585,19 @@ function bindAuth(){
         msg.textContent="正在连接登录服务器…";
       }
 
-      const r=await signInWithTimeout(email,password,()=>{
+      const r=await resilientPasswordLogin(email,password,()=>{
         msg.textContent="当前网络响应较慢，仍在等待登录结果，请不要重复点击…";
+      },()=>{
+        msg.textContent="首次连接失败，正在自动重试登录线路…";
       });
       if(r?.error){
         const message=r.error.message==="LOGIN_TIMEOUT"
-          ?"登录服务器长时间未响应，本次请求已失效，请检查网络后重试。"
+          ?"账号服务器暂时没有响应。若网络稍后恢复，成功的迟到登录会自动生效；也可以点击“重新登录”。"
           :r.error.message==="LOGIN_STALE"
             ?"登录状态已经变化，请重新确认当前账号状态。"
             :friendlyAuthError(r.error);
         msg.textContent=message;
-        if(/无法连接|超时|断网|暂时异常/.test(message))retry?.classList.remove("hidden");
+        if(/无法连接|超时|断网|暂时异常|没有响应/.test(message))retry?.classList.remove("hidden");
         return;
       }
       if(r?.data?.session?.user){
@@ -3246,10 +3261,12 @@ if(state.user){
 supabase.auth.onAuthStateChange(async(event,session)=>{
   const nextUser=session?.user||null;
 
-  if(Date.now()<__ignoreAuthEventsUntil&&event==="SIGNED_IN"){
+  if(__authRegisterBusy&&event==="SIGNED_IN"){
     return;
   }
-  if(__authRegisterBusy&&event==="SIGNED_IN"){
+  if(__authLoginBusy&&event==="SIGNED_IN"){
+    state.user=nextUser;
+    updateAuthUI();
     return;
   }
   if((__authLoginBusy||__authRegisterBusy)&&event==="TOKEN_REFRESHED"){
