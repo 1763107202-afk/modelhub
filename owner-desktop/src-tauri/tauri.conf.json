@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "机械创新实验室私人状态中心",
+  "version": "1.0.0",
+  "identifier": "cn.edu.just.mechinnovation.ownerops",
+  "build": {
+    "devUrl": "https://1763107202-afk.github.io/modelhub/owner-ops.html",
+    "frontendDist": "https://1763107202-afk.github.io/modelhub/owner-ops.html"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["icons/icon.ico"],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      }
+    }
+  }
+}
