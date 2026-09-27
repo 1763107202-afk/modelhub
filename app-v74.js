@@ -602,20 +602,30 @@ function bindAuth(){
       }
       if(r?.data?.session?.user){
         state.user=r.data.session.user;
-        const usedCache=await loadProfile(true);
+        try{
+          localStorage.setItem(REMEMBER_LOGIN_KEY,remember?"1":"0");
+          if(remember)sessionStorage.removeItem(SESSION_LOGIN_KEY);
+          else sessionStorage.setItem(SESSION_LOGIN_KEY,"1");
+        }catch(_e){}
         updateAuthUI();
-        if(!usedCache){
-          await loadProfile(false);
-          updateAuthUI();
-        }
+        msg.textContent=remember?"登录成功，已记住登录状态":"登录成功，本次会话内保持登录";
+        q("#auth").close();
+
+        // 登录成功后立即放行界面；成员资料在后台补齐，避免移动网络上
+        // profile 请求稍慢时出现“账号已登录但弹窗一直不关”的假失败。
+        void (async()=>{
+          try{
+            const usedCache=await loadProfile(true);
+            if(usedCache)updateAuthUI();
+            await loadProfile(false);
+            updateAuthUI();
+          }catch(err){
+            console.warn("登录后成员资料同步失败，保留已建立的登录会话",err);
+          }
+        })();
+        return;
       }
-      try{
-        localStorage.setItem(REMEMBER_LOGIN_KEY,remember?"1":"0");
-        if(remember)sessionStorage.removeItem(SESSION_LOGIN_KEY);
-        else sessionStorage.setItem(SESSION_LOGIN_KEY,"1");
-      }catch(_e){}
-      msg.textContent=remember?"登录成功，已记住登录状态":"登录成功，本次会话内保持登录";
-      q("#auth").close();
+      throw new Error("LOGIN_SESSION_MISSING");
     }catch(err){
       const message=friendlyAuthError(err);
       msg.textContent=message;
@@ -3267,6 +3277,25 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   if(__authLoginBusy&&event==="SIGNED_IN"){
     state.user=nextUser;
     updateAuthUI();
+    // 某些 Android WebView / 家庭宽带链路会先触发 SIGNED_IN，
+    // 但 signInWithPassword Promise 的响应体迟迟不结束。事件本身已证明会话成立，
+    // 因此立即关闭登录弹窗，不再让用户看到“登录中”。
+    const authDialog=q("#auth");
+    if(authDialog?.open){
+      const authMsg=q("#authMsg");
+      if(authMsg)authMsg.textContent="登录成功";
+      authDialog.close();
+    }
+    void (async()=>{
+      try{
+        const usedCache=await loadProfile(true);
+        if(usedCache)updateAuthUI();
+        await loadProfile(false);
+        updateAuthUI();
+      }catch(err){
+        console.warn("SIGNED_IN 后成员资料同步失败",err);
+      }
+    })();
     return;
   }
   if((__authLoginBusy||__authRegisterBusy)&&event==="TOKEN_REFRESHED"){
