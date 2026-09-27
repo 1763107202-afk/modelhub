@@ -16,7 +16,7 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
 .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}.card{border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726);padding:17px}.card span{font-size:12px;color:#8299b3}.card b{display:block;font-size:26px;margin-top:5px}.card small{display:block;color:#6f88a5;margin-top:7px}.ok{color:#74c69d!important}.warn{color:#f6bd60!important}.bad{color:#ef8a91!important}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:6px}
 .section{margin:26px 0}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.sectionHead h2{margin:0;font-size:22px}.sectionHead p{margin:0;color:#7890aa;font-size:13px}
 .links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.linkCard{border:1px solid #1c3049;border-radius:16px;background:#0b192a;padding:15px;transition:.18s}.linkCard:hover{transform:translateY(-2px);border-color:#41648c}.linkCard strong{display:block}.linkCard small{display:block;color:#7890aa;margin-top:4px}.tag{display:inline-block;margin-top:10px;padding:4px 8px;border-radius:999px;background:#112a46;color:#9bc9fb;font-size:11px}
-.login{width:min(480px,calc(100% - 28px));margin:80px auto;padding:22px;border:1px solid #1c3049;border-radius:18px;background:#0b192a}.field{display:grid;gap:6px;margin-top:12px;color:#cbd9ea;font-size:13px}.field input{width:100%;padding:11px 12px;border-radius:11px;border:1px solid #223a57;background:#081524;color:#edf6ff}.msg{margin-top:12px;color:#8fa4bd;font-size:13px}.footer{padding:28px 0 42px;color:#6f88a5;font-size:12px}
+.login{width:min(480px,calc(100% - 28px));margin:80px auto;padding:22px;border:1px solid #1c3049;border-radius:18px;background:#0b192a}.field{display:grid;gap:6px;margin-top:12px;color:#cbd9ea;font-size:13px}.field input{width:100%;padding:11px 12px;border-radius:11px;border:1px solid #223a57;background:#081524;color:#edf6ff}.msg{margin-top:12px;color:#8fa4bd;font-size:13px}.panel{background:#0b192a;border:1px solid #1c3049;border-radius:18px;padding:16px;overflow:auto}.panel h2{margin:0 0 12px;font-size:18px}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:10px 9px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:top}th{color:#7890aa;font-size:11px}.device{max-width:360px;word-break:break-word;color:#7890aa}.footer{padding:28px 0 42px;color:#6f88a5;font-size:12px}
 @media(max-width:1080px){.grid{grid-template-columns:repeat(3,1fr)}.links{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.grid,.links{grid-template-columns:1fr}.topin{flex-wrap:wrap;padding:10px 0}.nav{width:100%;margin-left:0}.hero{padding-top:24px}}
 </style>
 </head>
@@ -63,9 +63,26 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
     <div class="sectionHead"><div><h2>实时检测详情</h2><p>状态检测失败不会影响其他服务卡片。</p></div></div>
     <div class="links">
       <article class="linkCard"><strong>站点版本</strong><small id="siteVersion">—</small><span class="tag">site-version.json</span></article>
-      <article class="linkCard"><strong>注册成员</strong><small id="memberCount">—</small><span class="tag">Supabase RPC</span></article>
+      <article class="linkCard"><strong>注册成员</strong><small id="memberCount">—</small><span class="tag">Profiles 实时统计</span></article>
       <article class="linkCard"><strong>七牛对象数</strong><small id="qiniuObjects">—</small><span class="tag">Kodo 实时统计</span></article>
       <article class="linkCard"><strong>周期内更新人数</strong><small id="progressCount">—</small><span class="tag">最近 14 天</span></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><div><h2>ChatGPT 教程访客</h2><p>显示教程累计访问、独立访客、今日访问和最近访问记录。</p></div><a class="btn" href="https://1763107202-afk.github.io/modelhub/chatgpt-guide/admin.html" target="_blank" rel="noopener noreferrer">打开教程访问后台 ↗</a></div>
+    <div class="grid" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <article class="card"><span>累计访问</span><b id="guideTotalVisits">—</b><small>全部访问记录</small></article>
+      <article class="card"><span>独立访客</span><b id="guideUniqueVisitors">—</b><small>按填写姓名去重</small></article>
+      <article class="card"><span>今日访问</span><b id="guideTodayVisits">—</b><small>当天访问次数</small></article>
+      <article class="card"><span>最近访问者</span><b id="guideLatestVisitor" style="font-size:22px">—</b><small id="guideLatestTime">暂无记录</small></article>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <h2>最近访问记录</h2>
+      <table>
+        <thead><tr><th>姓名</th><th>访问时间</th><th>设备 / 浏览器</th><th>来源页面</th></tr></thead>
+        <tbody id="guideRecentRows"><tr><td colspan="4">正在读取…</td></tr></tbody>
+      </table>
     </div>
   </section>
 
@@ -77,6 +94,14 @@ import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
 const q=s=>document.querySelector(s);
 const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KiB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MiB";return (v/1024**3).toFixed(2)+" GiB"};
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
+function shortDevice(ua){
+  const s=String(ua||"");
+  const os=/iPhone|iPad/.test(s)?"iPhone / iPad":/Android/.test(s)?"Android":/Windows/.test(s)?"Windows":/Macintosh|Mac OS/.test(s)?"macOS":"其他设备";
+  const browser=/Edg\//.test(s)?"Edge":/Chrome\//.test(s)?"Chrome":/Safari\//.test(s)?"Safari":/Firefox\//.test(s)?"Firefox":"浏览器";
+  return os+" · "+browser;
+}
 const base="https://1763107202-afk.github.io/modelhub";
 const internal=[
   ["主站",base+"/","公开主页"],
@@ -127,8 +152,10 @@ async function refresh(){
   q("#checkedAt").textContent="刷新："+now.toLocaleString("zh-CN",{hour12:false});
   const site=fetch(base+"/site-version.json?_="+Date.now(),{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()});
   const metrics=supabase.rpc("get_member_admin_metrics");
+  const memberCountReq=supabase.from("profiles").select("id",{count:"exact",head:true});
   const qiniu=supabase.functions.invoke("qiniu-storage-stats",{body:{}});
-  const [siteR,metricsR,qiniuR]=await Promise.allSettled([site,metrics,qiniu]);
+  const guideStats=supabase.rpc("get_chatgpt_guide_visit_stats_owner");
+  const [siteR,metricsR,memberCountR,qiniuR,guideR]=await Promise.allSettled([site,metrics,memberCountReq,qiniu,guideStats]);
 
   if(siteR.status==="fulfilled"){
     setState("#siteState","正常","ok","#siteMeta","GitHub Pages 可访问");
@@ -144,11 +171,16 @@ async function refresh(){
     const used=Number(row?.storage_used_bytes||0),limit=Number(row?.storage_limit_bytes||1073741824);
     q("#supaUsed").textContent=bytes(used);
     q("#supaQuota").textContent="已用 "+(limit?Math.min(100,used/limit*100).toFixed(2):"0")+"% / 1 GiB";
-    q("#memberCount").textContent=String(row?.member_count??"—")+" 人";
     q("#progressCount").textContent=String(row?.progress_updated_members??"—")+" 人";
   }else{
     setState("#supabaseState","异常","bad","#supabaseMeta",metricsR.reason?.message||metricsR.value?.error?.message||"RPC 检测失败");
-    q("#supaUsed").textContent="—";q("#memberCount").textContent="—";q("#progressCount").textContent="—";
+    q("#supaUsed").textContent="—";q("#progressCount").textContent="—";
+  }
+
+  if(memberCountR.status==="fulfilled"&&!memberCountR.value.error){
+    q("#memberCount").textContent=String(memberCountR.value.count??0)+" 人";
+  }else{
+    q("#memberCount").textContent="读取失败";
   }
 
   if(qiniuR.status==="fulfilled"&&!qiniuR.value.error&&!qiniuR.value.data?.error){
@@ -162,6 +194,23 @@ async function refresh(){
   }else{
     setState("#qiniuState","异常","bad","#qiniuMeta",qiniuR.reason?.message||qiniuR.value?.error?.message||qiniuR.value?.data?.error||"七牛统计失败");
     q("#qiniuUsed").textContent="—";q("#qiniuObjects").textContent="—";
+  }
+
+  if(guideR.status==="fulfilled"&&!guideR.value.error){
+    const d=guideR.value.data||{};
+    q("#guideTotalVisits").textContent=String(d.total_visits??0);
+    q("#guideUniqueVisitors").textContent=String(d.unique_visitors??0);
+    q("#guideTodayVisits").textContent=String(d.today_visits??0);
+    q("#guideLatestVisitor").textContent=d.recent?.[0]?.visitor_name||"—";
+    q("#guideLatestTime").textContent=d.recent?.[0]?.visited_at?fmt(d.recent[0].visited_at):"暂无记录";
+    q("#guideRecentRows").innerHTML=(d.recent||[]).slice(0,12).map(x=>'<tr><td><b>'+esc(x.visitor_name)+'</b></td><td>'+fmt(x.visited_at)+'</td><td class="device">'+esc(shortDevice(x.user_agent))+'<br><small>'+esc(x.user_agent||"")+'</small></td><td class="device">'+esc(x.referrer||"直接访问")+'</td></tr>').join("")||'<tr><td colspan="4">暂无访问记录</td></tr>';
+  }else{
+    q("#guideTotalVisits").textContent="—";
+    q("#guideUniqueVisitors").textContent="—";
+    q("#guideTodayVisits").textContent="—";
+    q("#guideLatestVisitor").textContent="—";
+    q("#guideLatestTime").textContent="访客数据读取失败";
+    q("#guideRecentRows").innerHTML='<tr><td colspan="4">访客数据读取失败</td></tr>';
   }
   q("#refreshBtn").disabled=false;q("#refreshBtn").textContent="立即刷新";
 }
