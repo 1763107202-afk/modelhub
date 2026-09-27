@@ -46,11 +46,12 @@ body.gate-locked{overflow:hidden}
 <div id="gate">
   <div class="panel">
     <h2>你是谁？</h2>
-    <p>请输入通行证后进入教程。</p>
-    <input id="gateInput" type="password" placeholder="请输入通行证" aria-label="通行证">
+    <p>请先输入你的姓名，再输入通行证。</p>
+    <input id="gateName" type="text" maxlength="40" placeholder="请输入姓名" aria-label="姓名">
+    <input id="gateInput" type="password" placeholder="请输入通行证" aria-label="通行证" style="margin-top:10px">
     <button id="gateButton" type="button">进入教程</button>
     <div id="gateError" class="err"></div>
-    <div class="tip">同一浏览器会话验证一次；关闭浏览器后需要重新输入。</div>
+    <div class="tip">姓名和访问时间会记录到访问后台；同一浏览器会话只验证一次，关闭浏览器后需要重新输入。</div>
   </div>
 </div>
 
@@ -203,15 +204,43 @@ cs.forEach((c,i)=>{c.checked=!!s[i];c.onchange=()=>{s[i]=c.checked;localStorage.
 
 <script>
 (async()=>{
-  const G=document.getElementById('gate'),I=document.getElementById('gateInput'),B=document.getElementById('gateButton'),E=document.getElementById('gateError');
+  const G=document.getElementById('gate'),N=document.getElementById('gateName'),I=document.getElementById('gateInput'),B=document.getElementById('gateButton'),E=document.getElementById('gateError');
+  const LOG_URL='https://yodtphuzgngxpihnfwop.supabase.co/rest/v1/chatgpt_guide_simple_access_logs';
+  const LOG_KEY='sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX';
   const H='e9bc253bd6b620762ef8128ec5188f47a3f1d5d026a44754f3441a1e7b301879';
   const hex=a=>Array.from(new Uint8Array(a)).map(x=>x.toString(16).padStart(2,'0')).join('');
+  async function logVisit(name){
+    if(sessionStorage.getItem('guide-log-sent')==='1') return;
+    try{
+      const sid=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
+      const res=await fetch(LOG_URL,{
+        method:'POST',
+        headers:{'apikey':LOG_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify({
+          visitor_name:name,
+          visited_at:new Date().toISOString(),
+          user_agent:navigator.userAgent||'',
+          referrer:document.referrer||'',
+          session_id:sid
+        })
+      });
+      if(res.ok) sessionStorage.setItem('guide-log-sent','1');
+    }catch(e){}
+  }
   async function check(){
+    const name=(N.value||'').trim();
+    if(!name){
+      E.textContent='请先输入你的姓名。';
+      N.focus();
+      return;
+    }
     const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(I.value));
     if(hex(d)===H){
       sessionStorage.setItem('guide-ok','1');
+      sessionStorage.setItem('guide-name',name);
       G.classList.add('off');
       document.body.classList.remove('gate-locked');
+      logVisit(name);
     }else{
       E.textContent='通行证不正确，请重新输入。';
       I.value='';
@@ -221,10 +250,13 @@ cs.forEach((c,i)=>{c.checked=!!s[i];c.onchange=()=>{s[i]=c.checked;localStorage.
   if(sessionStorage.getItem('guide-ok')==='1'){
     G.classList.add('off');
     document.body.classList.remove('gate-locked');
+    const savedName=sessionStorage.getItem('guide-name')||'';
+    if(savedName) logVisit(savedName);
   }else{
-    setTimeout(()=>I.focus(),50);
+    setTimeout(()=>N.focus(),50);
   }
   B.addEventListener('click',check);
+  N.addEventListener('keydown',e=>{if(e.key==='Enter')I.focus()});
   I.addEventListener('keydown',e=>{if(e.key==='Enter')check()});
 })();
 </script>
