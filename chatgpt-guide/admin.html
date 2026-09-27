@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChatGPT 教程访问后台</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#718096;--line:#dbe3ee;--blue:#315efb;--green:#16a085;--red:#d14343}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131a;--card:#161d27;--text:#edf2f7;--muted:#9eabbc;--line:#2b3644;--blue:#6f8cff;--green:#3cc5a7;--red:#f17070}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.top h1{margin:0;font-size:30px}.top p{margin:5px 0 0;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:9px 13px;font-weight:650;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.login{max-width:430px;margin:80px auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 18px 55px rgba(0,0,0,.08)}
+.login h2{margin:0 0 8px}.login p{margin:0 0 16px;color:var(--muted)}
+input{width:100%;height:46px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);padding:0 12px;font:inherit}
+.err{min-height:22px;color:var(--red);font-size:13px;margin-top:8px}
+.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.stat span{color:var(--muted);font-size:13px}.stat b{display:block;font-size:32px;margin-top:9px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px;overflow:auto}
+.panel h2{margin:0 0 14px;font-size:20px}
+table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}th{color:var(--muted);font-size:12px}
+.device{max-width:360px;word-break:break-word;color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.small{font-size:12px;color:var(--muted)}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="loginBox" class="login">
+    <h2>访问后台</h2>
+    <p>输入管理员通行证查看教程访问记录。</p>
+    <input id="adminPass" type="password" placeholder="管理员通行证" autocomplete="current-password">
+    <button id="loginBtn" class="btn primary" style="width:100%;margin-top:10px">进入后台</button>
+    <div id="loginErr" class="err"></div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="top">
+      <div>
+        <h1>ChatGPT 教程访问后台</h1>
+        <p>查看访问者姓名、访问次数、时间和设备信息。</p>
+      </div>
+      <div class="toolbar">
+        <button id="refreshBtn" class="btn">刷新数据</button>
+        <a class="btn" href="./">返回教程</a>
+        <button id="logoutBtn" class="btn">退出后台</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span>累计访问次数</span><b id="totalVisits">0</b></div>
+      <div class="stat"><span>独立访问人数</span><b id="uniqueVisitors">0</b></div>
+      <div class="stat"><span>今日访问次数</span><b id="todayVisits">0</b></div>
+      <div class="stat"><span>最近访问者</span><b id="latestVisitor" style="font-size:22px">—</b></div>
+    </div>
+
+    <div class="panel">
+      <h2>访问者汇总</h2>
+      <table>
+        <thead><tr><th>姓名</th><th>访问次数</th><th>首次访问</th><th>最近访问</th><th>最近设备</th></tr></thead>
+        <tbody id="visitorRows"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>最近 100 次访问</h2>
+      <table>
+        <thead><tr><th>姓名</th><th>访问时间</th><th>设备 / 浏览器</th><th>来源页面</th></tr></thead>
+        <tbody id="recentRows"></tbody>
+      </table>
+      <p class="small">仅记录用户主动填写的姓名、访问时间、浏览器/设备标识和来源页面，不记录密码内容。</p>
+    </div>
+  </section>
+</div>
+<script>
+const API='https://yodtphuzgngxpihnfwop.supabase.co/rest/v1/rpc/get_chatgpt_guide_visit_stats';
+const KEY='sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX';
+const $=s=>document.querySelector(s);
+let adminPass='';
+const fmt=v=>v?new Date(v).toLocaleString('zh-CN',{hour12:false}):'—';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function shortDevice(ua){
+  const s=String(ua||'');
+  let os=/iPhone|iPad/.test(s)?'iPhone / iPad':/Android/.test(s)?'Android':/Windows/.test(s)?'Windows':/Macintosh|Mac OS/.test(s)?'macOS':'其他设备';
+  let browser=/Edg\//.test(s)?'Edge':/Chrome\//.test(s)?'Chrome':/Safari\//.test(s)?'Safari':/Firefox\//.test(s)?'Firefox':'浏览器';
+  return os+' · '+browser;
+}
+async function load(){
+  $('#refreshBtn').disabled=true;
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},body:JSON.stringify({p_admin_pass:adminPass})});
+    if(!r.ok) throw new Error('unauthorized');
+    const d=await r.json();
+    $('#totalVisits').textContent=d.total_visits||0;
+    $('#uniqueVisitors').textContent=d.unique_visitors||0;
+    $('#todayVisits').textContent=d.today_visits||0;
+    $('#latestVisitor').textContent=d.recent?.[0]?.visitor_name||'—';
+    $('#visitorRows').innerHTML=(d.visitors||[]).map(x=>`
+      <tr>
+        <td><b>${esc(x.visitor_name)}</b></td>
+        <td>${x.visits||0}</td>
+        <td>${fmt(x.first_visit)}</td>
+        <td>${fmt(x.last_visit)}</td>
+        <td class="device">${esc(shortDevice(x.last_user_agent))}<br><span class="small">${esc(x.last_user_agent||'')}</span></td>
+      </tr>`).join('')||'<tr><td colspan="5">暂无访问记录</td></tr>';
+    $('#recentRows').innerHTML=(d.recent||[]).map(x=>`
+      <tr>
+        <td><b>${esc(x.visitor_name)}</b></td>
+        <td>${fmt(x.visited_at)}</td>
+        <td class="device">${esc(shortDevice(x.user_agent))}<br><span class="small">${esc(x.user_agent||'')}</span></td>
+        <td class="device">${esc(x.referrer||'直接访问')}</td>
+      </tr>`).join('')||'<tr><td colspan="4">暂无访问记录</td></tr>';
+  }finally{
+    $('#refreshBtn').disabled=false;
+  }
+}
+async function login(){
+  const p=$('#adminPass').value;
+  if(!p){$('#loginErr').textContent='请输入管理员通行证。';return;}
+  adminPass=p;
+  try{
+    await load();
+    sessionStorage.setItem('guide-admin-ok','1');
+    sessionStorage.setItem('guide-admin-pass',p);
+    $('#loginBox').classList.add('hidden');
+    $('#dashboard').classList.remove('hidden');
+    $('#loginErr').textContent='';
+  }catch(e){
+    adminPass='';
+    $('#loginErr').textContent='管理员通行证不正确。';
+  }
+}
+$('#loginBtn').onclick=login;
+$('#adminPass').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+$('#refreshBtn').onclick=()=>load();
+$('#logoutBtn').onclick=()=>{sessionStorage.removeItem('guide-admin-ok');sessionStorage.removeItem('guide-admin-pass');location.reload()};
+if(sessionStorage.getItem('guide-admin-ok')==='1'){
+  adminPass=sessionStorage.getItem('guide-admin-pass')||'';
+  if(adminPass){$('#loginBox').classList.add('hidden');$('#dashboard').classList.remove('hidden');load().catch(()=>location.reload())}
+}
+</script>
+</body>
+</html>
