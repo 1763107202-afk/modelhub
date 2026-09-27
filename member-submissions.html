@@ -68,7 +68,7 @@ async function enter(){
 async function loadMember(){
   const [p,s]=await Promise.all([
     supabase.from("profiles").select("id,email,full_name,major,phone,qq,role").eq("id",memberId).maybeSingle(),
-    supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").eq("user_id",memberId).order("created_at",{ascending:false})
+    supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,storage_backend,created_at,exam_id,exams(title)").eq("user_id",memberId).order("created_at",{ascending:false})
   ]);
   if(p.error){q("#list").innerHTML='<div class="empty">成员资料读取失败：'+esc(p.error.message)+'</div>';return}
   if(s.error){q("#list").innerHTML='<div class="empty">作业记录读取失败：'+esc(s.error.message)+'</div>';return}
@@ -81,8 +81,33 @@ async function loadMember(){
   q("#summary").textContent=rows.length+" 份作业";
   q("#updated").textContent="更新时间："+new Date().toLocaleString("zh-CN",{hour12:false});
   q("#empty").classList.toggle("hidden",rows.length>0);
-  q("#list").innerHTML=rows.map((x,i)=>'<article class="item"><div class="itemTop"><div><div class="meta">第 '+(rows.length-i)+' 次提交</div><h3>'+esc(x.exams?.title||"未关联任务")+'</h3><div>'+esc(x.file_name||"—")+'</div></div><span class="status">'+esc(x.status||"—")+'</span></div><div class="meta">提交时间：'+fmt(x.created_at)+(x.submitter_name?' · 提交人：'+esc(x.submitter_name):"")+'</div>'+(x.note?'<div class="note">备注：'+esc(x.note)+'</div>':'')+'<div class="actions">'+(x.storage_path?'<button class="btn pri downloadBtn" data-path="'+esc(x.storage_path)+'" data-name="'+esc(x.file_name||"作业文件")+'">下载作业</button>':'<span class="meta">文件路径不可用</span>')+'</div></article>').join("");
-  document.querySelectorAll(".downloadBtn").forEach(b=>b.onclick=async()=>{b.disabled=true;const old=b.textContent;b.textContent="正在生成下载链接…";const r=await supabase.storage.from("submissions").createSignedUrl(b.dataset.path,120);b.disabled=false;b.textContent=old;if(r.error){alert("下载失败："+r.error.message);return}window.open(r.data.signedUrl,"_blank")});
+  q("#list").innerHTML=rows.map((x,i)=>'<article class="item"><div class="itemTop"><div><div class="meta">第 '+(rows.length-i)+' 次提交</div><h3>'+esc(x.exams?.title||"未关联任务")+'</h3><div>'+esc(x.file_name||"—")+'</div></div><span class="status">'+esc(x.status||"—")+'</span></div><div class="meta">提交时间：'+fmt(x.created_at)+(x.submitter_name?' · 提交人：'+esc(x.submitter_name):"")+'</div>'+(x.note?'<div class="note">备注：'+esc(x.note)+'</div>':'')+'<div class="actions">'+(x.storage_path?'<button class="btn pri downloadBtn" data-path="'+esc(x.storage_path)+'" data-backend="'+esc(x.storage_backend||"supabase")+'" data-name="'+esc(x.file_name||"作业文件")+'">下载作业</button>':'<span class="meta">文件路径不可用</span>')+'</div></article>').join("");
+  document.querySelectorAll(".downloadBtn").forEach(b=>b.onclick=async()=>{
+    b.disabled=true;
+    const old=b.textContent;
+    b.textContent="正在生成下载链接…";
+    let popup=null;
+    try{
+      try{popup=window.open("about:blank","_blank")}catch(_e){}
+      if((b.dataset.backend||"supabase")==="qiniu"){
+        const r=await supabase.functions.invoke("qiniu-download-url",{body:{key:b.dataset.path,expiresIn:3600}});
+        if(r.error)throw new Error(r.error.message||"七牛下载链接生成失败");
+        if(r.data?.error)throw new Error(r.data.error);
+        if(!r.data?.url)throw new Error("七牛下载链接为空");
+        if(popup&&!popup.closed)popup.location.replace(r.data.url);else location.href=r.data.url;
+      }else{
+        const r=await supabase.storage.from("submissions").createSignedUrl(b.dataset.path,120);
+        if(r.error)throw r.error;
+        if(popup&&!popup.closed)popup.location.replace(r.data.signedUrl);else location.href=r.data.signedUrl;
+      }
+    }catch(err){
+      try{popup?.close()}catch(_e){}
+      alert("下载失败："+(err?.message||String(err)));
+    }finally{
+      b.disabled=false;
+      b.textContent=old;
+    }
+  });
 }
 
 q("#themeToggle").onclick=()=>window.JUSTTheme?.toggle();
@@ -91,6 +116,6 @@ q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();showLogin("已�
 supabase.auth.onAuthStateChange((_e,s)=>{if(!s)showLogin()});
 await enter();
 </script>
-<script src="./cache-loader.js?v=3" data-app="false"></script>
+<script src="./cache-loader.js?v=2026.09.27.12" data-app="false"></script>
 </body>
 </html>
