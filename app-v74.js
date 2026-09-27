@@ -1287,16 +1287,22 @@ async function initExams(){
   q("#examEmpty").classList.toggle("hidden",data.length>0);
   document.querySelectorAll(".delExam").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除该试卷及关联提交吗？"))return;
-    const rel=await supabase.from("submissions").select("storage_path").eq("exam_id",b.dataset.id);
+    const rel=await supabase.from("submissions").select("storage_path,storage_backend").eq("exam_id",b.dataset.id);
     if(rel.error)return toast("关联提交读取失败："+rel.error.message);
-    const paths=(rel.data||[]).map(x=>x.storage_path).filter(Boolean);
+    const related=(rel.data||[]).filter(x=>x.storage_path);
+    const qiniuPaths=related.filter(x=>x.storage_backend==="qiniu"||isQiniuStorageKey(x.storage_path)).map(x=>x.storage_path);
+    const supabasePaths=related.filter(x=>!(x.storage_backend==="qiniu"||isQiniuStorageKey(x.storage_path))).map(x=>x.storage_path);
     const d=await supabase.from("exams").delete().eq("id",b.dataset.id);
     if(d.error)return toast("删除任务失败："+d.error.message);
     const cleanupResults=[];
-    if(paths.length)cleanupResults.push(await removeStorageObjectsSafe("submissions",paths,{queueOnFail:true}));
+    if(qiniuPaths.length){
+      const qr=await Promise.all(qiniuPaths.map(path=>removeQiniuObjectSafe(path)));
+      cleanupResults.push(...qr);
+    }
+    if(supabasePaths.length)cleanupResults.push(await removeStorageObjectsSafe("submissions",supabasePaths,{queueOnFail:true}));
     if(b.dataset.path)cleanupResults.push(await removeStorageObjectSafe("exams",b.dataset.path,{queueOnFail:true}));
     const cleanupFailed=cleanupResults.some(x=>x?.error);
-    toast(cleanupFailed?"任务及关联记录已删除，部分文件已加入待清理队列":"试卷 / 任务及关联提交已删除");
+    toast(cleanupFailed?"任务及关联记录已删除，但有云端文件清理失败，请稍后重试":"试卷 / 任务、关联提交及云端文件已同步删除");
     await initExams();
   });
 }
