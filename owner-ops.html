@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Owner Ops | JUST Lab</title>
+<style>
+*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#07111f;color:#edf5ff;line-height:1.55}
+a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:min(1380px,calc(100% - 28px));margin:auto}
+.top{position:sticky;top:0;z-index:20;background:#07111ff2;border-bottom:1px solid #ffffff12;backdrop-filter:blur(16px)}
+.topin{min-height:72px;display:flex;align-items:center;gap:14px}.brand{font-weight:900}.brand small{display:block;color:#7992ad;font-size:11px;font-weight:600;margin-top:2px}
+.nav{margin-left:auto;display:flex;gap:8px}.btn{border:1px solid #29415d;border-radius:12px;padding:9px 13px;background:#11233a;color:#dfeeff;font-weight:800;cursor:pointer}.btn.pri{background:linear-gradient(135deg,#4f8cff,#7758ff);border:0;color:#fff}.btn.ghost{background:transparent}
+.hero{padding:38px 0 20px}.eyebrow{font-size:12px;letter-spacing:.15em;color:#76abff;font-weight:900}.hero h1{font-size:clamp(32px,5vw,54px);line-height:1.06;margin:8px 0}.hero p{margin:0;color:#8fa4bd}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pill{padding:6px 10px;border-radius:999px;background:#102946;border:1px solid #274d75;color:#a5cffb;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}.card{border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726);padding:17px}.card span{font-size:12px;color:#8299b3}.card b{display:block;font-size:26px;margin-top:5px}.card small{display:block;color:#6f88a5;margin-top:7px}.ok{color:#74c69d!important}.warn{color:#f6bd60!important}.bad{color:#ef8a91!important}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:6px}
+.section{margin:26px 0}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.sectionHead h2{margin:0;font-size:22px}.sectionHead p{margin:0;color:#7890aa;font-size:13px}
+.links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.linkCard{border:1px solid #1c3049;border-radius:16px;background:#0b192a;padding:15px;transition:.18s}.linkCard:hover{transform:translateY(-2px);border-color:#41648c}.linkCard strong{display:block}.linkCard small{display:block;color:#7890aa;margin-top:4px}.tag{display:inline-block;margin-top:10px;padding:4px 8px;border-radius:999px;background:#112a46;color:#9bc9fb;font-size:11px}
+.login{width:min(480px,calc(100% - 28px));margin:80px auto;padding:22px;border:1px solid #1c3049;border-radius:18px;background:#0b192a}.field{display:grid;gap:6px;margin-top:12px;color:#cbd9ea;font-size:13px}.field input{width:100%;padding:11px 12px;border-radius:11px;border:1px solid #223a57;background:#081524;color:#edf6ff}.msg{margin-top:12px;color:#8fa4bd;font-size:13px}.footer{padding:28px 0 42px;color:#6f88a5;font-size:12px}
+@media(max-width:1080px){.grid{grid-template-columns:repeat(3,1fr)}.links{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.grid,.links{grid-template-columns:1fr}.topin{flex-wrap:wrap;padding:10px 0}.nav{width:100%;margin-left:0}.hero{padding-top:24px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap topin"><div class="brand">JUST Lab · Owner Ops<small>私人运维与关联服务状态页</small></div><div class="nav"><button id="refreshBtn" class="btn pri">立即刷新</button><button id="logoutBtn" class="btn ghost hidden">退出</button></div></div></header>
+
+<section id="loginView" class="login">
+  <span class="eyebrow">PRIVATE OWNER PAGE</span>
+  <h2>私人运维页面</h2>
+  <p style="color:#8fa4bd">此页面没有站内入口，仅允许主管理员本人访问。</p>
+  <label class="field">邮箱<input id="email" type="email" autocomplete="email"></label>
+  <label class="field">密码<input id="password" type="password" autocomplete="current-password"></label>
+  <button id="loginBtn" class="btn pri" style="margin-top:14px;width:100%">登录并验证身份</button>
+  <div id="loginMsg" class="msg"></div>
+</section>
+
+<main id="app" class="wrap hidden">
+  <section class="hero">
+    <span class="eyebrow">SYSTEM OVERVIEW</span>
+    <h1>网站全链路状态中心</h1>
+    <p>集中查看主站、Supabase、七牛云、GitHub Pages 与常用管理入口。</p>
+    <div class="meta"><span id="ownerBadge" class="pill">主管理员</span><span id="checkedAt" class="pill">尚未刷新</span><span class="pill">自动刷新：30 秒</span></div>
+  </section>
+
+  <section class="grid">
+    <article class="card"><span>主站状态</span><b id="siteState">检测中</b><small id="siteMeta">GitHub Pages</small></article>
+    <article class="card"><span>Supabase</span><b id="supabaseState">检测中</b><small id="supabaseMeta">Auth / Database</small></article>
+    <article class="card"><span>七牛云</span><b id="qiniuState">检测中</b><small id="qiniuMeta">Kodo 私有对象存储</small></article>
+    <article class="card"><span>七牛实时已用</span><b id="qiniuUsed">—</b><small id="qiniuQuota">免费额度 10 GiB</small></article>
+    <article class="card"><span>Supabase 存储</span><b id="supaUsed">—</b><small id="supaQuota">Storage 1 GiB</small></article>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><div><h2>站内入口</h2><p>全部主要页面集中访问，不在主站公开添加此页入口。</p></div></div>
+    <div class="links" id="internalLinks"></div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><div><h2>外部关联服务</h2><p>代码、数据库、对象存储与文件访问域名。</p></div></div>
+    <div class="links" id="externalLinks"></div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><div><h2>实时检测详情</h2><p>状态检测失败不会影响其他服务卡片。</p></div></div>
+    <div class="links">
+      <article class="linkCard"><strong>站点版本</strong><small id="siteVersion">—</small><span class="tag">site-version.json</span></article>
+      <article class="linkCard"><strong>注册成员</strong><small id="memberCount">—</small><span class="tag">Supabase RPC</span></article>
+      <article class="linkCard"><strong>七牛对象数</strong><small id="qiniuObjects">—</small><span class="tag">Kodo 实时统计</span></article>
+      <article class="linkCard"><strong>周期内更新人数</strong><small id="progressCount">—</small><span class="tag">最近 14 天</span></article>
+    </div>
+  </section>
+
+  <footer class="footer">江苏科技大学机械创新实验室 · Owner Ops · 此页面未设置站内导航入口</footer>
+</main>
+
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
+const q=s=>document.querySelector(s);
+const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KiB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MiB";return (v/1024**3).toFixed(2)+" GiB"};
+const base="https://1763107202-afk.github.io/modelhub";
+const internal=[
+  ["主站",base+"/","公开主页"],
+  ["主管理后台",base+"/admin.html","公告、教程、资料等管理"],
+  ["成员管理后台",base+"/admin-members.html","成员、进度、存储管理"],
+  ["资料库",base+"/files/","实验室共享资料"],
+  ["教程",base+"/tutorials.html","视频与教程资料"],
+  ["进度中心",base+"/progress.html","个人 / 团队进度"],
+  ["项目管理",base+"/projects.html","项目与队伍"],
+  ["作业提交",base+"/submit.html","压缩包作业提交"],
+  ["个人主页",base+"/profile.html","个人项目与动态"],
+  ["软件下载",base+"/download.html","桌面 / 移动端下载"],
+  ["往届作品",base+"/works.html","历届成果展示"],
+  ["试卷与任务",base+"/exams.html","任务与截止时间"]
+];
+const external=[
+  ["GitHub 仓库","https://github.com/1763107202-afk/modelhub","网站源代码与版本"],
+  ["GitHub Pages",base+"/","公开部署站点"],
+  ["Supabase 项目","https://supabase.com/dashboard/project/yodtphuzgngxpihnfwop","数据库、Auth、Edge Functions"],
+  ["七牛云 Kodo","https://portal.qiniu.com/kodo/bucket","对象存储控制台"],
+  ["七牛文件域名","http://jxcxsys.rqez.cn","私有文件访问域名"]
+];
+function renderLinks(id,rows){
+  q(id).innerHTML=rows.map(x=>'<a class="linkCard" href="'+x[1]+'" target="_blank" rel="noopener noreferrer"><strong>'+x[0]+'</strong><small>'+x[2]+'</small><span class="tag">打开入口 ↗</span></a>').join("");
+}
+renderLinks("#internalLinks",internal);renderLinks("#externalLinks",external);
+
+function setState(id,text,kind,metaId,meta){
+  const el=q(id);el.textContent=text;el.className=kind||"";
+  if(metaId&&meta!=null)q(metaId).textContent=meta;
+}
+async function authorize(){
+  const s=await supabase.auth.getSession();
+  const user=s.data.session?.user;
+  if(!user)return false;
+  const p=await supabase.from("profiles").select("full_name,role,progress_exempt").eq("id",user.id).maybeSingle();
+  if(p.error||!p.data)return false;
+  // 主管理员本人：super_admin；指导老师为 progress_exempt，不进入此私人页面。
+  if(p.data.role!=="super_admin"||p.data.progress_exempt===true)return false;
+  q("#ownerBadge").textContent=(p.data.full_name||"主管理员")+" · 私人页面";
+  q("#loginView").classList.add("hidden");q("#app").classList.remove("hidden");q("#logoutBtn").classList.remove("hidden");
+  return true;
+}
+async function refresh(){
+  if(!(await authorize()))return;
+  q("#refreshBtn").disabled=true;q("#refreshBtn").textContent="刷新中…";
+  const now=new Date();
+  q("#checkedAt").textContent="刷新："+now.toLocaleString("zh-CN",{hour12:false});
+  const site=fetch(base+"/site-version.json?_="+Date.now(),{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()});
+  const metrics=supabase.rpc("get_member_admin_metrics");
+  const qiniu=supabase.functions.invoke("qiniu-storage-stats",{body:{}});
+  const [siteR,metricsR,qiniuR]=await Promise.allSettled([site,metrics,qiniu]);
+
+  if(siteR.status==="fulfilled"){
+    setState("#siteState","正常","ok","#siteMeta","GitHub Pages 可访问");
+    q("#siteVersion").textContent="当前版本 "+(siteR.value?.version||"—");
+  }else{
+    setState("#siteState","异常","bad","#siteMeta",siteR.reason?.message||"站点检测失败");
+    q("#siteVersion").textContent="读取失败";
+  }
+
+  if(metricsR.status==="fulfilled"&&!metricsR.value.error){
+    const row=Array.isArray(metricsR.value.data)?metricsR.value.data[0]:metricsR.value.data;
+    setState("#supabaseState","正常","ok","#supabaseMeta","Auth / Database / RPC 正常");
+    const used=Number(row?.storage_used_bytes||0),limit=Number(row?.storage_limit_bytes||1073741824);
+    q("#supaUsed").textContent=bytes(used);
+    q("#supaQuota").textContent="已用 "+(limit?Math.min(100,used/limit*100).toFixed(2):"0")+"% / 1 GiB";
+    q("#memberCount").textContent=String(row?.member_count??"—")+" 人";
+    q("#progressCount").textContent=String(row?.progress_updated_members??"—")+" 人";
+  }else{
+    setState("#supabaseState","异常","bad","#supabaseMeta",metricsR.reason?.message||metricsR.value?.error?.message||"RPC 检测失败");
+    q("#supaUsed").textContent="—";q("#memberCount").textContent="—";q("#progressCount").textContent="—";
+  }
+
+  if(qiniuR.status==="fulfilled"&&!qiniuR.value.error&&!qiniuR.value.data?.error){
+    const d=qiniuR.value.data||{};
+    setState("#qiniuState","正常","ok","#qiniuMeta","Kodo API 实时统计正常");
+    const used=Number(d.totalBytes||0),free=Number(d.freeQuotaBytes||10*1024**3),over=Boolean(d.overFreeQuota)||used>free;
+    q("#qiniuUsed").textContent=bytes(used);
+    q("#qiniuQuota").textContent=over?"已超过免费额度 "+bytes(Number(d.overageBytes||used-free)):"当前仍在 10 GiB 免费额度内";
+    q("#qiniuQuota").className=over?"bad":"ok";
+    q("#qiniuObjects").textContent=String(d.objectCount??0)+" 个对象";
+  }else{
+    setState("#qiniuState","异常","bad","#qiniuMeta",qiniuR.reason?.message||qiniuR.value?.error?.message||qiniuR.value?.data?.error||"七牛统计失败");
+    q("#qiniuUsed").textContent="—";q("#qiniuObjects").textContent="—";
+  }
+  q("#refreshBtn").disabled=false;q("#refreshBtn").textContent="立即刷新";
+}
+q("#loginBtn").onclick=async()=>{
+  q("#loginMsg").textContent="正在验证…";
+  const r=await supabase.auth.signInWithPassword({email:q("#email").value.trim(),password:q("#password").value});
+  if(r.error){q("#loginMsg").textContent="登录失败："+r.error.message;return}
+  if(!(await authorize())){await supabase.auth.signOut();q("#loginMsg").textContent="该账号没有此私人页面权限。";return}
+  q("#loginMsg").textContent="";await refresh();
+};
+q("#refreshBtn").onclick=refresh;
+q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();location.reload()};
+supabase.auth.onAuthStateChange((_e,s)=>{if(!s){q("#app").classList.add("hidden");q("#loginView").classList.remove("hidden")}});
+if(await authorize())await refresh();
+setInterval(()=>{if(!q("#app").classList.contains("hidden"))void refresh()},30000);
+</script>
+</body>
+</html>
