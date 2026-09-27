@@ -972,7 +972,7 @@ async function uploadStorageFile(bucket,path,file,onProgress){
   }
 }
 async function uploadTutorialFile(path,file,onProgress){return uploadStorageFile("tutorials",path,file,onProgress)}
-const QINIU_PUBLIC_DOMAIN="http://tlzdmew9r.hd-bkt.clouddn.com";
+const QINIU_PUBLIC_DOMAIN="http://jxcxsys.rqez.cn";
 function qiniuFileCategory(file,resourceType=""){
   const n=(file?.name||"").toLowerCase();
   if(resourceType==="video"||/\.(mp4|webm|ogg|mov|m4v|avi|mkv)$/i.test(n))return "video";
