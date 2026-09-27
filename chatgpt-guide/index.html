@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChatGPT 从零注册、安装与使用教程</title>
+<style>
+:root{--bg:#f6f7f8;--card:#fff;--text:#151719;--muted:#687078;--line:#dfe3e6;--green:#10a37f;--soft:#f0f2f4;--warn:#fff7e6;--danger:#fff0f0}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1214;--card:#181c1f;--text:#eef1f2;--muted:#aab1b5;--line:#30383d;--soft:#22282c;--warn:#2a2415;--danger:#2b1818}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;line-height:1.72}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header .in{max-width:1080px;margin:auto;padding:12px 18px;display:flex;align-items:center;gap:12px}.brand{font-weight:800}.progress{margin-left:auto;font-size:13px;color:var(--muted)}
+main{max-width:1080px;margin:auto;padding:34px 18px 70px}.hero{padding:16px 0 26px}.badge{display:inline-block;padding:5px 10px;border-radius:999px;background:color-mix(in srgb,var(--green) 12%,var(--card));color:var(--green);font-weight:700;font-size:13px}
+h1{font-size:clamp(34px,5vw,62px);line-height:1.07;letter-spacing:-.04em;margin:16px 0 12px}.hero p{font-size:18px;color:var(--muted);max-width:820px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.nav a,.btn{display:inline-flex;text-decoration:none;color:inherit;border:1px solid var(--line);background:var(--card);padding:9px 12px;border-radius:10px;font-weight:650}.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:18px 0;box-shadow:0 10px 30px rgba(0,0,0,.05);scroll-margin-top:74px}
+.head{display:flex;gap:13px}.num{width:40px;height:40px;border-radius:12px;background:var(--text);color:var(--card);display:grid;place-items:center;font-weight:800;flex:none}.head h2{margin:0;font-size:24px}.head p{margin:2px 0 0;color:var(--muted)}
+.steps{display:grid;gap:10px;margin:17px 0}.step{background:var(--soft);padding:12px 14px;border-radius:12px}.step b{display:block}.note{padding:13px 15px;border:1px solid var(--line);border-radius:13px;margin:14px 0}.note.info{background:color-mix(in srgb,#3b82f6 8%,var(--card))}.note.warn{background:var(--warn)}.note.danger{background:var(--danger)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0}.actions a{display:inline-flex;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;padding:8px 11px;background:var(--card);font-weight:650}.actions a.primary{background:var(--green);border-color:var(--green);color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.box{background:var(--soft);border-radius:13px;padding:14px}.box h3{margin:0 0 6px}.check{border-top:1px solid var(--line);padding-top:14px;margin-top:18px;color:var(--muted)}
+code{background:var(--soft);padding:2px 6px;border-radius:6px}footer{color:var(--muted);font-size:13px;margin-top:26px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.card{padding:18px}h1{font-size:39px}.hero p{font-size:16px}}
+</style>
+</head>
+<body>
+<header><div class="in"><div class="brand">ChatGPT 新手教程</div><div class="progress" id="prog">0 / 9 已完成</div></div></header>
+<main>
+<section class="hero" id="top">
+<span class="badge">保姆级 · 按步骤操作</span>
+<h1>ChatGPT 从零注册、安装与使用教程</h1>
+<p>从准备网络环境、注册邮箱、创建 ChatGPT 账号，到苹果用户 App Store 路线、桌面端 Codex、充值入口和实际使用经验，都集中在这一页。</p>
+<div class="nav">
+<a href="#s1">01 网络环境</a><a href="#s4">04 邮箱</a><a href="#s5">05 ChatGPT</a><a href="#s7">07 苹果用户</a><a href="#s8">08 充值</a><a href="#s9">09 使用技巧</a>
+</div>
+<div class="note warn"><b>说明：</b>第三方网络服务、套餐、节点和价格可能随时变化，请以实时页面为准。OpenAI、Apple、Proton 对地区、账户与付款方式都有各自规则，请自行确认当前条件是否符合官方要求。</div>
+<div class="note info"><b>账号安全：</b>Proton、ChatGPT 和 Apple 账户的账号密码一定保存好，建议使用可信密码管理器。不要把密码放进群聊、公开文档或教程截图。</div>
+</section>
+
+<section class="card" id="s1"><div class="head"><div class="num">01</div><div><h2>注册 iKuuu 并进入下载页面</h2><p>先准备网络客户端。</p></div></div>
+<div class="actions"><a class="primary" href="https://ikuuu.top" target="_blank" rel="noopener">打开 ikuuu.top ↗</a></div>
+<div class="steps">
+<div class="step"><b>1. 注册并登录</b>注册完成后进入首页。</div>
+<div class="step"><b>2. 点击“下载和教程”</b>按自己的设备系统下载对应客户端。</div>
+<div class="step"><b>3. 每日签到</b>首页可签到领取平台提供的流量。</div>
+</div>
+<div class="note info">按当前使用经验，免费账户约有 50GB/月流量并按月刷新，免费节点以日本线路为主；付费套餐参考价约 ¥12/月。具体额度、设备数和价格以网站实时页面为准。</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s2"><div class="head"><div class="num">02</div><div><h2>安装客户端并连接节点</h2><p>安装完成后打开客户端。</p></div></div>
+<div class="steps">
+<div class="step"><b>1. 选择当前节点</b>免费用户先试可用免费节点；有付费套餐后可选择更多地区。</div>
+<div class="step"><b>2. 日常建议使用“规则”模式</b>一般不需要切成“全局”。</div>
+<div class="step"><b>3. 点击连接按钮</b>状态从“已断开”变成“已连接”即可。</div>
+</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s3"><div class="head"><div class="num">03</div><div><h2>没有节点或显示超时：刷新排错</h2><p>刚充值看不到付费节点时也按这个顺序。</p></div></div>
+<div class="steps">
+<div class="step"><b>1. 进入“服务器”页面</b>查看节点列表和延迟。</div>
+<div class="step"><b>2. 点击刷新</b>优先点击页面右上角刷新；有右下角同步/刷新入口时也可再点一次。</div>
+<div class="step"><b>3. 充值后节点没出现</b>先刷新服务器列表，不要重复购买。</div>
+<div class="step"><b>4. 一直超时</b>完全退出软件和后台进程 → 重开；仍不行再重启电脑后重新连接。</div>
+</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s4"><div class="head"><div class="num">04</div><div><h2>注册 Proton 邮箱</h2><p>使用一个独立邮箱注册 ChatGPT。</p></div></div>
+<div class="actions"><a class="primary" href="https://proton.me" target="_blank" rel="noopener">打开 Proton ↗</a><a href="https://mail.proton.me" target="_blank" rel="noopener">打开 Proton Mail ↗</a></div>
+<div class="steps">
+<div class="step"><b>1. Create a free account</b>免费套餐即可。</div>
+<div class="step"><b>2. 设置邮箱和密码</b>邮箱后缀通常是 <code>@proton.me</code>，一定记好账号密码。</div>
+<div class="step"><b>3. Human Verification</b>按本教程选择“邮箱验证”，完成验证后继续。</div>
+<div class="step"><b>4. 进入 Proton Mail</b>确认自己能正常打开收件箱并收信。</div>
+</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s5"><div class="head"><div class="num">05</div><div><h2>进入 ChatGPT 官网并完成注册</h2><p>普通用户可直接使用 Proton 邮箱。</p></div></div>
+<div class="actions"><a class="primary" href="https://chatgpt.com" target="_blank" rel="noopener">打开 ChatGPT 官网 ↗</a></div>
+<div class="grid">
+<div class="box"><h3>普通邮箱用户</h3><p>输入完整的 <code>你的用户名@proton.me</code>。如果要求验证码，打开 Proton Mail，找到 OpenAI / ChatGPT 邮件，复制最新验证码后返回填写。</p></div>
+<div class="box"><h3>苹果用户</h3><p>可在登录页点击“使用 Apple 账户继续”。后续尽量一直使用同一种登录方式，避免自己忘记账号是怎么创建的。</p></div>
+</div>
+<div class="note warn"><b>验证码没收到？</b>检查垃圾邮件、确认邮箱拼写，并优先使用最新收到的验证码。</div>
+<div class="note info"><b>关于二次验证：</b>如果你还没有准备好身份验证器、Passkey 或可靠的恢复方式，不必急着主动开启 MFA。等你明确知道如何保存和恢复第二因素后再开启会更稳妥；即使未主动开启 MFA，新设备登录仍可能触发邮箱验证码或其他安全验证。</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s6"><div class="head"><div class="num">06</div><div><h2>注册后免费版就能直接用</h2><p>充值不是使用 ChatGPT 的前置条件。</p></div></div>
+<div class="actions"><a class="primary" href="https://chatgpt.com/download/" target="_blank" rel="noopener">下载官方桌面端 ↗</a><a href="https://chatgpt.com" target="_blank" rel="noopener">使用网页版 ↗</a></div>
+<div class="grid">
+<div class="box"><h3>免费版</h3><p>日常聊天、联网搜索、上传图片/文件、数据分析、图片生成等大部分基础需求都可以先用免费版完成，部分高级能力有额度限制。</p></div>
+<div class="box"><h3>Codex</h3><p>新版 ChatGPT 桌面端已整合 Codex。普通用户使用 ChatGPT 账号登录即可，不需要自己手动配置 API Key。只有主动选择 API 独立计费时才需要 API Key。</p></div>
+</div>
+<div class="note info"><b>不想付费的第三方备选：</b>日常聊天、写作、问答、简单代码等基础需求，可尝试你提供的第三方页面。它不能视作官方 ChatGPT 的完整等价替代，高级能力、Work / Codex、稳定性与模型质量可能不同。</div>
+<div class="actions"><a href="https://chat1.sorryios.ai/pastel/#/login" target="_blank" rel="noopener">打开第三方备选网页 ↗</a></div>
+<div class="note danger"><b>第三方站点安全提醒：</b>该页面并非 OpenAI 官方。不要在第三方页面输入 OpenAI / Apple / Proton 主账号密码，也不要上传身份证、银行卡、隐私文件等敏感资料。</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s7"><div class="head"><div class="num">07</div><div><h2>苹果用户：美国区 Apple 账户路线</h2><p>这是可选路线，不是必须步骤。</p></div></div>
+<div class="actions"><a class="primary" href="https://account.apple.com" target="_blank" rel="noopener">创建 / 管理 Apple 账户 ↗</a><a href="https://apps.apple.com/us/app/chatgpt/id6448311069" target="_blank" rel="noopener">ChatGPT 美国区 App Store ↗</a><a href="https://support.apple.com/zh-cn/118283" target="_blank" rel="noopener">Apple 地区说明 ↗</a></div>
+<div class="steps">
+<div class="step"><b>1. 打开 account.apple.com</b>点击“创建你的 Apple 账户”。</div>
+<div class="step"><b>2. 国家或地区选择“美国”</b>继续填写并完成邮箱、手机号验证。付款和账单资料应符合 Apple 当前规则。</div>
+<div class="step"><b>3. iPhone 不必退出整个 iCloud</b>通常只需在“设置 → 你的名字 → 媒体与购买项目”切换 App Store 购买账号。</div>
+<div class="step"><b>4. App Store 搜索应用</b>可搜索 YouTube、ChatGPT 和所需网络客户端；ChatGPT 要确认开发者为 OpenAI。</div>
+<div class="step"><b>5. 一定记住美区账号密码</b>以后更新 App、重新下载或恢复购买都可能再次要求登录。</div>
+</div>
+<div class="note warn"><b>不想折腾美区 Apple 账户？</b>可以直接跳过这一整步，和其他用户一样使用下一节的视频方式继续了解充值。美区 Apple 账户只是苹果用户的一种可选方案。</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s8"><div class="head"><div class="num">08</div><div><h2>充值与后续</h2><p>先确认免费版能正常使用，再决定是否升级。</p></div></div>
+<div class="actions"><a class="primary" href="https://www.bilibili.com/video/BV1cYbx6mEAa/?share_source=copy_web&vd_source=b5ca87d02083bcbb0d6ffa1207e00d3c" target="_blank" rel="noopener">打开 Bilibili 后续教程 ↗</a><a href="https://chatgpt.com/pricing/" target="_blank" rel="noopener">查看官方当前套餐 ↗</a></div>
+<div class="note info"><b>适用于所有用户：</b>《从零注册ChatGPT账号，5步搞定ChatGPT+Codex全注册安装！全网最详细保姆级教程》可作为注册完成后的充值与 Codex 补充教程。</div>
+<div class="note warn"><b>避免重复订阅：</b>如果已经通过一个渠道购买，不要在网页端和 App Store 同时重复订阅。</div>
+<label class="check"><input type="checkbox" data-done> 我已完成这一步</label>
+</section>
+
+<section class="card" id="s9"><div class="head"><div class="num">09</div><div><h2>怎么把 ChatGPT 用好</h2><p>先沟通，再让它做最终成品。</p></div></div>
+<div class="note info"><b>核心原则：</b>复杂任务不要一上来就要求“直接生成最终 Word / PPT / 网页 / PDF”。先让 AI 理解目标、已有资料和用途，再一步步收紧要求。</div>
+<div class="steps">
+<div class="step"><b>1. 先提出诉求</b>先用大白话说明你要解决什么问题。</div>
+<div class="step"><b>2. 再给已有资料</b>把 Word、PDF、图片、截图、代码、模板、参考案例都发给它，并说明哪些必须保留。</div>
+<div class="step"><b>3. 没有资料就先让它查</b>涉及最新技术、价格、政策、软件版本、论文或案例时，先让它联网搜相关资料。</div>
+<div class="step"><b>4. 最后说明最终要干什么</b>明确要网页、Word、PPT、代码、报告、流程图还是图片，以及用途和受众。</div>
+<div class="step"><b>5. 要求一定尽量详细</b>内容深度、视觉质感、排版、字体、留白、颜色、正式程度、图片、按钮、手机端适配等都可以写清楚。</div>
+<div class="step"><b>6. 第一版出来后一步步优化</b>哪里不满意直接指出，例如“这里太空”“内容不够专业”“按钮太大”“参考这张图继续改”。</div>
+</div>
+<div class="grid">
+<div class="box"><h3>推荐顺序</h3><p><b>诉求 → 资料 → 调研 → 最终任务 → 详细要求 → 逐步优化</b></p></div>
+<div class="box"><h3>大白话通常已经够用</h3><p>现在 ChatGPT 对自然语言理解已经很强。大多数任务不需要背复杂“提示词模板”，把真实需求、限制和反馈说完整更重要。</p></div>
+</div>
+<div class="note warn"><b>Skill / 教程 / 参考资料：</b>需要更专业时，可以给它高质量教程、规范、操作手册、示例文件、工作流程或可用 Skill / 工具说明。但不要随便安装来源不明的脚本、插件或工具。</div>
+<div class="note danger"><b>长时间没有输出或没有进度：</b>如果明显卡住，不要无限等待。可以停止生成/停止任务，然后继续问：<br><br><b>“刚才是不是卡住了？请从中断的位置继续，并先告诉我目前已经完成到哪里。”</b><br><br>复杂任务本来可能需要更久，所以不要几秒钟没反应就停止；只有明显长时间无输出、无进度时再这样做。</div>
+<label class="check"><input type="checkbox" data-done> 教程全部完成</label>
+</section>
+
+<footer>
+<p><b>更新基准：2026-09-27。</b>软件界面、套餐、验证方式、地区政策都可能变化，请以实时页面为准。</p>
+<p>官方参考：
+<a href="https://help.openai.com/en/articles/7947663-chatgpt-supported-countries" target="_blank" rel="noopener">支持地区</a> ·
+<a href="https://help.openai.com/en/articles/9275245-chatgpt-free-tier-faq" target="_blank" rel="noopener">免费版 FAQ</a> ·
+<a href="https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan" target="_blank" rel="noopener">Codex</a> ·
+<a href="https://help.openai.com/en/articles/7967234-enabling-or-disabling-multi-factor-authentication-mfa" target="_blank" rel="noopener">MFA</a></p>
+</footer>
+</main>
+<script>
+const cs=[...document.querySelectorAll('[data-done]')],key='chatgptGuideDone';let s={};try{s=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+cs.forEach((c,i)=>{c.checked=!!s[i];c.onchange=()=>{s[i]=c.checked;localStorage.setItem(key,JSON.stringify(s));up()}});function up(){document.getElementById('prog').textContent=cs.filter(x=>x.checked).length+' / '+cs.length+' 已完成'}up();
+</script>
+</body>
+</html>
