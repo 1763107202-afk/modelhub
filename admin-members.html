@@ -330,8 +330,10 @@ function renderQiniuStorage(data){
   q("#qiniuArchiveBytes").textContent="占用 "+bytes(Number(data.archiveBytes||0));
   q("#qiniuSubmissionCount").textContent=String(data.submissionCount??0);
   q("#qiniuSubmissionBytes").textContent="占用 "+bytes(Number(data.submissionBytes||0));
-  q("#qiniuBucketHint").textContent="Bucket："+(data.bucket||"justjxcxsys");
-  q("#qiniuStorageUpdated").textContent="刷新于 "+new Date().toLocaleString("zh-CN",{hour12:false});
+  const bucketHint=q("#qiniuBucketHint");
+  if(bucketHint)bucketHint.textContent="Bucket："+(data.bucket||"justjxcxsys");
+  const storageUpdated=q("#qiniuStorageUpdated");
+  if(storageUpdated)storageUpdated.textContent="刷新于 "+new Date().toLocaleString("zh-CN",{hour12:false});
   q("#qiniuStorageStatus").textContent="七牛云当前共 "+objects+" 个对象，实时占用 "+bytes(used)+"。";
 }
 async function loadQiniuStorage(){
