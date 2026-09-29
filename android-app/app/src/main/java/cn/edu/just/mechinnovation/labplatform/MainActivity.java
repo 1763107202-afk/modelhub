@@ -7,12 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -24,6 +29,18 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
 public class MainActivity extends Activity {
     private static final String START_URL =
             "https://1763107202-afk.github.io/modelhub/?android=1";
@@ -34,6 +51,9 @@ public class MainActivity extends Activity {
     private WebView webView;
     private ProgressBar progressBar;
     private ValueCallback<Uri[]> fileChooserCallback;
+    private ConnectivityManager connectivityManager;
+    private volatile Network cellularNetwork;
+    private ConnectivityManager.NetworkCallback cellularCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +79,7 @@ public class MainActivity extends Activity {
         root.addView(progressBar, progressParams);
         setContentView(root);
 
+        configureCellularFallback();
         configureWebView();
 
         if (savedInstanceState == null) {
@@ -89,17 +110,146 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setUserAgentString(
-                settings.getUserAgentString() + " JUSTLabAndroid/1.0.0");
+                settings.getUserAgentString() + " JUSTLabAndroid/1.1.0");
 
         CookieManager cookies = CookieManager.getInstance();
         cookies.setAcceptCookie(true);
         cookies.setAcceptThirdPartyCookies(webView, true);
 
+        webView.addJavascriptInterface(new NetworkBridge(), "JUSTNetworkBridge");
         webView.setWebViewClient(new PlatformWebViewClient());
         webView.setWebChromeClient(new PlatformWebChromeClient());
 
         webView.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) ->
                 downloadFile(url, userAgent, contentDisposition, mimeType));
+    }
+
+    private void configureCellularFallback() {
+        connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) return;
+
+        NetworkRequest request = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build();
+
+        cellularCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                cellularNetwork = network;
+            }
+
+            @Override
+            public void onLost(Network network) {
+                if (cellularNetwork != null && cellularNetwork.equals(network)) {
+                    cellularNetwork = null;
+                }
+            }
+        };
+
+        try {
+            connectivityManager.requestNetwork(request, cellularCallback);
+        } catch (Exception ignored) {
+            cellularNetwork = null;
+        }
+    }
+
+    private static String readAll(InputStream stream) throws Exception {
+        if (stream == null) return "";
+        StringBuilder out = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            char[] buffer = new char[8192];
+            int count;
+            while ((count = reader.read(buffer)) >= 0) {
+                out.append(buffer, 0, count);
+            }
+        }
+        return out.toString();
+    }
+
+    private class NetworkBridge {
+        @JavascriptInterface
+        public String request(String method, String url, String headersJson, String body) {
+            JSONObject result = new JSONObject();
+            HttpURLConnection connection = null;
+            try {
+                Uri uri = Uri.parse(url);
+                if (!"https".equalsIgnoreCase(uri.getScheme())
+                        || !"yodtphuzgngxpihnfwop.supabase.co".equalsIgnoreCase(uri.getHost())) {
+                    result.put("error", "备用线路仅允许访问实验室 Supabase 服务");
+                    return result.toString();
+                }
+
+                Network network = cellularNetwork;
+                if (network == null) {
+                    result.put("error", "当前没有可用的移动数据备用线路");
+                    return result.toString();
+                }
+
+                URL target = new URL(url);
+                connection = (HttpURLConnection) network.openConnection(target);
+                connection.setRequestMethod(method == null ? "GET" : method.toUpperCase());
+                connection.setConnectTimeout(8000);
+                connection.setReadTimeout(16000);
+                connection.setInstanceFollowRedirects(true);
+                connection.setUseCaches(false);
+
+                JSONObject headers = headersJson == null || headersJson.isEmpty()
+                        ? new JSONObject()
+                        : new JSONObject(headersJson);
+                java.util.Iterator<String> keys = headers.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    if ("host".equalsIgnoreCase(key)
+                            || "content-length".equalsIgnoreCase(key)
+                            || "connection".equalsIgnoreCase(key)) {
+                        continue;
+                    }
+                    connection.setRequestProperty(key, headers.optString(key, ""));
+                }
+
+                String safeBody = body == null ? "" : body;
+                if (!safeBody.isEmpty()
+                        && !"GET".equalsIgnoreCase(method)
+                        && !"HEAD".equalsIgnoreCase(method)) {
+                    connection.setDoOutput(true);
+                    byte[] bytes = safeBody.getBytes(StandardCharsets.UTF_8);
+                    connection.setFixedLengthStreamingMode(bytes.length);
+                    try (OutputStream output = connection.getOutputStream()) {
+                        output.write(bytes);
+                    }
+                }
+
+                int status = connection.getResponseCode();
+                InputStream stream = status >= 400
+                        ? connection.getErrorStream()
+                        : connection.getInputStream();
+                String responseBody = readAll(stream);
+
+                JSONObject responseHeaders = new JSONObject();
+                for (Map.Entry<String, List<String>> entry
+                        : connection.getHeaderFields().entrySet()) {
+                    if (entry.getKey() == null || entry.getValue() == null) continue;
+                    responseHeaders.put(entry.getKey(),
+                            android.text.TextUtils.join(", ", entry.getValue()));
+                }
+
+                result.put("status", status);
+                result.put("body", responseBody);
+                result.put("headers", responseHeaders);
+                return result.toString();
+            } catch (Exception ex) {
+                try {
+                    result.put("error",
+                            ex.getMessage() == null ? "移动数据备用线路请求失败" : ex.getMessage());
+                } catch (Exception ignored) {}
+                return result.toString();
+            } finally {
+                if (connection != null) connection.disconnect();
+            }
+        }
     }
 
     private boolean isPlatformUrl(Uri uri) {
@@ -331,6 +481,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (connectivityManager != null && cellularCallback != null) {
+            try {
+                connectivityManager.unregisterNetworkCallback(cellularCallback);
+            } catch (Exception ignored) {}
+        }
         if (webView != null) {
             webView.loadUrl("about:blank");
             webView.stopLoading();
