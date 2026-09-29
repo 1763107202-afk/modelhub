@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>全员账号管理 | JUST Lab Owner Ops</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07111f;color:#edf5ff;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}.wrap{width:min(1380px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:5;background:#07111ff2;border-bottom:1px solid #ffffff12;backdrop-filter:blur(14px)}.topin{min-height:70px;display:flex;align-items:center;gap:12px}.brand{font-weight:900}.nav{margin-left:auto;display:flex;gap:8px}.btn{border:1px solid #29415d;border-radius:11px;padding:9px 12px;background:#11233a;color:#e8f2ff;font-weight:800;cursor:pointer;text-decoration:none}.btn.pri{background:#2d6cdf}.btn.danger{background:#351722;border-color:#78324a;color:#ffc4d0}.hero{padding:30px 0 18px}.hero h1{margin:0;font-size:34px}.hero p{color:#849ab3}.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 180px 180px auto;gap:10px;margin:12px 0}.toolbar input,.toolbar select,.field input,.field select{width:100%;padding:11px;border-radius:10px;border:1px solid #223a57;background:#081524;color:#edf6ff}.panel{border:1px solid #1c3049;border-radius:18px;background:#0b192a;padding:15px;overflow:auto}table{width:100%;border-collapse:collapse;min-width:1040px}th,td{padding:10px 9px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:top}th{color:#7890aa;font-size:11px}.actions{display:flex;gap:6px;flex-wrap:wrap}.pill{display:inline-flex;padding:4px 8px;border-radius:999px;background:#112a46;color:#9bc9fb;font-size:11px}.muted{color:#7890aa;font-size:12px}.login{width:min(460px,calc(100% - 28px));margin:70px auto;padding:22px;border:1px solid #1c3049;border-radius:18px;background:#0b192a}.field{display:grid;gap:6px;margin-top:12px}.msg{margin-top:10px;color:#8fa4bd;font-size:13px}.hidden{display:none!important}.dialog{border:1px solid #29415d;border-radius:16px;background:#0b192a;color:#edf5ff;padding:18px;width:min(560px,92vw)}.dialog::backdrop{background:#02060bcc}.dialog h2{margin-top:0}.dialogActions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}@media(max-width:720px){.toolbar{grid-template-columns:1fr}.topin{flex-wrap:wrap;padding:10px 0}.nav{margin-left:0;width:100%}}
+</style></head><body>
+<header class="top"><div class="wrap topin"><div class="brand">JUST Lab · 全员账号管理</div><div class="nav"><a class="btn" href="./owner-ops.html">返回状态中心</a><button id="refresh" class="btn pri">刷新</button><button id="logout" class="btn hidden">退出</button></div></div></header>
+
+<section id="loginBox" class="login">
+<h2>主管理员验证</h2><p class="muted">仅私人运维主管理员可访问。</p>
+<label class="field">邮箱<input id="email" type="email"></label>
+<label class="field">密码<input id="password" type="password"></label>
+<button id="loginBtn" class="btn pri" style="width:100%;margin-top:14px">登录</button>
+<div id="loginMsg" class="msg"></div>
+</section>
+
+<main id="app" class="wrap hidden">
+<section class="hero"><h1>全员账号管理</h1><p>查看全部注册账号，并统一管理成员资料、成员类型、副管理员权限、密码重置和账号删除。</p></section>
+<div class="toolbar">
+<input id="search" type="search" placeholder="搜索姓名 / 邮箱 / 专业">
+<select id="membership"><option value="">全部成员类型</option><option value="freshman">大一新生</option><option value="formal">正式成员</option></select>
+<select id="role"><option value="">全部权限</option><option value="student">普通成员</option><option value="admin">副管理员</option><option value="super_admin">主管理员 / 指导老师</option></select>
+<span id="summary" class="pill">正在读取…</span>
+</div>
+<div class="panel"><table><thead><tr><th>成员</th><th>登录邮箱</th><th>专业</th><th>类型</th><th>权限</th><th>注册时间</th><th>操作</th></tr></thead><tbody id="rows"><tr><td colspan="7">正在读取…</td></tr></tbody></table></div>
+</main>
+
+<dialog id="editDialog" class="dialog">
+<h2>编辑账号</h2><input id="editId" type="hidden">
+<label class="field">姓名<input id="editName"></label>
+<label class="field">专业 / 年级<input id="editMajor"></label>
+<label class="field">电话<input id="editPhone"></label>
+<label class="field">QQ<input id="editQQ"></label>
+<label class="field">成员类型<select id="editMembership"><option value="freshman">大一新生</option><option value="formal">正式成员</option></select></label>
+<label class="field">权限<select id="editRole"><option value="student">普通成员</option><option value="admin">副管理员</option></select></label>
+<div id="editMsg" class="msg"></div><div class="dialogActions"><button id="editClose" class="btn">取消</button><button id="editSave" class="btn pri">保存</button></div>
+</dialog>
+
+<dialog id="pwdDialog" class="dialog">
+<h2>重置密码</h2><input id="pwdId" type="hidden"><p id="pwdTarget" class="muted"></p>
+<label class="field">新密码<input id="pwd1" type="password" minlength="8"></label>
+<label class="field">再次输入<input id="pwd2" type="password" minlength="8"></label>
+<div id="pwdMsg" class="msg"></div><div class="dialogActions"><button id="pwdClose" class="btn">取消</button><button id="pwdSave" class="btn pri">确认重置</button></div>
+</dialog>
+
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
+const q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
+let members=[],me=null;
+function roleName(m){return m.progress_exempt?"指导老师":m.role==="super_admin"?"主管理员":m.role==="admin"?"副管理员":"普通成员"}
+async function authorize(){
+ const s=await supabase.auth.getSession(); const user=s.data.session?.user;if(!user)return false;
+ const r=await supabase.from("profiles").select("id,role,progress_exempt,full_name").eq("id",user.id).maybeSingle();
+ if(r.error||!r.data||r.data.role!=="super_admin"||r.data.progress_exempt)return false; me=r.data;
+ q("#loginBox").classList.add("hidden");q("#app").classList.remove("hidden");q("#logout").classList.remove("hidden");return true;
+}
+function render(){
+ const term=q("#search").value.trim().toLowerCase(),ms=q("#membership").value,role=q("#role").value;
+ const list=members.filter(m=>(!term||[m.full_name,m.email,m.major].join(" ").toLowerCase().includes(term))&&(!ms||m.membership_status===ms)&&(!role||m.role===role));
+ q("#summary").textContent=list.length+" / "+members.length+" 个账号";
+ q("#rows").innerHTML=list.map(m=>{
+  const self=m.id===me.id,prot=m.role==="super_admin";
+  return '<tr><td><b>'+esc(m.full_name||"未填写姓名")+'</b><div class="muted">'+esc(m.id.slice(0,8))+'…</div></td><td>'+esc(m.email||"—")+'</td><td>'+esc(m.major||"—")+'</td><td>'+(m.membership_status==="freshman"?"大一新生":"正式成员")+'</td><td><span class="pill">'+esc(roleName(m))+'</span></td><td>'+fmt(m.created_at)+'</td><td><div class="actions"><button class="btn edit" data-id="'+m.id+'">编辑</button>'+(!self?'<button class="btn pwd" data-id="'+m.id+'">重置密码</button>':'')+(!self&&!prot?'<button class="btn danger del" data-id="'+m.id+'">删除账号</button>':'')+'</div></td></tr>';
+ }).join("")||'<tr><td colspan="7">没有符合条件的账号。</td></tr>';
+ document.querySelectorAll(".edit").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));
+ document.querySelectorAll(".pwd").forEach(b=>b.onclick=()=>openPwd(b.dataset.id));
+ document.querySelectorAll(".del").forEach(b=>b.onclick=()=>removeUser(b.dataset.id));
+}
+async function load(){
+ const r=await supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,progress_exempt,created_at,formal_since").order("created_at",{ascending:true});
+ if(r.error)throw r.error;members=r.data||[];render();
+}
+function openEdit(id){
+ const m=members.find(x=>x.id===id);if(!m)return;q("#editId").value=id;q("#editName").value=m.full_name||"";q("#editMajor").value=m.major||"";q("#editPhone").value=m.phone||"";q("#editQQ").value=m.qq||"";q("#editMembership").value=m.membership_status;q("#editRole").value=m.role==="admin"?"admin":"student";q("#editRole").disabled=m.role==="super_admin";q("#editMembership").disabled=m.role==="super_admin"&&m.progress_exempt;q("#editMsg").textContent=m.role==="super_admin"?"最高权限账号受保护，不允许在这里修改其权限。":"";q("#editDialog").showModal();
+}
+async function saveEdit(){
+ const id=q("#editId").value,m=members.find(x=>x.id===id);if(!m)return;
+ const data={full_name:q("#editName").value.trim(),major:q("#editMajor").value.trim(),phone:q("#editPhone").value.trim()||null,qq:q("#editQQ").value.trim()||null};
+ if(!data.full_name||!data.major){q("#editMsg").textContent="姓名和专业不能为空";return}
+ if(m.role!=="super_admin"){data.membership_status=q("#editMembership").value;data.role=q("#editRole").value;if(m.membership_status==="freshman"&&data.membership_status==="formal")data.formal_since=new Date().toISOString()}
+ const r=await supabase.from("profiles").update(data).eq("id",id);if(r.error){q("#editMsg").textContent="保存失败："+r.error.message;return}q("#editDialog").close();await load();
+}
+function openPwd(id){const m=members.find(x=>x.id===id);if(!m||id===me.id)return;q("#pwdId").value=id;q("#pwd1").value="";q("#pwd2").value="";q("#pwdMsg").textContent="";q("#pwdTarget").textContent="正在为 "+(m.full_name||m.email)+" 重置登录密码";q("#pwdDialog").showModal()}
+async function savePwd(){
+ const id=q("#pwdId").value,m=members.find(x=>x.id===id);if(!m)return;const a=q("#pwd1").value,b=q("#pwd2").value;
+ if(a.length<8||!/[A-Za-z]/.test(a)||!/[0-9]/.test(a)){q("#pwdMsg").textContent="密码至少 8 位，并同时包含字母和数字";return}
+ if(a!==b){q("#pwdMsg").textContent="两次密码不一致";return}
+ const r=await supabase.functions.invoke("reset-member-password",{body:{user_id:id,password:a}});if(r.error||r.data?.error){q("#pwdMsg").textContent="重置失败："+(r.data?.error||r.error?.message);return}q("#pwdDialog").close();alert("密码已重置成功");
+}
+async function removeUser(id){
+ const m=members.find(x=>x.id===id);if(!m||m.role==="super_admin"||id===me.id)return;
+ if(!confirm("确定删除 "+(m.full_name||m.email)+" 的账号吗？此操作不可撤销。"))return;
+ const typed=prompt("请输入成员姓名确认：");if(typed!==(m.full_name||""))return;
+ const r=await supabase.functions.invoke("remove-member",{body:{user_id:id}});if(r.error||r.data?.error)return alert("删除失败："+(r.data?.error||r.error?.message));await load();
+}
+q("#loginBtn").onclick=async()=>{q("#loginMsg").textContent="正在验证…";const r=await supabase.auth.signInWithPassword({email:q("#email").value.trim(),password:q("#password").value});if(r.error){q("#loginMsg").textContent="登录失败："+r.error.message;return}if(!(await authorize())){await supabase.auth.signOut();q("#loginMsg").textContent="无权访问";return}await load()};
+q("#refresh").onclick=()=>load().catch(e=>alert(e.message));q("#logout").onclick=async()=>{await supabase.auth.signOut();location.reload()};q("#search").oninput=render;q("#membership").onchange=render;q("#role").onchange=render;q("#editClose").onclick=()=>q("#editDialog").close();q("#editSave").onclick=saveEdit;q("#pwdClose").onclick=()=>q("#pwdDialog").close();q("#pwdSave").onclick=savePwd;
+if(await authorize())await load();
+</script></body></html>
