@@ -47,6 +47,7 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
     <article class="card"><span>七牛云</span><b id="qiniuState">检测中</b><small id="qiniuMeta">Kodo 私有对象存储</small></article>
     <article class="card"><span>七牛实时已用</span><b id="qiniuUsed">—</b><small id="qiniuQuota">免费额度 10 GiB</small></article>
     <article class="card"><span>Supabase 存储</span><b id="supaUsed">—</b><small id="supaQuota">Storage 1 GiB</small></article>
+    <article class="card"><span>今日访问总数</span><b id="todaySiteVisits">—</b><small id="todaySiteVisitsMeta">按浏览器会话去重</small></article>
   </section>
 
   <section class="section">
@@ -165,7 +166,8 @@ async function refresh(){
   const memberCountReq=supabase.from("profiles").select("id",{count:"exact",head:true});
   const qiniu=supabase.functions.invoke("qiniu-storage-stats",{body:{}});
   const guideStats=supabase.rpc("get_chatgpt_guide_visit_stats_owner");
-  const [siteR,metricsR,memberCountR,qiniuR,guideR]=await Promise.allSettled([site,metrics,memberCountReq,qiniu,guideStats]);
+  const siteVisits=supabase.rpc("get_owner_site_visit_stats");
+  const [siteR,metricsR,memberCountR,qiniuR,guideR,siteVisitsR]=await Promise.allSettled([site,metrics,memberCountReq,qiniu,guideStats,siteVisits]);
 
   if(siteR.status==="fulfilled"){
     setState("#siteState","正常","ok","#siteMeta","GitHub Pages 可访问");
@@ -204,6 +206,15 @@ async function refresh(){
   }else{
     setState("#qiniuState","异常","bad","#qiniuMeta",qiniuR.reason?.message||qiniuR.value?.error?.message||qiniuR.value?.data?.error||"七牛统计失败");
     q("#qiniuUsed").textContent="—";q("#qiniuObjects").textContent="—";
+  }
+
+  if(siteVisitsR.status==="fulfilled"&&!siteVisitsR.value.error){
+    const v=siteVisitsR.value.data||{};
+    q("#todaySiteVisits").textContent=String(v.today??0);
+    q("#todaySiteVisitsMeta").textContent="昨日 "+String(v.yesterday??0)+" · 近 7 日 "+String(v.last7days??0);
+  }else{
+    q("#todaySiteVisits").textContent="—";
+    q("#todaySiteVisitsMeta").textContent="访问统计读取失败";
   }
 
   if(guideR.status==="fulfilled"&&!guideR.value.error){
