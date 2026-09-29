@@ -131,6 +131,18 @@ function applyTheme(theme,save=false){
   }
 }
 applyTheme(preferredTheme());
+
+const SITE_VISIT_SESSION_KEY="justLabSiteVisitSessionV1";
+async function logSiteVisitOnce(){
+  try{
+    const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+    const saved=sessionStorage.getItem(SITE_VISIT_SESSION_KEY);
+    if(saved===today)return;
+    const r=await supabase.rpc("log_site_visit");
+    if(!r.error)sessionStorage.setItem(SITE_VISIT_SESSION_KEY,today);
+  }catch(_e){}
+}
+void logSiteVisitOnce();
 const DESKTOP_SESSION_KEY="justDesktopMode";
 const desktopMode=(()=>{
   try{
