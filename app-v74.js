@@ -440,24 +440,12 @@ function isAlreadyRegisteredError(err){
 async function signUpWithTimeout(payload,onSlow){
   const attempt=++__authRegisterSeq;
   const epoch=++__authRegisterEpoch;
-  let hardTimedOut=false;
   let slowTimer=null;
   let hardTimer=null;
 
   const request=supabase.auth.signUp(payload);
-  const guarded=request.then(async result=>{
-    if(hardTimedOut||epoch!==__authRegisterEpoch){
-      const token=result?.data?.session?.access_token||null;
-      if(token){
-        try{
-          const current=await supabase.auth.getSession();
-          if(current?.data?.session?.access_token===token){
-            await supabase.auth.signOut({scope:"local"});
-          }
-        }catch(_e){}
-      }
-      return {error:new Error("SIGNUP_STALE"),stale:true,attempt};
-    }
+  const guarded=request.then(result=>{
+    if(epoch!==__authRegisterEpoch)return {error:new Error("SIGNUP_STALE"),stale:true,attempt};
     return {...result,attempt};
   }).catch(error=>({error,attempt}));
 
@@ -466,15 +454,22 @@ async function signUpWithTimeout(payload,onSlow){
       try{onSlow?.()}catch(_e){}
     },SIGNUP_SLOW_NOTICE_MS);
     hardTimer=setTimeout(()=>{
-      hardTimedOut=true;
-      __ignoreAuthEventsUntil=Date.now()+60000;
       resolve({error:new Error("SIGNUP_TIMEOUT"),timedOut:true,attempt});
-    },SIGNUP_HARD_TIMEOUT_MS);
+    },35000);
   });
 
-  const result=await Promise.race([guarded,hardTimeout]);
+  let result=await Promise.race([guarded,hardTimeout]);
   clearTimeout(slowTimer);
   clearTimeout(hardTimer);
+
+  // 国内部分 WiFi / WebView 会出现“服务端已创建账号，但响应迟迟没回到前端”。
+  // 超时后先检查本地会话，若 Supabase 已经建立登录态，就直接按注册成功处理。
+  if(result?.error?.message==="SIGNUP_TIMEOUT"){
+    const late=await getSessionQuick(5000);
+    if(late?.data?.session?.user){
+      result={data:late.data,error:null,recovered:true,attempt};
+    }
+  }
   return result;
 }
 async function applyRegisteredSession(session){
@@ -568,7 +563,8 @@ function bindAuth(){
   q("#backLogin").onclick=()=>setAuthMode("login");
 
   const performLogin=async()=>{
-    const email=q("#email").value.trim(),password=q("#password").value;
+    const email=q("#email").value.trim().toLowerCase(),password=q("#password").value;
+    q("#email").value=email;
     const btn=q("#login"),retry=q("#retryLogin"),msg=q("#authMsg"),remember=q("#rememberLogin")?.checked!==false;
     if(__authLoginBusy){
       msg.textContent="登录请求正在处理中，请稍候…";
@@ -597,7 +593,26 @@ function bindAuth(){
         msg.textContent="正在连接登录服务器…";
       }
 
-      const r=await resilientPasswordLogin(email,password,()=>{
+      // 先确认是否其实已经存在有效会话。某些 WiFi 下 token 刷新成功，
+      // 但首屏恢复较慢，用户会误以为“没有登录成功”而再次输入密码。
+      const existing=await getSessionQuick(2200);
+      if(existing?.data?.session?.user){
+        state.user=existing.data.session.user;
+        updateAuthUI();
+        msg.textContent="已恢复现有登录状态";
+        q("#auth").close();
+        void (async()=>{
+          try{
+            const usedCache=await loadProfile(true);
+            if(usedCache)updateAuthUI();
+            await loadProfile(false);
+            updateAuthUI();
+          }catch(_e){}
+        })();
+        return;
+      }
+
+      const r=await resilientPasswordLogin(email.toLowerCase(),password,()=>{
         msg.textContent="当前网络响应较慢，仍在等待登录结果，请不要重复点击…";
       },()=>{
         msg.textContent="首次连接失败，正在自动重试登录线路…";
@@ -3331,6 +3346,20 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   const nextUser=session?.user||null;
 
   if(__authRegisterBusy&&event==="SIGNED_IN"){
+    state.user=nextUser;
+    updateAuthUI();
+    const passDialog=q("#passAuth");
+    const passMsg=q("#passMsg");
+    if(passMsg)passMsg.textContent="账号已创建，登录状态已建立";
+    if(passDialog?.open)setTimeout(()=>passDialog.close(),250);
+    void (async()=>{
+      try{
+        await loadProfile(false);
+        updateAuthUI();
+      }catch(err){
+        console.warn("注册成功后成员资料同步失败，保留已建立会话",err);
+      }
+    })();
     return;
   }
   if(__authLoginBusy&&event==="SIGNED_IN"){
