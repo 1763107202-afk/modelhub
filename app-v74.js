@@ -159,12 +159,11 @@ let __manualLoginEpoch=0;
 let __authRegisterBusy=false;
 let __authRegisterSeq=0;
 let __authRegisterEpoch=0;
-let __ignoreAuthEventsUntil=0;
 const AUTH_RESTORE_TIMEOUT=4000;
 const LOGIN_SLOW_NOTICE_MS=6000;
 const LOGIN_HARD_TIMEOUT_MS=30000;
-const SIGNUP_SLOW_NOTICE_MS=10000;
-const SIGNUP_HARD_TIMEOUT_MS=25000;
+const SIGNUP_SLOW_NOTICE_MS=8000;
+const SIGNUP_HARD_TIMEOUT_MS=35000;
 function finishAuthBootstrap(){
   if(__authBootstrapDone)return;
   __authBootstrapDone=true;
@@ -535,7 +534,7 @@ async function signUpWithTimeout(payload,onSlow){
     },SIGNUP_SLOW_NOTICE_MS);
     hardTimer=setTimeout(()=>{
       resolve({error:new Error("SIGNUP_TIMEOUT"),timedOut:true,attempt});
-    },35000);
+    },SIGNUP_HARD_TIMEOUT_MS);
   });
 
   let result=await Promise.race([guarded,hardTimeout]);
@@ -556,12 +555,20 @@ async function applyRegisteredSession(session){
   if(!session?.user)return false;
   state.user=session.user;
   updateAuthUI();
-  await loadProfile(false);
-  updateAuthUI();
   try{
     localStorage.setItem(REMEMBER_LOGIN_KEY,"1");
     sessionStorage.removeItem(SESSION_LOGIN_KEY);
   }catch(_e){}
+  void (async()=>{
+    try{
+      const usedCache=await loadProfile(true);
+      if(usedCache)updateAuthUI();
+      await loadProfile(false);
+      updateAuthUI();
+    }catch(err){
+      console.warn("注册后成员资料同步失败，保留已建立的登录会话",err);
+    }
+  })();
   return true;
 }
 
@@ -756,7 +763,8 @@ function bindAuth(){
     const freshman=q("#regFreshman")?.value||"";
     if(!freshman)return q("#authMsg").textContent="请选择是否为大一新生";
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return q("#authMsg").textContent="请输入有效邮箱地址";
-    if(p.length<6)return q("#authMsg").textContent="密码至少需要 6 位";
+    if(p.length<8)return q("#authMsg").textContent="首次注册密码至少需要 8 位";
+    if(!/[A-Za-z]/.test(p)||!/[0-9]/.test(p))return q("#authMsg").textContent="首次注册密码必须同时包含字母和数字";
     q("#authMsg").textContent="";q("#passMsg").textContent="";q("#passcodeConfirm").value="";
     q("#auth").close();q("#passAuth").showModal();
   };
@@ -785,7 +793,8 @@ function bindAuth(){
     if(!lab_passcode)return msg.textContent="请输入实验室通行证";
     if(!navigator.onLine)return msg.textContent="当前设备似乎已断网，请连接网络后重试。";
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return msg.textContent="邮箱格式不正确，请返回检查。";
-    if(password.length<6)return msg.textContent="密码至少需要 6 位，请返回修改。";
+    if(password.length<8)return msg.textContent="首次注册密码至少需要 8 位，请返回修改。";
+    if(!/[A-Za-z]/.test(password)||!/[0-9]/.test(password))return msg.textContent="首次注册密码必须同时包含字母和数字，请返回修改。";
 
     __authRegisterBusy=true;
     btn.disabled=true;
@@ -801,9 +810,11 @@ function bindAuth(){
       if(r?.error){
         if(isAlreadyRegisteredError(r.error)){
           msg.textContent="检测到该邮箱已经注册，正在尝试直接登录…";
-          const s=await signInWithTimeout(email,password,()=>{
-            msg.textContent="账号已存在，当前网络较慢，仍在尝试登录…";
-          });
+          const s=await resilientPasswordLogin(
+            email,password,
+            ()=>{msg.textContent="账号已存在，当前网络较慢，仍在尝试登录…";},
+            ()=>{msg.textContent="首次连接失败，正在自动重试账号登录…";}
+          );
           if(s?.error){
             msg.textContent=s.error.message==="LOGIN_TIMEOUT"
               ?"账号已存在，但自动登录超时。请返回登录页重新登录。"
@@ -819,6 +830,19 @@ function bindAuth(){
           return;
         }
 
+        if(isAuthNetworkError(r.error)||r.error?.message==="SIGNUP_TIMEOUT"){
+          msg.textContent="注册响应没有及时返回，正在确认账号是否其实已经创建成功…";
+          const recovered=await resilientPasswordLogin(
+            email,password,
+            ()=>{msg.textContent="正在确认账号状态，当前网络仍然较慢…";},
+            ()=>{msg.textContent="正在通过备用重试确认账号状态…";}
+          );
+          if(!recovered?.error&&await applyRegisteredSession(recovered?.data?.session)){
+            msg.textContent="账号已经创建成功，已自动恢复登录";
+            setTimeout(()=>q("#passAuth").close(),350);
+            return;
+          }
+        }
         msg.textContent=friendlySignupError(r.error);
         return;
       }
@@ -833,9 +857,11 @@ function bindAuth(){
 
       // 某些 Supabase 配置注册成功后不直接返回 session，受控执行一次登录。
       msg.textContent="账号创建成功，正在建立登录会话…";
-      const s=await signInWithTimeout(email,password,()=>{
-        msg.textContent="账号已经创建，当前网络较慢，仍在建立登录会话…";
-      });
+      const s=await resilientPasswordLogin(
+        email,password,
+        ()=>{msg.textContent="账号已经创建，当前网络较慢，仍在建立登录会话…";},
+        ()=>{msg.textContent="正在自动重试建立登录会话…";}
+      );
       if(s?.error){
         msg.textContent=s.error.message==="LOGIN_TIMEOUT"
           ?"账号已经创建成功，但自动登录超时。请返回登录页直接登录。"
