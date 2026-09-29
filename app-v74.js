@@ -19,9 +19,89 @@ async function getTusModule(){
 const SUPABASE_URL="https://yodtphuzgngxpihnfwop.supabase.co";
 const SUPABASE_KEY="sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX";
 const PROJECT_REF="yodtphuzgngxpihnfwop";
-const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// Android APP 双线路：默认使用当前网络；Supabase 请求在 WiFi 等线路
+// 失败/长时间无响应时，由原生桥接自动改走蜂窝网络。浏览器端仍使用标准 fetch。
+const __platformNativeFetch=globalThis.fetch.bind(globalThis);
+function __androidNetworkBridge(){
+  try{return globalThis.JUSTNetworkBridge&&typeof globalThis.JUSTNetworkBridge.request==="function"
+    ?globalThis.JUSTNetworkBridge:null}catch(_e){return null}
+}
+async function __platformFetch(input,init={}){
+  const bridge=__androidNetworkBridge();
+  const url=typeof input==="string"?input:input?.url;
+  if(!bridge||!url||!String(url).startsWith(SUPABASE_URL)){
+    return __platformNativeFetch(input,init);
+  }
+
+  const method=String(init?.method||(input instanceof Request?input.method:"GET")||"GET").toUpperCase();
+  const upstreamSignal=init?.signal||(input instanceof Request?input.signal:null);
+  const controller=new AbortController();
+  let upstreamAbort=null;
+  if(upstreamSignal){
+    if(upstreamSignal.aborted)controller.abort(upstreamSignal.reason);
+    else{
+      upstreamAbort=()=>controller.abort(upstreamSignal.reason);
+      upstreamSignal.addEventListener("abort",upstreamAbort,{once:true});
+    }
+  }
+  const timer=setTimeout(()=>{
+    try{controller.abort(new DOMException("PRIMARY_NETWORK_TIMEOUT","AbortError"))}catch(_e){controller.abort()}
+  },6500);
+
+  let directError=null;
+  try{
+    return await __platformNativeFetch(input,{...init,signal:controller.signal});
+  }catch(error){
+    directError=error;
+  }finally{
+    clearTimeout(timer);
+    if(upstreamSignal&&upstreamAbort){
+      try{upstreamSignal.removeEventListener("abort",upstreamAbort)}catch(_e){}
+    }
+  }
+
+  if(upstreamSignal?.aborted)throw (upstreamSignal.reason||directError||new Error("REQUEST_ABORTED"));
+
+  let body=init?.body??null;
+  if(body==null&&input instanceof Request&&!["GET","HEAD"].includes(method)){
+    try{body=await input.clone().text()}catch(_e){}
+  }
+  if(body!=null&&typeof body!=="string"){
+    throw directError||new TypeError("当前备用线路不支持该请求体");
+  }
+
+  try{
+    const headers={};
+    if(input instanceof Request){
+      input.headers.forEach((v,k)=>{headers[k]=v});
+    }
+    new Headers(init?.headers||{}).forEach((v,k)=>{headers[k]=v});
+    const raw=bridge.request(method,String(url),JSON.stringify(headers),body||"");
+    const result=JSON.parse(String(raw||"{}"));
+    if(result?.error)throw new Error(result.error);
+    globalThis.__justCellularFallbackUsedAt=Date.now();
+    try{
+      globalThis.dispatchEvent(new CustomEvent("just-network-fallback",{detail:{route:"cellular",url:String(url)}}));
+    }catch(_e){}
+    return new Response(result?.body??"",{
+      status:Number(result?.status||502),
+      headers:result?.headers||{}
+    });
+  }catch(nativeError){
+    console.warn("蜂窝备用线路调用失败",nativeError);
+    throw directError||nativeError;
+  }
+}
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{global:{fetch:__platformFetch}});
 const page=document.body.dataset.page||"home";
 const q=s=>document.querySelector(s);
+globalThis.addEventListener?.("just-network-fallback",()=>{
+  const auth=q("#auth"),pass=q("#passAuth");
+  const authMsg=q("#authMsg"),passMsg=q("#passMsg");
+  if(auth?.open&&authMsg)authMsg.textContent="WiFi 线路不稳定，已自动切换移动数据备用线路…";
+  if(pass?.open&&passMsg)passMsg.textContent="WiFi 线路不稳定，已自动切换移动数据备用线路继续注册…";
+});
 const state={user:null,profile:null,authz:null};
 const teamMemberSelection=new Set();
 const teamMemberDirectory=new Map();
