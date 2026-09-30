@@ -71,7 +71,6 @@ test('Macro errors preserve user line numbers and unsupported features fail expl
  failure('int a[2];void setup(){a[2]=5;}void loop(){}',/越界/);
  failure('const int a[2]={1,2};void setup(){a[0]=3;}void loop(){}',/常量/);
  failure('struct T{int n;};const T a={1};void setup(){a.n=3;}void loop(){}',/常量/);
- failure('void setup(){int *p;}void loop(){}',/指针/);
  failure('#include <WiFi.h>\nvoid setup(){} void loop(){}',/尚未适配/);
  failure('void setup(){break;}void loop(){}',/之外/);
  failure('int a[5000];void setup(){}void loop(){}',/数组长度/);
@@ -112,4 +111,51 @@ test('Conditional macro guards and multiline macros expand without touching quot
 test('Serial formats binary inputs, floating telemetry, char buffers and printf fields',()=>{
  const w=run('float gain=.125;char text[]="OK";void setup(){Serial.println(255,HEX);Serial.println(gain,3);Serial.println(text);Serial.printf("s=%d, pwm=%03u, gain=%.2f\\n",digitalRead(32),7,gain);}void loop(){delay(1000);}');
  assert.deepEqual(w.logs.filter(x=>x.type==='serial').map(x=>x.text),['FF','0.125','OK','s=1, pwm=007, gain=0.13\n']);
+});
+
+test('Basic pointers, address-of, dereference and arrow member access work for common Arduino helpers',()=>{
+ const w=run(`
+ struct T{int n;};int x=3;T item={4};int result=0;
+ void bump(int *p){(*p)++;}
+ void setup(){int *p=&x;bump(p);T *q=&item;q->n+=2;result=x+item.n;}
+ void loop(){delay(1000);}
+ `);
+ assert.equal(w.vm.variables().x,4);assert.equal(w.vm.variables().item.n,6);assert.equal(w.vm.variables().result,10);
+});
+test('Common conditional compilation, relaxed includes and full-width pasted punctuation compile',()=>{
+ const w=run(`#include <SomeTeamMotorDriver.h>
+ #define MODE 2
+ #if MODE == 1
+ int selected=1;
+ #elif defined(MODE) && MODE == 2
+ int selected=2;
+ #else
+ int selected=3;
+ #endif
+ int value=0;
+ void setup（）｛ value＝selected＋3； ｝
+ void loop（）｛ delay（1000）； ｝
+ `);
+ assert.equal(w.vm.variables().value,5);
+});
+test('Automatic wiring recognizes common two-motor and four-sensor sketches',()=>{
+ const w=run(`
+ #define PWMA 14
+ #define AIN1 25
+ #define AIN2 26
+ #define PWMB 27
+ #define BIN1 32
+ #define BIN2 33
+ #define S1 4
+ #define S2 16
+ #define S3 17
+ #define S4 18
+ void setup(){pinMode(AIN1,OUTPUT);pinMode(AIN2,OUTPUT);pinMode(BIN1,OUTPUT);pinMode(BIN2,OUTPUT);}
+ void loop(){int a=digitalRead(S1);int b=digitalRead(S2);int c=digitalRead(S3);int d=digitalRead(S4);
+ digitalWrite(AIN1,HIGH);digitalWrite(AIN2,LOW);digitalWrite(BIN1,HIGH);digitalWrite(BIN2,LOW);
+ analogWrite(PWMA,120);analogWrite(PWMB,140);delay(1000);}
+ `,10);
+ assert.deepEqual(w.config.sensorPins,[4,16,17,18]);
+ assert.deepEqual(w.config.motorPins,[[14,25,26],[14,25,26],[27,32,33],[27,32,33]]);
+ assert.deepEqual(w.motor,[120,120,140,140]);
 });
