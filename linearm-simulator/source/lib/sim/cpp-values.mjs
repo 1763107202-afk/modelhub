@@ -1,20 +1,23 @@
 import {CodeError} from './cpp-parser.mjs';
 export const metadata=new WeakMap();
-export const baseType=type=>type.replace(/\b(const|static|volatile|extern|inline)\b/g,'').trim().replace(/\s+/g,' ');
+export const baseType=type=>type.replace(/\b(const|static|volatile|extern|inline|constexpr)\b/g,'').trim().replace(/\s+/g,' ').replace(/\s*\*\s*/g,'*');
 export const integralType=type=>!['float','double','String','Servo','void'].includes(baseType(type));
 export function copyValue(value){
- if(!value||typeof value!=='object'||value.servo)return value;
+ if(!value||typeof value!=='object'||value.servo||value.pointer)return value;
  const result=Array.isArray(value)?value.map(copyValue):Object.assign(Object.create(null),Object.fromEntries(Object.entries(value).map(([k,v])=>[k,copyValue(v)])));
  const meta=metadata.get(value);if(meta)metadata.set(result,{...meta,readonly:false});return result;
 }
 export function cast(value,type,line=1){
  const t=baseType(type),meta=value&&typeof value==='object'?metadata.get(value):null;
+ if(t==='auto')return value;
+ if(/\*+$/.test(t)){if(value===0||value===null||value===undefined)return 0;if(typeof value==='string'||Array.isArray(value)||value?.pointer||typeof value==='object')return value;throw new CodeError(`不能把这个值转换为 ${t}`,line);}
  if(meta?.kind==='struct'){if(meta.type!==t)throw new CodeError(`结构体类型不匹配：${meta.type} → ${t}`,line);return copyValue(value);}
  if(Array.isArray(value)||value?.servo)return value;
  if(t==='String')return String(value??'');if(t==='void')return 0;
  if(t==='bool'||t==='boolean')return value?1:0;
  const number=Number(value);if(!Number.isFinite(number))throw new CodeError(`不能把这个值转换为 ${t}`,line);
  if(t==='float'||t==='double')return number;
+ if(/(?:int64_t|uint64_t|long long)/.test(t))return Math.trunc(number);
  if(!/^(?:int|long|short|char|byte|word|size_t|u?int\d+_t|unsigned(?: .*?)?|signed(?: .*?)?)$/.test(t))throw new CodeError(`需要 ${t} 结构体值`,line);
  const n=Math.trunc(number),bits=/char|byte|int8_t/.test(t)?8:/short|word|int16_t/.test(t)?16:32,unsigned=/unsigned|^uint|^byte$|^word$|^size_t$/.test(t);
  if(unsigned)return bits===32?n>>>0:(n%(2**bits)+2**bits)%(2**bits);
