@@ -1,0 +1,48 @@
+name: Build linearm simulator
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "linearm-simulator/source/**"
+      - ".github/workflows/linearm-simulator-build.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: linearm-simulator-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.25.0 --activate
+      - name: Install
+        working-directory: linearm-simulator/source
+        run: pnpm install --frozen-lockfile
+      - name: Test
+        working-directory: linearm-simulator/source
+        run: pnpm test
+      - name: Build static site
+        working-directory: linearm-simulator/source
+        run: pnpm build
+      - name: Commit static export
+        run: |
+          if git diff --quiet -- linearm-simulator/index.html linearm-simulator/assets linearm-simulator/references linearm-simulator/examples linearm-simulator/favicon.svg; then
+            echo "Static export already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add linearm-simulator/index.html linearm-simulator/assets linearm-simulator/references linearm-simulator/examples linearm-simulator/favicon.svg
+          git commit -m "build(linearm-simulator): refresh static export [skip ci]"
+          git push
