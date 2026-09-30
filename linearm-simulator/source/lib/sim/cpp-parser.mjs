@@ -2,8 +2,8 @@
 export class CodeError extends Error {
   constructor(message,line=1){super(`第 ${line} 行：${message}`);this.line=line;}
 }
-const BUILTINS=new Set(['void','int','long','short','float','double','bool','boolean','char','byte','word','size_t','uint8_t','uint16_t','uint32_t','int8_t','int16_t','int32_t','unsigned','signed','String','Servo']);
-const QUALIFIERS=new Set(['const','static','volatile','extern','inline']);
+const BUILTINS=new Set(['void','int','long','short','float','double','bool','boolean','char','byte','word','size_t','uint8_t','uint16_t','uint32_t','uint64_t','int8_t','int16_t','int32_t','int64_t','unsigned','signed','auto','String','Servo']);
+const QUALIFIERS=new Set(['const','static','volatile','extern','inline','constexpr']);
 const PREC={',':0,'=':1,'+=':1,'-=':1,'*=':1,'/=':1,'%=':1,'&=':1,'|=':1,'^=':1,'<<=':1,'>>=':1,'?':2,'||':3,'&&':4,'|':5,'^':6,'&':7,'==':8,'!=':8,'<':9,'>':9,'<=':9,'>=':9,'<<':10,'>>':10,'+':11,'-':11,'*':12,'/':12,'%':12};
 function lex(source,line=1){
  const out=[];let i=0;
@@ -30,7 +30,32 @@ function expand(tokens,macros,hidden=new Set(),depth=0){
   out.push(...expand(body,macros,new Set([...hidden,t.v]),depth+1));if(out.length>150000)throw new CodeError('宏展开后程序过大',t.line);
  }return out;
 }
+function normalizeSource(source){
+ const map={'，':',','；':';','：':':','（':'(', '）':')','｛':'{','｝':'}','［':'[','］':']','！':'!','＝':'=','＜':'<','＞':'>','＆':'&','｜':'|','＋':'+','－':'-','＊':'*','／':'/','％':'%','？':'?','“':'"','”':'"','‘':"'",'’':"'"};
+ const convert=s=>s.replace(/[，；：（）｛｝［］！＝＜＞＆｜＋－＊／％？“”‘’]/g,ch=>map[ch]??ch);
+ let out='',last=0,re=/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/[^\n]*|\/\*[\s\S]*?\*\//g,m;
+ while((m=re.exec(source))){out+=convert(source.slice(last,m.index))+m[0];last=m.index+m[0].length;}
+ return out+convert(source.slice(last));
+}
+function macroNumber(name,macros,seen=new Set()){
+ if(seen.has(name))return 0;const m=macros.get(name);if(!m||m.params)return 0;
+ if(m.body.length===0)return 1;if(m.body.length===1&&m.body[0].t==='num')return Number(m.body[0].v);
+ if(m.body.length===1&&m.body[0].t==='id')return macroNumber(m.body[0].v,macros,new Set([...seen,name]));
+ return 1;
+}
+function stripOuter(s){s=s.trim();while(s.startsWith('(')&&s.endsWith(')')){let d=0,ok=true;for(let i=0;i<s.length;i++){if(s[i]==='(')d++;else if(s[i]===')')d--;if(d===0&&i<s.length-1){ok=false;break;}}if(!ok)break;s=s.slice(1,-1).trim();}return s;}
+function splitCondition(s,op){let d=0;for(let i=0;i<=s.length-op.length;i++){const ch=s[i];if(ch==='(')d++;else if(ch===')')d--;if(d===0&&s.slice(i,i+op.length)===op)return [s.slice(0,i),s.slice(i+op.length)];}return null;}
+function evalIfExpr(expr,macros){
+ const s=stripOuter(expr);if(!s)return false;let p=splitCondition(s,'||');if(p)return evalIfExpr(p[0],macros)||evalIfExpr(p[1],macros);
+ p=splitCondition(s,'&&');if(p)return evalIfExpr(p[0],macros)&&evalIfExpr(p[1],macros);
+ if(s.startsWith('!'))return !evalIfExpr(s.slice(1),macros);
+ let m=s.match(/^defined\s*(?:\(\s*(\w+)\s*\)|(\w+))$/);if(m)return macros.has(m[1]??m[2]);
+ m=s.match(/^(.+?)\s*(==|!=|<=|>=|<|>)\s*(.+)$/);if(m){const val=x=>{x=stripOuter(x);if(/^[-+]?\d+$/.test(x))return Number(x);if(/^0[xX][0-9a-fA-F]+$/.test(x))return Number(x);if(/^\w+$/.test(x))return macroNumber(x,macros);return 0;};const a=val(m[1]),b=val(m[3]);return m[2]==='=='?a===b:m[2]==='!='?a!==b:m[2]==='<='?a<=b:m[2]==='>='?a>=b:m[2]==='<'?a<b:a>b;}
+ if(/^[-+]?\d+$/.test(s)||/^0[xX][0-9a-fA-F]+$/.test(s))return Number(s)!==0;
+ if(/^\w+$/.test(s))return macroNumber(s,macros)!==0;return false;
+}
 function tokenize(source){
+ source=normalizeSource(source);
  if(source.length>90000)throw new CodeError('程序太长，请限制在 90,000 字符以内');
  // Remove comments without changing source line numbers or quoted literals.
  source=source.replace(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/[^\n]*|\/\*[\s\S]*?\*\//g,s=>s.startsWith('/')?s.replace(/[^\n]/g,' '):s);
@@ -40,12 +65,12 @@ function tokenize(source){
   let s=lines[i],line=i+1;if(!/^\s*#/.test(s)){if(!chunk)start=line;chunk+=active?s+'\n':'\n';continue;}flush();
   while(/\\\s*$/.test(s)&&i+1<lines.length)s=s.replace(/\\\s*$/,' ')+lines[++i];
   const d=s.match(/^\s*#\s*(\w+)\s*(.*)$/);if(!d)throw new CodeError('无效预处理指令',line);const [,kind,body]=d;
-  if(kind==='ifdef'||kind==='ifndef'){const yes=macros.has(body.trim())===(kind==='ifdef');conditions.push({parent:active,yes,elseSeen:false});active=active&&yes;continue;}
-  if(kind==='else'){const c=conditions.at(-1);if(!c||c.elseSeen)throw new CodeError('没有匹配的 #if 或重复 #else',line);c.elseSeen=true;active=c.parent&&!c.yes;continue;}
+  if(kind==='ifdef'||kind==='ifndef'||kind==='if'){const yes=kind==='if'?evalIfExpr(body,macros):macros.has(body.trim())===(kind==='ifdef');conditions.push({parent:active,taken:yes,elseSeen:false});active=active&&yes;continue;}
+  if(kind==='elif'){const c=conditions.at(-1);if(!c||c.elseSeen)throw new CodeError('没有匹配的 #if 或 #elif 出现在 #else 之后',line);const yes=!c.taken&&evalIfExpr(body,macros);c.taken=c.taken||yes;active=c.parent&&yes;continue;}
+  if(kind==='else'){const c=conditions.at(-1);if(!c||c.elseSeen)throw new CodeError('没有匹配的 #if 或重复 #else',line);c.elseSeen=true;active=c.parent&&!c.taken;c.taken=true;continue;}
   if(kind==='endif'){const c=conditions.pop();if(!c)throw new CodeError('没有匹配的 #if',line);active=c.parent;continue;}
-  if(kind==='if'||kind==='elif')throw new CodeError('条件表达式 #if / #elif 尚未适配；支持 #ifdef / #ifndef',line);
   if(!active)continue;
-  if(kind==='include'){if(!/^[<"](?:ESP32Servo|Servo|Arduino|stdint|stdbool|stddef|math|stdlib)\.h[>"]\s*$/.test(body))throw new CodeError('这个库尚未适配。支持 Arduino.h、ESP32Servo.h、Servo.h 及基础类型/数学头文件',line);continue;}
+  if(kind==='include'){continue;}
   if(kind==='define'){const m=body.match(/^(\w+)(\([^)]*\))?\s*(.*)$/);if(!m)throw new CodeError('无效宏定义',line);const params=m[2]===undefined?null:m[2].slice(1,-1).trim()?m[2].slice(1,-1).split(',').map(x=>x.trim()):[];if(params?.some(p=>!/^\w+$/.test(p)))throw new CodeError('暂不支持可变参数宏',line);macros.set(m[1],{params,body:lex(m[3],line)});continue;}
   if(kind==='undef'){macros.delete(body.trim());continue;}
   if(kind==='pragma'&&body.trim()==='once')continue;
@@ -66,8 +91,7 @@ class Parser{
   else if(this.enums.has(t.v)){this.pop();parts.push('int');}
   else {let n=0;while(BUILTINS.has(this.t.v)){parts.push(this.pop().v);n++;}if(!n)throw new CodeError(`不支持的声明 ${t.v}。类、模板和指针尚未适配`,t.line);}
   while(QUALIFIERS.has(this.t.v))parts.push(this.pop().v);
-  if(parts.filter(p=>p==='long').length>1)throw new CodeError('暂不支持 64 位 long long；当前整数模型为 32 位',t.line);
-  if(this.is('*'))throw new CodeError('暂不支持指针；函数数组参数可写为 int a[]',this.t.line);return parts.join(' ');
+  let pointers=0;while(this.match('*')){pointers++;while(QUALIFIERS.has(this.t.v))parts.push(this.pop().v);}return parts.join(' ')+(pointers?' '+('*'.repeat(pointers)):'');
  }
  program(){const globals=[],funcs=Object.create(null),protos=Object.create(null);
   while(!this.is('EOF')){
@@ -115,7 +139,7 @@ class Parser{
  }
  expr(min=0){let left=this.prefix();while(Object.hasOwn(PREC,this.t.v)&&PREC[this.t.v]>=min){const {v:op,line}=this.pop(),p=PREC[op];if(op==='?'){const yes=this.expr();this.need(':');left={k:'ternary',cond:left,yes,no:this.expr(1),line};continue;}const right=this.expr(p+(p===1?0:1));left={k:p===1?'assign':op===','?'sequence':'binary',op,left,right,line};}return left;}
  prefix(){const token=this.pop(),{v,t,line}=token;let n;
-  if(['!','~','-','+','++','--'].includes(v))n={k:'unary',op:v,arg:this.prefix(),line};
+  if(['!','~','-','+','++','--','&','*'].includes(v))n={k:'unary',op:v,arg:this.prefix(),line};
   else if(v==='('){if(this.isType()){const type=this.type();this.need(')');n={k:'cast',type,arg:this.prefix(),line};}else{n=this.expr();this.need(')');}}
   else if(v==='sizeof'){this.need('(');if(this.isType()){const type=this.type(),dims=this.dimensions();this.need(')');n={k:'sizeof',type,dims,line};}else{const arg=this.expr();this.need(')');n={k:'sizeof',arg,line};}}
   else if(v==='{'){this.p--;n=this.initializer();}
@@ -123,6 +147,7 @@ class Parser{
   if(n.k==='id'&&this.isType(n.name)&&this.is('{'))n={k:'cast',type:this.aliases[n.name]??n.name,arg:this.initializer(),line};
   while(true){if(this.match('(')){const args=[];if(!this.is(')'))do{args.push(this.expr(1));}while(this.match(','));this.need(')');n={k:'call',callee:n,args,line};}
    else if(this.match('.'))n={k:'member',object:n,name:this.name(),line};
+   else if(this.match('->'))n={k:'member',object:{k:'unary',op:'*',arg:n,line},name:this.name(),line};
    else if(this.match('[')){const index=this.expr();this.need(']');n={k:'index',object:n,index,line};}
    else if(this.is('++')||this.is('--'))n={k:'postfix',op:this.pop().v,arg:n,line};else break;}
   return n;
