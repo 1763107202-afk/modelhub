@@ -1,9 +1,9 @@
 {
   "name": "循迹与机械臂仿真实验台",
-  "version": 4,
+  "version": 5,
   "source_commit": "39dca7e5f42c393bbf9c7def946031bb78f4db7c",
   "source_site": "https://shen-linearm-lab.shenxin1978318.chatgpt.site",
-  "deployment": "GitHub Pages static export",
+  "deployment": "GitHub Pages static application",
   "features": [
     "完整三维底盘与 MeArm 模型",
     "Arduino C++ 子集解释器",
@@ -11,6 +11,11 @@
     "三页空白初始代码",
     "代码导入导出与本机草稿",
     "串口事件与硬件参数校准",
-    "无红色物块"
-  ]
+    "无红色物块",
+    "结构体、数组、引用参数、typedef / enum 与 switch",
+    "常见宏、局部 static 与串口格式化",
+    "ESP32 2.x / 3.x LEDC 占空比仿真与接线诊断"
+  ],
+  "version_label": "Arduino compatibility v5",
+  "updated": "2026-09-30"
 }
