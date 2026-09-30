@@ -22,10 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22.13.0"
-      - name: Enable pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@11.25.0 --activate
+      - name: Install pnpm
+        run: npm install --global pnpm@11.25.0
       - name: Install
         working-directory: linearm-simulator/source
         run: pnpm install --frozen-lockfile
