@@ -1,0 +1,86 @@
+name: Build Private Owner Ops Android App
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "owner-android-app/**"
+      - ".github/workflows/owner-android.yml"
+      - "assets/lab-logo-transparent.svg"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owner-android-app-build
+  cancel-in-progress: true
+
+jobs:
+  build-owner-android:
+    name: Build private owner APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Prepare Android SDK
+        shell: bash
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_SDK_ROOT/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          fi
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Restore signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: just-lab-owner-android-signing-v1
+
+      - name: Ensure signing key exists
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=JUST Lab Owner Ops, OU=Mechanical Innovation Lab, O=JUST, L=Zhenjiang, ST=Jiangsu, C=CN"
+          fi
+
+      - name: Prepare icon
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin
+          mkdir -p owner-android-app/app/src/main/res/drawable
+          rsvg-convert -w 512 -h 512 assets/lab-logo-transparent.svg -o owner-android-app/app/src/main/res/drawable/lab_logo.png
+
+      - name: Build signed release APK
+        shell: bash
+        run: |
+          gradle -p owner-android-app :app:assembleRelease --no-daemon
+          test -f owner-android-app/app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload private APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUST-Lab-Owner-Ops-Android
+          path: owner-android-app/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
