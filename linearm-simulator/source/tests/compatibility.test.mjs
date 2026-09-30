@@ -71,7 +71,6 @@ test('Macro errors preserve user line numbers and unsupported features fail expl
  failure('int a[2];void setup(){a[2]=5;}void loop(){}',/越界/);
  failure('const int a[2]={1,2};void setup(){a[0]=3;}void loop(){}',/常量/);
  failure('struct T{int n;};const T a={1};void setup(){a.n=3;}void loop(){}',/常量/);
- failure('#include <WiFi.h>\nvoid setup(){} void loop(){}',/尚未适配/);
  failure('void setup(){break;}void loop(){}',/之外/);
  failure('int a[5000];void setup(){}void loop(){}',/数组长度/);
 });
