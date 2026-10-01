@@ -40,7 +40,7 @@
 
 <dialog id="pwdDialog" class="dialog">
 <h2>重置密码</h2><input id="pwdId" type="hidden"><p id="pwdTarget" class="muted"></p>
-<label class="field">新密码<input id="pwd1" type="password" minlength="8"></label>
+<label id="pwdCurrentField" class="field hidden">当前密码<input id="pwdCurrent" type="password" autocomplete="current-password"></label>\n<label class="field">新密码<input id="pwd1" type="password" minlength="8" autocomplete="new-password"></label>
 <label class="field">再次输入<input id="pwd2" type="password" minlength="8"></label>
 <div id="pwdMsg" class="msg"></div><div class="dialogActions"><button id="pwdClose" class="btn">取消</button><button id="pwdSave" class="btn pri">确认重置</button></div>
 </dialog>
@@ -49,7 +49,7 @@
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
 const q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
-let members=[],me=null;
+let members=[],me=null,pwdSelf=false;
 function roleName(m){return m.progress_exempt?"指导老师":m.role==="super_admin"?"主管理员":m.role==="admin"?"副管理员":"普通成员"}
 async function authorize(){
  const s=await supabase.auth.getSession(); const user=s.data.session?.user;if(!user)return false;
@@ -63,7 +63,7 @@ function render(){
  q("#summary").textContent=list.length+" / "+members.length+" 个账号";
  q("#rows").innerHTML=list.map(m=>{
   const self=m.id===me.id,prot=m.role==="super_admin";
-  return '<tr><td><b>'+esc(m.full_name||"未填写姓名")+'</b><div class="muted">'+esc(m.id.slice(0,8))+'…</div></td><td>'+esc(m.email||"—")+'</td><td>'+esc(m.major||"—")+'</td><td>'+(m.membership_status==="freshman"?"大一新生":"正式成员")+'</td><td><span class="pill">'+esc(roleName(m))+'</span></td><td>'+fmt(m.created_at)+'</td><td><div class="actions"><button class="btn edit" data-id="'+m.id+'">编辑</button>'+(!self?'<button class="btn pwd" data-id="'+m.id+'">重置密码</button>':'')+(!self&&!prot?'<button class="btn danger del" data-id="'+m.id+'">删除账号</button>':'')+'</div></td></tr>';
+  return '<tr><td><b>'+esc(m.full_name||"未填写姓名")+'</b><div class="muted">'+esc(m.id.slice(0,8))+'…</div></td><td>'+esc(m.email||"—")+'</td><td>'+esc(m.major||"—")+'</td><td>'+(m.membership_status==="freshman"?"大一新生":"正式成员")+'</td><td><span class="pill">'+esc(roleName(m))+'</span></td><td>'+fmt(m.created_at)+'</td><td><div class="actions"><button class="btn edit" data-id="'+m.id+'">编辑</button>'+(self?'<button class="btn pwd" data-id="'+m.id+'">修改我的密码</button>':'<button class="btn pwd" data-id="'+m.id+'">重置密码</button>')+(!self&&!prot?'<button class="btn danger del" data-id="'+m.id+'">删除账号</button>':'')+'</div></td></tr>';
  }).join("")||'<tr><td colspan="7">没有符合条件的账号。</td></tr>';
  document.querySelectorAll(".edit").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));
  document.querySelectorAll(".pwd").forEach(b=>b.onclick=()=>openPwd(b.dataset.id));
@@ -83,11 +83,17 @@ async function saveEdit(){
  if(m.role!=="super_admin"){data.membership_status=q("#editMembership").value;data.role=q("#editRole").value;if(m.membership_status==="freshman"&&data.membership_status==="formal")data.formal_since=new Date().toISOString()}
  const r=await supabase.from("profiles").update(data).eq("id",id);if(r.error){q("#editMsg").textContent="保存失败："+r.error.message;return}q("#editDialog").close();await load();
 }
-function openPwd(id){const m=members.find(x=>x.id===id);if(!m||id===me.id)return;q("#pwdId").value=id;q("#pwd1").value="";q("#pwd2").value="";q("#pwdMsg").textContent="";q("#pwdTarget").textContent="正在为 "+(m.full_name||m.email)+" 重置登录密码";q("#pwdDialog").showModal()}
+function openPwd(id){const m=members.find(x=>x.id===id);if(!m)return;pwdSelf=id===me.id;q("#pwdId").value=id;q("#pwdCurrent").value="";q("#pwd1").value="";q("#pwd2").value="";q("#pwdMsg").textContent="";q("#pwdCurrentField").classList.toggle("hidden",!pwdSelf);q("#pwdTarget").textContent=pwdSelf?"正在修改当前主管理员账号的登录密码":"正在为 "+(m.full_name||m.email)+" 重置登录密码";q("#pwdDialog").showModal()}
 async function savePwd(){
  const id=q("#pwdId").value,m=members.find(x=>x.id===id);if(!m)return;const a=q("#pwd1").value,b=q("#pwd2").value;
  if(a.length<8||!/[A-Za-z]/.test(a)||!/[0-9]/.test(a)){q("#pwdMsg").textContent="密码至少 8 位，并同时包含字母和数字";return}
  if(a!==b){q("#pwdMsg").textContent="两次密码不一致";return}
+ if(pwdSelf){
+  const current=q("#pwdCurrent").value;if(!current){q("#pwdMsg").textContent="请输入当前密码";return}
+  const r=await supabase.auth.updateUser({password:a,current_password:current});
+  if(r.error){q("#pwdMsg").textContent="修改失败："+r.error.message;return}
+  q("#pwdDialog").close();alert("主管理员密码已修改成功，请使用新密码重新登录。");await supabase.auth.signOut();location.reload();return;
+ }
  const r=await supabase.functions.invoke("reset-member-password",{body:{user_id:id,password:a}});if(r.error||r.data?.error){q("#pwdMsg").textContent="重置失败："+(r.data?.error||r.error?.message);return}q("#pwdDialog").close();alert("密码已重置成功");
 }
 async function removeUser(id){
