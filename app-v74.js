@@ -1119,21 +1119,54 @@ function qiniuPublicUrlFromKey(key=""){
   if(!key)return "";
   return QINIU_PUBLIC_DOMAIN.replace(/\/$/,"")+"/"+String(key).split("/").map(encodeURIComponent).join("/");
 }
-async function qiniuSignedUrl(key,expiresIn=3600){
+async function qiniuSignedInfo(key,expiresIn=3600){
   if(!key)throw new Error("缺少七牛云文件路径");
   const r=await supabase.functions.invoke("qiniu-download-url",{body:{key,expiresIn}});
   if(r.error)throw new Error(r.error.message||"七牛私有下载链接生成失败");
   if(r.data?.error)throw new Error(r.data.error);
   if(!r.data?.url)throw new Error("七牛私有下载链接为空");
-  return r.data.url;
+  return r.data;
+}
+async function qiniuSignedUrl(key,expiresIn=3600){
+  return (await qiniuSignedInfo(key,expiresIn)).url;
+}
+async function fastestQiniuVideoUrl(info){
+  const candidates=Array.isArray(info?.candidates)?info.candidates.filter(x=>x?.url):[];
+  if(candidates.length<2)return info.url;
+  const cacheKey="justQiniuVideoRouteV3";
+  try{
+    const saved=JSON.parse(localStorage.getItem(cacheKey)||"null");
+    if(saved?.region&&Date.now()-Number(saved.ts||0)<6*60*60*1000){
+      const hit=candidates.find(x=>x.region===saved.region);
+      if(hit)return hit.url;
+    }
+  }catch(_e){}
+  const probe=async item=>{
+    const ctl=new AbortController();
+    const timer=setTimeout(()=>ctl.abort(),2200);
+    const started=performance.now();
+    try{
+      const res=await fetch(item.url,{method:"GET",headers:{Range:"bytes=0-0"},cache:"no-store",signal:ctl.signal});
+      if(res.status!==206&&res.status!==200)throw new Error("HTTP "+res.status);
+      try{await res.body?.cancel()}catch(_e){}
+      return {item,ms:performance.now()-started};
+    }finally{clearTimeout(timer)}
+  };
+  const results=(await Promise.all(candidates.map(async item=>{try{return await probe(item)}catch(_e){return null}}))).filter(Boolean);
+  if(!results.length)return info.url;
+  results.sort((a,b)=>a.ms-b.ms);
+  const best=results[0];
+  try{localStorage.setItem(cacheKey,JSON.stringify({region:best.item.region,ts:Date.now(),ms:Math.round(best.ms)}))}catch(_e){}
+  return best.item.url;
 }
 async function openQiniuKey(key,button=null){
   const old=button?.textContent||"";
   let popup=null;
   try{
-    if(button){button.disabled=true;button.textContent="正在生成安全链接…";}
+    if(button){button.disabled=true;button.textContent=isQiniuStorageKey(key)&&String(key).startsWith("videos/")?"正在选择最快线路…":"正在生成安全链接…";}
     try{popup=window.open("about:blank","_blank")}catch(_e){}
-    const url=await qiniuSignedUrl(key,3600);
+    const info=await qiniuSignedInfo(key,3600);
+    const url=String(key).startsWith("videos/")?await fastestQiniuVideoUrl(info):info.url;
     if(popup&&!popup.closed)popup.location.replace(url);
     else window.location.href=url;
   }catch(err){
