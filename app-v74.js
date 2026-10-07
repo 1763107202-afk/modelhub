@@ -1447,12 +1447,36 @@ async function initWorks(){
     }
   };
 }
+function examUsesQiniu(exam){
+  return exam.storage_backend==="qiniu"||isQiniuStorageKey(exam.storage_path);
+}
+function examAttachmentMarkup(exam){
+  const path=exam.storage_path||"";
+  if(examUsesQiniu(exam)&&path){
+    return '<button class="btn sec qiniuOpenBtn" type="button" data-key="'+esc(path)+'">打开 / 下载附件</button>';
+  }
+  const url=exam.file_url||(path?supabase.storage.from("exams").getPublicUrl(path).data.publicUrl:"");
+  if(!/^https?:\/\//i.test(url))return "";
+  const isPdf=/\.pdf(?:$|[?#])/i.test(exam.file_name||path||url);
+  return '<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+(isPdf?"查看 / 下载 PDF":"打开 / 下载附件")+'</a>';
+}
 async function initExams(){
-  const r=await supabase.from("exams").select("*").order("created_at",{ascending:false});const data=r.data||[];
-  q("#examGrid").innerHTML=data.map(x=>'<article class="card"><span class="tag">PDF 试卷 / 任务</span><h3>'+esc(x.title)+'</h3><p>'+esc(x.description||"暂无说明")+'</p><div class="meta">截止：'+fmt(x.deadline)+'</div><div class="actions"><a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.file_url)+'">查看 / 下载 PDF</a>'+(isAdmin()?'<button class="btn danger delExam" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除</button>':'')+'</div></article>').join("");
+  const r=await supabase.from("exams").select("*").order("created_at",{ascending:false});
+  if(r.error){
+    showModuleRetry("#examGrid","作业加载失败："+r.error.message,"exams",()=>initExams());
+    q("#examEmpty").classList.add("hidden");
+    return;
+  }
+  const data=r.data||[];
+  q("#examGrid").innerHTML=data.map(x=>{
+    const attachment=examAttachmentMarkup(x);
+    const fileInfo=attachment?'<div class="meta" style="overflow-wrap:anywhere">附件：'+esc(x.file_name||"作业附件")+'</div>':'<div class="meta">本作业无附件，请按作业说明完成。</div>';
+    return '<article class="card"><span class="tag">作业 / 任务</span><h3>'+esc(x.title)+'</h3><p style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(x.description||"暂无说明")+'</p><div class="meta">截止：'+fmt(x.deadline)+'</div>'+fileInfo+'<div class="actions">'+attachment+'<a class="btn pri" href="./submit.html?exam='+encodeURIComponent(x.id)+'">提交作业</a>'+(isAdmin()?'<button class="btn danger delExam" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'" data-backend="'+(examUsesQiniu(x)?"qiniu":"supabase")+'">删除</button>':'')+'</div></article>';
+  }).join("");
+  bindQiniuOpenButtons(q("#examGrid"));
   q("#examEmpty").classList.toggle("hidden",data.length>0);
   document.querySelectorAll(".delExam").forEach(b=>b.onclick=async()=>{
-    if(!confirm("确定删除该试卷及关联提交吗？"))return;
+    if(!confirm("确定删除该作业 / 任务及关联提交吗？"))return;
     const rel=await supabase.from("submissions").select("storage_path,storage_backend").eq("exam_id",b.dataset.id);
     if(rel.error)return toast("关联提交读取失败："+rel.error.message);
     const related=(rel.data||[]).filter(x=>x.storage_path);
@@ -1466,7 +1490,9 @@ async function initExams(){
       cleanupResults.push(...qr);
     }
     if(supabasePaths.length)cleanupResults.push(await removeStorageObjectsSafe("submissions",supabasePaths,{queueOnFail:true}));
-    if(b.dataset.path)cleanupResults.push(await removeStorageObjectSafe("exams",b.dataset.path,{queueOnFail:true}));
+    if(b.dataset.path)cleanupResults.push(b.dataset.backend==="qiniu"
+      ?await removeQiniuObjectSafe(b.dataset.path)
+      :await removeStorageObjectSafe("exams",b.dataset.path,{queueOnFail:true}));
     const cleanupFailed=cleanupResults.some(x=>x?.error);
     toast(cleanupFailed?"任务及关联记录已删除，但有云端文件清理失败，请稍后重试":"试卷 / 任务、关联提交及云端文件已同步删除");
     await initExams();
@@ -2616,6 +2642,8 @@ async function initSubmit(){
     if(e.error)throw e.error;
     const exams=e.data||[];
     q("#examSel").innerHTML='<option value="">请选择试卷 / 任务</option>'+exams.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join("");
+    const requestedExam=new URLSearchParams(location.search).get("exam");
+    if(requestedExam&&exams.some(x=>x.id===requestedExam))q("#examSel").value=requestedExam;
     const countCard=q("#submitCountCard"),countEl=q("#submitterCount"),countHint=q("#submitCountHint");
     const refreshSubmitterCount=async()=>{
       const examId=q("#examSel").value;
@@ -2636,6 +2664,7 @@ async function initSubmit(){
       if(countHint)countHint.textContent="按成员账号去重统计；同一成员重复提交只计 1 人。";
     };
     q("#examSel").onchange=refreshSubmitterCount;
+    void refreshSubmitterCount();
     q("#submitName").value=state.profile?.full_name||"";
     q("#subFile").onchange=()=>{
       const f=q("#subFile").files[0];
@@ -3105,6 +3134,71 @@ async function loadAdminDashboard(){
   if(retryBox)retryBox.remove();
   map.forEach(([sel,key])=>{const el=q(sel);if(el)el.textContent=String(vals[key]??0)});
 }
+function initExamForm(){
+  const form=q("#examForm"),input=q("#examFile")||q("#pdf");
+  if(!form||!input)return;
+  // Keep cached copies of the old form compatible with optional attachments.
+  input.required=false;
+  input.removeAttribute("accept");
+  const clear=q("#examFileClear"),preview=q("#examFilePreview");
+  const updateAttachment=()=>{
+    const file=input.files[0];
+    if(clear){clear.hidden=!file;clear.classList.toggle("hidden",!file)}
+    if(preview)preview.textContent=file?file.name+" · "+bytesText(file.size):"未添加附件，可直接发布文字作业。";
+  };
+  input.onchange=updateAttachment;
+  if(clear)clear.onclick=()=>{input.value="";updateAttachment()};
+  updateAttachment();
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    if(form.dataset.publishing==="true")return;
+    const title=q("#examTitle").value.trim(),description=q("#examDesc").value.trim();
+    const deadlineValue=q("#deadline").value,file=input.files[0];
+    if(!title)return toast("请填写作业标题");
+    if(deadlineValue&&Number.isNaN(new Date(deadlineValue).getTime()))return toast("请填写有效的截止时间");
+    const deadline=deadlineValue?new Date(deadlineValue).toISOString():null;
+    const btn=e.submitter||form.querySelector('button[type="submit"]')||form.querySelector("button");
+    const oldText=btn?.textContent||"发布作业";
+    let storage_path=null,file_url=null,storage_backend="supabase";
+    form.dataset.publishing="true";
+    if(btn)btn.disabled=true;
+    try{
+      if(file){
+        const category=qiniuFileCategory(file);
+        const progress=p=>{if(btn)btn.textContent="附件上传中 "+p+"% · "+bytesText(file.size)};
+        progress(0);
+        if(category){
+          const uploaded=await uploadQiniuFile(file,category,progress);
+          storage_path=uploaded.key;file_url=uploaded.url;storage_backend="qiniu";
+        }else{
+          storage_path=storageObjectPath("attachments",file.name);
+          await uploadStorageFile("exams",storage_path,file,progress);
+          file_url=supabase.storage.from("exams").getPublicUrl(storage_path).data.publicUrl;
+        }
+      }
+      if(btn)btn.textContent="正在发布作业…";
+      const ins=await supabase.from("exams").insert({
+        title,description,deadline,file_url,storage_path,
+        file_name:file?.name||null,storage_backend,created_by:state.user.id
+      });
+      if(ins.error){
+        if(storage_path){
+          if(storage_backend==="qiniu")await removeQiniuObjectSafe(storage_path);
+          else await removeStorageObjectSafe("exams",storage_path,{queueOnFail:true});
+        }
+        throw ins.error;
+      }
+      form.reset();updateAttachment();toast("作业 / 任务发布成功");
+      setTimeout(()=>location.href="./exams.html",450);
+    }catch(err){
+      console.error("作业发布失败",err);
+      toast("作业发布失败："+(err?.message||String(err)));
+    }finally{
+      delete form.dataset.publishing;
+      if(btn){btn.disabled=false;btn.textContent=oldText}
+    }
+  };
+}
 async function initAdmin(){
   if(!state.user||!isAdmin()){q("#adminGate").innerHTML='<div class="notice">当前账号没有管理权限。</div>';q("#adminContent").classList.add("hidden");return}
   q("#adminContent").classList.remove("hidden");
@@ -3255,7 +3349,7 @@ async function initAdmin(){
   };
   q("#labFileMode").onchange=toggleLabFileMode;toggleLabFileMode();
   q("#workForm").onsubmit=async e=>{e.preventDefault();const title=q("#workTitle").value.trim();if(!title)return toast("请填写作品名称");let cover_url="",storage_path=null;const f=q("#workCover").files[0];const btn=e.submitter||q("#workForm button");const oldText=btn?.textContent||"发布作品";try{if(f){storage_path=storageObjectPath("covers",f.name);if(btn){btn.disabled=true;btn.textContent="封面上传中 0%"}await uploadStorageFile("works",storage_path,f,p=>{if(btn)btn.textContent="封面上传中 "+p+"%"});cover_url=supabase.storage.from("works").getPublicUrl(storage_path).data.publicUrl}if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("past_works").insert({title,year:q("#workYear").value?Number(q("#workYear").value):null,team_name:q("#workTeam").value.trim(),description:q("#workDesc").value.trim(),cover_url:cover_url||null,storage_path,detail_url:q("#workUrl").value.trim()||null,created_by:state.user.id});if(ins.error){if(storage_path)await removeStorageObjectSafe("works",storage_path);throw ins.error}e.target.reset();toast("往届作品发布成功");setTimeout(()=>location.href="./works.html",450)}catch(err){console.error("作品发布失败",err);toast("作品发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
-  q("#examForm").onsubmit=async e=>{e.preventDefault();const title=q("#examTitle").value.trim(),f=q("#pdf").files[0];if(!title)return toast("请填写任务标题");if(!f)return toast("请选择 PDF 文件");if(!/\.pdf$/i.test(f.name))return toast("任务文件必须是 PDF");const p=storageObjectPath("pdf",f.name);const btn=e.submitter||q("#examForm button");const oldText=btn?.textContent||"发布任务";try{if(btn){btn.disabled=true;btn.textContent="PDF 上传中 0% · "+bytesText(f.size)}await uploadStorageFile("exams",p,f,x=>{if(btn)btn.textContent="PDF 上传中 "+x+"% · "+bytesText(f.size)});const url=supabase.storage.from("exams").getPublicUrl(p).data.publicUrl;if(btn)btn.textContent="正在发布任务…";const ins=await supabase.from("exams").insert({title,description:q("#examDesc").value.trim(),deadline:q("#deadline").value?new Date(q("#deadline").value).toISOString():null,file_url:url,storage_path:p,created_by:state.user.id});if(ins.error){await removeStorageObjectSafe("exams",p);throw ins.error}e.target.reset();toast("试卷 / 任务发布成功");setTimeout(()=>location.href="./exams.html",450)}catch(err){console.error("任务发布失败",err);toast("任务发布失败："+(err?.message||String(err)))}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
+  initExamForm();
   q("#tutorialForm").onsubmit=async e=>{e.preventDefault();const type=q("#resourceType").value,mode=q("#resourceMode").value,title=q("#tutorialTitle").value.trim();let url=q("#resourceUrl").value.trim(),storage_path=null,file_name=null,storage_backend="supabase";if(mode==="url"){url=normalizeExternalUrl(url);if(!url)return toast("请输入正确的外部链接");if(isOwnPlatformUrl(url))return toast("你填的是本站首页/后台地址，请粘贴真正的视频或资料链接");}const btn=e.submitter||q("#tutorialForm button[type=submit]")||q("#tutorialForm button");const oldText=btn?.textContent||"发布教程";try{if(!title)return toast("请填写教程标题");if(mode==="file"){const f=q("#resourceFile").files[0];if(!f)return toast("请选择要上传的教程文件");if(type==="pdf"&&!/\.pdf$/i.test(f.name))return toast("PDF 教程请选择 .pdf 文件");if(type==="word"&&!/\.(doc|docx)$/i.test(f.name))return toast("Word 教程请选择 .doc 或 .docx 文件");if(type==="ppt"&&!/\.(ppt|pptx)$/i.test(f.name))return toast("PPT 教程请选择 .ppt 或 .pptx 文件");if(type==="archive"&&!/\.(zip|rar|7z)$/i.test(f.name))return toast("压缩包教程请选择 .zip、.rar 或 .7z 文件");if(type==="video"&&!(f.type||"").startsWith("video/")&&!/\.(mp4|webm|ogg|mov|m4v|avi|mkv)$/i.test(f.name))return toast("请选择视频文件");file_name=f.name;const cloudCategory=qiniuFileCategory(f,type);if(cloudCategory){if(btn){btn.disabled=true;btn.textContent="七牛云上传中 0% · "+bytesText(f.size)}const uploaded=await uploadQiniuFile(f,cloudCategory,p=>{if(btn)btn.textContent="七牛云上传中 "+p+"% · "+bytesText(f.size)});storage_path=uploaded.key;url=uploaded.url;storage_backend="qiniu";}else{storage_path=tutorialStoragePath(type,f.name);if(btn){btn.disabled=true;btn.textContent="上传中 0% · "+bytesText(f.size)}await uploadTutorialFile(storage_path,f,p=>{if(btn)btn.textContent="上传中 "+p+"% · "+bytesText(f.size)});url=supabase.storage.from("tutorials").getPublicUrl(storage_path).data.publicUrl}}if(!url)return toast("请输入资料链接或选择文件");if(btn){btn.disabled=true;btn.textContent="正在发布…"}const ins=await supabase.from("tutorials").insert({title,description:q("#tutorialDesc").value.trim(),video_url:url,resource_type:type,file_name,storage_path,storage_backend,created_by:state.user.id});if(ins.error){if(storage_path){if(storage_backend==="qiniu")await removeQiniuObjectSafe(storage_path);else await removeStorageObjectSafe("tutorials",storage_path)}throw ins.error}e.target.reset();toggleResourceForm();toast(resourceTypeName(type)+"发布成功");setTimeout(()=>location.href="./tutorials.html",450)}catch(err){const msg=err?.message||String(err);console.error("教程发布失败",err);if(/maximum|too large|payload|entity too large|exceeded/i.test(msg))toast("文件超过当前上传上限，请压缩后重试");else if(/row-level security|policy|permission|unauthorized|jwt/i.test(msg))toast("发布权限或登录状态异常，请重新登录后再试");else toast("发布失败："+msg)}finally{if(btn){btn.disabled=false;btn.textContent=oldText}}};
   function toggleResourceForm(){const type=q("#resourceType").value,mode=q("#resourceMode").value,isFile=mode==="file";q("#resourceUrlWrap").classList.toggle("hidden",isFile);q("#resourceFileWrap").classList.toggle("hidden",!isFile);q("#resourceUrlLabel").textContent=type==="video"?"视频链接":type==="pdf"?"PDF 链接":type==="word"?"Word 链接":type==="archive"?"压缩包链接":"PPT 链接";q("#resourceFileLabel").textContent=type==="video"?"视频文件":type==="pdf"?"PDF 文件":type==="word"?"Word 文件":type==="archive"?"压缩包文件":"PPT 文件";q("#resourceFile").accept=type==="video"?"video/*":type==="pdf"?".pdf,application/pdf":type==="word"?".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document":type==="archive"?".zip,.rar,.7z,application/zip,application/x-rar-compressed,application/x-7z-compressed":".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"}q("#resourceType").onchange=toggleResourceForm;q("#resourceMode").onchange=toggleResourceForm;toggleResourceForm();
   loadAllSubmissions();
