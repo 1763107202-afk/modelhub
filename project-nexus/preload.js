@@ -1,15 +1,13 @@
 const {contextBridge,ipcRenderer}=require('electron');
+const call=(channel,...args)=>ipcRenderer.invoke(channel,...args);
 contextBridge.exposeInMainWorld('nexus',{
- load:()=>ipcRenderer.invoke('load'),
- createProject:(name)=>ipcRenderer.invoke('create-project',name),
- pickFolder:(id)=>ipcRenderer.invoke('pick-folder',id),
- pickFile:(id)=>ipcRenderer.invoke('pick-file',id),
- openPath:(path)=>ipcRenderer.invoke('open-path',path),
- openProject:(id)=>ipcRenderer.invoke('open-project',id),
- removeLink:(id,index)=>ipcRenderer.invoke('remove-link',id,index),
- getSettings:()=>ipcRenderer.invoke('get-settings'),
- saveSettings:(settings)=>ipcRenderer.invoke('save-settings',settings),
- chat:(payload)=>ipcRenderer.invoke('chat',payload),
- toggleFullscreen:()=>ipcRenderer.invoke('fullscreen'),
- openHistoryImport:()=>ipcRenderer.invoke('import-history')
+ load:()=>call('load'),createProject:(name,kind)=>call('create-project',name,kind),
+ addTask:(id,title)=>call('task-add',id,title),toggleTask:(id,taskId)=>call('task-toggle',id,taskId),
+ pickFolder:id=>call('pick-folder',id),pickFile:id=>call('pick-file',id),removeLink:(id,index)=>call('remove-link',id,index),
+ openPath:p=>call('open-path',p),revealPath:p=>call('reveal-path',p),openProject:id=>call('open-project',id),
+ createWork:title=>call('create-work',title),toggleWork:id=>call('toggle-work',id),
+ addRoot:()=>call('add-root'),scanApps:()=>call('scan-apps'),pinApp:id=>call('pin-app',id),runApp:id=>call('run-app',id),
+ profiles:()=>call('profiles'),getSettings:()=>call('settings-get'),saveSettings:s=>call('settings-save',s),
+ chat:payload=>call('chat',payload),openFloat:()=>call('float-open'),toggleFullscreen:()=>call('fullscreen-toggle'),
+ capture:()=>call('screen-capture'),importHistory:()=>call('history-import')
 });
