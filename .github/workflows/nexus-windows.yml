@@ -1,29 +1,48 @@
-name: NEXUS Windows Build
+name: 构建 PROJECT NEXUS Windows 桌面端
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'project-nexus/**'
       - '.github/workflows/nexus-windows.yml'
-  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  windows:
+  build:
     runs-on: windows-latest
     defaults:
       run:
         working-directory: project-nexus
     steps:
       - uses: actions/checkout@v4
-      - name: Check project source
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: 验证必需源文件
         shell: pwsh
         run: |
-          if (!(Test-Path package.json)) { throw "Missing package.json: upload desktop app source before building." }
-          npm ci
-          npm test --if-present
-          npm run build
-      - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
+          foreach ($file in @('go.mod','main.go','windows.go','other.go','NEXUS.ps1')) {
+            if (!(Test-Path -LiteralPath $file)) { throw "缺少桌面应用源码: $file" }
+          }
+      - name: 验证 WPF 脚本语法
+        shell: pwsh
+        run: |
+          $tokens=$null; $errors=$null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path './NEXUS.ps1'),[ref]$tokens,[ref]$errors) | Out-Null
+          if($errors.Count -gt 0) { $errors | Format-List | Out-String | Write-Host; throw 'WPF 脚本语法检查失败' }
+      - name: Go 单元测试
+        shell: pwsh
+        run: go test ./...
+      - name: 构建 Windows x64 图形程序
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          go build -trimpath -ldflags '-H windowsgui -s -w' -o dist/PROJECT_NEXUS.exe .
+          if (!(Test-Path -LiteralPath dist/PROJECT_NEXUS.exe)) { throw '未生成 Windows EXE' }
+      - uses: actions/upload-artifact@v4
         with:
-          name: PROJECT-NEXUS-Windows
-          path: |
-            project-nexus/dist/**
+          name: PROJECT-NEXUS-Windows-x64
+          path: project-nexus/dist/PROJECT_NEXUS.exe
           if-no-files-found: error
