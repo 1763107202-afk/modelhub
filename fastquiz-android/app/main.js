@@ -60,7 +60,7 @@ function matchInfo(meaning,options){
  }
  var ordered=scores.slice().sort(function(a,b){return b-a;});
  var bestIdx=scores.indexOf(ordered[0]);
- return {index:ordered[0]>=0.88&&ordered[0]-(ordered[1]||0)>=0.12?bestIdx:-1,score:ordered[0],scores:scores};
+ return {index:ordered[0]>=0.88&&ordered[0]-(ordered[1]||0)>=(ordered[0]===1?0.07:0.12)?bestIdx:-1,score:ordered[0],scores:scores};
 }
 function match(meaning,options){return matchInfo(meaning,options).index;}
 function editDistance(a,b){
