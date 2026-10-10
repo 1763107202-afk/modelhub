@@ -1,0 +1,48 @@
+name: PROJECT NEXUS Windows 桌面端
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "project-nexus/desktop/**"
+      - ".github/workflows/project-nexus-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    name: Windows x64 编译与验证
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: project-nexus/desktop
+    steps:
+      - name: 下载源码
+        uses: actions/checkout@v4
+      - name: 安装 .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: 恢复依赖
+        run: dotnet restore ProjectNexus.csproj
+      - name: 编译 Windows Release
+        run: dotnet build ProjectNexus.csproj -c Release --no-restore -warnaserror
+      - name: 发布免安装 Windows x64 软件
+        run: dotnet publish ProjectNexus.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=none -p:DebugSymbols=false -o output
+      - name: 检查 EXE 文件
+        shell: pwsh
+        run: |
+          if (!(Test-Path "output/ProjectNexus.exe")) { throw "Windows EXE 未生成" }
+          $file = Get-Item "output/ProjectNexus.exe"
+          if ($file.Length -lt 1MB) { throw "EXE 文件大小异常" }
+          Get-FileHash "output/ProjectNexus.exe" -Algorithm SHA256 | Format-List
+          Get-ChildItem output | Select-Object Name,Length
+      - name: 上传可下载软件
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROJECT-NEXUS-Windows-x64
+          path: project-nexus/desktop/output/
+          if-no-files-found: error
+          retention-days: 30
