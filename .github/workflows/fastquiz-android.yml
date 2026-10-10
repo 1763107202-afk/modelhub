@@ -19,6 +19,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Regression tests for matching and OCR recovery
+        run: node fastquiz-android/tools/check_logic.js
       - name: Download ECDICT
         run: |
           curl -fL --retry 4 --connect-timeout 30 https://raw.githubusercontent.com/skywind3000/ECDICT/master/ecdict.csv -o /tmp/ecdict.csv
