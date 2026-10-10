@@ -36,7 +36,16 @@ function normalized(s){
   .replace(/在那儿/g,"那里")
   .replace(/向下的/g,"向下")
   .replace(/往下/g,"向下");
- return v.replace(/[\s，。;；:：、()（）\[\]“”"‘’—\-]+/g,"");
+ v=v.replace(/[\s，。;；:：、()（）\[\]“”"‘’—\-]+/g,"");
+ // Semantic aliases are intentionally narrow: do not guess when two choices share a valid sense.
+ var alias={
+  "桔子":"柑橘","橘子":"柑橘","橙子":"柑橘",
+  "橙色":"橘色","橙色的":"橘色的",
+  "迅速的":"快速的","快的":"快速的","飞快的":"快速的",
+  "很快的":"快速的","快速":"快速的","迅速":"快速的",
+  "迅速地":"很快地","快速地":"很快地","飞快地":"很快地"
+ };
+ return alias[v]||v;
 }
 function senses(text){
  return String(text||"").split(/[\n\r;,，；、]/).map(normalized).filter(function(x){return x.length>0;});
