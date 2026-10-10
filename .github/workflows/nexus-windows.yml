@@ -1,0 +1,29 @@
+name: NEXUS Windows Build
+on:
+  push:
+    paths:
+      - 'project-nexus/**'
+      - '.github/workflows/nexus-windows.yml'
+  workflow_dispatch:
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: project-nexus
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check project source
+        shell: pwsh
+        run: |
+          if (!(Test-Path package.json)) { throw "Missing package.json: upload desktop app source before building." }
+          npm ci
+          npm test --if-present
+          npm run build
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROJECT-NEXUS-Windows
+          path: |
+            project-nexus/dist/**
+          if-no-files-found: error
