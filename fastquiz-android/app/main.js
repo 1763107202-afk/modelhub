@@ -32,7 +32,10 @@ function normalized(s){
   .replace(/祖父(?:或者|或)祖母/g,"祖父母")
   .replace(/哪一个/g,"哪个")
   .replace(/那一个/g,"那个")
-  .replace(/那几个/g,"那些");
+  .replace(/在那里/g,"那里")
+  .replace(/在那儿/g,"那里")
+  .replace(/向下的/g,"向下")
+  .replace(/往下/g,"向下");
  return v.replace(/[\s，。;；:：、()（）\[\]“”"‘’—\-]+/g,"");
 }
 function senses(text){
@@ -49,7 +52,7 @@ function matchInfo(meaning,options){
     if(o===m){best=1;continue;}
     if(o.length>=2&&m.length>=2&&(o.indexOf(m)>=0||m.indexOf(o)>=0)){
      var coverage=Math.min(o.length,m.length)/Math.max(o.length,m.length);
-     if(coverage>=0.65)best=Math.max(best,0.78+0.15*coverage);
+     if(coverage>=0.64)best=Math.max(best,0.78+0.19*coverage);
     }
    }
   }
@@ -57,7 +60,7 @@ function matchInfo(meaning,options){
  }
  var ordered=scores.slice().sort(function(a,b){return b-a;});
  var bestIdx=scores.indexOf(ordered[0]);
- return {index:ordered[0]>=0.87&&ordered[0]-(ordered[1]||0)>=0.1?bestIdx:-1,score:ordered[0],scores:scores};
+ return {index:ordered[0]>=0.88&&ordered[0]-(ordered[1]||0)>=0.12?bestIdx:-1,score:ordered[0],scores:scores};
 }
 function match(meaning,options){return matchInfo(meaning,options).index;}
 function editDistance(a,b){
@@ -80,15 +83,15 @@ function findNearWord(word,options){
   while(cur.moveToNext()){
    var candidate=String(cur.getString(0)),translation=String(cur.getString(1));
    var similarity=1-editDistance(word,candidate)/Math.max(word.length,candidate.length);
-   if(similarity<0.70)continue;
+   if(similarity<0.72)continue;
    var info=matchInfo(translation,options);
-   if(info.index<0||info.score<0.91)continue;
+   if(info.index<0||info.score<0.94)continue;
    var item={word:candidate,translation:translation,index:info.index,similarity:similarity,score:info.score};
    if(!best||item.similarity>best.similarity){second=best;best=item;}
    else if(!second||item.similarity>second.similarity)second=item;
   }
  }finally{cur.close();}
- if(best&&second&&best.index!==second.index&&best.similarity-second.similarity<0.09)return null;
+ if(best&&second&&best.index!==second.index&&best.similarity-second.similarity<0.1)return null;
  return best;
 }
 function recognize(img,box){
@@ -96,7 +99,7 @@ function recognize(img,box){
 }
 function isWhite(pixel){
  var r=(pixel>>16)&255,g=(pixel>>8)&255,b=pixel&255;
- return r>=234&&g>=234&&b>=234;
+ return r>=233&&g>=233&&b>=233;
 }
 function detectCardCenters(w,h,sample){
  var x1=Math.round(w*.20),x2=Math.round(w*.80);
@@ -107,7 +110,7 @@ function detectCardCenters(w,h,sample){
   if(yes){if(begin<0)begin=y;prev=y;}
   else if(begin>=0){
    var height=prev-begin+step;
-   if(height>h*.038&&height<h*.15)runs.push({top:begin,bottom:prev,center:Math.round((begin+prev)/2),height:height});
+   if(height>h*.036&&height<h*.14)runs.push({top:begin,bottom:prev,center:Math.round((begin+prev)/2),height:height});
    begin=-1;
   }
  }
@@ -123,63 +126,71 @@ function findCards(img,w,h){
  cachedCards=detectCardCenters(w,h,function(x,y){return images.pixel(img,x,y);});
  return cachedCards;
 }
-function pickWord(items,h){
- var best="",quality=-1;
+function extractWord(items,w,h,firstTop){
+ var word="",quality=-999;
  items.forEach(function(r){
-  var text=String(r.text||"").trim().toLowerCase(),rect=r.bounds;
-  if(!/^[a-z][a-z '-]{1,36}$/.test(text)||text==="vs"||text==="versus"||!rect)return;
-  var center=(Number(rect.top)+Number(rect.bottom))/2;
-  var score=-Math.abs(center/h-.40)*8+Math.min(30,text.length)*.013+Number(r.confidence||0)*.08;
-  if(score>quality){quality=score;best=text;}
+  var str=String(r.text||"").trim().toLowerCase(),b=r.bounds;
+  if(!b||!/^[a-z][a-z '-]{1,35}$/.test(str)||str==="vs"||str==="versus")return;
+  var cy=(Number(b.top)+Number(b.bottom))/2, cx=(Number(b.left)+Number(b.right))/2;
+  if(cy<h*.29||cy>firstTop-h*.055||cx<w*.15||cx>w*.85)return;
+  var score=-Math.abs(cy/h-.395)*5+Number(r.confidence||0)*.20+Math.min(str.length,15)*.013;
+  if(score>quality){quality=score;word=str;}
  });
- return best.replace(/\s+/g," ").trim();
+ return word.replace(/\s+/g," ").trim();
 }
-function readWord(img,w,h){
- var region=[Math.round(w*.09),Math.round(h*.29),Math.round(w*.82),Math.round(h*.25)];
- var word=pickWord(recognize(img,region),h);
- if(word)return word;
- try{
-  var cut=images.clip(img,region[0],region[1],region[2],region[3]);
-  var scaled=null;
-  try{
-   scaled=images.scale(cut,2,2);
-   var res=recognize(scaled,[0,0,scaled.getWidth(),scaled.getHeight()]);
-   word=pickWord(res,scaled.getHeight());
-   if(!word){
-    for(var i=0;i<res.length;i++){
-     var t=String(res[i].text||"").trim().toLowerCase();
-     if(/^[a-z][a-z-]{1,30}$/.test(t)&&t!=="vs"){word=t;break;}
-    }
+function assignOptions(items,cards){
+ var texts=["","","",""];
+ items.forEach(function(r){
+  if(!r.bounds||!/[一-龥]/.test(String(r.text||"")))return;
+  var cy=(Number(r.bounds.top)+Number(r.bounds.bottom))/2;
+  for(var i=0;i<4;i++){
+   if(cy>=cards[i].top-6&&cy<=cards[i].bottom+6){
+    texts[i]+=String(r.text||"");
+    return;
    }
-  }finally{if(scaled)scaled.recycle();if(cut)cut.recycle();}
- }catch(e){log("英文OCR放大后备失败:"+e);}
- return word;
+  }
+ });
+ return texts;
+}
+function fallbackWord(img,w,h){
+ var region=[Math.round(w*.10),Math.round(h*.32),Math.round(w*.8),Math.round(h*.19)];
+ var crop=null,scaled=null;
+ try{
+  crop=images.clip(img,region[0],region[1],region[2],region[3]);
+  scaled=images.scale(crop,1.6,1.6);
+  var rs=recognize(scaled,[0,0,scaled.getWidth(),scaled.getHeight()]);
+  for(var k=0;k<rs.length;k++){
+   var s=String(rs[k].text||"").toLowerCase().trim();
+   if(/^[a-z][a-z '-]{1,30}$/.test(s)&&s!=="vs")return s;
+  }
+ }catch(e){log("放大识别回退异常:"+e);}
+ finally{try{if(scaled)scaled.recycle();}catch(e){}try{if(crop)crop.recycle();}catch(e){}}
+ return "";
 }
 function screenRead(img){
  var w=img.getWidth(),h=img.getHeight();
  var cards=findCards(img,w,h);
- if(!cards)return {word:"",options:["","","",""],centers:[],w:w,h:h,error:"未找到4个白色选项卡片"};
- var word=readWord(img,w,h);
- var options=["","","",""],ys=cards.map(function(x){return x.center;});
- var opt=recognize(img,[Math.round(w*.12),Math.round(h*.47),Math.round(w*.76),Math.round(h*.51)]);
- opt.forEach(function(r){
-  if(!r.bounds||!/[一-龥]/.test(String(r.text||"")))return;
-  var cy=(Number(r.bounds.top)+Number(r.bounds.bottom))/2,best=-1,diff=h*.055;
-  for(var i=0;i<4;i++){
-   var gap=Math.abs(cy-ys[i]);if(gap<diff){diff=gap;best=i;}
-  }
-  if(best>=0)options[best]+=String(r.text||"");
- });
- for(var i=0;i<4;i++){
-  if(!options[i]){
-   var top=Math.max(0,Math.round(cards[i].top-3)),height=Math.min(h-top,Math.round(cards[i].height+6));
-   var parts=recognize(img,[Math.round(w*.16),top,Math.round(w*.68),height]);
-   var lines=[];
-   parts.forEach(function(x){if(/[一-龥]/.test(String(x.text||"")))lines.push(String(x.text));});
-   options[i]=lines.join("");
-  }
+ if(!cards)return {word:"",options:["","","",""],centers:[],w:w,h:h,error:"未找到4个白色选项卡"};
+ // One combined OCR call covers the English prompt and the four answer cards.
+ var top=Math.round(h*.30),bottom=Math.min(h,Math.round(cards[3].bottom+h*.018));
+ var rs=recognize(img,[Math.round(w*.10),top,Math.round(w*.80),bottom-top]);
+ var word=extractWord(rs,w,h,cards[0].top);
+ var options=assignOptions(rs,cards);
+ if(!word)word=fallbackWord(img,w,h);
+ return {word:word,options:options,centers:cards.map(function(c){return c.center;}),cards:cards,w:w,h:h,error:""};
+}
+function fillMissingOptions(img,q,maxCount){
+ var count=0;
+ for(var i=0;i<4&&count<maxCount;i++){
+  if(/[一-龥]/.test(q.options[i]))continue;
+  count++;
+  var c=q.cards[i],x=Math.round(q.w*.17),y=Math.max(0,c.top-4);
+  try{
+   var rs=recognize(img,[x,y,Math.round(q.w*.66),Math.min(q.h-y,c.height+10)]);
+   var arr=rs.filter(function(r){return /[一-龥]/.test(String(r.text||""));});
+   q.options[i]=arr.map(function(r){return String(r.text);}).join("");
+  }catch(e){log("单卡OCR失败:"+i+" "+e);}
  }
- return {word:word,options:options,centers:ys,w:w,h:h,error:""};
 }
 function status(t){log(t);if(p)try{p.message.post(function(){p.message.setText(t.slice(0,22));});}catch(e){}}
 function ensureAccessibility(){
@@ -205,69 +216,72 @@ p.setPosition(0,Math.round(device.height*.13));
 p.toggle.click(function(){running=!running;p.toggle.setText(running?"暂停":"开始");});
 p.quit.click(function(){alive=false;exit();});
 events.on("exit",function(){try{db.close();}catch(e){}try{p.close();}catch(e){}});
-var last="",lastAt=0,lastOcrNotice=0,pending=null;
+var lastFailed="",lastFailedAt=0,lastNotice=0,pending=null,tapCount=0,ocrTotal=0,ocrCount=0;
 while(alive){
- if(!running){sleep(120);continue;}
+ if(!running){sleep(150);continue;}
  try{
-  if(currentPackage()!=="com.jiongji.andriod.card"){sleep(140);continue;}
-  var img=images.captureScreen(),q;
-  try{q=screenRead(img);}finally{if(img)img.recycle();}
-  if(!q.centers.length){
-   if(Date.now()-lastOcrNotice>2500){status("等待答题界面");log(q.error);lastOcrNotice=Date.now();}
-   sleep(130);continue;
-  }
-  if(!q.word){
-   if(Date.now()-lastOcrNotice>2400){status("英文OCR未识别");log("屏幕卡片位置："+q.centers+"；选项="+JSON.stringify(q.options));lastOcrNotice=Date.now();}
-   sleep(100);continue;
-  }
-  var sig=q.word+"|"+q.options.join("|");
-  if(pending){
-   if(q.word!==pending.word||sig!==pending.sig){
-    log("点击后检测到题面发生变化："+pending.word);
-    pending=null;
-   }else{
-    var delta=Date.now()-pending.at;
-    if(delta<850){sleep(100);continue;}
-    if(pending.tries===1&&delta>1000&&delta<2900){
-     var retry=press(pending.x,pending.y,90);
-     pending.tries=2;pending.at=Date.now();
-     log("题目未变化，再发送一次触控："+pending.word+" 返回="+retry);
-     sleep(120);continue;
-    }
-    if(delta>1600&&pending.tries>=2){
-     if(delta<2200)log("已重试触控但题面仍未变化，请检查卡片坐标或应用限制："+pending.word);
-     pending=null;last=sig;lastAt=Date.now();
-    }else{sleep(100);continue;}
+  if(currentPackage()!=="com.jiongji.andriod.card"){sleep(160);continue;}
+  var captureAt=Date.now();
+  var img=images.captureScreen();
+  var capTime=Date.now()-captureAt,ocrAt=Date.now(),q;
+  try{
+   q=screenRead(img);
+   if(q.centers.length){
+    var n=q.options.filter(function(s){return /[一-龥]/.test(s);}).length;
+    if(q.word&&n<3)fillMissingOptions(img,q,2);
    }
+  }finally{if(img)img.recycle();}
+  var ocrMs=Date.now()-ocrAt;
+  ocrTotal+=ocrMs;ocrCount++;
+  if(!q.centers.length){
+   if(Date.now()-lastNotice>2900){status("等待题目选项");log(q.error);lastNotice=Date.now();}
+   sleep(150);continue;
   }
-  var nonempty=q.options.filter(function(s){return /[一-龥]/.test(s);}).length;
-  if(nonempty<2){
-   if(Date.now()-lastOcrNotice>2500){status("选项OCR不完整");log("单词="+q.word+"，选项="+JSON.stringify(q.options)+"，卡片中心="+q.centers);lastOcrNotice=Date.now();}
-   sleep(90);continue;
+  var present=q.options.filter(function(s){return /[一-龥]/.test(s);}).length;
+  if(!q.word||present<2){
+   if(Date.now()-lastNotice>2500){status(!q.word?"英文单词OCR未识别":"选项OCR不足");log("OCR调试：词="+q.word+" 选项="+JSON.stringify(q.options)+" 选项中心="+q.centers+" 截屏"+capTime+"ms OCR"+ocrMs+"ms");lastNotice=Date.now();}
+   sleep(95);continue;
   }
-  if(sig===last&&Date.now()-lastAt<1800){sleep(110);continue;}
-  var meaning=lookup(q.word),idx=meaning?match(meaning,q.options):-1;
-  var corrected=null;
-  if(idx<0&&q.word.length>=7){
+  var signature=q.word+"|"+q.options.join("|");
+  if(pending){
+    if(q.word!==pending.word&&present>=2){
+      log("检测到新单词: "+q.word+"，上题："+pending.word);
+      pending=null;
+    }else{
+      if(Date.now()-pending.at>3000&& !pending.warning){
+        pending.warning=true;
+        status("触控后题目未变化");
+        log("单题仅点击一次，不重复误触："+pending.word+" → "+pending.index+"；待下一题。");
+      }
+      sleep(130);continue;
+    }
+  }
+  if(signature===lastFailed&&Date.now()-lastFailedAt<2300){sleep(140);continue;}
+  var meaning=lookup(q.word),info=meaning?matchInfo(meaning,q.options):{index:-1,score:0,scores:[]};
+  var idx=info.index,corrected=null;
+  if(idx<0&&q.word.length>=7&&present>=3){
    corrected=findNearWord(q.word,q.options);
-   if(corrected){idx=corrected.index;meaning=corrected.translation;log("英文OCR纠错："+q.word+" → "+corrected.word);}
+   if(corrected){idx=corrected.index;meaning=corrected.translation;log("OCR拼写纠错："+q.word+" → "+corrected.word);}
   }
   if(idx<0){
-   if(sig!==last||Date.now()-lastAt>4500){
-    status(meaning?"释义未匹配："+q.word:"词库无此词："+q.word);
-    log("词="+q.word+"；释义="+(meaning||"[无]")+"；选项="+JSON.stringify(q.options)+"；卡片中心="+q.centers);
-    last=sig;lastAt=Date.now();
+   if(Date.now()-lastNotice>1800){
+     status(meaning?"释义不能确定："+q.word:"词库没查到："+q.word);
+     log("词="+q.word+" 释义="+(meaning||"[无]")+" 选项="+JSON.stringify(q.options)+" 匹配分="+JSON.stringify(info.scores)+" 截屏"+capTime+"ms OCR"+ocrMs+"ms");
+     lastNotice=Date.now();
    }
-   sleep(100);continue;
+   lastFailed=signature;lastFailedAt=Date.now();
+   sleep(115);continue;
   }
+  if(!/[一-龥]/.test(q.options[idx])){sleep(90);continue;}
   if(currentPackage()!=="com.jiongji.andriod.card"||!running)continue;
-  var x=Math.round(q.w*.5),y=q.centers[idx];
-  var did=press(x,y,65);
-  if(!did)did=click(x,y);
-  log("发送点击："+(corrected?corrected.word:q.word)+" 第"+(idx+1)+"项 @("+x+","+y+") 手势返回="+did+" 可读选项数="+nonempty);
-  status((corrected?corrected.word:q.word)+" 点击第"+(idx+1)+"项");
-  pending={word:q.word,sig:sig,x:x,y:y,at:Date.now(),tries:1};
-  last=sig;lastAt=Date.now();
- }catch(e){log("运行异常："+e);sleep(300);}
- sleep(90);
+  var tx=Math.round(q.w*.5),ty=q.centers[idx],sendAt=Date.now();
+  var accepted=press(tx,ty,55);
+  if(!accepted)accepted=click(tx,ty);
+  tapCount++;
+  log("尝试点击: "+q.word+" 第"+(idx+1)+"项 ("+tx+","+ty+")；手势返回="+accepted+"；OCR="+ocrMs+"ms，匹配分="+info.score);
+  status(q.word+" → 选项"+(idx+1));
+  pending={word:q.word,signature:signature,index:idx+1,at:Date.now(),warning:false};
+  if(tapCount%5===0){log("平均OCR耗时："+Math.round(ocrTotal/Math.max(1,ocrCount))+"ms/帧；点击尝试数="+tapCount);}
+  sleep(175);
+ }catch(e){log("运行异常："+e);sleep(400);}
 }
