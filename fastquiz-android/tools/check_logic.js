@@ -12,7 +12,7 @@ const db={
  rawQuery:(sql,args)=>{
   let i=0;
   const candidates=rows.filter(x=>x[0].includes(args[0].replace(/%/g,"")));
-  return {moveToNext:()=>i<candidates.length,getString:(k)=>candidates[i++][k],close:()=>{}};
+  return {moveToNext:()=>i<candidates.length,getString:(k)=>{const v=candidates[i][k];if(k===1)i++;return v;},close:()=>{}};
  }
 };
 const context={db:db};vm.createContext(context);
