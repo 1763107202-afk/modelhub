@@ -13,24 +13,45 @@ function startupDb(){
   var c=db.rawQuery("SELECT COUNT(*) FROM dictionary",[]);
   c.moveToFirst();var count=c.getLong(0);c.close();
   if(count<100000)throw Error("词库不完整:"+count);
-  toastLog("已加载词典"+count+"条");
+  var ctest=db.rawQuery("SELECT translation FROM dictionary WHERE word='tiger'",[]);
+  var tiger=ctest.moveToFirst()?String(ctest.getString(0)):"";
+  ctest.close();
+  if(tiger.indexOf("老虎")<0)throw Error("词典校验失败：tiger="+tiger);
+  log("词典自检：tiger → "+tiger);
+  toastLog("词库已加载："+count+"条；tiger检测通过");
 }
 function lookup(word){
  var c=db.rawQuery("SELECT translation FROM dictionary WHERE word=? LIMIT 1",[word.toLowerCase()]);
  try{return c.moveToFirst()?String(c.getString(0)):"";}finally{c.close();}
 }
-function normalized(s){return String(s||"").replace(/^(n|v|adj|adv|vt|vi)\.?\s*/ig,"").replace(/[\s，。;；:：、()（）]+/g,"");}
+function normalized(s){
+ return String(s||"").replace(/^\s*(?:n|v|a|adj|adv|vt|vi|prep|pron|conj|int|art)\.?\s*/ig,"")
+   .replace(/\[[^\]]+\]/g,"").replace(/[\s，。;；:：、()（）\[\]“”"‘’]+/g,"").toLowerCase();
+}
+function senses(text){
+ return String(text||"").split(/[\n\r;,，；、]/).map(normalized).filter(function(x){return x.length>0;});
+}
 function match(meaning,options){
- var parts=meaning.split(/[;；\n]/).map(normalized), scores=options.map(function(o){
-   o=normalized(o);var best=0;
-   parts.forEach(function(m){if(!m||!o)return;
-     if(m===o)best=Math.max(best,1);
-     else if(m.indexOf(o)>=0&&o.length>1)best=Math.max(best,.9);
-     else if(o.indexOf(m)>=0&&m.length>2)best=Math.max(best,.82);
-   });return best;
- });
- var idx=scores.indexOf(Math.max.apply(Math,scores)),sorted=scores.slice().sort(function(a,b){return b-a;});
- return sorted[0]>=.8&&sorted[0]-sorted[1]>=.1?idx:-1;
+ var terms=senses(meaning),scores=[];
+ for(var i=0;i<options.length;i++){
+  var choice=String(options[i]||"");
+  var choices=choice.split(/[，,；;、\/]/).map(normalized).filter(function(x){return x.length>0;});
+  var best=0;
+  for(var a=0;a<choices.length;a++){
+   for(var b=0;b<terms.length;b++){
+    var o=choices[a],m=terms[b];
+    if(o===m){best=Math.max(best,1);continue;}
+    if(o.length>=2&&m.length>=2&&(o.indexOf(m)>=0||m.indexOf(o)>=0)){
+      var coverage=Math.min(o.length,m.length)/Math.max(o.length,m.length);
+      best=Math.max(best,coverage>=0.65?0.88:0.76);
+    }
+   }
+  }
+  scores.push(best);
+ }
+ var ranked=scores.slice().sort(function(a,b){return b-a;});
+ var idx=scores.indexOf(ranked[0]);
+ return ranked[0]>=0.86&&ranked[0]-ranked[1]>=0.1?idx:-1;
 }
 function recognize(img,box){
  var r=ocr.mlkit.detect(img,box);
@@ -87,7 +108,15 @@ while(alive){
   var sig=q.word+"|"+q.options.join("|");
   if(sig===last||Date.now()-lastAt<700){sleep(70);continue;}
   var meaning=lookup(q.word),idx=meaning?match(meaning,q.options):-1;
-  if(idx<0){status("无法确定:"+q.word);sleep(160);continue;}
+  if(idx<0){
+   var reason=meaning?"选项未匹配:":"词库未收录:";
+   if(sig!==last||Date.now()-lastAt>2000){
+    status(reason+q.word);
+    log("识别题目="+q.word+" | 释义="+(meaning||"[词库无此项]")+" | 选项="+JSON.stringify(q.options));
+    last=sig;lastAt=Date.now();
+   }
+   sleep(160);continue;
+  }
   if(currentPackage()==="com.jiongji.andriod.card"&&running){
    click(Math.round(q.w*.5),Math.round(q.h*q.centers[idx]));
    last=sig;lastAt=Date.now();status(q.word+" → "+(idx+1));
