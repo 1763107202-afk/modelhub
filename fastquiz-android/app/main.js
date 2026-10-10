@@ -97,14 +97,21 @@ p.setPosition(0,Math.round(device.height*.13));
 p.toggle.click(function(){running=!running;p.toggle.setText(running?"暂停":"开始");});
 p.quit.click(function(){alive=false;exit();});
 events.on("exit",function(){try{db.close();}catch(e){}try{p.close();}catch(e){}});
-var last="",lastAt=0;
+var last="",lastAt=0,lastOcrNotice=0;
 while(alive){
  if(!running){sleep(120);continue;}
  try{
   if(currentPackage()!=="com.jiongji.andriod.card"){sleep(150);continue;}
   var img=images.captureScreen(),q;
   try{q=screenRead(img);}finally{if(img)img.recycle();}
-  if(!q.word||q.options.some(function(s){return !/[\u3400-\u9fff]/.test(s); })){sleep(70);continue;}
+  if(!q.word||q.options.some(function(s){return !/[\u3400-\u9fff]/.test(s); })){
+   if(Date.now()-lastOcrNotice>2500){
+    status(!q.word?"OCR未识别到单词":"OCR未读全选项");
+    log("OCR原始识别：单词="+q.word+" 选项="+JSON.stringify(q.options));
+    lastOcrNotice=Date.now();
+   }
+   sleep(70);continue;
+  }
   var sig=q.word+"|"+q.options.join("|");
   if(sig===last||Date.now()-lastAt<700){sleep(70);continue;}
   var meaning=lookup(q.word),idx=meaning?match(meaning,q.options):-1;
