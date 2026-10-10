@@ -1,0 +1,13 @@
+{
+  "name": "极速词汇助手",
+  "packageName": "cn.fastquiz.offline",
+  "versionName": "2.1.0",
+  "versionCode": 3,
+  "mainScriptFileName": "main.js",
+  "permissions": [
+    "android.permission.SYSTEM_ALERT_WINDOW",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.WAKE_LOCK"
+  ],
+  "signatureScheme": "V1 + V2"
+}
