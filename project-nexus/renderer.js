@@ -34,6 +34,7 @@ function ai(){
 function settingsPage(){return breadcrumb('设置与数据','所有数据保存在本机，工程源文件不会自动移动。')+'<div class="panel"><h3>应用设置</h3><p>当前客户端：PROJECT NEXUS · Electron 中文桌面版</p><p class="muted">F11 及右上角按钮可切换全屏。AI 悬浮窗口可置顶其他软件。</p>'+btn('AI 模型设置','navigate-ai')+'</div><div class="panel"><h3>数据与隐私</h3><p class="muted">工程映射仅存储本地路径；聊天导出必须由你主动选择；API Key 用 Windows 安全存储加密。请勿将私人聊天、截图、密钥上传到公开 GitHub 仓库。</p></div>'}
 function render(){frame();$('section-title').textContent={home:'指挥中心',projects:'工程项目',files:'智能文件柜',work:'工作中心',apps:'软件启动台',ai:'NEXUS AI',settings:'设置与数据'}[page]||'指挥中心';$('content').innerHTML={home,projects,files,work,apps,ai,settings:settingsPage}[page]();if(page==='ai'){const box=$('chat-log');box.scrollTop=box.scrollHeight;const input=$('chat-input');input?.focus()}}
 function setPage(x){page=x;render()}
+function askProjectName(){return new Promise(resolve=>{const bg=document.createElement('div');bg.className='modal-overlay';bg.innerHTML='<div class="modal"><h2>创建新的项目抽屉</h2><p class="muted">支持科研、工程、课程与任何新工作。</p><input id="modal-name" maxlength="100" placeholder="例如：桥梁有限元分析"><div class="toolbar"><button id="modal-cancel">取消</button><button id="modal-ok" class="primary">确认创建</button></div></div>';document.body.appendChild(bg);const done=v=>{bg.remove();resolve(v)};bg.querySelector('#modal-cancel').onclick=()=>done('');bg.querySelector('#modal-ok').onclick=()=>done(bg.querySelector('#modal-name').value.trim());bg.querySelector('#modal-name').addEventListener('keydown',e=>{if(e.key==='Enter')done(e.target.value.trim());if(e.key==='Escape')done('')});bg.querySelector('#modal-name').focus()})}
 async function refresh(){db=await api.load();if(!pid&&db.projects?.length)pid=db.projects[0].id;render()}
 async function execute(fn){try{await fn()}catch(e){const error=safeErr(e);notify(error,'error');if(page==='ai'){activeError=error;chatMessages.push({role:'error',text:error});render()}console.error(e)}}
 async function ask(prompt){const value=String(prompt||'').trim();if(!value||busy)return;busy=true;chatDraft=value;activeError='正在等待模型响应…';chatMessages.push({role:'user',text:value});const payload={message:value,projectId:$('chat-project')?.value||'',includeHistory:historyAllowed,image:uploadImage||''};uploadImage='';chatDraft='';render();try{const answer=await api.chat(payload);chatMessages.push({role:'assistant',text:answer});activeError='请求成功';}catch(e){activeError=safeErr(e);chatMessages.push({role:'error',text:activeError});}finally{busy=false;render()}}
@@ -48,7 +49,7 @@ document.addEventListener('click',e=>{
   switch(a){
    case 'fullscreen-toggle':await api.toggleFullscreen();return;
    case 'float-open':await api.openFloat();return;
-   case 'create-project':{const name=prompt('新项目名称（工程、学习、工作均可）：');if(!name)return;db=await api.createProject(name,'自定义项目');pid=db.projects.at(-1)?.id;render();return}
+   case 'create-project':{const name=await askProjectName();if(!name)return;db=await api.createProject(name,'自定义项目');pid=db.projects.at(-1)?.id;render();return}
    case 'select-project':selectProject(id);return;
    case 'open-project':await api.openProject(id);return;
    case 'pick-folder':db=await api.pickFolder(id);render();return;
@@ -64,7 +65,7 @@ document.addEventListener('click',e=>{
    case 'pin-app':db=await api.pinApp(id);render();return;
    case 'run-app':await api.runApp(id);return;
    case 'settings-save':{const payload={provider:$('provider').value,endpoint:$('endpoint').value,model:$('model-id').value,key:$('api-key').value};settings=await api.saveSettings(payload);render();notify('模型设置已保存，可以发送“你好”测试。');return}
-   case 'history-import':{const result=await api.importHistory();notify('已导入 '+result.count+' 条聊天的标题和摘要');return}
+   case 'history-import':{const result=await api.importHistory();notify('已导入 '+result.count+' 条历史会话摘要；仅勾选授权后发送相关摘录');return}
    case 'send-chat':await ask($('chat-input')?.value||chatDraft);return;
    case 'capture':{const image=await api.capture();uploadImage=image;render();notify('截图已预览，只有点击发送才会上传');return}
    case 'remove-image':uploadImage='';render();return;
