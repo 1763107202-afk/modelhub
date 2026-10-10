@@ -1,48 +1,51 @@
-name: 构建 PROJECT NEXUS Windows 桌面端
+name: PROJECT NEXUS · Electron Windows
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'project-nexus/**'
       - '.github/workflows/nexus-windows.yml'
-
 permissions:
   contents: read
-
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
     defaults:
       run:
         working-directory: project-nexus
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: 检出源码
+        uses: actions/checkout@v4
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: '1.22'
-      - name: 验证必需源文件
+          node-version: '22'
+      - name: 核验完整工程
         shell: pwsh
         run: |
-          foreach ($file in @('go.mod','main.go','windows.go','other.go','NEXUS.ps1')) {
-            if (!(Test-Path -LiteralPath $file)) { throw "缺少桌面应用源码: $file" }
+          foreach ($file in @('package.json','main.js','preload.js','renderer.js','index.html')) {
+            if (!(Test-Path -LiteralPath $file)) { throw "缺少源代码: $file" }
           }
-      - name: 验证 WPF 脚本语法
+          node --check main.js
+          node --check preload.js
+          node --check renderer.js
+      - name: 安装依赖
         shell: pwsh
-        run: |
-          $tokens=$null; $errors=$null
-          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path './NEXUS.ps1'),[ref]$tokens,[ref]$errors) | Out-Null
-          if($errors.Count -gt 0) { $errors | Format-List | Out-String | Write-Host; throw 'WPF 脚本语法检查失败' }
-      - name: Go 单元测试
+        run: npm install --no-audit --no-fund
+      - name: 基本校验
         shell: pwsh
-        run: go test ./...
-      - name: 构建 Windows x64 图形程序
+        run: npm test
+      - name: 生成 Windows 安装包与便携版
         shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Path dist -Force | Out-Null
-          go build -trimpath -ldflags '-H windowsgui -s -w' -o dist/PROJECT_NEXUS.exe .
-          if (!(Test-Path -LiteralPath dist/PROJECT_NEXUS.exe)) { throw '未生成 Windows EXE' }
-      - uses: actions/upload-artifact@v4
+        run: npm run build
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: 上传 Windows 构建结果
+        uses: actions/upload-artifact@v4
         with:
           name: PROJECT-NEXUS-Windows-x64
-          path: project-nexus/dist/PROJECT_NEXUS.exe
+          path: |
+            project-nexus/dist/*.exe
           if-no-files-found: error
+          retention-days: 30
