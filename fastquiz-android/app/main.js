@@ -1,4 +1,3 @@
-"auto";
 var db=null, running=false, alive=true, p=null;
 var dbFile=files.join(String(context.getFilesDir().getAbsolutePath()),"lexicon.db");
 function startupDb(){
@@ -20,9 +19,9 @@ function lookup(word){
  var c=db.rawQuery("SELECT translation FROM dictionary WHERE word=? LIMIT 1",[word.toLowerCase()]);
  try{return c.moveToFirst()?String(c.getString(0)):"";}finally{c.close();}
 }
-function normalized(s){return String(s||"").replace(/^(n|v|adj|adv|vt|vi)\\.?\\s*/ig,"").replace(/[\\s，。;；:：、()（）]+/g,"");}
+function normalized(s){return String(s||"").replace(/^(n|v|adj|adv|vt|vi)\.?\s*/ig,"").replace(/[\s，。;；:：、()（）]+/g,"");}
 function match(meaning,options){
- var parts=meaning.split(/[;；\\n]/).map(normalized), scores=options.map(function(o){
+ var parts=meaning.split(/[;；\n]/).map(normalized), scores=options.map(function(o){
    o=normalized(o);var best=0;
    parts.forEach(function(m){if(!m||!o)return;
      if(m===o)best=Math.max(best,1);
@@ -49,12 +48,26 @@ function screenRead(img){
     var y=(Number(b.top)+Number(b.bottom))/2/h;
     var best=-1,dist=.048;
     for(var i=0;i<4;i++){var d=Math.abs(y-centers[i]);if(d<dist){dist=d;best=i;}}
-    if(best>=0&&/[\\u3400-\\u9fff]/.test(String(r.text)))options[best]+=r.text;
+    if(best>=0&&/[\u3400-\u9fff]/.test(String(r.text)))options[best]+=r.text;
  });
  return {word:word,options:options,centers:centers,w:w,h:h};
 }
 function status(t){log(t);if(p)try{p.message.post(function(){p.message.setText(t.slice(0,22));});}catch(e){}}
-auto.waitFor();
+function ensureAccessibility(){
+  for(var attempt=0;attempt<3;attempt++){
+    try { auto.waitFor(); return true; }
+    catch(e){
+      var explain='无障碍服务未正常运行。请打开手机设置→辅助功能→无障碍→极速词汇助手，关闭后重新开启。返回此应用，再尝试启动。';
+      log('无障碍状态异常：'+String(e));
+      if(!dialogs.confirm('需要无障碍服务',explain+'\n\n点击「确定」打开系统设置，或取消退出。'))return false;
+      app.startActivity({action:'android.settings.ACCESSIBILITY_SETTINGS'});
+      sleep(1500);
+    }
+  }
+  dialogs.alert('授权未成功','请先在系统设置中重新启用极速词汇助手无障碍服务，然后再打开本软件。');
+  return false;
+}
+if(!ensureAccessibility())exit();
 if(!images.requestScreenCapture(false)){toastLog("截图授权失败");exit();}
 ocr.mode="mlkit";
 try{startupDb();}catch(e){toastLog(String(e));exit();}
@@ -70,7 +83,7 @@ while(alive){
   if(currentPackage()!=="com.jiongji.andriod.card"){sleep(150);continue;}
   var img=images.captureScreen(),q;
   try{q=screenRead(img);}finally{if(img)img.recycle();}
-  if(!q.word||q.options.some(function(s){return !/[\\u3400-\\u9fff]/.test(s); })){sleep(70);continue;}
+  if(!q.word||q.options.some(function(s){return !/[\u3400-\u9fff]/.test(s); })){sleep(70);continue;}
   var sig=q.word+"|"+q.options.join("|");
   if(sig===last||Date.now()-lastAt<700){sleep(70);continue;}
   var meaning=lookup(q.word),idx=meaning?match(meaning,q.options):-1;
