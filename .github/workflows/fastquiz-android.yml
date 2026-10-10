@@ -1,0 +1,45 @@
+name: FastQuiz APK
+on:
+  push:
+    branches: [fastquiz-android-offline]
+    paths: ['fastquiz-android/**', '.github/workflows/fastquiz-android.yml']
+  workflow_dispatch:
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Download ECDICT
+        run: |
+          curl -fL --retry 4 --connect-timeout 30 https://raw.githubusercontent.com/skywind3000/ECDICT/master/ecdict.csv -o /tmp/ecdict.csv
+          test "$(wc -c </tmp/ecdict.csv)" -gt 20000000
+      - name: Generate offline dictionary
+        run: python fastquiz-android/tools/make_dictionary.py /tmp/ecdict.csv fastquiz-android/app/lexicon.db
+      - name: Download verified upstream APK and packager
+        run: |
+          curl -fL --retry 4 https://github.com/SuperMonster003/AutoJs6/releases/download/v6.7.0/autojs6-v6.7.0-universal-047ae62e.apk -o /tmp/autojs.apk
+          curl -fL --retry 4 https://github.com/Steven-Qiang/AutoJs6-ApkBuilder/releases/download/v1.1.0/apkbuilder-cli.jar -o /tmp/builder.jar
+          echo 'fc330acfc7b3bdf7fdcf0d179b5c076e4a3c3103729d883edfc9af02f25b2c4e  /tmp/autojs.apk' | sha256sum -c
+          echo 'dfe134d4cab0cc74a3bded6cfe2ab27db9502df738874a798b5178f5ffe72c14  /tmp/builder.jar' | sha256sum -c
+      - name: Build APK
+        run: java -jar /tmp/builder.jar -a /tmp/autojs.apk -s ./fastquiz-android/app -o FastQuiz_Offline.apk
+      - name: Validate APK archive
+        run: |
+          test -s FastQuiz_Offline.apk
+          unzip -t FastQuiz_Offline.apk | tail -1
+          sha256sum FastQuiz_Offline.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FastQuiz_Offline_APK
+          path: FastQuiz_Offline.apk
+          if-no-files-found: error
