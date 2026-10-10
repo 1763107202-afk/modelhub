@@ -9,5 +9,5 @@ contextBridge.exposeInMainWorld('nexus',{
  addRoot:()=>call('add-root'),scanApps:()=>call('scan-apps'),pinApp:id=>call('pin-app',id),runApp:id=>call('run-app',id),
  profiles:()=>call('profiles'),getSettings:()=>call('settings-get'),saveSettings:s=>call('settings-save',s),
  chat:payload=>call('chat',payload),clearKey:()=>call('key-clear'),openFloat:()=>call('float-open'),toggleFullscreen:()=>call('fullscreen-toggle'),
- capture:()=>call('screen-capture'),importHistory:()=>call('history-import')
+ capture:()=>call('screen-capture'),importHistory:()=>call('history-import'),listHistory:()=>call('history-list'),assignHistory:(id,projectId)=>call('history-assign',id,projectId)
 });
