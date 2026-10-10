@@ -25,33 +25,71 @@ function lookup(word){
  try{return c.moveToFirst()?String(c.getString(0)):"";}finally{c.close();}
 }
 function normalized(s){
- return String(s||"").replace(/^\s*(?:n|v|a|adj|adv|vt|vi|prep|pron|conj|int|art)\.?\s*/ig,"")
-   .replace(/\[[^\]]+\]/g,"").replace(/[\s，。;；:：、()（）\[\]“”"‘’]+/g,"").toLowerCase();
+ var v=String(s||"").toLowerCase()
+  .replace(/^\s*(?:n|v|a|adj|adv|vt|vi|prep|pron|conj|int|art|num)\.\s*/i,"")
+  .replace(/\[[^\]]+\]/g,"")
+  .replace(/外祖父或外祖母/g,"外祖父母")
+  .replace(/祖父(?:或者|或)祖母/g,"祖父母")
+  .replace(/哪一个/g,"哪个")
+  .replace(/那一个/g,"那个")
+  .replace(/那几个/g,"那些");
+ return v.replace(/[\s，。;；:：、()（）\[\]“”"‘’—\-]+/g,"");
 }
 function senses(text){
  return String(text||"").split(/[\n\r;,，；、]/).map(normalized).filter(function(x){return x.length>0;});
 }
-function match(meaning,options){
+function matchInfo(meaning,options){
  var terms=senses(meaning),scores=[];
  for(var i=0;i<options.length;i++){
-  var choice=String(options[i]||"");
-  var choices=choice.split(/[，,；;、\/]/).map(normalized).filter(function(x){return x.length>0;});
+  var chunks=String(options[i]||"").split(/[，,；;、\/]/).map(normalized).filter(function(x){return x.length>0;});
   var best=0;
-  for(var a=0;a<choices.length;a++){
+  for(var a=0;a<chunks.length;a++){
    for(var b=0;b<terms.length;b++){
-    var o=choices[a],m=terms[b];
-    if(o===m){best=Math.max(best,1);continue;}
+    var o=chunks[a],m=terms[b];
+    if(o===m){best=1;continue;}
     if(o.length>=2&&m.length>=2&&(o.indexOf(m)>=0||m.indexOf(o)>=0)){
-      var coverage=Math.min(o.length,m.length)/Math.max(o.length,m.length);
-      best=Math.max(best,coverage>=0.65?0.88:0.76);
+     var coverage=Math.min(o.length,m.length)/Math.max(o.length,m.length);
+     if(coverage>=0.65)best=Math.max(best,0.78+0.15*coverage);
     }
    }
   }
   scores.push(best);
  }
- var ranked=scores.slice().sort(function(a,b){return b-a;});
- var idx=scores.indexOf(ranked[0]);
- return ranked[0]>=0.86&&ranked[0]-ranked[1]>=0.1?idx:-1;
+ var ordered=scores.slice().sort(function(a,b){return b-a;});
+ var bestIdx=scores.indexOf(ordered[0]);
+ return {index:ordered[0]>=0.87&&ordered[0]-(ordered[1]||0)>=0.1?bestIdx:-1,score:ordered[0],scores:scores};
+}
+function match(meaning,options){return matchInfo(meaning,options).index;}
+function editDistance(a,b){
+ a=String(a||"");b=String(b||"");
+ var dp=[],i,j,next;
+ for(j=0;j<=b.length;j++)dp[j]=j;
+ for(i=1;i<=a.length;i++){
+  next=[i];
+  for(j=1;j<=b.length;j++)next[j]=Math.min(next[j-1]+1,dp[j]+1,dp[j-1]+(a.charAt(i-1)===b.charAt(j-1)?0:1));
+  dp=next;
+ }
+ return dp[b.length];
+}
+function findNearWord(word,options){
+ if(word.length<7)return null;
+ var key=word.substring(0,Math.min(6,word.length-2));
+ var cur=db.rawQuery("SELECT word, translation FROM dictionary WHERE word LIKE ? LIMIT 45",["%"+key+"%"]);
+ var best=null,second=null;
+ try{
+  while(cur.moveToNext()){
+   var candidate=String(cur.getString(0)),translation=String(cur.getString(1));
+   var similarity=1-editDistance(word,candidate)/Math.max(word.length,candidate.length);
+   if(similarity<0.70)continue;
+   var info=matchInfo(translation,options);
+   if(info.index<0||info.score<0.91)continue;
+   var item={word:candidate,translation:translation,index:info.index,similarity:similarity,score:info.score};
+   if(!best||item.similarity>best.similarity){second=best;best=item;}
+   else if(!second||item.similarity>second.similarity)second=item;
+  }
+ }finally{cur.close();}
+ if(best&&second&&best.index!==second.index&&best.similarity-second.similarity<0.09)return null;
+ return best;
 }
 function recognize(img,box){
  var r=ocr.mlkit.detect(img,box);
@@ -59,7 +97,7 @@ function recognize(img,box){
 }
 function screenRead(img){
  var w=img.getWidth(),h=img.getHeight();
- var wx=Math.round(.25*w),wy=Math.round(.34*h),ww=Math.round(.5*w),wh=Math.round(.13*h);
+ var wx=Math.round(.08*w),wy=Math.round(.34*h),ww=Math.round(.84*w),wh=Math.round(.15*h);
  var words=recognize(img,[wx,wy,ww,wh]),word="";
  words.forEach(function(x){var s=String(x.text||"").trim();if(/^[A-Za-z][A-Za-z '-]{0,28}$/.test(s)&&s.length>word.length)word=s.toLowerCase();});
  var opt=recognize(img,[Math.round(.14*w),Math.round(.54*h),Math.round(.72*w),Math.round(.44*h)]);
@@ -115,18 +153,23 @@ while(alive){
   var sig=q.word+"|"+q.options.join("|");
   if(sig===last||Date.now()-lastAt<700){sleep(70);continue;}
   var meaning=lookup(q.word),idx=meaning?match(meaning,q.options):-1;
+  var corrected=null;
+  if(idx<0 && q.word.length>=7){
+   corrected=findNearWord(q.word,q.options);
+   if(corrected){idx=corrected.index;meaning=corrected.translation;log("OCR纠错:"+q.word+" → "+corrected.word+" | 拼写相似度="+corrected.similarity);}
+  }
   if(idx<0){
-   var reason=meaning?"选项未匹配:":"词库未收录:";
-   if(sig!==last||Date.now()-lastAt>2000){
+   var reason=meaning?"释义和选项不一致:":"词典没有识别词:";
+   if(sig!==last||Date.now()-lastAt>4500){
     status(reason+q.word);
-    log("识别题目="+q.word+" | 释义="+(meaning||"[词库无此项]")+" | 选项="+JSON.stringify(q.options));
+    log("识别题目="+q.word+" | 释义="+(meaning||"[无]")+" | 选项="+JSON.stringify(q.options));
     last=sig;lastAt=Date.now();
    }
-   sleep(160);continue;
+   sleep(130);continue;
   }
   if(currentPackage()==="com.jiongji.andriod.card"&&running){
    click(Math.round(q.w*.5),Math.round(q.h*q.centers[idx]));
-   last=sig;lastAt=Date.now();status(q.word+" → "+(idx+1));
+   last=sig;lastAt=Date.now();status((corrected?corrected.word:q.word)+" → "+(idx+1));
   }
  }catch(e){log("识别异常:"+e);sleep(300);}
  sleep(70);
