@@ -51,12 +51,51 @@ const profiles={
  '自定义接口':{endpoint:'',model:''}
 };
 ipcMain.handle('profiles',()=>profiles);
-ipcMain.handle('settings-get',()=>{const s=read('ai-settings.json',{provider:'DeepSeek',...profiles.DeepSeek});return {...s,hasKey:fs.existsSync(f('apikey.enc'))}});
-ipcMain.handle('settings-save',(_e,x)=>{const provider=String(x.provider||'DeepSeek');let endpoint=String(x.endpoint||'').trim(),model=String(x.model||'').trim();let u;try{u=new URL(endpoint)}catch{throw Error('接口地址不是有效 URL')}if(!(u.protocol==='https:'||(u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))))throw Error('云端只允许 HTTPS，本地允许 Ollama');if(!model)throw Error('请填写模型 ID');if(x.key){if(!safeStorage.isEncryptionAvailable())throw Error('Windows 密钥加密不可用');fs.writeFileSync(f('apikey.enc'),safeStorage.encryptString(String(x.key)))}write('ai-settings.json',{provider,endpoint,model});return {provider,endpoint,model,hasKey:fs.existsSync(f('apikey.enc'))}});
+// 密钥按服务商与 URL 来源隔离。防止切换模型平台时意外把旧平台密钥发送给新平台。
+function keyPath(provider,endpoint){
+  const origin=new URL(endpoint).origin;
+  const slug=crypto.createHash('sha256').update(String(provider)+'\\n'+origin).digest('hex');
+  return f('api-key-'+slug+'.enc');
+}
+function migrateLegacyKey(settings){
+  const legacy=f('apikey.enc');
+  if(!settings?.provider||!settings?.endpoint||!fs.existsSync(legacy))return;
+  let dst;try{dst=keyPath(settings.provider,settings.endpoint)}catch{return}
+  if(!fs.existsSync(dst)){
+    // 旧版密钥仅迁移到旧版配置对应的平台，绝不复制给新服务商。
+    fs.copyFileSync(legacy,dst);
+  }
+  fs.renameSync(legacy,legacy+'.migrated');
+}
+ipcMain.handle('settings-get',()=>{
+ const s=read('ai-settings.json',{provider:'DeepSeek',...profiles.DeepSeek});
+ migrateLegacyKey(s);
+ return {...s,hasKey:!!s.endpoint&&fs.existsSync(keyPath(s.provider,s.endpoint))};
+});
+ipcMain.handle('settings-save',(_e,x)=>{
+ const provider=String(x.provider||'DeepSeek'), endpoint=String(x.endpoint||'').trim(),model=String(x.model||'').trim();
+ let u;try{u=new URL(endpoint)}catch{throw Error('接口地址不是有效 URL')}
+ if(!(u.protocol==='https:'||(u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))))throw Error('云端只允许 HTTPS，本地允许 Ollama');
+ if(!model)throw Error('请填写模型 ID');
+ const previous=read('ai-settings.json',{});
+ migrateLegacyKey(previous);
+ const destination=keyPath(provider,endpoint);
+ if(x.key){
+   if(!safeStorage.isEncryptionAvailable())throw Error('Windows 密钥加密不可用');
+   fs.writeFileSync(destination,safeStorage.encryptString(String(x.key)));
+ }
+ write('ai-settings.json',{provider,endpoint,model});
+ return {provider,endpoint,model,hasKey:fs.existsSync(destination)};
+});
+ipcMain.handle('key-clear',()=>{
+ const s=read('ai-settings.json',{});
+ if(s.endpoint){const p=keyPath(s.provider,s.endpoint);if(fs.existsSync(p))fs.unlinkSync(p)}
+ return {hasKey:false};
+});
 function queryAI(endpoint,model,messages,key){
  return new Promise((resolve,reject)=>{const u=new URL(endpoint),driver=u.protocol==='https:'?https:http;const req=driver.request(u,{method:'POST',timeout:90000,headers:{'Content-Type':'application/json',...(key?{Authorization:'Bearer '+key}:{})}},res=>{const chunks=[];let len=0;res.on('data',v=>{len+=v.length;if(len>4*1024*1024){req.destroy(Error('服务端响应超过大小限制'));return}chunks.push(v)});res.on('end',()=>{const raw=Buffer.concat(chunks).toString('utf8');let obj;try{obj=JSON.parse(raw)}catch{return reject(Error('模型返回无效 JSON：'+raw.slice(0,120)))}if(res.statusCode>=400){const detail=obj.error?.message||obj.message||raw.slice(0,200);return reject(Error('模型请求失败 HTTP '+res.statusCode+'：'+detail))}const txt=obj.choices?.[0]?.message?.content;if(!txt)return reject(Error('模型接口响应成功，但没有返回聊天文本'));resolve(typeof txt==='string'?txt:JSON.stringify(txt))})});req.on('timeout',()=>req.destroy(Error('模型响应超时（90秒）')));req.on('error',reject);req.end(JSON.stringify({model,messages,stream:false}))})
 }
-ipcMain.handle('chat',async(_e,payload)=>{const s=read('ai-settings.json',{}),message=String(payload?.message||'').trim().slice(0,10000);if(!s.endpoint||!s.model)throw Error('请先在「AI 设置」中填写模型接口地址和模型 ID');if(!message)throw Error('请输入消息');const keyFile=f('apikey.enc');let key='';if(fs.existsSync(keyFile)){if(!safeStorage.isEncryptionAvailable())throw Error('Windows 凭据无法解密');key=safeStorage.decryptString(fs.readFileSync(keyFile))}if(s.provider!=='Ollama 本地'&&!key)throw Error('当前服务商缺少 API Key');const context=[];if(payload?.projectId){const p=project(db(),payload.projectId);if(p){context.push('当前项目：'+p.name);context.push('工程映射：'+(p.links||[]).map(x=>path.basename(x.path)).join('、'));context.push('已验收任务：'+(p.tasks||[]).filter(x=>x.verified).map(x=>x.title).join('、'));}}if(payload?.includeHistory){const matches=read('chat-history.json',[]).filter(x=>x.projectId===payload.projectId).slice(0,8);for(const c of matches)context.push('历史摘录：'+c.title+' '+String(c.snippet||'').slice(0,600))}
+ipcMain.handle('chat',async(_e,payload)=>{const s=read('ai-settings.json',{}),message=String(payload?.message||'').trim().slice(0,10000);if(!s.endpoint||!s.model)throw Error('请先在「AI 设置」中填写模型接口地址和模型 ID');if(!message)throw Error('请输入消息');migrateLegacyKey(s);const keyFile=keyPath(s.provider,s.endpoint);let key='';if(fs.existsSync(keyFile)){if(!safeStorage.isEncryptionAvailable())throw Error('Windows 凭据无法解密');key=safeStorage.decryptString(fs.readFileSync(keyFile))}if(s.provider!=='Ollama 本地'&&!key)throw Error('当前平台未配置 API Key。不同 AI 平台的密钥互不通用，请分别填写。');const context=[];if(payload?.projectId){const p=project(db(),payload.projectId);if(p){context.push('当前项目：'+p.name);context.push('工程映射：'+(p.links||[]).map(x=>path.basename(x.path)).join('、'));context.push('已验收任务：'+(p.tasks||[]).filter(x=>x.verified).map(x=>x.title).join('、'));}}if(payload?.includeHistory){const matches=read('chat-history.json',[]).filter(x=>x.projectId===payload.projectId).slice(0,8);for(const c of matches)context.push('历史摘录：'+c.title+' '+String(c.snippet||'').slice(0,600))}
  const img=String(payload?.image||'');if(img&&s.provider==='DeepSeek'&&/^deepseek-(chat|reasoner)$/.test(s.model))throw Error('所选 DeepSeek 模型当前按纯文本配置，无法接收截图；请改用支持图像输入的模型');
  const content=img?[{type:'text',text:message},{type:'image_url',image_url:{url:img}}]:message;
  const messages=[{role:'system',content:'你是 PROJECT NEXUS 的简体中文工程助手。请根据确切的项目记录作答，区分未验证的用户陈述和已验收工作。不声称自动读取 ChatGPT 实时聊天。'+context.join('\n')},{role:'user',content}];
