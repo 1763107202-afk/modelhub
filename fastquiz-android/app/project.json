@@ -1,8 +1,8 @@
 {
   "name": "极速词汇助手",
   "packageName": "cn.fastquiz.offline",
-  "versionName": "2.4.0",
-  "versionCode": 7,
+  "versionName": "2.4.1",
+  "versionCode": 8,
   "mainScriptFileName": "main.js",
   "permissions": [
     "android.permission.SYSTEM_ALERT_WINDOW",
