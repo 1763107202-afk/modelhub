@@ -39,5 +39,13 @@ const mock=(x,y)=>expected.some(c=>y>=c-77&&y<=c+77)?0xffffff:0x2277aa;
 const found=context.detectCardCenters(w,h,mock);
 assert.ok(found && found.length===4,"four white cards detected");
 assert.ok(found.every((c,i)=>Math.abs(c.center-expected[i])<12),"four card centers mapped");
-console.log("14 regression cases passed");
+
+// The entries below are taken from the bundled ECDICT dataset, not fabricated demonstration meanings.
+assert.strictEqual(context.match("n. 柑橘, 桔子, 橘色\na. 橘色的",["太阳","橙子","苹果","鸭子"]),1,"orange fruit equivalent");
+assert.strictEqual(context.match("n. 柑橘, 桔子, 橘色\na. 橘色的",["黄色","橙色","绿色","蓝色"]),1,"orange color equivalent");
+assert.strictEqual(context.match("a. 快速的, 紧的\nadv. 很快地, 紧紧地, 彻底地\nn. 绝食, 斋戒\nvi. 绝食, 斋戒",["慢的","快的","懒惰的","温柔的"]),1,"fast adjective equivalent");
+assert.strictEqual(context.match("a. 快速的, 紧的\nadv. 很快地, 紧紧地, 彻底地\nn. 绝食, 斋戒\nvi. 绝食, 斋戒",["缓慢地","迅速地","不情愿地","总是"]),1,"fast adverb equivalent");
+assert.strictEqual(context.match("n. 柑橘, 桔子, 橘色\na. 橘色的",["橙子","橙色","香蕉","黑色"]),-1,"two orange senses: must not guess");
+
+console.log("19 regression checks passed");
 
