@@ -1,0 +1,40 @@
+{
+  "name": "project-nexus",
+  "version": "1.4.0",
+  "private": true,
+  "description": "中文 Windows 工程工作站",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --check main.js && node --check preload.js && node --check renderer.js",
+    "build": "electron-builder --win nsis portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "cn.projectnexus.desktop",
+    "productName": "PROJECT NEXUS",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html"
+    ],
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "artifactName": "PROJECT_NEXUS_${version}_${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
