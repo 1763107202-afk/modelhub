@@ -18,7 +18,7 @@ let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',p
 function safeErr(e){const x=String(e?.message||e||'未知错误');return x.replace(/^Error invoking remote method '[^']+': Error:\s*/,'').slice(0,1100)}
 function notify(message,kind='ok'){const t=$('toast');if(!t)return;t.textContent=message;t.style.color=kind==='error'?'#ffacb5':'#95ecd2';}
 function frame(){
- $('root').innerHTML='<div class="layout"><aside class="sidebar"><div class="brand">◆ NEXUS</div><div class="muted" style="margin:0 9px 18px">中文工程 · 智能工作中心</div><div id="navigation"></div><div class="side-foot">● 本地工作站<br><small>源工程保持原位 · 离线可用</small></div></aside><main class="main"><header class="top"><div><div class="muted">PROJECT NEXUS / ENGINEERING CONSOLE</div><div class="title" id="section-title">工程指挥中心</div></div><div class="top-actions">'+btn('⌕ 搜索 Ctrl+K','command-open','class="nav-search"')+btn('✧ AI 悬浮窗','float-open')+btn('⛶ 全屏切换','fullscreen-toggle')+'</div></header><div class="content" id="content"></div></main></div><div id="toast" role="status" aria-live="polite" class="toast"></div>';
+ $('root').innerHTML='<div class="layout"><aside class="sidebar"><div class="brand">◆ NEXUS</div><div class="muted" style="margin:0 9px 18px">中文工程 · 智能工作中心</div><div id="navigation"></div><div class="side-foot">● 本地工作站<br><small>源工程保持原位 · 离线可用</small></div></aside><main class="main"><header class="top"><div><div class="muted">PROJECT NEXUS / ENGINEERING CONSOLE</div><div class="title" id="section-title">工程指挥中心</div></div><div class="top-actions">'+btn('⌕ 搜索 Ctrl+K','command-open','class="nav-search"')+btn('✧ AI 悬浮窗','float-open')+btn('⛶ 全屏切换','fullscreen-toggle')+btn('⌑ 锁定','lock-now')+'</div></header><div class="content" id="content"></div></main></div><div id="toast" role="status" aria-live="polite" class="toast"></div>';
  const nav=[['home','▦ 指挥中心'],['projects','◈ 工程项目'],['files','▤ 智能文件柜'],['work','☷ 工作任务'],['apps','▷ 软件启动台'],['tools','▥ 效率工具'],['ai','✧ AI 智能助手'],['settings','⚙ 设置 / 数据']];
  $('navigation').innerHTML=nav.map(([id,title])=>'<button type="button" class="nav '+(page===id?'active':'')+'" data-act="nav" data-id="'+id+'">'+title+'</button>').join('');
 }
@@ -279,6 +279,7 @@ document.addEventListener('click',e=>{
    }
    case 'snapshot-reveal':await api.revealSnapshot(id,el.dataset.snapshot);return;
    case 'fullscreen-toggle':await api.toggleFullscreen();return;
+   case 'lock-now':{const status=await api.authLock();showLockScreen(status);return;}
    case 'float-open':await api.openFloat();return;
    case 'create-project':{const name=await askProjectName();if(!name)return;db=await api.createProject(name,'自定义项目');pid=db.projects.at(-1)?.id;render();return}
    case 'select-project':selectProject(id);return;
@@ -311,5 +312,32 @@ document.addEventListener('click',e=>{
   }
  });
 });
-async function start(){try{profiles=await api.profiles();settings=await api.getSettings();db=await api.load();historyItems=await api.listHistory();try{radarData=await api.radarGet();modeData=await api.listModes();}catch(e){console.warn('部分扩展工具初始化失败：',e)}if(db.projects?.length)pid=db.projects[0].id;chatMessages=await api.getProjectChat(pid);notesText=await api.getMemory(pid);if(isFloat)page='ai';render()}catch(e){$('root').textContent='NEXUS 初始化失败：'+safeErr(e);console.error(e)}}
+
+function showLockScreen(state){
+ document.body.classList.add('nexus-locked');
+ const setup=state.needsSetup;
+ $('root').innerHTML='<main class="lock-screen"><section class="lock-panel"><div class="lock-mark">◆</div><p class="lock-eyebrow">PROJECT NEXUS · 个人工程工作站</p><h1>'+(setup?'首次使用 · 设置访问密码':'欢迎回来 · 解锁工作站')+'</h1><p class="lock-hint">'+(setup?'保护本机工程索引、项目记忆与 AI 聊天记录。密码长度至少 8 位。':'工作站已锁定。验证密码后才能访问你的工程和项目记录。')+'</p><form id="nexus-unlock-form"><label for="auth-pass">访问密码</label><input id="auth-pass" type="password" required minlength="8" autocomplete="'+(setup?'new-password':'current-password')+'" placeholder="请输入访问密码"><div id="auth-confirm-wrap" '+(setup?'':'hidden')+'><label for="auth-confirm">再次确认密码</label><input id="auth-confirm" type="password" '+(setup?'required':'')+' autocomplete="new-password" placeholder="请再次输入密码"></div><p class="lock-error" id="lock-error" role="alert"></p><button type="submit" id="auth-submit" class="primary">'+(setup?'设置密码并进入':'解锁工作站')+'</button></form><p class="lock-foot">本地加盐哈希保存密码 · 连续失败暂时限制尝试 · 不上传 GitHub</p></section></main>';
+ $('nexus-unlock-form').onsubmit=async event=>{
+  event.preventDefault();
+  const button=$('auth-submit'),err=$('lock-error');button.disabled=true;err.textContent='正在验证…';
+  try{
+   const pass=$('auth-pass').value;
+   if(setup)await api.authSetup(pass,$('auth-confirm').value);
+   else await api.authUnlock(pass);
+   document.body.classList.remove('nexus-locked');
+   await initializeWorkspace();
+  }catch(e){err.textContent=safeErr(e);button.disabled=false;}
+ };
+ $('auth-pass').focus();
+}
+async function initializeWorkspace(){
+ profiles=await api.profiles();settings=await api.getSettings();db=await api.load();
+ historyItems=await api.listHistory();
+ try{radarData=await api.radarGet();modeData=await api.listModes()}catch(e){console.warn('部分扩展模块读取失败',e)}
+ if(db.projects?.length)pid=db.projects[0].id;
+ chatMessages=await api.getProjectChat(pid);notesText=await api.getMemory(pid);
+ if(isFloat)page='ai';render();
+}
+
+async function start(){try{const status=await api.authStatus();if(status.unlocked)await initializeWorkspace();else showLockScreen(status)}catch(e){$('root').textContent='NEXUS 安全初始化失败：'+safeErr(e);console.error(e)}}
 start();
