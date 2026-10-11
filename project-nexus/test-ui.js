@@ -9,6 +9,7 @@ const {window}=dom,doc=window.document;
 const p={id:'p1',name:'测试桥梁',kind:'机械',links:[{path:'C:\\Demo\\Bridge_V15.wbpj',type:'file',date:'2026-01-01T08:00:00.000Z'}],tasks:[],createdAt:'2026-01-01T08:00:00.000Z'};
 const state={projects:[p],works:[],apps:[{id:'a1',name:'ANSYS Workbench',kind:'工程设计',path:'C:\\Demo\\Workbench.lnk',pinned:true}],roots:[]};
 window.nexus={
+ getAppVersion:async()=>({version:'2.1.0-beta.2'}),
  authStatus:async()=>({needsSetup:false,unlocked:true,remainingSeconds:0}),
  listFolders:async()=>({folders:[],warnings:[]}),
  profiles:async()=>({DeepSeek:{endpoint:'https://api.deepseek.com/chat/completions',model:'deepseek-chat'}}),
@@ -27,6 +28,7 @@ const wait=()=>new Promise(r=>setTimeout(r,45));
 (async()=>{
  window.eval(renderer);await wait();
  assert(byAct('nav'),'Navigation not rendered');
+ assert(doc.body.textContent.includes('2.1.0-beta.2'),'Actual packaged version not shown in UI');
  assert(doc.querySelector('.project-card'),'Project card not visible on home page');
  assert(doc.querySelector('.hero'),'Quick-start hero missing');
  const tools=doc.querySelector('[data-act="nav"][data-id="tools"]');
