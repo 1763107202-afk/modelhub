@@ -1,6 +1,7 @@
 
 'use strict';
 const api=window.nexus;
+let actualVersion='检测中';
 const isFloat=new URLSearchParams(location.search).get('float')==='1';
 if(isFloat)document.body.classList.add('float');
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -18,7 +19,7 @@ let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',p
 function safeErr(e){const x=String(e?.message||e||'未知错误');return x.replace(/^Error invoking remote method '[^']+': Error:\s*/,'').slice(0,1100)}
 function notify(message,kind='ok'){const t=$('toast');if(!t)return;t.textContent=message;t.style.color=kind==='error'?'#ffacb5':'#95ecd2';}
 function frame(){
- $('root').innerHTML='<div class="layout"><aside class="sidebar"><div class="brand">◆ NEXUS</div><div class="muted" style="margin:0 9px 18px">中文工程 · 智能工作中心</div><div id="navigation"></div><div class="side-foot">● 本地工作站<br><small>源工程保持原位 · 离线可用</small></div></aside><main class="main"><header class="top"><div><div class="muted">PROJECT NEXUS / ENGINEERING CONSOLE</div><div class="title" id="section-title">工程指挥中心</div></div><div class="top-actions">'+btn('⌕ 搜索 Ctrl+K','command-open','class="nav-search"')+btn('✧ AI 悬浮窗','float-open')+btn('⛶ 全屏切换','fullscreen-toggle')+btn('⌑ 锁定','lock-now')+'</div></header><div class="content" id="content"></div></main></div><div id="toast" role="status" aria-live="polite" class="toast"></div>';
+ $('root').innerHTML='<div class="layout"><aside class="sidebar"><div class="brand">◆ NEXUS</div><div class="muted" style="margin:0 9px 18px">中文工程 · 智能工作中心 · <b class="nexus-version">'+esc(actualVersion)+'</b></div><div id="navigation"></div><div class="side-foot">● 本地工作站<br><small>源工程保持原位 · 离线可用</small></div></aside><main class="main"><header class="top"><div><div class="muted">PROJECT NEXUS / ENGINEERING CONSOLE</div><div class="title" id="section-title">工程指挥中心</div></div><div class="top-actions">'+btn('⌕ 搜索 Ctrl+K','command-open','class="nav-search"')+btn('✧ AI 悬浮窗','float-open')+btn('⛶ 全屏切换','fullscreen-toggle')+btn('⌑ 锁定','lock-now')+'</div></header><div class="content" id="content"></div></main></div><div id="toast" role="status" aria-live="polite" class="toast"></div>';
  const nav=[['home','▦ 指挥中心'],['projects','◈ 工程项目'],['files','▤ 智能文件柜'],['work','☷ 工作任务'],['apps','▷ 软件启动台'],['tools','▥ 效率工具'],['ai','✧ AI 智能助手'],['studio-image','◉ AI 图像工作室'],['studio-code','⌘ AI 代码工作室'],['settings','⚙ 设置 / 数据']];
  $('navigation').innerHTML=nav.map(([id,title])=>'<button type="button" class="nav '+(page===id?'active':'')+'" data-act="nav" data-id="'+id+'">'+title+'</button>').join('');
 }
@@ -168,7 +169,7 @@ function codeStudio(){
  '<p class="muted">支持单文件生成与保存，多文件工程和版本差异对比将在后续版本验证。建议始终保存为新文件。</p></section></div>';
 }
 
-function settingsPage(){return breadcrumb('设置与数据','所有数据保存在本机，工程源文件不会自动移动。')+'<div class="panel"><h3>应用设置</h3><p>当前客户端：PROJECT NEXUS · Electron 中文桌面版</p><p class="muted">F11 及右上角按钮可切换全屏。AI 悬浮窗口可置顶其他软件。</p>'+btn('AI 模型设置','navigate-ai')+'</div><div class="panel"><h3>数据与隐私</h3><p class="muted">工程映射仅存储本地路径；聊天导出必须由你主动选择；API Key 用 Windows 安全存储加密。请勿将私人聊天、截图、密钥上传到公开 GitHub 仓库。</p></div>'}
+function settingsPage(){return breadcrumb('设置与数据','所有数据保存在本机，工程源文件不会自动移动。')+'<div class="panel"><h3>应用设置</h3><p>当前客户端：PROJECT NEXUS <strong class="nexus-version">'+esc(actualVersion)+'</strong> · Electron 中文桌面版</p><p class="muted">F11 及右上角按钮可切换全屏。AI 悬浮窗口可置顶其他软件。</p>'+btn('AI 模型设置','navigate-ai')+'</div><div class="panel"><h3>数据与隐私</h3><p class="muted">工程映射仅存储本地路径；聊天导出必须由你主动选择；API Key 用 Windows 安全存储加密。请勿将私人聊天、截图、密钥上传到公开 GitHub 仓库。</p></div>'}
 function render(){frame();$('section-title').textContent={home:'指挥中心',projects:'工程项目',files:'智能文件柜',work:'工作中心',apps:'软件启动台',ai:'NEXUS AI',tools:'效率工具','studio-image':'AI 图像工作室','studio-code':'AI 代码工作室',settings:'设置与数据'}[page]||'指挥中心';$('content').innerHTML={home,projects,files,work,apps,ai,tools,'studio-image':imageStudio,'studio-code':codeStudio,settings:settingsPage}[page]();if(page==='ai'){const box=$('chat-log');box.scrollTop=box.scrollHeight;const input=$('chat-input');input?.focus()}if(page==='apps')loadVisibleAppIcons()}
 async function loadVisibleAppIcons(){const nodes=[...document.querySelectorAll('[data-app-icon]')].slice(0,90);for(const node of nodes){const id=node.dataset.appIcon;try{const src=await api.getAppIcon(id);if(src&&node.isConnected){const img=document.createElement('img');img.src=src;img.alt='';img.loading='lazy';node.replaceChildren(img)}}catch{}}}
 
@@ -460,7 +461,7 @@ case 'tool-tab':toolTab=el.dataset.tool||'modes';render();return;
 function showLockScreen(state){
  document.body.classList.add('nexus-locked');
  const setup=state.needsSetup;
- $('root').innerHTML='<main class="lock-screen"><section class="lock-panel"><div class="lock-mark">◆</div><p class="lock-eyebrow">PROJECT NEXUS · 个人工程工作站</p><h1>'+(setup?'首次使用 · 设置访问密码':'欢迎回来 · 解锁工作站')+'</h1><p class="lock-hint">'+(setup?'保护本机工程索引、项目记忆与 AI 聊天记录。密码长度至少 8 位。':'工作站已锁定。验证密码后才能访问你的工程和项目记录。')+'</p><form id="nexus-unlock-form"><label for="auth-pass">访问密码</label><input id="auth-pass" type="password" required minlength="8" autocomplete="'+(setup?'new-password':'current-password')+'" placeholder="请输入访问密码"><div id="auth-confirm-wrap" '+(setup?'':'hidden')+'><label for="auth-confirm">再次确认密码</label><input id="auth-confirm" type="password" '+(setup?'required':'')+' autocomplete="new-password" placeholder="请再次输入密码"></div><p class="lock-error" id="lock-error" role="alert"></p><button type="submit" id="auth-submit" class="primary">'+(setup?'设置密码并进入':'解锁工作站')+'</button></form><p class="lock-foot">本地加盐哈希保存密码 · 连续失败暂时限制尝试 · 不上传 GitHub</p></section></main>';
+ $('root').innerHTML='<main class="lock-screen"><section class="lock-panel"><div class="lock-mark">◆</div><p class="lock-eyebrow">PROJECT NEXUS <strong class="nexus-version">'+esc(actualVersion)+'</strong> · 个人工程工作站</p><h1>'+(setup?'首次使用 · 设置访问密码':'欢迎回来 · 解锁工作站')+'</h1><p class="lock-hint">'+(setup?'保护本机工程索引、项目记忆与 AI 聊天记录。密码长度至少 8 位。':'工作站已锁定。验证密码后才能访问你的工程和项目记录。')+'</p><form id="nexus-unlock-form"><label for="auth-pass">访问密码</label><input id="auth-pass" type="password" required minlength="8" autocomplete="'+(setup?'new-password':'current-password')+'" placeholder="请输入访问密码"><div id="auth-confirm-wrap" '+(setup?'':'hidden')+'><label for="auth-confirm">再次确认密码</label><input id="auth-confirm" type="password" '+(setup?'required':'')+' autocomplete="new-password" placeholder="请再次输入密码"></div><p class="lock-error" id="lock-error" role="alert"></p><button type="submit" id="auth-submit" class="primary">'+(setup?'设置密码并进入':'解锁工作站')+'</button></form><p class="lock-foot">本地加盐哈希保存密码 · 连续失败暂时限制尝试 · 不上传 GitHub</p></section></main>';
  $('nexus-unlock-form').onsubmit=async event=>{
   event.preventDefault();
   const button=$('auth-submit'),err=$('lock-error');button.disabled=true;err.textContent='正在验证…';
@@ -483,7 +484,7 @@ async function initializeWorkspace(){
  if(isFloat)page='ai';render();
 }
 
-async function start(){try{const status=await api.authStatus();if(status.unlocked)await initializeWorkspace();else showLockScreen(status)}catch(e){$('root').textContent='NEXUS 安全初始化失败：'+safeErr(e);console.error(e)}}
+async function start(){try{const info=await api.getAppVersion();actualVersion=info.version;const status=await api.authStatus();if(status.unlocked)await initializeWorkspace();else showLockScreen(status)}catch(e){$('root').textContent='NEXUS 安全初始化失败：'+safeErr(e);console.error(e)}}
 if(typeof api.onLocked==='function')api.onLocked(()=>{
  const root=$('root');if(root)root.textContent='工作站已锁定，正在显示密码验证…';
  api.authStatus().then(status=>showLockScreen(status)).catch(e=>{if(root)root.textContent='锁定失败：'+safeErr(e)});
