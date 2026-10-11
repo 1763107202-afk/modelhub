@@ -371,12 +371,25 @@ ipcMain.handle('report-export',async(e,projectId,format)=>{
  if(outcome.canceled||!outcome.filePath)return {canceled:true};
  if(ext==='md'){fs.writeFileSync(outcome.filePath,text,'utf8');return {path:outcome.filePath}};
  if(ext==='docx'){
-  const {Document,Paragraph,Packer}=require('docx');
-  const doc=new Document({sections:[{children:text.split('\n').map(line=>new Paragraph({text:line.slice(0,1000)}))}]});
+  const {Document,Paragraph,Packer,HeadingLevel}=require('docx');
+  const blocks=text.split('\n').map(raw=>{
+   const line=raw.slice(0,1400);
+   if(line.startsWith('# '))return new Paragraph({text:line.slice(2),heading:HeadingLevel.TITLE,spacing:{before:200,after:220}});
+   if(line.startsWith('## '))return new Paragraph({text:line.slice(3),heading:HeadingLevel.HEADING_1,spacing:{before:300,after:120}});
+   if(line.startsWith('- '))return new Paragraph({text:'• '+line.slice(2),indent:{left:280},spacing:{after:65}});
+   return new Paragraph({text:line,spacing:{after:75}});
+  });
+  const doc=new Document({sections:[{children:blocks}]});
   fs.writeFileSync(outcome.filePath,await Packer.toBuffer(doc));return {path:outcome.filePath};
  }
  const escapeHtml=x=>String(x).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
- const html='<html><head><meta charset="utf-8"><style>body{font-family:"Microsoft YaHei",sans-serif;font-size:11pt;line-height:1.65;margin:35px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><pre>'+escapeHtml(text)+'</pre></body></html>';
+ const body=text.split('\n').map(line=>{
+  if(line.startsWith('# '))return '<h1>'+escapeHtml(line.slice(2))+'</h1>';
+  if(line.startsWith('## '))return '<h2>'+escapeHtml(line.slice(3))+'</h2>';
+  if(line.startsWith('- '))return '<div class="list-item">'+escapeHtml(line.slice(2))+'</div>';
+  return line.trim()?'<p>'+escapeHtml(line)+'</p>':'<div class="space"></div>';
+ }).join('');
+ const html='<html><head><meta charset="utf-8"><style>body{font-family:"Microsoft YaHei",sans-serif;color:#17314a;font-size:10pt;line-height:1.6;margin:28px 34px}h1{color:#086887;font-size:23pt;border-bottom:3px solid #1a84ad;padding-bottom:12px}h2{color:#185675;font-size:14pt;margin:22px 0 10px;break-after:avoid}p{margin:5px 0}.list-item{margin:5px 0 5px 16px;overflow-wrap:anywhere}.space{height:10px}*{overflow-wrap:anywhere}</style></head><body>'+body+'</body></html>';
  const win=new BrowserWindow({show:false,webPreferences:{sandbox:true,nodeIntegration:false,contextIsolation:true}});
  try{await win.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(html));const bytes=await win.webContents.printToPDF({printBackground:true,pageSize:'A4'});fs.writeFileSync(outcome.filePath,bytes)}finally{win.destroy()}
  return {path:outcome.filePath};
