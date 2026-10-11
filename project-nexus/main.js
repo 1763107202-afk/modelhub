@@ -334,6 +334,11 @@ function publicGithubStatus(){
  });
 }
 ipcMain.handle('github-status',()=>publicGithubStatus());
+ipcMain.handle('github-open',async(_e,url)=>{
+ const addr=String(url||'');
+ if(!/^https:\/\/github\.com\/1763107202-afk\/modelhub(?:\/actions(?:\/runs\/\d+|\/workflows\/[a-z0-9_-]+\.yml)?)?\/?$/i.test(addr))throw Error('只允许打开当前工程仓库的 GitHub 页面');
+ await shell.openExternal(addr);return true;
+});
 ipcMain.handle('report-export',async(e,projectId,format)=>{
  const p=ensureProject(db(),projectId),ext=['md','pdf','docx'].includes(format)?format:'md';
  const health=features.health(db(),read('ai-settings.json',{}),scanRoots());
