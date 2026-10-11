@@ -1,0 +1,30 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {createController,createHash,verifyHash}=require('./nexus-auth');
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'nexus-auth-'));
+let now=0;
+try{
+ const a=createController(dir,{clock:()=>now});
+ assert.equal(a.status().needsSetup,true);
+ assert.throws(()=>a.assertUnlocked(),/锁定/);
+ assert.throws(()=>a.setup('12345','12345'),/8/);
+ assert.throws(()=>a.setup('password123','password456'),/不一致/);
+ a.setup('SafePassword123!','SafePassword123!');
+ assert.equal(a.status().unlocked,true);
+ assert.throws(()=>a.setup('Duplicate123','Duplicate123'),/已设置/);
+ a.lock();assert.equal(a.status().unlocked,false);
+ for(let i=0;i<5;i++)assert.throws(()=>a.unlock('invalid password'),/密码不正确/);
+ assert(a.status().remainingSeconds>0);
+ assert.throws(()=>a.unlock('SafePassword123!'),/秒后重试/);
+ now+=31000;
+ a.unlock('SafePassword123!');
+ a.assertUnlocked();
+ const other=createController(dir,{clock:()=>now});
+ assert.equal(other.status().unlocked,false);
+ other.unlock('SafePassword123!');
+ assert.equal(other.status().unlocked,true);
+ const hash=createHash('helloworld123');
+ assert(verifyHash('helloworld123',hash));
+ assert(!verifyHash('wrongpw123',hash));
+ console.log('PASS: 首次设置、锁定、重新解锁、持久验证、失败限流和密码哈希');
+}finally{fs.rmSync(dir,{recursive:true,force:true})}
