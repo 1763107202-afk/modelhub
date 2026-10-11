@@ -1,6 +1,6 @@
 {
   "name": "project-nexus",
-  "version": "2.1.0-beta.1",
+  "version": "2.1.0-beta.2",
   "private": true,
   "description": "PROJECT NEXUS 2.0 中文 AI 工程工作站（预览版）",
   "main": "main.js",
