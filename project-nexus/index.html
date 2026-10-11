@@ -75,4 +75,16 @@ body{background:radial-gradient(circle at 75% -20%,#173e55 0%,transparent 46%),#
 
 /* NEXUS 本地访问密码锁屏 */
 .nexus-locked{background:#080f1a}.lock-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 55% 20%,#173e5a 0,transparent 45%),#080f1a}.lock-panel{width:min(100%,460px);background:#122437;border:1px solid #38637c;border-radius:24px;padding:36px;box-shadow:0 24px 90px #0009}.lock-mark{font-size:43px;font-weight:900;color:#79dafa}.lock-eyebrow{color:#7ebad5;letter-spacing:.08em;font-size:12px}.lock-panel h1{font-size:26px;margin:16px 0}.lock-hint{color:#a3bbcb;font-size:14px;line-height:1.8}.lock-panel label{display:block;color:#c0deec;font-size:13px;margin:18px 0 8px}.lock-panel input{width:100%;padding:13px}.lock-panel button{width:100%;margin-top:13px;padding:14px;font-weight:700}.lock-error{color:#ff9ba8;min-height:23px;line-height:1.5;font-size:13px}.lock-foot{color:#809ab0;font-size:11px;text-align:center;margin:25px 0 0;line-height:1.7}
+/* 工程文件柜：一级文件夹视图 */
+.folder-browser{background:linear-gradient(130deg,#15283b,#102338);border-color:#3e6379}
+.folder-browser>.row-between{flex-wrap:wrap}.folder-browser .toolbar{align-items:center}
+.first-folder-list,.folder-choices{display:grid;gap:10px;max-height:430px;overflow:auto;margin:16px 0}
+.folder-row{display:flex;gap:13px;align-items:center;background:#102536;border:1px solid #355a71;padding:13px;border-radius:13px}
+.folder-row:hover{border-color:#5ca7c9}.folder-row>.folder-check{flex:none;width:18px;height:18px;accent-color:#49c6e7}
+.folder-icon{font-size:26px;flex:none;width:44px;height:44px;display:grid;place-items:center;background:#1e435a;border-radius:10px}
+.folder-details{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}.folder-details strong{overflow-wrap:anywhere}
+.folder-details small{font-size:11px;color:#a1bdcc;overflow-wrap:anywhere}.folder-row button{flex-shrink:0}
+.folder-dialog{max-height:85vh;overflow:auto}.folder-choices button{display:flex;justify-content:space-between;gap:10px;text-align:left}
+.folder-choices button small{color:#91b4ca}.folder-browser #folder-project{width:240px;max-width:100%}
+@media(max-width:850px){.folder-row{flex-wrap:wrap}.folder-row button{margin-left:auto}.folder-browser .toolbar{flex-wrap:wrap}.folder-browser #folder-project{width:100%}}
 </style></head><body><div id="root"></div><script src="./renderer.js"></script></body></html>
