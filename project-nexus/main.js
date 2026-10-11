@@ -1,5 +1,5 @@
 'use strict';
-const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,screen }=require('electron');
+const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,screen,globalShortcut }=require('electron');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),http=require('node:http'),https=require('node:https');
 const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
@@ -14,14 +14,18 @@ function save(s){write('workspace.json',s);return s}
 function project(s,id){return s.projects.find(p=>p.id===id)}
 function mainWindow(){
  mainWin=new BrowserWindow({width:1450,height:940,minWidth:980,minHeight:650,backgroundColor:'#0b1420',title:'PROJECT NEXUS · 个人工作站',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.js'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
- mainWin.loadFile(path.join(__dirname,'index.html'));mainWin.on('closed',()=>mainWin=null);
+ mainWin.loadFile(path.join(__dirname,'index.html'));mainWin.once('ready-to-show',()=>mainWin?.maximize());mainWin.on('closed',()=>mainWin=null);
 }
 function floatWindow(){
  if(chatWin&&!chatWin.isDestroyed()){chatWin.show();chatWin.focus();return true}
  chatWin=new BrowserWindow({width:460,height:700,minWidth:380,minHeight:480,alwaysOnTop:true,autoHideMenuBar:true,title:'NEXUS AI · 悬浮助手',backgroundColor:'#0d1724',webPreferences:{preload:path.join(__dirname,'preload.js'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
  chatWin.loadFile(path.join(__dirname,'index.html'),{query:{float:'1'}});chatWin.on('closed',()=>chatWin=null);return true;
 }
-app.whenReady().then(()=>{mainWindow();app.on('activate',()=>{if(!mainWin)mainWindow()})});
+app.whenReady().then(()=>{mainWindow();
+ globalShortcut.register('Control+Alt+N',()=>{if(!mainWin||mainWin.isDestroyed()){mainWindow();return}if(mainWin.isMinimized())mainWin.restore();mainWin.show();mainWin.focus()});
+ globalShortcut.register('Control+Alt+J',()=>floatWindow());
+ app.on('activate',()=>{if(!mainWin)mainWindow()});
+});app.on('will-quit',()=>globalShortcut.unregisterAll());
 app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit()});
 function local(p){if(typeof p!=='string'||!path.isAbsolute(p))throw Error('路径不合法');return p}
 function ensureProject(s,id){const p=project(s,id);if(!p)throw Error('项目不存在');return p}
@@ -35,7 +39,7 @@ ipcMain.handle('pick-file',(e,id)=>addLink(e,id,'file'));
 ipcMain.handle('remove-link',(_e,id,index)=>{const s=db(),p=ensureProject(s,id);if(index<0||index>=(p.links||[]).length)throw Error('无效映射');p.links.splice(index,1);return save(s)});
 ipcMain.handle('open-path',async(_e,loc)=>{loc=local(loc);if(!fs.existsSync(loc))throw Error('文件不存在：'+loc);const err=await shell.openPath(loc);if(err)throw Error(err);return true});
 ipcMain.handle('reveal-path',(_e,loc)=>{loc=local(loc);if(!fs.existsSync(loc))throw Error('文件不存在：'+loc);shell.showItemInFolder(loc);return true});
-ipcMain.handle('open-project',async(_e,id)=>{const p=ensureProject(db(),id);const item=(p.links||[]).find(x=>fs.existsSync(x.path));if(!item)throw Error('请先通过“添加文件夹”或“添加主工程”关联项目');const err=await shell.openPath(item.path);if(err)throw Error(err);return true});
+ipcMain.handle('open-project',async(_e,id)=>{const p=ensureProject(db(),id);const links=(p.links||[]).filter(x=>fs.existsSync(x.path));const item=links.find(x=>x.type==='file')||links[0];if(!item)throw Error('请先通过“添加文件夹”或“添加主工程”关联项目');const err=await shell.openPath(item.path);if(err)throw Error(err);return true});
 ipcMain.handle('create-work',(_e,title)=>{title=String(title||'').trim().slice(0,120);if(!title)throw Error('请输入工作内容');const s=db();s.works.unshift({id:uid(),title,done:false,date:new Date().toISOString()});return save(s)});
 ipcMain.handle('toggle-work',(_e,id)=>{const s=db(),w=s.works.find(x=>x.id===id);if(!w)throw Error('没有这项工作');w.done=!w.done;return save(s)});
 ipcMain.handle('add-root',async e=>{const x=await dialog.showOpenDialog(BrowserWindow.fromWebContents(e.sender),{title:'授权扫描的文件夹',properties:['openDirectory']});const s=db();if(!x.canceled)for(const v of x.filePaths)if(!s.roots.includes(v))s.roots.push(v);return save(s)});
