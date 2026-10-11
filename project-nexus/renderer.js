@@ -14,7 +14,7 @@ const fileType=link=>{
  return {icon:item[0],type:item[1]};
 };
 const btn=(name,act,more='')=>'<button type="button" data-act="'+act+'" '+more+'>'+name+'</button>';
-let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',profiles={},settings={},uploadImage='',chatMessages=[],busy=false,query='',appKind='常用',activeError='',chatDraft='',historyAllowed=false,historyItems=[],notesText='',radarData={files:[],warnings:[]},radarQuery='',modeData=[],modePreview=null,modeChoice='mechanical',toolTab='modes',projectTab='timeline',projectEvents=[],projectGraph=null,projectSnapshots=[],versionGroups=[],githubRuns=[],healthData=null,githubError='',logReport=null;
+let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',profiles={},settings={},uploadImage='',chatMessages=[],busy=false,query='',appKind='常用',activeError='',chatDraft='',historyAllowed=false,historyItems=[],notesText='',radarData={files:[],warnings:[]},radarQuery='',modeData=[],modePreview=null,modeChoice='mechanical',toolTab='modes',projectTab='timeline',projectEvents=[],projectGraph=null,projectSnapshots=[],versionGroups=[],githubRuns=[],healthData=null,githubError='',logReport=null,folderIndex={folders:[],warnings:[]},folderSuggestions=[];
 function safeErr(e){const x=String(e?.message||e||'未知错误');return x.replace(/^Error invoking remote method '[^']+': Error:\s*/,'').slice(0,1100)}
 function notify(message,kind='ok'){const t=$('toast');if(!t)return;t.textContent=message;t.style.color=kind==='error'?'#ffacb5':'#95ecd2';}
 function frame(){
@@ -46,7 +46,30 @@ function progressReview(p){
  return '<section class="ai-progress-review"><div class="row-between"><div><h3>✧ AI 进度评估</h3><p class="muted">分析本项目已保存的聊天与长期记忆，仅作为待审核建议。</p></div>'+btn('根据聊天评估进度','analyze-progress','data-id="'+esc(p.id)+'" class="primary"')+'</div><label class="inline-check"><input type="checkbox" id="progress-include-history"> 授权本次分析使用已关联的 ChatGPT 历史摘录（将向所选模型传输相关文字）</label>'+(report?'<div class="ai-review-summary"><span class="pill">'+esc(report.stage||'待核实')+'</span><p>'+esc(report.summary||'暂无概述')+'</p><p class="muted">'+esc(report.sourceWarning||'结果须人工确认')+'</p></div><div class="review-grid">'+(report.items||[]).map((item,i)=>'<article class="review-item"><div class="row-between"><strong>'+esc(item.title)+'</strong><span class="pill">'+esc(item.status)+'</span></div><p class="muted">证据：'+esc(item.evidence)+'</p><p class="muted">AI 评估把握度 '+Number(item.confidence||0)+'% · 不代表实际完成率</p>'+(item.reviewed?'<span class="pill">已审核</span>':'<div class="toolbar">'+btn('加入待办','accept-progress','data-id="'+esc(p.id)+'" data-index="'+i+'"')+(item.status==='已完成待确认'?btn('确认已完成','verify-progress','data-id="'+esc(p.id)+'" data-index="'+i+'" class="primary"'):'')+'</div>')+'</article>').join('')+'</div>':'<div class="empty">尚无 AI 进度评估。导入或关联项目聊天后，点击“根据聊天评估进度”。</div>')+'</section>';
 }
 function projects(){return breadcrumb('工程项目','每个项目有独立的文件抽屉、主工程入口和验收进度。')+'<div class="toolbar">'+btn('＋ 新建项目','create-project','class="primary"')+'</div><div class="cards">'+(db.projects.map(p=>projectCard(p)).join('')||'<div class="empty card">暂无工程项目。你可以自由创建，不限制项目数量。</div>')+'</div>'+(pid?projectDetail():'')}
-function files(){return breadcrumb('智能文件柜','优先人工映射；支持授权目录扫描。所有工程原文件保持原位。')+'<div class="panel"><h3>已授权扫描目录</h3><div class="toolbar">'+btn('＋ 授权文件夹','add-root')+'</div><div class="muted">'+(db.roots||[]).map(x=>'<div class="file-path">📁 '+esc(x)+'</div>').join('')+'</div><p class="muted">当前版本只记录授权目录，不自动移走文件。AI 归属建议需经过核对。</p></div>'+db.projects.map(p=>'<div class="panel"><div class="row-between"><h3>📂 '+esc(p.name)+'</h3><div class="toolbar">'+btn('添加目录','pick-folder','data-id="'+esc(p.id)+'"')+btn('添加文件','pick-file','data-id="'+esc(p.id)+'"')+'</div></div>'+((p.links||[]).map((l,i)=>'<div class="list-item"><span>'+esc(l.path)+'</span><div class="actions">'+btn('打开','open-path','data-path="'+esc(l.path)+'"')+btn('定位','reveal','data-path="'+esc(l.path)+'"')+btn('取消映射','remove-link','data-id="'+esc(p.id)+'" data-index="'+i+'"')+'</div></div>').join('')||'<p class="muted">暂无关联文件</p>')+'</div>').join('')}
+
+function folderBrowser(projectId=''){
+ const chosen=projectId||pid||'';
+ const list=(folderIndex.folders||[]).map(x=>{
+  const advice=folderSuggestions.find(v=>v.path===x.path)||x;
+  return '<div class="folder-row"><input class="folder-check" type="checkbox" data-folder="'+esc(x.path)+'"><div class="folder-icon">📁</div><div class="folder-details"><strong>'+esc(x.name)+'</strong><small>'+esc(x.root)+'</small><small>归属建议：'+esc(advice.projectName||'未确定')+' · '+(advice.confidence||0)+'%'+(advice.reason?' · '+esc(advice.reason):'')+'</small></div>'+btn('关联此文件夹','folder-link','data-path="'+esc(x.path)+'"')+'</div>';
+ }).join('');
+ return '<div class="panel folder-browser"><div class="row-between"><div><h3>授权目录下的一级工程文件夹</h3><p class="muted">只显示第一层工程文件夹，不展示里面的模型零件、缓存和子文件夹。</p></div>'+btn('重新扫描一级目录','folders-scan','class="primary"')+'</div><div class="toolbar">'+btn('授权总工程目录','add-root')+'<select id="folder-project"><option value="">请选择所属项目</option>'+projectOptions(chosen)+'</select>'+btn('AI 判断所选文件夹','folders-ai')+'</div><div class="first-folder-list">'+(list||'<div class="empty">还没有一级工程文件夹，请先授权保存工程的总目录。</div>')+'</div><p class="muted">AI 仅在你点击分析后接收所选目录的名称与路径；建议须人工确认。</p></div>';
+}
+async function folderPicker(projectId){
+ folderIndex=await api.listFolders();
+ const overlay=document.createElement('div');
+ overlay.className='modal-overlay';overlay.id='folder-picker-overlay';
+ overlay.innerHTML='<div class="modal folder-dialog"><h2>选择一级工程文件夹</h2><p class="muted">仅显示授权根目录的直接子文件夹，不展开内部文件。</p><div class="folder-choices">'+folderIndex.folders.map(x=>'<button data-folder-path="'+esc(x.path)+'">📁 '+esc(x.name)+'</button>').join('')+'</div><div class="toolbar"><button id="folder-allow">授权总目录</button><button id="folder-dismiss">取消</button></div></div>';
+ document.body.appendChild(overlay);
+ overlay.querySelector('#folder-dismiss').onclick=()=>overlay.remove();
+ overlay.querySelector('#folder-allow').onclick=async()=>{db=await api.addRoot();overlay.remove();await folderPicker(projectId)};
+ overlay.querySelector('.folder-choices').onclick=e=>{
+  const item=e.target.closest('[data-folder-path]');if(!item)return;
+  execute(async()=>{db=await api.linkFolder(projectId,item.dataset.folderPath);overlay.remove();render();notify('已关联一级工程文件夹')});
+ };
+}
+
+function files(){return breadcrumb('智能文件柜','仅展示授权目录下的一级工程文件夹，工程内部文件默认隐藏。')+folderBrowser()+db.projects.map(p=>'<div class="panel"><div class="row-between"><h3>'+esc(p.name)+'</h3>'+btn('关联一级工程文件夹','open-folder-picker','data-id="'+esc(p.id)+'"')+'</div>'+(p.links||[]).slice(0,12).map(l=>'<div class="list-item"><span>'+esc(fileName(l.path))+'</span>'+btn('打开','open-path','data-path="'+esc(l.path)+'"')+'</div>').join('')+'</div>').join('')}
 function work(){return breadcrumb('工作任务','既能管理工程，也能记录课程、学习、科研和其他日常工作。')+'<div class="panel"><h3>添加新的工作</h3><div class="toolbar"><input id="work-title" placeholder="输入要完成的工作">'+btn('＋ 添加工作','create-work','class="primary"')+'</div></div><div class="panel"><h3>工作清单</h3>'+((db.works||[]).map(w=>'<label class="list-item task"><span><input type="checkbox" data-act="toggle-work" data-id="'+esc(w.id)+'" '+(w.done?'checked':'')+'> '+esc(w.title)+'</span><span class="pill">'+(w.done?'已完成':'进行中')+'</span></label>').join('')||'<div class="empty">当前没有工作任务。</div>')+'</div>'}
 function apps(){
  const kinds=['常用','工程设计','学习办公','开发工具','其他','全部'];
@@ -217,6 +240,19 @@ document.addEventListener('click',e=>{
     const started=await api.startMode(projectId,modePreview.id,appId,filePath);
     notify('已启动：'+started.opened.join('、'));return;
    }
+   case 'folders-scan':folderIndex=await api.scanFolders();folderSuggestions=[];render();notify('发现 '+folderIndex.folders.length+' 个一级工程文件夹');return;
+   case 'open-folder-picker':await folderPicker(id);return;
+   case 'folder-link':{
+    const target=$('folder-project')?.value||pid;
+    if(!target)throw Error('请先选择所属项目');
+    if(!confirm('将这一级工程文件夹关联到项目？不会修改目录里的任何内容。'))return;
+    db=await api.linkFolder(target,el.dataset.path);render();notify('已关联一级工程文件夹');return;
+   }
+   case 'folders-ai':{
+    const paths=[...document.querySelectorAll('[data-folder]:checked')].map(x=>x.dataset.folder);
+    if(!paths.length)throw Error('请先勾选需要 AI 判断的一级工程文件夹');
+    folderSuggestions=(await api.aiSuggestFolders(paths)).items;render();notify('AI 建议已经生成，请逐项确认');return;
+   }
    case 'radar-scan':radarData=await api.radarScan();render();notify('扫描完成，发现 '+radarData.files.length+' 项工程文件');return;
    case 'radar-link':{
     const projectId=$('radar-project')?.value||'';
@@ -289,14 +325,14 @@ document.addEventListener('click',e=>{
    case 'accept-progress':db=await api.acceptProgress(id,Number(el.dataset.index),false);render();notify('任务已加入待办，尚未验收');return;
    case 'verify-progress':if(!confirm('确认这项工作在工程中确已完成？确认后将计入项目进度。'))return;db=await api.acceptProgress(id,Number(el.dataset.index),true);render();notify('已人工确认完成并计入进度');return;
    case 'open-project':await api.openProject(id);return;
-   case 'pick-folder':db=await api.pickFolder(id);render();return;
+   case 'pick-folder':await folderPicker(id);return;
    case 'pick-file':db=await api.pickFile(id);render();return;
    case 'remove-link':if(!confirm('确定只取消这个映射吗？源文件不会被删除。'))return;db=await api.removeLink(id,Number(el.dataset.index));render();return;
    case 'open-path':await api.openPath(el.dataset.path);return;
    case 'reveal':await api.revealPath(el.dataset.path);return;
    case 'add-task':{const title=$('new-task')?.value;if(!title?.trim())throw Error('请输入验收任务名称');db=await api.addTask(id,title);render();return}
    case 'create-work':{const title=$('work-title')?.value;if(!title?.trim())throw Error('请输入工作名称');db=await api.createWork(title);render();return}
-   case 'add-root':db=await api.addRoot();render();return;
+   case 'add-root':db=await api.addRoot();folderIndex=await api.scanFolders();render();return;
    case 'scan-apps':db=await api.scanApps();appKind='工程设计';render();notify('扫描完成：请按分类查看与收藏');return;
    case 'app-kind':appKind=el.dataset.kind;render();return;
    case 'pin-app':db=await api.pinApp(id);render();return;
