@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "node --check main.js && node --check preload.js && node --check renderer.js && node --check nexus-memory.js && node --check nexus-features.js && node test-memory.js && node test-features.js",
+    "test": "node --check main.js && node --check preload.js && node --check renderer.js && node --check nexus-memory.js && node --check nexus-features.js && node test-memory.js && node test-features.js && node --check nexus-log-diagnostics.js && node test-logs.js",
     "build": "electron-builder --win nsis portable --x64"
   },
   "devDependencies": {
@@ -27,7 +27,9 @@
       "nexus-memory.js",
       "!test-memory.js",
       "nexus-features.js",
-      "!test-features.js"
+      "!test-features.js",
+      "nexus-log-diagnostics.js",
+      "!test-logs.js"
     ],
     "win": {
       "target": [
