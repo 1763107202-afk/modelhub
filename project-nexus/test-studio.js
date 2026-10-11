@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict');
+const s=require('./nexus-studio');
+assert.equal(s.apiUrl('https://api.openai.com/v1/images/generations'),'https://api.openai.com/v1/images/generations');
+assert.throws(()=>s.apiUrl('http://example.com/images'),/HTTPS/);
+assert.throws(()=>s.apiUrl('https://user:pass@example.com/images'),/账号/);
+assert.equal(s.validateImageRequest({prompt:'机械工程效果图',size:'1024x1024'}).size,'1024x1024');
+assert.throws(()=>s.validateImageRequest({prompt:' '}),/描述/);
+assert.throws(()=>s.validateImageRequest({prompt:'测试',size:'1x1'}),/尺寸/);
+assert.equal(s.unwrapCode('\x60\x60\x60python\nprint(123)\n\x60\x60\x60'),'print(123)');
+assert.equal(s.safeFilename('测试:文件', 'python'),'测试_文件.py');
+assert.throws(()=>s.codeLanguage('exe'),/不支持/);
+const png=Buffer.from([137,80,78,71,13,10,26,10,0,0]);
+const img=s.imageFromResponse({data:[{b64_json:png.toString('base64')}]});
+assert.equal(img.extension,'png');assert(img.dataUrl.startsWith('data:image/png;base64,'));
+assert.throws(()=>s.imageFromResponse({data:[{url:'https://example.org/image'}]}),/base64/);
+console.log('PASS: 图像配置校验、PNG 响应、生图大小限制、代码围栏和安全文件名');
