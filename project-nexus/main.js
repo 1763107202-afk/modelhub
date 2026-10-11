@@ -4,6 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
 const features=require('./nexus-features');
+const diagnostics=require('./nexus-log-diagnostics');
 let mainWin=null, chatWin=null;
 const home=()=>app.getPath('userData'),f=n=>path.join(home(),n);
 function read(n,defaultValue){
@@ -345,6 +346,14 @@ function publicGithubStatus(){
  });req.on('error',reject);req.on('timeout',()=>req.destroy(Error('GitHub 请求超时')));
  });
 }
+
+ipcMain.handle('logs-pick',async(e)=>{
+ const dialogResult=await dialog.showOpenDialog(BrowserWindow.fromWebContents(e.sender),{
+  title:'选择 ANSYS / Fluent / Unity 运行日志',properties:['openFile'],
+  filters:[{name:'工程日志',extensions:['log','txt','out','err']}]});
+ if(dialogResult.canceled)return {canceled:true};
+ return diagnostics.analyzeFile(dialogResult.filePaths[0]);
+});
 ipcMain.handle('github-status',()=>publicGithubStatus());
 ipcMain.handle('github-open',async(_e,url)=>{
  const addr=String(url||'');
