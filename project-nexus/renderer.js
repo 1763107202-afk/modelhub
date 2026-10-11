@@ -310,7 +310,7 @@ document.addEventListener('click',e=>{
    case 'studio-code-copy':{
     studioCode=$('studio-code-editor')?.value||studioCode;
     if(!studioCode)throw Error('没有可复制的代码');
-    await navigator.clipboard.writeText(studioCode);notify('代码已复制');return;
+    await api.studioCopyCode(studioCode);notify('代码已复制到系统剪贴板');return;
    }
    case 'studio-code-save':{
     studioCode=$('studio-code-editor')?.value||studioCode;
