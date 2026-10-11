@@ -1,5 +1,5 @@
 'use strict';
-const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,screen,globalShortcut }=require('electron');
+const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,screen,globalShortcut,clipboard }=require('electron');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),http=require('node:http'),https=require('node:https');
 const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
@@ -237,6 +237,7 @@ ipcMain.handle('studio-code-generate',async(_e,input)=>{
   {role:'user',content:task}],key);
  return {language,code:studio.unwrapCode(reply),model:cfg.model,projectId};
 });
+ipcMain.handle('studio-code-copy',(_e,source)=>{const code=studio.unwrapCode(source);clipboard.writeText(code);return {copied:true,length:code.length}});
 ipcMain.handle('studio-code-save',async(e,source,language)=>{
  studio.codeLanguage(language);
  const code=studio.unwrapCode(source);
@@ -245,7 +246,7 @@ ipcMain.handle('studio-code-save',async(e,source,language)=>{
   defaultPath:studio.safeFilename('nexus_generated',language),filters:[{name:language+' 源代码',extensions:[ext.slice(1)]}]});
  if(selected.canceled||!selected.filePath)return {canceled:true};
  if(fs.existsSync(selected.filePath))throw Error('文件已存在。为防止覆盖你的源工程，请使用新的文件名');
- fs.writeFileSync(selected.filePath,code,'utf8');
+ fs.writeFileSync(selected.filePath,code,{encoding:'utf8',flag:'wx'});
  return {canceled:false,path:selected.filePath};
 });
 
