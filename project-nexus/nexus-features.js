@@ -37,6 +37,13 @@ function health(state,settings,roots){const checks=[],add=(title,ok,detail)=>che
  const bad=(roots||[]).filter(x=>!fs.existsSync(x));add('扫描目录',bad.length===0,bad.length+' 个不可用目录');
  add('AI 模型配置',!!settings?.endpoint&&!!settings?.model,settings?.model||'尚未配置（离线功能仍可使用）');
  const free=Math.round(os.freemem()/107374182.4)/10;add('系统可用内存',free>=2,'约 '+free+' GB');
+ try{
+  const root=process.platform==='win32'?(process.env.SystemDrive||'C:')+'\\':'/';
+  if(typeof fs.statfsSync==='function'){
+   const disk=fs.statfsSync(root),freeGB=Math.round(disk.bavail*disk.bsize/1073741824*10)/10;
+   add('系统盘剩余空间',freeGB>=10,'系统盘可用约 '+freeGB+' GB；低于 10 GB 时建议检查 Unity、ANSYS 缓存');
+  }
+ }catch{add('系统盘空间',true,'此系统未提供可读取的磁盘信息（已跳过）')}
  return {checks,passed:checks.filter(x=>x.ok).length,total:checks.length,time:new Date().toISOString()};}
 function report(project,events,check){let output='# NEXUS 项目阶段报告\n\n项目：'+project.name+'\n生成日期：'+new Date().toLocaleString('zh-CN')+'\n\n## 验收任务\n';
  for(const task of project.tasks||[])output+='- ['+(task.verified?'x':' ')+'] '+task.title.replace(/[\r\n]/g,' ')+'\n';
