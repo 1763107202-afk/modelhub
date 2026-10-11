@@ -14,7 +14,7 @@ const fileType=link=>{
  return {icon:item[0],type:item[1]};
 };
 const btn=(name,act,more='')=>'<button type="button" data-act="'+act+'" '+more+'>'+name+'</button>';
-let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',profiles={},settings={},uploadImage='',chatMessages=[],busy=false,query='',appKind='常用',activeError='',chatDraft='',historyAllowed=false,historyItems=[],notesText='',radarData={files:[],warnings:[]},radarQuery='',modeData=[],modePreview=null,modeChoice='mechanical',toolTab='modes',projectTab='timeline',projectEvents=[],projectGraph=null,projectSnapshots=[],versionGroups=[],githubRuns=[],healthData=null,githubError='';
+let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',profiles={},settings={},uploadImage='',chatMessages=[],busy=false,query='',appKind='常用',activeError='',chatDraft='',historyAllowed=false,historyItems=[],notesText='',radarData={files:[],warnings:[]},radarQuery='',modeData=[],modePreview=null,modeChoice='mechanical',toolTab='modes',projectTab='timeline',projectEvents=[],projectGraph=null,projectSnapshots=[],versionGroups=[],githubRuns=[],healthData=null,githubError='',logReport=null;
 function safeErr(e){const x=String(e?.message||e||'未知错误');return x.replace(/^Error invoking remote method '[^']+': Error:\s*/,'').slice(0,1100)}
 function notify(message,kind='ok'){const t=$('toast');if(!t)return;t.textContent=message;t.style.color=kind==='error'?'#ffacb5':'#95ecd2';}
 function frame(){
@@ -79,7 +79,8 @@ function healthPanel(){
  return '<div class="panel"><div class="row-between"><div><h3>🛡 工作站功能自检</h3><p class="muted">检查工程路径、数据库结构、AI 配置和内存。不会自动清理系统盘。</p></div>'+btn('运行自检','health-refresh','class="primary"')+'</div>'+(healthData?'<div class="health-score">'+healthData.passed+' / '+healthData.total+' 项通过</div><p class="muted">检测时间：'+esc(healthData.time?.replace('T',' ').slice(0,19))+'</p><div class="health-check-list">'+healthData.checks.map(c=>'<div class="health-item"><span class="'+(c.ok?'healthy':'attention')+'">'+(c.ok?'✓':'!')+'</span><div><strong>'+esc(c.title)+'</strong><small>'+esc(c.detail)+'</small></div></div>').join('')+'</div>':'<div class="empty">点击“运行自检”查看状态。配置未完成将显示提醒，不代表程序损坏。</div>')+'</div>';
 }
 function githubPanel(){
- return '<div class="panel"><div class="row-between"><div><h3>⛭ GitHub Windows 构建状态</h3><p class="muted">只读取你目前的公开 modelhub 仓库中与 NEXUS 相关的工作流，不需要填写 GitHub Token。</p></div>'+btn('刷新构建状态','github-refresh','class="primary"')+'</div><div class="toolbar">'+btn('打开 GitHub 项目','github-open','data-url="https://github.com/1763107202-afk/modelhub"')+'</div>'+ (githubError?'<p class="warning-text">'+esc(githubError)+'</p>':'')+(githubRuns.length?'<div class="build-list">'+githubRuns.map(run=>'<div class="build-item"><div><strong>'+esc(run.name)+'</strong><small>'+esc(run.createdAt?.slice(0,19).replace('T',' '))+' · '+esc(run.sha?.slice(0,8))+'</small></div><div class="actions"><span class="pill">'+esc(run.conclusion||run.status)+'</span>'+btn('查看记录','github-open','data-url="'+esc(run.htmlUrl)+'"')+'</div></div>').join('')+'</div>':'<div class="empty">尚未读取构建数据，点击刷新。若网络不可访问，会显示具体错误。</div>')+'</div>';
+ return '<div class="panel"><div class="row-between"><div><h3>⛭ GitHub Windows 构建状态</h3><p class="muted">读取 modelhub 仓库的 NEXUS 自动构建结果，不需要 GitHub Token。</p></div>'+btn('刷新构建状态','github-refresh','class="primary"')+'</div><div class="toolbar">'+btn('打开 GitHub 项目','github-open','data-url="https://github.com/1763107202-afk/modelhub"')+'</div>'+ (githubError?'<p class="warning-text">'+esc(githubError)+'</p>':'')+(githubRuns.length?'<div class="build-list">'+githubRuns.map(run=>'<div class="build-item"><div><strong>'+esc(run.name)+'</strong><small>'+esc(run.createdAt?.slice(0,19).replace('T',' '))+' · '+esc(run.sha?.slice(0,8))+'</small></div><div class="actions"><span class="pill">'+esc(run.conclusion||run.status)+'</span>'+btn('查看记录','github-open','data-url="'+esc(run.htmlUrl)+'"')+'</div></div>').join('')+'</div>':'<div class="empty">尚未读取构建数据，点击刷新。若网络不可访问，会显示具体错误。</div>')+'</div>'+
+ '<div class="panel"><div class="row-between"><div><h3>🔧 本地仿真日志诊断</h3><p class="muted">选择 ANSYS、Fluent 或 Unity 的日志文件，离线查找关键错误。不会自动上传日志到任何 AI 平台。</p></div>'+btn('选择日志并分析','logs-pick','class="primary"')+'</div>'+(logReport?'<div class="ai-review-summary"><strong>'+esc(logReport.title)+'</strong><p>'+esc(logReport.note)+'</p><p class="muted">共 '+logReport.lines+' 行，发现 '+logReport.findings.length+' 个可能需要检查的线索。</p></div><div class="review-grid">'+logReport.findings.map(f=>'<div class="review-item"><div class="row-between"><strong>'+esc(f.tool)+' · 第 '+f.line+' 行</strong><span class="pill">'+esc(f.severity)+'</span></div><p>'+esc(f.excerpt)+'</p><p class="muted">'+esc(f.advice)+'</p></div>').join('')+'</div><div class="toolbar">'+btn('复制诊断并切换 AI','logs-ask-ai')+'</div>':'<div class="empty">可选择 .log、.txt、.out、.err 文件。扫描后展示线索及建议，仍需复核工程结果。</div>')+'</div>';
 }
 function reportPanel(){
  return '<div class="panel"><h3>📑 AI 工程档案与阶段报告</h3><p class="muted">根据当前本地项目任务、时间线、已关联文件和 AI 进度建议生成报告。请自行核对真实性。</p><div class="columns"><div class="field"><label>选择项目</label><select id="report-project">'+projectOptions(pid)+'</select></div><div class="field"><label>报告格式</label><select id="report-format"><option value="docx">Word (.docx)</option><option value="pdf">PDF (.pdf)</option><option value="md">Markdown (.md)</option></select></div></div><div class="toolbar">'+btn('导出项目阶段报告','report-export','class="primary"')+'</div><p class="muted">报告由本机生成，不会把项目文件发给云端。已验收和 AI 建议会分别标识。</p></div>';
@@ -189,6 +190,14 @@ document.addEventListener('click',e=>{
    }
    case 'versions-refresh':versionGroups=await api.getVersions('');render();notify('已完成版本文件识别');return;
    case 'health-refresh':healthData=await api.healthCheck();render();notify('自检完成：'+healthData.passed+'/'+healthData.total+' 项通过');return;
+
+   case 'logs-pick':{const result=await api.diagnoseLog();if(result.canceled)return;logReport=result;render();notify('日志分析已完成，发现 '+logReport.findings.length+' 个可能的问题');return}
+   case 'logs-ask-ai':{
+    if(!logReport)throw Error('请先选择日志文件');
+    chatDraft='请根据以下来自本地日志的线索分析可能原因，并说明进一步检查步骤。不要把关键词匹配当作已经确定的故障。\n'+
+    logReport.findings.slice(0,12).map(x=>x.tool+' 第'+x.line+'行：'+x.excerpt+'\n建议：'+x.advice).join('\n\n');
+    setPage('ai');notify('诊断内容已放入聊天输入框，确认后再发送给模型');return;
+   }
    case 'github-refresh':{
     githubError='';
     try{githubRuns=await api.getGitHubStatus();}catch(e){githubError=safeErr(e);githubRuns=[]}
