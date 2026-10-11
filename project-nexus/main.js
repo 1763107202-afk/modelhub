@@ -59,7 +59,7 @@ ipcMain.handle=(channel,handler)=>{
 ipcMain.handle('auth-status',()=>lockController.status());
 ipcMain.handle('auth-setup',(_event,password,confirm)=>lockController.setup(password,confirm));
 ipcMain.handle('auth-unlock',(_event,password)=>lockController.unlock(password));
-ipcMain.handle('auth-lock',()=>lockController.lock());
+ipcMain.handle('auth-lock',()=>{const status=lockController.lock();for(const window of BrowserWindow.getAllWindows())if(!window.isDestroyed())window.webContents.send('nexus-locked');return status});
 
 ipcMain.handle('load',()=>db());
 ipcMain.handle('create-project',(_e,name,kind='自定义')=>{name=String(name||'').trim().slice(0,100);if(!name)throw Error('请填写项目名称');const s=db();s.projects.push({id:uid(),name,kind:String(kind).slice(0,40),links:[],tasks:[],createdAt:new Date().toISOString()});return save(s)});
