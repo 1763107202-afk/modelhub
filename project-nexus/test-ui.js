@@ -53,6 +53,10 @@ const wait=()=>new Promise(r=>setTimeout(r,45));
  appSearch.dispatchEvent(new window.CompositionEvent('compositionend',{bubbles:true}));
  assert.equal(doc.querySelector('#app-search'),originalInput,'中文候选词提交后不应重建搜索框');
  assert(doc.querySelector('.app-card'),'提交搜索后应显示匹配的应用');
+ appSearch.value='有限元';
+ appSearch.dispatchEvent(new window.Event('input',{bubbles:true}));
+ assert(doc.querySelector('.app-card'),'中文别名“有限元”应匹配 ANSYS');
+
 
  byAct('command-open').click();await wait();assert(doc.querySelector('#nexus-commands'),'Ctrl+K command palette missing');
  const command=doc.querySelector('#command-search');command.value='测试桥梁';command.dispatchEvent(new window.Event('input',{bubbles:true}));
