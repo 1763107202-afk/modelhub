@@ -174,6 +174,64 @@ ipcMain.handle('chat',async(_e,payload)=>{
  write('project-chat.json',next);
  return {reply,projectId,saved:true,usedHistory:m.historyHits};
 });
+
+function parseProgressProposal(reply) {
+ const raw=String(reply||'').trim(),start=raw.indexOf('{'),end=raw.lastIndexOf('}');
+ if(start===-1||end<=start)throw Error('模型没有返回有效的进度分析 JSON，请重试或更换模型');
+ let result;
+ try{result=JSON.parse(raw.slice(start,end+1))}catch{throw Error('模型进度分析不是可解析的 JSON，请重试')}
+ const statuses=['已完成待确认','进行中','尚未开始','证据不足'];
+ return {stage:String(result.stage||'阶段未确定').slice(0,100),summary:String(result.summary||'').slice(0,900),
+  sourceWarning:'AI 仅根据已授权聊天材料推断，未经人工验收不计入完成进度。',
+  items:(Array.isArray(result.items)?result.items:[]).slice(0,18).map(v=>({
+   title:String(v.title||'').trim().slice(0,120),status:statuses.includes(v.status)?v.status:'证据不足',
+   evidence:String(v.evidence||'未引用明确证据').slice(0,550),confidence:Math.max(0,Math.min(100,Number(v.confidence)||0)),
+   reviewed:false
+  })).filter(v=>v.title)};
+}
+ipcMain.handle('progress-analyze',async(_e,projectId,options={})=>{
+ const p=ensureProject(db(),projectId),cfg=read('ai-settings.json',{});
+ if(!cfg.endpoint||!cfg.model)throw Error('请先配置 AI 服务商及模型 ID');
+ migrateLegacyKey(cfg);
+ const filename=keyPath(cfg.provider,cfg.endpoint),key=fs.existsSync(filename)?safeStorage.decryptString(fs.readFileSync(filename)):'';
+ if(!key&&cfg.provider!=='Ollama 本地')throw Error('当前 AI 平台尚未设置自己的 API Key');
+ const turnText=memory.getTurns(chatStore(),projectId).slice(-30)
+  .map(t=>((t.role==='user')?'用户':'AI')+'：'+String(t.text||'').slice(0,850)).join('\n').slice(-14500);
+ const prior=options.includeHistory===true?historyRows().filter(h=>h.projectId===projectId).slice(0,15):[];
+ const priorText=prior.map(h=>'【导入的 ChatGPT 对话：'+h.title+'】\n'+String(h.snippet||'').slice(0,1000)).join('\n\n').slice(0,16000);
+ const notes=String(memoryNotes()[memory.projectBucket(projectId)]||'').slice(0,4000);
+ if(!turnText&&!priorText&&!notes)throw Error('这个项目暂无聊天或记忆资料，无法据此判断进度。请先导入记录并关联项目。');
+ const system='你是机械工程项目进度审查员，只使用输入材料提出进度建议，必须用简体中文。不得把“计划/准备/询问/讨论”算作完成。' +
+ '“已完成待确认”仅适用于资料明确陈述已实际完成，但仍须用户确认。' +
+ '严格返回 JSON，格式为 {"stage":"阶段","summary":"总体判断","items":[{"title":"可验收任务","status":"已完成待确认|进行中|尚未开始|证据不足","evidence":"在记录中找到的对应简短原文或事实依据","confidence":0-100}]}；不要 Markdown。' +
+ '最多12项，信息不足须标为证据不足，不能虚构日期、数值、文件验证或已执行的工作。';
+ const record='项目：'+p.name+'\n已验收任务：'+(p.tasks||[]).filter(t=>t.verified).map(t=>t.title).join('、')+
+ '\n【已保存项目长期笔记】\n'+notes+'\n【NEXUS 本项目聊天】\n'+turnText+
+ '\n【经用户授权的 ChatGPT 历史摘录】\n'+priorText;
+ const reply=await queryAI(cfg.endpoint,cfg.model,[{role:'system',content:system},{role:'user',content:record}],key);
+ const proposal=parseProgressProposal(reply);
+ proposal.createdAt=new Date().toISOString();
+ proposal.sources={nexus:turnText.length>0,historyCount:prior.length,notes:!!notes};
+ const latest=db(),target=ensureProject(latest,projectId);
+ target.aiReview=proposal;save(latest);
+ return proposal;
+});
+ipcMain.handle('progress-accept',(_e,projectId,index,verified)=>{
+ const state=db(),p=ensureProject(state,projectId),review=p.aiReview;
+ if(!review||!Array.isArray(review.items)||!Number.isInteger(index)||index<0||index>=review.items.length)throw Error('进度建议已失效，请重新分析');
+ const suggestion=review.items[index];
+ if(suggestion.reviewed)throw Error('该条建议已处理');
+ const title=suggestion.title.trim().slice(0,120);
+ if(!title)throw Error('建议任务无效');
+ if(verified&&suggestion.status!=='已完成待确认')throw Error('当前建议不属于已完成状态，只能作为待办添加');
+ p.tasks??=[];
+ let task=p.tasks.find(t=>String(t.title||'').trim().toLowerCase()===title.toLowerCase());
+ if(!task){task={id:uid(),title,verified:false,weight:1,origin:'ai-suggestion'};p.tasks.push(task)}
+ if(verified)task.verified=true;
+ suggestion.reviewed=true;suggestion.acceptedAt=new Date().toISOString();
+ save(state);return state;
+});
+
 ipcMain.handle('float-open',()=>floatWindow());
 ipcMain.handle('fullscreen-toggle',e=>{const w=BrowserWindow.fromWebContents(e.sender);w.setFullScreen(!w.isFullScreen());return w.isFullScreen()});
 ipcMain.handle('screen-capture',async()=>{const size=screen.getPrimaryDisplay().size;const sources=await desktopCapturer.getSources({types:['screen'],thumbnailSize:{width:Math.min(size.width,1920),height:Math.min(size.height,1080)}});if(!sources.length||sources[0].thumbnail.isEmpty())throw Error('截图不可用。请尝试 Windows 区域截图或检查系统屏幕捕获权限');return sources[0].thumbnail.toDataURL()});
