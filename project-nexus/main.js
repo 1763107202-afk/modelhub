@@ -5,6 +5,7 @@ const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
 const auth=require('./nexus-auth');
 const features=require('./nexus-features');
+const folders=require('./nexus-folders');
 const diagnostics=require('./nexus-log-diagnostics');
 let mainWin=null, chatWin=null;
 let lockController=null;
@@ -277,6 +278,41 @@ function scanRoots(){
  return [...new Set([...(state.roots||[]),...state.projects.flatMap(p=>(p.links||[]).filter(l=>l.type==='folder').map(l=>l.path))])].filter(x=>typeof x==='string'&&path.isAbsolute(x)).slice(0,12);
 }
 function cachedRadar(){return read('file-radar.json',{files:[],warnings:[],scannedAt:null})}
+function authorizedFolderIndex(){return folders.browseRoots((db().roots||[]),db().projects)}
+ipcMain.handle('folders-list',()=>authorizedFolderIndex());
+ipcMain.handle('folders-scan',()=>{const result=authorizedFolderIndex();write('folder-index.json',result);return result});
+ipcMain.handle('folders-link',(_e,projectId,folderPath)=>{
+ const index=authorizedFolderIndex();
+ if(!folders.isListedFolder(folderPath,index))throw Error('只允许关联已授权根目录下的一级工程文件夹；请先授权根目录并重新扫描');
+ const state=db(),p=ensureProject(state,projectId);
+ p.links??=[];
+ if(!p.links.some(x=>x.path.toLowerCase()===folderPath.toLowerCase()))p.links.push({path:folderPath,type:'folder',date:new Date().toISOString()});
+ return save(state);
+});
+ipcMain.handle('folders-ai-suggest',async(_e,folderPaths)=>{
+ const index=authorizedFolderIndex(),paths=Array.isArray(folderPaths)?folderPaths.slice(0,45):[];
+ if(paths.some(p=>!folders.isListedFolder(p,index)))throw Error('选中的文件夹不在授权一级目录范围');
+ const selected=index.folders.filter(x=>paths.includes(x.path));
+ if(!selected.length)throw Error('请先勾选需要判断归属的一级工程文件夹');
+ const cfg=read('ai-settings.json',{});
+ if(!cfg.endpoint||!cfg.model)throw Error('请先配置 AI 模型');
+ migrateLegacyKey(cfg);
+ const keyfile=keyPath(cfg.provider,cfg.endpoint);
+ const key=fs.existsSync(keyfile)?safeStorage.decryptString(fs.readFileSync(keyfile)):'';
+ if(!key&&cfg.provider!=='Ollama 本地')throw Error('当前模型尚未设置 API Key');
+ const state=db();
+ if(!state.projects.length)throw Error('请先创建工程项目');
+ const prompt='你是中文工程目录归类助手。只能根据目录名和项目名推荐归属，绝不能假装已经打开目录内的文件。返回一个 JSON 对象，格式 {"items":[{"path":"原始路径","projectId":"已给出的项目ID或空字符串","confidence":0到100,"reason":"简短依据"}]}。不确定则 projectId 为空。';
+ const payload={folders:selected.map(x=>({name:x.name,path:x.path})),projects:state.projects.map(p=>({id:p.id,name:p.name}))};
+ const response=await queryAI(cfg.endpoint,cfg.model,[{role:'system',content:prompt},{role:'user',content:JSON.stringify(payload)}],key);
+ let data;try{data=JSON.parse(response.slice(response.indexOf('{'),response.lastIndexOf('}')+1))}catch{throw Error('AI 未返回有效 JSON，请重试；任何文件夹都尚未关联')}
+ const items=(Array.isArray(data.items)?data.items:[]).filter(x=>selected.some(y=>y.path===x.path)).map(x=>({path:x.path,name:path.basename(x.path),
+  projectId:state.projects.some(p=>p.id===x.projectId)?x.projectId:null,
+  projectName:state.projects.find(p=>p.id===x.projectId)?.name||'未确定',
+  confidence:Math.min(100,Math.max(0,Number(x.confidence)||0)),
+  reason:String(x.reason||'未说明').slice(0,200)}));
+ return {items,warning:'AI 仅收到授权一级工程文件夹的名称和路径，没有扫描其内部文件。建议必须人工确认。'};
+});
 ipcMain.handle('radar-scan',()=>{
  const root=scanRoots();
  if(!root.length)throw Error('请先在智能文件柜授权扫描目录，或映射一个工程文件夹');
