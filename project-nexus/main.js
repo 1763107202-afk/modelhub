@@ -1,6 +1,8 @@
 'use strict';
 const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,screen }=require('electron');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),http=require('node:http'),https=require('node:https');
+const admzip=require('adm-zip');
+const memory=require('./nexus-memory');
 let mainWin=null, chatWin=null;
 const home=()=>app.getPath('userData'),f=n=>path.join(home(),n);
 function read(n,defaultValue){try{return JSON.parse(fs.readFileSync(f(n),'utf8'))}catch{return defaultValue}}
@@ -95,16 +97,79 @@ ipcMain.handle('key-clear',()=>{
 function queryAI(endpoint,model,messages,key){
  return new Promise((resolve,reject)=>{const u=new URL(endpoint),driver=u.protocol==='https:'?https:http;const req=driver.request(u,{method:'POST',timeout:90000,headers:{'Content-Type':'application/json',...(key?{Authorization:'Bearer '+key}:{})}},res=>{const chunks=[];let len=0;res.on('data',v=>{len+=v.length;if(len>4*1024*1024){req.destroy(Error('服务端响应超过大小限制'));return}chunks.push(v)});res.on('end',()=>{const raw=Buffer.concat(chunks).toString('utf8');let obj;try{obj=JSON.parse(raw)}catch{return reject(Error('模型返回无效 JSON：'+raw.slice(0,120)))}if(res.statusCode>=400){const detail=obj.error?.message||obj.message||raw.slice(0,200);return reject(Error('模型请求失败 HTTP '+res.statusCode+'：'+detail))}const txt=obj.choices?.[0]?.message?.content;if(!txt)return reject(Error('模型接口响应成功，但没有返回聊天文本'));resolve(typeof txt==='string'?txt:JSON.stringify(txt))})});req.on('timeout',()=>req.destroy(Error('模型响应超时（90秒）')));req.on('error',reject);req.end(JSON.stringify({model,messages,stream:false}))})
 }
-ipcMain.handle('chat',async(_e,payload)=>{const s=read('ai-settings.json',{}),message=String(payload?.message||'').trim().slice(0,10000);if(!s.endpoint||!s.model)throw Error('请先在「AI 设置」中填写模型接口地址和模型 ID');if(!message)throw Error('请输入消息');migrateLegacyKey(s);const keyFile=keyPath(s.provider,s.endpoint);let key='';if(fs.existsSync(keyFile)){if(!safeStorage.isEncryptionAvailable())throw Error('Windows 凭据无法解密');key=safeStorage.decryptString(fs.readFileSync(keyFile))}if(s.provider!=='Ollama 本地'&&!key)throw Error('当前平台未配置 API Key。不同 AI 平台的密钥互不通用，请分别填写。');const context=[];if(payload?.projectId){const p=project(db(),payload.projectId);if(p){context.push('当前项目：'+p.name);context.push('工程映射：'+(p.links||[]).map(x=>path.basename(x.path)).join('、'));context.push('已验收任务：'+(p.tasks||[]).filter(x=>x.verified).map(x=>x.title).join('、'));}}if(payload?.includeHistory){const matches=read('chat-history.json',[]).filter(x=>x.projectId===payload.projectId).slice(0,8);for(const c of matches)context.push('历史摘录：'+c.title+' '+String(c.snippet||'').slice(0,600))}
- const img=String(payload?.image||'');if(img&&(!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(img)||img.length>8*1024*1024))throw Error('截图格式无效或超出大小限制（约 6 MB）');if(img&&s.provider==='DeepSeek'&&/^deepseek-(chat|reasoner)$/.test(s.model))throw Error('所选 DeepSeek 模型当前按纯文本配置，无法接收截图；请改用支持图像输入的模型');
- const content=img?[{type:'text',text:message},{type:'image_url',image_url:{url:img}}]:message;
- const recent=Array.isArray(payload?.recent)?payload.recent.slice(-8).filter(x=>['user','assistant'].includes(x?.role)&&typeof x?.text==='string').map(x=>({role:x.role,content:x.text.slice(0,1500)})):[];
- const messages=[{role:'system',content:'你是 PROJECT NEXUS 的简体中文工程助手。请根据确切的项目记录作答，区分未验证的用户陈述和已验收工作。不声称自动读取 ChatGPT 实时聊天。'+context.join('\\n')},...recent,{role:'user',content}];
- return queryAI(s.endpoint,s.model,messages,key);
+
+function historyRows(){return read('chat-history.json',[])}
+function chatStore(){return read('project-chat.json',{})}
+function memoryNotes(){return read('project-notes.json',{})}
+ipcMain.handle('chat-list',(_e,projectId)=>memory.getTurns(chatStore(),projectId));
+ipcMain.handle('chat-clear',(_e,projectId)=>{const x=chatStore();delete x[memory.projectBucket(projectId)];write('project-chat.json',x);return true});
+ipcMain.handle('memory-get',(_e,projectId)=>String(memoryNotes()[memory.projectBucket(projectId)]||''));
+ipcMain.handle('memory-save',(_e,projectId,value)=>{
+ if(projectId&&!project(db(),projectId))throw Error('该项目不存在');
+ const x=memoryNotes();x[memory.projectBucket(projectId)]=String(value||'').slice(0,6000);write('project-notes.json',x);return true;
+});
+ipcMain.handle('chat',async(_e,payload)=>{
+ const cfg=read('ai-settings.json',{}),message=String(payload?.message||'').trim().slice(0,10000);
+ if(!cfg.endpoint||!cfg.model)throw Error('请先配置模型平台、模型 ID 和接口地址');
+ if(!message)throw Error('请输入消息');
+ const projectId=String(payload?.projectId||'');
+ if(projectId&&!project(db(),projectId))throw Error('没有找到这个项目');
+ migrateLegacyKey(cfg);
+ const keyFile=keyPath(cfg.provider,cfg.endpoint);let key='';
+ if(fs.existsSync(keyFile)){
+  if(!safeStorage.isEncryptionAvailable())throw Error('Windows 无法解密 API Key');
+  key=safeStorage.decryptString(fs.readFileSync(keyFile));
+ }
+ if(cfg.provider!=='Ollama 本地'&&!key)throw Error('当前服务商缺少 API Key，请在此平台单独配置');
+ const image=String(payload?.image||'');
+ if(image&&(!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(image)||image.length>8*1024*1024))throw Error('截图超出大小限制或格式不正确');
+ if(image&&cfg.provider==='DeepSeek'&&/^deepseek-(chat|reasoner)$/.test(cfg.model))throw Error('当前 DeepSeek 模型按纯文本配置；请换用支持图片的模型');
+ const turns=memory.getTurns(chatStore(),projectId);
+ const m=memory.contextForProject({projectId,question:message,turns,notes:memoryNotes(),history:historyRows(),includeHistory:payload?.includeHistory===true});
+ const projectInfo=projectId?project(db(),projectId):null;
+ const context=projectInfo?'\n项目名称：'+projectInfo.name+'\n已验收：'+(projectInfo.tasks||[]).filter(x=>x.verified).map(x=>x.title).join('、')+'\n文件映射名称：'+(projectInfo.links||[]).map(x=>path.basename(x.path)).join('、'):'';
+ const content=image?[{type:'text',text:message},{type:'image_url',image_url:{url:image}}]:message;
+ const messages=[{role:'system',content:m.system+context},...m.messages,{role:'user',content}];
+ const reply=await queryAI(cfg.endpoint,cfg.model,messages,key);
+ let next=memory.addTurn(chatStore(),projectId,'user',message);
+ next=memory.addTurn(next,projectId,'assistant',reply);
+ write('project-chat.json',next);
+ return {reply,projectId,saved:true,usedHistory:m.historyHits};
 });
 ipcMain.handle('float-open',()=>floatWindow());
 ipcMain.handle('fullscreen-toggle',e=>{const w=BrowserWindow.fromWebContents(e.sender);w.setFullScreen(!w.isFullScreen());return w.isFullScreen()});
 ipcMain.handle('screen-capture',async()=>{const size=screen.getPrimaryDisplay().size;const sources=await desktopCapturer.getSources({types:['screen'],thumbnailSize:{width:Math.min(size.width,1920),height:Math.min(size.height,1080)}});if(!sources.length||sources[0].thumbnail.isEmpty())throw Error('截图不可用。请尝试 Windows 区域截图或检查系统屏幕捕获权限');return sources[0].thumbnail.toDataURL()});
-ipcMain.handle('history-list',()=>read('chat-history.json',[]).map(x=>({id:x.id,title:x.title,projectId:x.projectId||null})).slice(0,1500));
-ipcMain.handle('history-assign',(_e,historyId,projectId)=>{const rows=read('chat-history.json',[]);if(projectId&&!project(db(),projectId))throw Error('项目不存在');const h=rows.find(x=>x.id===historyId);if(!h)throw Error('聊天记录不存在');h.projectId=projectId||null;write('chat-history.json',rows);return true});
-ipcMain.handle('history-import',async e=>{const x=await dialog.showOpenDialog(BrowserWindow.fromWebContents(e.sender),{title:'导入 ChatGPT 导出的 conversations.json',filters:[{name:'JSON',extensions:['json']}],properties:['openFile']});if(x.canceled)return {count:0};const loc=x.filePaths[0];if(fs.statSync(loc).size>100*1024*1024)throw Error('聊天导出文件过大，请先拆分');const raw=JSON.parse(fs.readFileSync(loc,'utf8'));if(!Array.isArray(raw))throw Error('JSON 格式不是 ChatGPT 对话导出');const arr=raw.map(c=>{const snippets=[];for(const v of Object.values(c.mapping||{})){const m=v?.message,parts=m?.content?.parts||[];if(['user','assistant'].includes(m?.author?.role)){for(const t of parts)if(typeof t==='string'&&t.trim())snippets.push(t.slice(0,240))}}return {id:uid(),title:String(c.title||'').slice(0,150),snippet:snippets.slice(-3).join(' ').slice(0,750),projectId:null}});write('chat-history.json',arr);return {count:arr.length}});
+
+ipcMain.handle('history-list',()=>historyRows().map(x=>({id:x.id,title:x.title,projectId:x.projectId||null,suggestionProjectId:x.suggestionProjectId||null,suggestionScore:x.suggestionScore||0})).slice(0,1500));
+ipcMain.handle('history-assign',(_e,hid,projectId)=>{
+ if(projectId&&!project(db(),projectId))throw Error('指定项目不存在');
+ const rows=historyRows(),hit=rows.find(x=>x.id===hid);
+ if(!hit)throw Error('未找到该历史会话');
+ hit.projectId=projectId||null;write('chat-history.json',rows);return true;
+});
+ipcMain.handle('history-export-open',async()=>{await shell.openExternal('https://chatgpt.com/');return true});
+ipcMain.handle('history-import',async e=>{
+ const w=BrowserWindow.fromWebContents(e.sender);
+ const result=await dialog.showOpenDialog(w,{title:'导入 ChatGPT 官方导出的 ZIP 或 conversations.json',filters:[{name:'官方导出',extensions:['zip','json']}],properties:['openFile']});
+ if(result.canceled)return {count:0,added:0,updated:0,suggested:0,canceled:true};
+ const loc=result.filePaths[0],stat=fs.statSync(loc);
+ if(stat.size>160*1024*1024)throw Error('导出文件超过 160MB，请拆分文件后导入');
+ let json;
+ if(/\.zip$/i.test(loc)){
+  const zip=new admzip(loc);
+  const entries=zip.getEntries().filter(x=>!x.isDirectory&&/(^|\/)conversations\.json$/i.test(x.entryName));
+  if(entries.length!==1)throw Error('ZIP 中没有唯一的 conversations.json，请确认是 ChatGPT 官方导出文件');
+  const entry=entries[0];
+  if(entry.header.size>120*1024*1024)throw Error('聊天 JSON 解压后超过安全上限');
+  const buf=entry.getData();
+  if(buf.length>120*1024*1024)throw Error('导出内容超出安全限制');
+  json=JSON.parse(buf.toString('utf8'));
+ }else{
+  if(stat.size>120*1024*1024)throw Error('聊天 JSON 超出安全限制');
+  json=JSON.parse(fs.readFileSync(loc,'utf8'));
+ }
+ const imported=memory.extractExport(json);
+ const merged=memory.mergeHistory(historyRows(),imported,db().projects);
+ write('chat-history.json',merged.rows);
+ return {count:merged.rows.length,added:merged.added,updated:merged.updated,suggested:merged.suggested};
+});
