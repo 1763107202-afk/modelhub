@@ -3,6 +3,7 @@ const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,scree
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),http=require('node:http'),https=require('node:https');
 const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
+const features=require('./nexus-features');
 let mainWin=null, chatWin=null;
 const home=()=>app.getPath('userData'),f=n=>path.join(home(),n);
 function read(n,defaultValue){try{return JSON.parse(fs.readFileSync(f(n),'utf8'))}catch{return defaultValue}}
@@ -230,6 +231,129 @@ ipcMain.handle('progress-accept',(_e,projectId,index,verified)=>{
  if(verified)task.verified=true;
  suggestion.reviewed=true;suggestion.acceptedAt=new Date().toISOString();
  save(state);return state;
+});
+
+
+const modes=[
+ {id:'mechanical',title:'机械建模',icon:'🧩',hint:'SolidWorks · AutoCAD · 工程模型',pattern:/solidworks|autocad|cad|keyshot|creo|inventor/i,ext:/\.(sldasm|sldprt|slddrw|step|stp|stl|dwg)$/i},
+ {id:'simulation',title:'有限元与流体仿真',icon:'🔬',hint:'ANSYS · Fluent · 网格与求解文件',pattern:/ansys|fluent|mechanical|matlab/i,ext:/\.(wbpj|wbpz|cas|dat|h5)$/i},
+ {id:'vr',title:'Unity 与 VR',icon:'🥽',hint:'Unity · PICO · VR 场景',pattern:/unity|pico|steamvr|blender/i,ext:/\.(unity|blend|fbx)$/i},
+ {id:'study',title:'学习与报告',icon:'📚',hint:'Word · WPS · PDF · 课程资料',pattern:/word|wps|office|edge|chrome|pdf|powerpoint/i,ext:/\.(pdf|docx?|pptx|xlsx)$/i}
+];
+function scanRoots(){
+ const state=db();
+ // 授权范围：用户手动授权的目录，以及已明确映射为工程目录的位置。
+ return [...new Set([...(state.roots||[]),...state.projects.flatMap(p=>(p.links||[]).filter(l=>l.type==='folder').map(l=>l.path))])].filter(x=>typeof x==='string'&&path.isAbsolute(x)).slice(0,12);
+}
+function cachedRadar(){return read('file-radar.json',{files:[],warnings:[],scannedAt:null})}
+ipcMain.handle('radar-scan',()=>{
+ const root=scanRoots();
+ if(!root.length)throw Error('请先在智能文件柜授权扫描目录，或映射一个工程文件夹');
+ const result=features.radar(root,db().projects,{maxFiles:700,maxDepth:3});
+ write('file-radar.json',result);
+ return result;
+});
+ipcMain.handle('radar-get',()=>cachedRadar());
+ipcMain.handle('radar-link',(_e,projectId,filePath)=>{
+ const file=cachedRadar().files.find(x=>x.path===filePath);
+ if(!file||!fs.existsSync(file.path)||!fs.statSync(file.path).isFile())throw Error('文件不在已扫描索引中，或已被移动。请重新扫描');
+ const state=db(),project=ensureProject(state,projectId);
+ if(!(project.links||[]).some(l=>l.path.toLowerCase()===file.path.toLowerCase()))(project.links??=[]).push({path:file.path,type:'file',date:new Date().toISOString()});
+ return save(state);
+});
+ipcMain.handle('versions-list',(_e,projectId)=>{
+ const state=db();if(projectId)ensureProject(state,projectId);
+ const sources=[...cachedRadar().files];
+ // 显式映射的工程文件在尚未扫描时也能参与版本识别
+ for(const p of state.projects){if(projectId&&p.id!==projectId)continue;
+ for(const l of p.links||[]){if(l.type!=='file'||sources.some(x=>x.path===l.path)||!fs.existsSync(l.path))continue;
+ try{const stat=fs.statSync(l.path);sources.push({name:path.basename(l.path),path:l.path,projectId:p.id,modifiedAt:stat.mtime.toISOString()})}catch{}
+ }}
+ return features.versions(projectId?sources.filter(x=>x.projectId===projectId):sources);
+});
+ipcMain.handle('snapshot-list',(_e,projectId)=>{
+ ensureProject(db(),projectId);
+ return read('snapshots.json',[]).filter(x=>x.projectId===projectId).slice(-80).reverse();
+});
+ipcMain.handle('snapshot-create',(_e,projectId,sourcePath)=>{
+ const p=ensureProject(db(),projectId);
+ const file=(p.links||[]).find(l=>l.path===sourcePath&&l.type==='file');
+ if(!file)throw Error('只能对已明确关联的工程文件创建快照');
+ const stat=fs.statSync(file.path);
+ if(!stat.isFile()||stat.size>250*1024*1024)throw Error('快照只支持不超过 250MB 的单个普通文件');
+ const dir=path.join(home(),'snapshots',projectId);fs.mkdirSync(dir,{recursive:true});
+ const id=uid(),dst=path.join(dir,id+'-'+path.basename(file.path).replace(/[<>:"/\\|?*]/g,'_'));
+ fs.copyFileSync(file.path,dst,fs.constants.COPYFILE_EXCL);
+ const items=read('snapshots.json',[]);
+ const snapshot={id,projectId,source:file.path,target:dst,size:stat.size,createdAt:new Date().toISOString()};
+ items.push(snapshot);write('snapshots.json',items.slice(-800));return snapshot;
+});
+ipcMain.handle('snapshot-reveal',(_e,projectId,snapshotId)=>{
+ ensureProject(db(),projectId);
+ const item=read('snapshots.json',[]).find(x=>x.projectId===projectId&&x.id===snapshotId);
+ if(!item||!fs.existsSync(item.target))throw Error('未找到此快照文件');
+ shell.showItemInFolder(item.target);return true;
+});
+ipcMain.handle('timeline-get',(_e,projectId)=>{
+ const project=ensureProject(db(),projectId),base=features.timeline(project,historyRows(),memory.getTurns(chatStore(),projectId));
+ for(const s of read('snapshots.json',[]).filter(x=>x.projectId===projectId)){
+ base.push({time:s.createdAt,title:'保存文件快照：'+path.basename(s.source),source:'本机备份',details:s.target});
+ }
+ return base.sort((a,b)=>b.time.localeCompare(a.time)).slice(0,160);
+});
+ipcMain.handle('graph-get',(_e,projectId)=>features.graph(ensureProject(db(),projectId),historyRows()));
+ipcMain.handle('health-check',()=>features.health(db(),read('ai-settings.json',{}),scanRoots()));
+ipcMain.handle('modes-list',()=>modes.map(({id,title,icon,hint})=>({id,title,icon,hint})));
+ipcMain.handle('mode-preview',(_e,projectId,modeId)=>{
+ const cfg=modes.find(x=>x.id===modeId);if(!cfg)throw Error('未知工作模式');
+ const state=db(),p=projectId?ensureProject(state,projectId):null;
+ const apps=(state.apps||[]).filter(a=>cfg.pattern.test(a.name)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,5).map(a=>({id:a.id,name:a.name,kind:a.kind}));
+ const files=(p?.links||[]).filter(x=>x.type==='file'&&cfg.ext.test(x.path)).slice(0,7).map(x=>({path:x.path,name:path.basename(x.path)}));
+ return {id:cfg.id,title:cfg.title,hint:cfg.hint,apps,files,project:p?.name||'未选择项目'};
+});
+ipcMain.handle('mode-start',async(_e,projectId,modeId,appId,filePath)=>{
+ const preview=modes.find(x=>x.id===modeId);if(!preview)throw Error('未知工作模式');
+ const state=db(),p=projectId?ensureProject(state,projectId):null;
+ const selectedApp=appId?(state.apps||[]).find(a=>a.id===appId&&preview.pattern.test(a.name)):null;
+ const selectedFile=filePath?(p?.links||[]).find(l=>l.path===filePath&&l.type==='file'&&preview.ext.test(l.path)):null;
+ if(!selectedApp&&!selectedFile)throw Error('请先选择此模式推荐的程序或项目文件');
+ const opened=[];
+ if(selectedApp){if(!fs.existsSync(selectedApp.path))throw Error('软件快捷方式不存在');const err=await shell.openPath(selectedApp.path);if(err)throw Error(err);opened.push(selectedApp.name)}
+ if(selectedFile){if(!fs.existsSync(selectedFile.path))throw Error('关联工程文件不存在');const err=await shell.openPath(selectedFile.path);if(err)throw Error(err);opened.push(path.basename(selectedFile.path))}
+ return {opened};
+});
+function publicGithubStatus(){
+ return new Promise((resolve,reject)=>{
+ const url='https://api.github.com/repos/1763107202-afk/modelhub/actions/runs?per_page=12';
+ const req=https.get(url,{timeout:10000,headers:{'User-Agent':'PROJECT-NEXUS','Accept':'application/vnd.github+json'}},res=>{
+  const chunks=[];let size=0;res.on('data',buf=>{size+=buf.length;if(size>350000)req.destroy(Error('GitHub 返回数据过大'));else chunks.push(buf)});
+  res.on('end',()=>{if(res.statusCode!==200)return reject(Error('GitHub HTTP '+res.statusCode));let result;try{result=JSON.parse(Buffer.concat(chunks).toString('utf8'))}catch{return reject(Error('GitHub 数据解析失败'))}
+    resolve((result.workflow_runs||[]).filter(x=>/nexus/i.test(x.name)).slice(0,8).map(x=>({id:x.id,name:x.name,status:x.status,conclusion:x.conclusion,createdAt:x.created_at,htmlUrl:x.html_url,sha:x.head_sha})));
+  });
+ });req.on('error',reject);req.on('timeout',()=>req.destroy(Error('GitHub 请求超时')));
+ });
+}
+ipcMain.handle('github-status',()=>publicGithubStatus());
+ipcMain.handle('report-export',async(e,projectId,format)=>{
+ const p=ensureProject(db(),projectId),ext=['md','pdf','docx'].includes(format)?format:'md';
+ const health=features.health(db(),read('ai-settings.json',{}),scanRoots());
+ const events=features.timeline(p,historyRows(),memory.getTurns(chatStore(),projectId));
+ const text=features.report(p,events,health);
+ const outcome=await dialog.showSaveDialog(BrowserWindow.fromWebContents(e.sender),{
+  title:'导出项目阶段报告',defaultPath:path.join(app.getPath('documents'),'NEXUS-'+p.name.replace(/[<>:"/\\|?*]/g,'_')+'-'+new Date().toISOString().slice(0,10)+'.'+ext),
+  filters:[{name:ext.toUpperCase(),extensions:[ext]}]});
+ if(outcome.canceled||!outcome.filePath)return {canceled:true};
+ if(ext==='md'){fs.writeFileSync(outcome.filePath,text,'utf8');return {path:outcome.filePath}};
+ if(ext==='docx'){
+  const {Document,Paragraph,Packer}=require('docx');
+  const doc=new Document({sections:[{children:text.split('\n').map(line=>new Paragraph({text:line.slice(0,1000)}))}]});
+  fs.writeFileSync(outcome.filePath,await Packer.toBuffer(doc));return {path:outcome.filePath};
+ }
+ const escapeHtml=x=>String(x).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const html='<html><head><meta charset="utf-8"><style>body{font-family:"Microsoft YaHei",sans-serif;font-size:11pt;line-height:1.65;margin:35px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><pre>'+escapeHtml(text)+'</pre></body></html>';
+ const win=new BrowserWindow({show:false,webPreferences:{sandbox:true,nodeIntegration:false,contextIsolation:true}});
+ try{await win.loadURL('data:text/html;charset=utf-8,'+encodeURIComponent(html));const bytes=await win.webContents.printToPDF({printBackground:true,pageSize:'A4'});fs.writeFileSync(outcome.filePath,bytes)}finally{win.destroy()}
+ return {path:outcome.filePath};
 });
 
 ipcMain.handle('float-open',()=>floatWindow());
