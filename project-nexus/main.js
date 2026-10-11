@@ -386,6 +386,19 @@ ipcMain.handle('float-open',()=>floatWindow());
 ipcMain.handle('fullscreen-toggle',e=>{const w=BrowserWindow.fromWebContents(e.sender);w.setFullScreen(!w.isFullScreen());return w.isFullScreen()});
 ipcMain.handle('screen-capture',async()=>{const size=screen.getPrimaryDisplay().size;const sources=await desktopCapturer.getSources({types:['screen'],thumbnailSize:{width:Math.min(size.width,1920),height:Math.min(size.height,1080)}});if(!sources.length||sources[0].thumbnail.isEmpty())throw Error('截图不可用。请尝试 Windows 区域截图或检查系统屏幕捕获权限');return sources[0].thumbnail.toDataURL()});
 
+
+ipcMain.handle('screen-list-windows',async()=>{
+ const sources=await desktopCapturer.getSources({types:['window'],thumbnailSize:{width:64,height:64}});
+ return sources.filter(x=>x.name&&x.name.trim()).slice(0,80).map(x=>({id:x.id,name:x.name.slice(0,120)}));
+});
+ipcMain.handle('screen-capture-window',async(_e,id)=>{
+ if(typeof id!=='string'||id.length>300)throw Error('未选择有效窗口');
+ const sources=await desktopCapturer.getSources({types:['window'],thumbnailSize:{width:1440,height:900}});
+ const selected=sources.find(x=>x.id===id);
+ if(!selected||selected.thumbnail.isEmpty())throw Error('目标窗口已经关闭，或 Windows 禁止捕获该画面');
+ return selected.thumbnail.toDataURL();
+});
+
 ipcMain.handle('history-list',()=>historyRows().map(x=>({id:x.id,title:x.title,projectId:x.projectId||null,suggestionProjectId:x.suggestionProjectId||null,suggestionScore:x.suggestionScore||0})).slice(0,1500));
 ipcMain.handle('history-assign',(_e,hid,projectId)=>{
  if(projectId&&!project(db(),projectId))throw Error('指定项目不存在');
