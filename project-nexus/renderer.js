@@ -149,7 +149,7 @@ function askProjectName(){return new Promise(resolve=>{const bg=document.createE
 async function refresh(){db=await api.load();if(!pid&&db.projects?.length)pid=db.projects[0].id;render()}
 async function execute(fn){try{await fn()}catch(e){const error=safeErr(e);notify(error,'error');if(page==='ai'){activeError=error;chatMessages.push({role:'error',text:error});render()}console.error(e)}}
 async function ask(prompt){const value=String(prompt||'').trim();if(!value||busy)return;busy=true;chatDraft=value;activeError='正在等待模型响应…';chatMessages.push({role:'user',text:value});const payload={message:value,projectId:pid||'',includeHistory:historyAllowed,image:uploadImage||''};uploadImage='';chatDraft='';render();try{const result=await api.chat(payload);chatMessages=await api.getProjectChat(pid);activeError='已保存当前项目聊天 · 引用历史 '+result.usedHistory+' 条';}catch(e){activeError=safeErr(e);chatMessages.push({role:'error',text:activeError});}finally{busy=false;render()}}
-document.addEventListener('input',e=>{if(e.target.id==='chat-input')chatDraft=e.target.value;if(e.target.id==='app-search'){query=e.target.value;const start=e.target.selectionStart;const end=e.target.selectionEnd;render();$('app-search')?.focus();$('app-search')?.setSelectionRange(start,end)}});
+document.addEventListener('input',e=>{if(e.target.id==='chat-input')chatDraft=e.target.value;if(e.target.id==='radar-search'){radarQuery=e.target.value;const start=e.target.selectionStart;render();const target=$('radar-search');target?.focus();target?.setSelectionRange(start,start)}if(e.target.id==='app-search'){query=e.target.value;const start=e.target.selectionStart;const end=e.target.selectionEnd;render();$('app-search')?.focus();$('app-search')?.setSelectionRange(start,end)}});
 document.addEventListener('change',e=>{if(e.target.id==='include-history')historyAllowed=e.target.checked;if(e.target.id==='chat-project'){execute(()=>switchProject(e.target.value))}if(e.target.id==='project-notes')notesText=e.target.value;if(e.target.dataset.history){execute(async()=>{await api.assignHistory(e.target.dataset.history,e.target.value);historyItems=await api.listHistory();notify('历史记录已关联到项目，只有授权时才会发送摘要。')})}if(e.target.id==='provider'){const p=e.target.value;settings.provider=p;settings.endpoint=profiles[p]?.endpoint||'';settings.model=profiles[p]?.model||'';settings.hasKey=false;render()}if(e.target.dataset.act==='toggle-task')execute(async()=>{db=await api.toggleTask(e.target.dataset.id,e.target.dataset.task);render()});if(e.target.dataset.act==='toggle-work')execute(async()=>{db=await api.toggleWork(e.target.dataset.id);render()})});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommandPalette();return}if(e.key==='Escape'&&$('nexus-commands')){$('nexus-commands').remove();return}if(e.key==='Enter'&&e.ctrlKey&&e.target.id==='chat-input'){e.preventDefault();execute(()=>ask(e.target.value))}if(e.key==='F11'){e.preventDefault();execute(()=>api.toggleFullscreen())}});
 document.addEventListener('paste',e=>{if(page!=='ai')return;const item=[...(e.clipboardData?.items||[])].find(x=>x.type.startsWith('image/'));if(!item)return;e.preventDefault();const reader=new FileReader();reader.onload=()=>{uploadImage=String(reader.result);render();notify('已粘贴截图。发送前请确认隐私信息。')};reader.readAsDataURL(item.getAsFile())});
@@ -158,6 +158,78 @@ document.addEventListener('click',e=>{
  if(a==='nav'){setPage(id);return}if(a==='navigate-ai'){setPage('ai');return}if(a==='command-open'){openCommandPalette();return}
  execute(async()=>{
   switch(a){
+
+   case 'tool-tab':toolTab=el.dataset.tool||'modes';render();return;
+   case 'mode-choice':modeChoice=el.dataset.mode||'mechanical';modePreview=null;render();return;
+   case 'mode-preview':{
+    const chosen=$('mode-id')?.value||modeChoice;
+    const projectId=$('mode-project')?.value||'';
+    modeChoice=chosen;
+    modePreview=await api.previewMode(projectId,chosen);
+    render();return;
+   }
+   case 'mode-start':{
+    if(!modePreview)throw Error('请先查看当前工作模式的推荐项目');
+    const appId=$('mode-app')?.value||'',filePath=$('mode-file')?.value||'';
+    const projectId=$('mode-project')?.value||'';
+    if(!appId&&!filePath)throw Error('至少选择一个软件或工程文件');
+    if(!confirm('即将打开选中的软件和工程文件。确定继续吗？'))return;
+    const started=await api.startMode(projectId,modePreview.id,appId,filePath);
+    notify('已启动：'+started.opened.join('、'));return;
+   }
+   case 'radar-scan':radarData=await api.radarScan();render();notify('扫描完成，发现 '+radarData.files.length+' 项工程文件');return;
+   case 'radar-link':{
+    const projectId=$('radar-project')?.value||'';
+    if(!projectId)throw Error('请先选择要将文件关联到哪个项目');
+    const projectName=db.projects.find(x=>x.id===projectId)?.name||'项目';
+    if(!confirm('将这个文件加入「'+projectName+'」的文件抽屉？\n不会复制或移动原文件。'))return;
+    db=await api.radarLink(projectId,el.dataset.path);
+    render();notify('已关联到：'+projectName);return;
+   }
+   case 'versions-refresh':versionGroups=await api.getVersions('');render();notify('已完成版本文件识别');return;
+   case 'health-refresh':healthData=await api.healthCheck();render();notify('自检完成：'+healthData.passed+'/'+healthData.total+' 项通过');return;
+   case 'github-refresh':{
+    githubError='';
+    try{githubRuns=await api.getGitHubStatus();}catch(e){githubError=safeErr(e);githubRuns=[]}
+    render();return;
+   }
+   case 'github-open':await api.openGitHub(el.dataset.url);return;
+   case 'report-export':{
+    const projectId=$('report-project')?.value||'';
+    if(!projectId)throw Error('请先创建或选择项目');
+    const output=await api.exportReport(projectId,$('report-format')?.value||'docx');
+    if(!output.canceled)notify('报告已经导出：'+output.path);return;
+   }
+   case 'graph-load':{
+    const projectId=$('graph-project')?.value||'';
+    if(!projectId)throw Error('请先选择项目');
+    pid=projectId;
+    projectGraph=await api.getGraph(pid);
+    render();return;
+   }
+   case 'project-archive-tab':{
+    projectTab=el.dataset.view||'timeline';
+    if(projectTab==='timeline')projectEvents=await api.getTimeline(pid);
+    if(projectTab==='snapshots')projectSnapshots=await api.getSnapshots(pid);
+    if(projectTab==='graph')projectGraph=await api.getGraph(pid);
+    render();return;
+   }
+   case 'project-archive-refresh':{
+    if(!pid)throw Error('尚未选择项目');
+    if(projectTab==='timeline')projectEvents=await api.getTimeline(pid);
+    if(projectTab==='snapshots')projectSnapshots=await api.getSnapshots(pid);
+    if(projectTab==='graph')projectGraph=await api.getGraph(pid);
+    render();return;
+   }
+   case 'snapshot-create':{
+    const location=$('snapshot-file')?.value||'';
+    if(!location)throw Error('请选择已关联的工程文件');
+    if(!confirm('将对这个工程文件创建独立备份快照（不修改原件）。确定继续吗？'))return;
+    await api.snapshotFile(pid,location);
+    projectSnapshots=await api.getSnapshots(pid);
+    render();notify('快照已保存到 NEXUS 本机私有目录');return;
+   }
+   case 'snapshot-reveal':await api.revealSnapshot(id,el.dataset.snapshot);return;
    case 'fullscreen-toggle':await api.toggleFullscreen();return;
    case 'float-open':await api.openFloat();return;
    case 'create-project':{const name=await askProjectName();if(!name)return;db=await api.createProject(name,'自定义项目');pid=db.projects.at(-1)?.id;render();return}
@@ -189,5 +261,5 @@ document.addEventListener('click',e=>{
   }
  });
 });
-async function start(){try{profiles=await api.profiles();settings=await api.getSettings();db=await api.load();historyItems=await api.listHistory();if(db.projects?.length)pid=db.projects[0].id;chatMessages=await api.getProjectChat(pid);notesText=await api.getMemory(pid);if(isFloat)page='ai';render()}catch(e){$('root').textContent='NEXUS 初始化失败：'+safeErr(e);console.error(e)}}
+async function start(){try{profiles=await api.profiles();settings=await api.getSettings();db=await api.load();historyItems=await api.listHistory();try{radarData=await api.radarGet();modeData=await api.listModes();}catch(e){console.warn('部分扩展工具初始化失败：',e)}if(db.projects?.length)pid=db.projects[0].id;chatMessages=await api.getProjectChat(pid);notesText=await api.getMemory(pid);if(isFloat)page='ai';render()}catch(e){$('root').textContent='NEXUS 初始化失败：'+safeErr(e);console.error(e)}}
 start();
