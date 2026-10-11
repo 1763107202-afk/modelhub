@@ -6,8 +6,20 @@ const memory=require('./nexus-memory');
 const features=require('./nexus-features');
 let mainWin=null, chatWin=null;
 const home=()=>app.getPath('userData'),f=n=>path.join(home(),n);
-function read(n,defaultValue){try{return JSON.parse(fs.readFileSync(f(n),'utf8'))}catch{return defaultValue}}
-function write(n,value){fs.mkdirSync(home(),{recursive:true});const tmp=f(n)+'.tmp';fs.writeFileSync(tmp,JSON.stringify(value,null,2),'utf8');fs.renameSync(tmp,f(n));}
+function read(n,defaultValue){
+ const target=f(n);
+ if(!fs.existsSync(target))return defaultValue;
+ try{return JSON.parse(fs.readFileSync(target,'utf8'))}
+ catch(e){throw Error('本地数据文件 '+n+' 无法读取或解析。为防止覆盖原有项目数据，程序已停止此项操作。请先备份 '+target+'，再尝试修复。原因：'+e.message)}
+}
+function write(n,value){
+ fs.mkdirSync(home(),{recursive:true});const dst=f(n),tmp=dst+'.tmp';
+ fs.writeFileSync(tmp,JSON.stringify(value,null,2),'utf8');
+ try{
+  if(fs.existsSync(dst)){try{fs.copyFileSync(dst,dst+'.bak')}catch(e){throw Error('创建数据备份失败：'+e.message)}}
+  fs.renameSync(tmp,dst);
+ }catch(e){try{fs.unlinkSync(tmp)}catch{}throw e}
+}
 const uid=()=>crypto.randomUUID();
 function initial(){return {projects:[],works:[],apps:[],roots:[],history:[]}}
 function db(){const v=read('workspace.json',null);return v&&Array.isArray(v.projects)?{...initial(),...v}:initial()}
