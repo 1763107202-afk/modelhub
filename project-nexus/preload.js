@@ -4,7 +4,7 @@ const onLocked=handler=>{ipcRenderer.on('nexus-locked',()=>handler());return tru
 contextBridge.exposeInMainWorld('nexus',{
  onLocked,
  authStatus:()=>call('auth-status'),authSetup:(password,confirm)=>call('auth-setup',password,confirm),authUnlock:password=>call('auth-unlock',password),authLock:()=>call('auth-lock'),
- studioImageSettings:()=>call('studio-image-settings-get'),studioSaveImageSettings:x=>call('studio-image-settings-save',x),studioGenerateImage:x=>call('studio-image-generate',x),studioSaveImage:data=>call('studio-image-save',data),studioGenerateCode:x=>call('studio-code-generate',x),studioSaveCode:(code,language)=>call('studio-code-save',code,language),
+ studioImageSettings:()=>call('studio-image-settings-get'),studioSaveImageSettings:x=>call('studio-image-settings-save',x),studioGenerateImage:x=>call('studio-image-generate',x),studioSaveImage:data=>call('studio-image-save',data),studioGenerateCode:x=>call('studio-code-generate',x),studioSaveCode:(code,language)=>call('studio-code-save',code,language),studioCopyCode:code=>call('studio-code-copy',code),
  load:()=>call('load'),createProject:(name,kind)=>call('create-project',name,kind),
  addTask:(id,title)=>call('task-add',id,title),assessProgress:(id,options)=>call('progress-analyze',id,options),acceptProgress:(id,index,verified)=>call('progress-accept',id,index,verified),toggleTask:(id,taskId)=>call('task-toggle',id,taskId),
  pickFolder:id=>call('pick-folder',id),pickFile:id=>call('pick-file',id),removeLink:(id,index)=>call('remove-link',id,index),setPrimaryLink:(id,index)=>call('set-primary-link',id,index),
