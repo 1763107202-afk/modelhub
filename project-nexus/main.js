@@ -3,6 +3,7 @@ const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,scree
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),http=require('node:http'),https=require('node:https');
 const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
+const studio=require('./nexus-studio');
 const auth=require('./nexus-auth');
 const features=require('./nexus-features');
 const folders=require('./nexus-folders');
@@ -168,6 +169,85 @@ ipcMain.handle('key-clear',()=>{
 function queryAI(endpoint,model,messages,key){
  return new Promise((resolve,reject)=>{const u=new URL(endpoint),driver=u.protocol==='https:'?https:http;const req=driver.request(u,{method:'POST',timeout:90000,headers:{'Content-Type':'application/json',...(key?{Authorization:'Bearer '+key}:{})}},res=>{const chunks=[];let len=0;res.on('data',v=>{len+=v.length;if(len>4*1024*1024){req.destroy(Error('服务端响应超过大小限制'));return}chunks.push(v)});res.on('end',()=>{const raw=Buffer.concat(chunks).toString('utf8');let obj;try{obj=JSON.parse(raw)}catch{return reject(Error('模型返回无效 JSON：'+raw.slice(0,120)))}if(res.statusCode>=400){const detail=obj.error?.message||obj.message||raw.slice(0,200);return reject(Error('模型请求失败 HTTP '+res.statusCode+'：'+detail))}const txt=obj.choices?.[0]?.message?.content;if(!txt)return reject(Error('模型接口响应成功，但没有返回聊天文本'));resolve(typeof txt==='string'?txt:JSON.stringify(txt))})});req.on('timeout',()=>req.destroy(Error('模型响应超时（90秒）')));req.on('error',reject);req.end(JSON.stringify({model,messages,stream:false}))})
 }
+
+
+function imageConfig(){return read('image-studio.json',{endpoint:'https://api.openai.com/v1/images/generations',model:'gpt-image-1'})}
+function imageSecret(endpoint){const file=keyPath('图像工作室',endpoint);return fs.existsSync(file)?safeStorage.decryptString(fs.readFileSync(file)):''}
+ipcMain.handle('studio-image-settings-get',()=>{
+ const cfg=imageConfig();return {...cfg,hasKey:fs.existsSync(keyPath('图像工作室',cfg.endpoint))};
+});
+ipcMain.handle('studio-image-settings-save',(_e,config)=>{
+ const cfg=studio.imageSettings(config);
+ if(config?.key){
+  if(!safeStorage.isEncryptionAvailable())throw Error('当前 Windows 安全存储不可用');
+  fs.writeFileSync(keyPath('图像工作室',cfg.endpoint),safeStorage.encryptString(String(config.key)));
+ }
+ write('image-studio.json',cfg);
+ return {...cfg,hasKey:fs.existsSync(keyPath('图像工作室',cfg.endpoint))};
+});
+function postImageGeneration(endpoint,model,request,key){
+ return new Promise((resolve,reject)=>{
+  const u=new URL(endpoint),transport=u.protocol==='https:'?https:http;
+  const payload=JSON.stringify({model,prompt:request.prompt,size:request.size,n:1});
+  const req=transport.request(u,{method:'POST',timeout:150000,
+   headers:{'Content-Type':'application/json',...(key?{Authorization:'Bearer '+key}:{})}},res=>{
+   const chunks=[];let length=0;
+   res.on('data',buf=>{length+=buf.length;if(length>27*1024*1024){req.destroy(Error('生图结果太大，超过安全限制'));return}chunks.push(buf)});
+   res.on('end',()=>{
+    let json;try{json=JSON.parse(Buffer.concat(chunks).toString('utf8'))}catch{return reject(Error('图像接口没有返回有效 JSON'))}
+    if(res.statusCode>=400)return reject(Error('生图请求 HTTP '+res.statusCode+'：'+String(json.error?.message||json.message||'服务商拒绝请求').slice(0,400)));
+    try{const image=studio.imageFromResponse(json);resolve({dataUrl:image.dataUrl,extension:image.extension,model})}catch(err){reject(err)}
+   });
+  });
+  req.on('timeout',()=>req.destroy(Error('图像生成超时（150 秒）')));
+  req.on('error',reject);req.end(payload);
+ });
+}
+ipcMain.handle('studio-image-generate',async(_e,input)=>{
+ const config=studio.imageSettings(imageConfig()),request=studio.validateImageRequest(input);
+ const key=imageSecret(config.endpoint);
+ if(!key&&!/^(http:\/\/127\.0\.0\.1|http:\/\/localhost)/i.test(config.endpoint))throw Error('图像模型没有配置专用 API Key');
+ return postImageGeneration(config.endpoint,config.model,request,key);
+});
+ipcMain.handle('studio-image-save',async(e,dataUrl)=>{
+ if(typeof dataUrl!=='string'||dataUrl.length>25*1024*1024)throw Error('图片数据无效或过大');
+ const payload=studio.imageFromResponse({data:[{b64_json:dataUrl.replace(/^data:image\/(?:png|jpeg|webp);base64,/,'')}]});
+ const owner=BrowserWindow.fromWebContents(e.sender);
+ const selected=await dialog.showSaveDialog(owner,{title:'保存 AI 生成图片',
+  defaultPath:'NEXUS_生成效果图.'+payload.extension,filters:[{name:'图像',extensions:[payload.extension]}]});
+ if(selected.canceled||!selected.filePath)return {canceled:true};
+ if(fs.existsSync(selected.filePath))throw Error('同名文件已存在。为保护原有工程图片，请换一个文件名');
+ fs.writeFileSync(selected.filePath,payload.bytes,{flag:'wx'});
+ return {canceled:false,path:selected.filePath};
+});
+ipcMain.handle('studio-code-generate',async(_e,input)=>{
+ const language=studio.codeLanguage(String(input?.language||'python'));
+ const task=String(input?.task||'').trim();
+ if(!task||task.length>8000)throw Error('请填写 1～8000 字的代码任务要求');
+ const projectId=String(input?.projectId||'');
+ const related=projectId?ensureProject(db(),projectId):null;
+ const cfg=read('ai-settings.json',{});
+ if(!cfg.endpoint||!cfg.model)throw Error('请先在 NEXUS AI 配置文本模型');
+ migrateLegacyKey(cfg);
+ const file=keyPath(cfg.provider,cfg.endpoint),key=fs.existsSync(file)?safeStorage.decryptString(fs.readFileSync(file)):'';
+ if(!key&&cfg.provider!=='Ollama 本地')throw Error('当前文本模型未设置 API Key');
+ const context=related?'项目：'+related.name+'\n已核实的项目笔记：'+String(memoryNotes()[memory.projectBucket(projectId)]||'').slice(0,2400):'未关联项目';
+ const reply=await queryAI(cfg.endpoint,cfg.model,[
+  {role:'system',content:'你是工程代码助手。只输出'+language+'代码，避免 Markdown 之外的解释；不要声称已运行或测试代码。针对所给工程背景解决问题，不能执行本机命令。'+context},
+  {role:'user',content:task}],key);
+ return {language,code:studio.unwrapCode(reply),model:cfg.model,projectId};
+});
+ipcMain.handle('studio-code-save',async(e,source,language)=>{
+ studio.codeLanguage(language);
+ const code=studio.unwrapCode(source);
+ const w=BrowserWindow.fromWebContents(e.sender),ext=studio.extensionFor(language);
+ const selected=await dialog.showSaveDialog(w,{title:'保存 AI 代码（不会自动执行）',
+  defaultPath:studio.safeFilename('nexus_generated',language),filters:[{name:language+' 源代码',extensions:[ext.slice(1)]}]});
+ if(selected.canceled||!selected.filePath)return {canceled:true};
+ if(fs.existsSync(selected.filePath))throw Error('文件已存在。为防止覆盖你的源工程，请使用新的文件名');
+ fs.writeFileSync(selected.filePath,code,'utf8');
+ return {canceled:false,path:selected.filePath};
+});
 
 function historyRows(){return read('chat-history.json',[])}
 function chatStore(){return read('project-chat.json',{})}
