@@ -1,6 +1,7 @@
 const {contextBridge,ipcRenderer}=require('electron');
 const call=(channel,...args)=>ipcRenderer.invoke(channel,...args);
 contextBridge.exposeInMainWorld('nexus',{
+ authStatus:()=>call('auth-status'),authSetup:(password,confirm)=>call('auth-setup',password,confirm),authUnlock:password=>call('auth-unlock',password),authLock:()=>call('auth-lock'),
  load:()=>call('load'),createProject:(name,kind)=>call('create-project',name,kind),
  addTask:(id,title)=>call('task-add',id,title),assessProgress:(id,options)=>call('progress-analyze',id,options),acceptProgress:(id,index,verified)=>call('progress-accept',id,index,verified),toggleTask:(id,taskId)=>call('task-toggle',id,taskId),
  pickFolder:id=>call('pick-folder',id),pickFile:id=>call('pick-file',id),removeLink:(id,index)=>call('remove-link',id,index),setPrimaryLink:(id,index)=>call('set-primary-link',id,index),
