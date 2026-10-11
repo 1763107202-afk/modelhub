@@ -50,7 +50,7 @@ function local(p){if(typeof p!=='string'||!path.isAbsolute(p))throw Error('路�
 function ensureProject(s,id){const p=project(s,id);if(!p)throw Error('项目不存在');return p}
 
 // 所有具名 IPC 除解锁与密码设置外均在主进程校验，不能仅通过前端隐藏内容绕过。
-const noAuth=new Set(['auth-status','auth-setup','auth-unlock','auth-lock']);
+const noAuth=new Set(['auth-status','auth-setup','auth-unlock','auth-lock','app-version']);
 const registerIpc=ipcMain.handle.bind(ipcMain);
 ipcMain.handle=(channel,handler)=>{
  registerIpc(channel,async(event,...args)=>{
@@ -58,6 +58,7 @@ ipcMain.handle=(channel,handler)=>{
   return handler(event,...args);
  });
 };
+ipcMain.handle('app-version',()=>({version:app.getVersion(),name:'PROJECT NEXUS',platform:process.platform}));
 ipcMain.handle('auth-status',()=>lockController.status());
 ipcMain.handle('auth-setup',(_event,password,confirm)=>lockController.setup(password,confirm));
 ipcMain.handle('auth-unlock',(_event,password)=>lockController.unlock(password));
