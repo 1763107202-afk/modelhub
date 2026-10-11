@@ -207,7 +207,31 @@ function askProjectName(){return new Promise(resolve=>{const bg=document.createE
 async function refresh(){db=await api.load();if(!pid&&db.projects?.length)pid=db.projects[0].id;render()}
 async function execute(fn){try{await fn()}catch(e){const error=safeErr(e);notify(error,'error');if(page==='ai'){activeError=error;chatMessages.push({role:'error',text:error});render()}console.error(e)}}
 async function ask(prompt){const value=String(prompt||'').trim();if(!value||busy)return;busy=true;chatDraft=value;activeError='正在等待模型响应…';chatMessages.push({role:'user',text:value});const payload={message:value,projectId:pid||'',includeHistory:historyAllowed,image:uploadImage||''};uploadImage='';chatDraft='';render();try{const result=await api.chat(payload);chatMessages=await api.getProjectChat(pid);activeError='已保存当前项目聊天 · 引用历史 '+result.usedHistory+' 条';}catch(e){activeError=safeErr(e);chatMessages.push({role:'error',text:activeError});}finally{busy=false;render()}}
-document.addEventListener('input',e=>{if(e.target.id==='chat-input')chatDraft=e.target.value;if(e.target.id==='radar-search'){radarQuery=e.target.value;const start=e.target.selectionStart;render();const target=$('radar-search');target?.focus();target?.setSelectionRange(start,start)}if(e.target.id==='app-search'){query=e.target.value;const start=e.target.selectionStart;const end=e.target.selectionEnd;render();$('app-search')?.focus();$('app-search')?.setSelectionRange(start,end)}});
+// 搜索过程中保持同一个 input 节点，中文拼音/五笔组合态不能重建输入框。
+function updateAppResults(){
+ if(page!=='apps')return;
+ const existing=document.querySelector('.app-grid');
+ if(!existing)return;
+ const detached=document.createElement('div');detached.innerHTML=apps();
+ const generated=detached.querySelector('.app-grid');
+ if(!generated)return;
+ existing.replaceChildren(...generated.childNodes);
+ loadVisibleAppIcons();
+}
+function updateRadarResults(){
+ if(page!=='tools'||toolTab!=='radar')return;
+ // 雷达现在只显示一级文件夹，输入时不应该重建整个页面。
+}
+document.addEventListener('compositionstart',e=>{if(e.target.id==='app-search'||e.target.id==='radar-search')e.target.dataset.composing='true'});
+document.addEventListener('compositionend',e=>{
+ if(e.target.id==='app-search'){e.target.dataset.composing='false';query=e.target.value;updateAppResults()}
+ if(e.target.id==='radar-search'){e.target.dataset.composing='false';radarQuery=e.target.value;updateRadarResults()}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id==='chat-input')chatDraft=e.target.value;
+ if(e.target.id==='app-search'){if(e.isComposing||e.target.dataset.composing==='true')return;query=e.target.value;updateAppResults()}
+ if(e.target.id==='radar-search'){if(e.isComposing||e.target.dataset.composing==='true')return;radarQuery=e.target.value;updateRadarResults()}
+});
 document.addEventListener('change',e=>{if(e.target.id==='include-history')historyAllowed=e.target.checked;if(e.target.id==='chat-project'){execute(()=>switchProject(e.target.value))}if(e.target.id==='project-notes')notesText=e.target.value;if(e.target.dataset.history){execute(async()=>{await api.assignHistory(e.target.dataset.history,e.target.value);historyItems=await api.listHistory();notify('历史记录已关联到项目，只有授权时才会发送摘要。')})}if(e.target.id==='provider'){const p=e.target.value;settings.provider=p;settings.endpoint=profiles[p]?.endpoint||'';settings.model=profiles[p]?.model||'';settings.hasKey=false;render()}if(e.target.dataset.act==='toggle-task')execute(async()=>{db=await api.toggleTask(e.target.dataset.id,e.target.dataset.task);render()});if(e.target.dataset.act==='toggle-work')execute(async()=>{db=await api.toggleWork(e.target.dataset.id);render()})});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommandPalette();return}if(e.key==='Escape'&&$('nexus-commands')){$('nexus-commands').remove();return}if(e.key==='Enter'&&e.ctrlKey&&e.target.id==='chat-input'){e.preventDefault();execute(()=>ask(e.target.value))}if(e.key==='F11'){e.preventDefault();execute(()=>api.toggleFullscreen())}});
 document.addEventListener('paste',e=>{if(page!=='ai')return;const item=[...(e.clipboardData?.items||[])].find(x=>x.type.startsWith('image/'));if(!item)return;e.preventDefault();const reader=new FileReader();reader.onload=()=>{uploadImage=String(reader.result);render();notify('已粘贴截图。发送前请确认隐私信息。')};reader.readAsDataURL(item.getAsFile())});
