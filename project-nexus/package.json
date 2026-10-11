@@ -1,12 +1,12 @@
 {
   "name": "project-nexus",
-  "version": "2.0.0-beta.3",
+  "version": "2.1.0-beta.1",
   "private": true,
   "description": "PROJECT NEXUS 2.0 中文 AI 工程工作站（预览版）",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "node --check main.js && node --check preload.js && node --check renderer.js && node --check nexus-memory.js && node --check nexus-features.js && node test-memory.js && node test-features.js && node --check nexus-log-diagnostics.js && node test-logs.js && node test-ipc.js && node test-ui.js && node --check nexus-folders.js && node test-folders.js",
+    "test": "node --check main.js && node --check preload.js && node --check renderer.js && node --check nexus-memory.js && node --check nexus-features.js && node test-memory.js && node test-features.js && node --check nexus-log-diagnostics.js && node test-logs.js && node test-ipc.js && node test-ui.js && node --check nexus-folders.js && node test-folders.js && node --check nexus-auth.js && node test-auth.js && node --check nexus-studio.js && node test-studio.js",
     "build": "electron-builder --win nsis portable --x64"
   },
   "devDependencies": {
@@ -34,7 +34,11 @@
       "!test-ipc.js",
       "!test-ui.js",
       "nexus-folders.js",
-      "!test-folders.js"
+      "!test-folders.js",
+      "nexus-auth.js",
+      "nexus-studio.js",
+      "!test-auth.js",
+      "!test-studio.js"
     ],
     "win": {
       "target": [
