@@ -87,4 +87,19 @@ body{background:radial-gradient(circle at 75% -20%,#173e55 0%,transparent 46%),#
 .folder-dialog{max-height:85vh;overflow:auto}.folder-choices button{display:flex;justify-content:space-between;gap:10px;text-align:left}
 .folder-choices button small{color:#91b4ca}.folder-browser #folder-project{width:240px;max-width:100%}
 @media(max-width:850px){.folder-row{flex-wrap:wrap}.folder-row button{margin-left:auto}.folder-browser .toolbar{flex-wrap:wrap}.folder-browser #folder-project{width:100%}}
+
+/* AI Studio · Industrial design workstation */
+.studio-layout{grid-template-columns:minmax(315px,0.85fr) minmax(400px,1.3fr);align-items:start}
+.studio-layout>.panel{min-width:0}
+.studio-layout .field{margin:14px 0}
+.studio-layout textarea{background:#0c1d2c;border-color:#3b5b72;line-height:1.65}
+.studio-layout h3{margin-top:0}
+.studio-image-frame{display:grid;place-items:center;min-height:350px;border:1px solid #35536a;border-radius:15px;background:radial-gradient(circle at center,#1b354a,#0b1522 72%);padding:12px;overflow:hidden}
+.studio-image-frame img{width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:10px}
+.studio-placeholder{min-height:350px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;border:1px dashed #456c82;border-radius:15px;color:#8bbdd6;font-size:40px}
+.studio-placeholder h3{color:#d7f0ff;font-size:18px}
+.studio-placeholder p{font-size:13px;color:#95b2c5;max-width:300px}
+.studio-code-editor{font-family:Consolas,"Cascadia Code","Microsoft YaHei UI",monospace!important;tab-size:4;white-space:pre;overflow:auto;resize:vertical;min-height:530px;background:#091827!important;color:#b7f9d4!important;border-color:#40677e!important;font-size:13px!important;line-height:1.6!important}
+.studio-layout .toolbar button{white-space:nowrap}
+@media(max-width:1100px){.studio-layout{grid-template-columns:1fr}.studio-code-editor{min-height:360px}}
 </style></head><body><div id="root"></div><script src="./renderer.js"></script></body></html>
