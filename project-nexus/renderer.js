@@ -474,4 +474,8 @@ async function initializeWorkspace(){
 }
 
 async function start(){try{const status=await api.authStatus();if(status.unlocked)await initializeWorkspace();else showLockScreen(status)}catch(e){$('root').textContent='NEXUS 安全初始化失败：'+safeErr(e);console.error(e)}}
+if(typeof api.onLocked==='function')api.onLocked(()=>{
+ const root=$('root');if(root)root.textContent='工作站已锁定，正在显示密码验证…';
+ api.authStatus().then(status=>showLockScreen(status)).catch(e=>{if(root)root.textContent='锁定失败：'+safeErr(e)});
+});
 start();
