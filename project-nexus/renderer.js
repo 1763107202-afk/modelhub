@@ -71,11 +71,21 @@ async function folderPicker(projectId){
 
 function files(){return breadcrumb('智能文件柜','仅展示授权目录下的一级工程文件夹，工程内部文件默认隐藏。')+folderBrowser()+db.projects.map(p=>'<div class="panel"><div class="row-between"><h3>'+esc(p.name)+'</h3>'+btn('关联一级工程文件夹','open-folder-picker','data-id="'+esc(p.id)+'"')+'</div>'+(p.links||[]).slice(0,12).map(l=>'<div class="list-item"><span>'+esc(fileName(l.path))+'</span>'+btn('打开','open-path','data-path="'+esc(l.path)+'"')+'</div>').join('')+'</div>').join('')}
 function work(){return breadcrumb('工作任务','既能管理工程，也能记录课程、学习、科研和其他日常工作。')+'<div class="panel"><h3>添加新的工作</h3><div class="toolbar"><input id="work-title" placeholder="输入要完成的工作">'+btn('＋ 添加工作','create-work','class="primary"')+'</div></div><div class="panel"><h3>工作清单</h3>'+((db.works||[]).map(w=>'<label class="list-item task"><span><input type="checkbox" data-act="toggle-work" data-id="'+esc(w.id)+'" '+(w.done?'checked':'')+'> '+esc(w.title)+'</span><span class="pill">'+(w.done?'已完成':'进行中')+'</span></label>').join('')||'<div class="empty">当前没有工作任务。</div>')+'</div>'}
+function appSearchAliases(name){
+ const n=String(name||'').toLowerCase();
+ const tags=[];
+ if(/ansys|workbench|mechanical|fluent/.test(n))tags.push('有限元 结构仿真 流体仿真 网格 机械分析');
+ if(/solidworks|autocad|cad|fusion|creo|nx /.test(n))tags.push('三维建模 机械设计 零件 装配 工程图');
+ if(/unity|unreal|pico|steamvr/.test(n))tags.push('虚拟现实 VR 场景 编辑');
+ if(/word|wps|office|excel|powerpoint/.test(n))tags.push('办公 文档 表格 演示 文本');
+ if(/vscode|visual studio|python|arduino|keil/.test(n))tags.push('编程 开发 代码 单片机');
+ return tags.join(' ');
+}
 function apps(){
  const kinds=['常用','工程设计','学习办公','开发工具','其他','全部'];
  let items=db.apps||[];
  if(appKind==='常用')items=items.filter(x=>x.pinned);else if(appKind!=='全部')items=items.filter(x=>x.kind===appKind);
- if(query)items=items.filter(x=>(x.name+' '+x.path).toLowerCase().includes(query.toLowerCase()));
+ if(query)items=items.filter(x=>(x.name+' '+x.path+' '+appSearchAliases(x.name)).toLowerCase().includes(query.toLowerCase()));
  return breadcrumb('软件启动中心','直接使用 Windows 已安装软件的真实图标，让常用软件像桌面 Dock 一样清晰好找。')+'<div class="app-controls"><div class="toolbar">'+btn('◎ 重新扫描应用','scan-apps','class="primary"')+'<input id="app-search" aria-label="搜索软件" placeholder="搜索软件名，例如 SolidWorks、Unity、ANSYS…" value="'+esc(query)+'"></div><div class="app-filters">'+kinds.map(k=>'<button type="button" data-act="app-kind" data-kind="'+k+'" class="'+(k===appKind?'primary':'')+'">'+k+'</button>').join('')+'</div><p class="muted">图标来自 Windows 程序或快捷方式的目标文件。点击星标收藏，保留你最常用的工程与学习软件。</p></div><div class="cards app-grid">'+(items.slice(0,180).map(x=>'<article class="card app-card"><div class="app-head"><div class="app-icon" data-app-icon="'+esc(x.id)+'"><span>'+esc(x.name.slice(0,1).toUpperCase())+'</span></div><div class="app-ident"><h3 title="'+esc(x.name)+'">'+esc(x.name)+'</h3><span class="pill">'+esc(x.kind)+'</span></div></div><p class="app-path" title="'+esc(x.path)+'">'+esc(x.path)+'</p><div class="actions">'+btn('▷ 启动应用','run-app','data-id="'+esc(x.id)+'" class="primary"')+btn(x.pinned?'★ 已收藏':'☆ 收藏','pin-app','data-id="'+esc(x.id)+'"')+'</div></article>').join('')||'<div class="empty-drawer"><h3>这里暂时没有软件</h3><p>先扫描 Windows 开始菜单，再按类别查看并收藏常用软件。</p>'+btn('扫描应用','scan-apps','class="primary"')+'</div>')+'</div>';
 }
 
