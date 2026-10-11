@@ -36,16 +36,50 @@ ipcMain.handle('task-toggle',(_e,id,taskId)=>{const s=db(),p=ensureProject(s,id)
 async function addLink(owner,id,type){const s=db(),p=ensureProject(s,id);const result=await dialog.showOpenDialog(BrowserWindow.fromWebContents(owner.sender),{title:type==='folder'?'选择工程文件夹':'选择主工程文件',properties:type==='folder'?['openDirectory']:['openFile','multiSelections']});if(result.canceled)return s;for(const loc of result.filePaths){if(!(p.links||[]).some(x=>x.path.toLowerCase()===loc.toLowerCase()))(p.links??=[]).push({path:loc,type,date:new Date().toISOString()})}return save(s)}
 ipcMain.handle('pick-folder',(e,id)=>addLink(e,id,'folder'));
 ipcMain.handle('pick-file',(e,id)=>addLink(e,id,'file'));
+ipcMain.handle('set-primary-link',(_e,id,index)=>{
+ const state=db(),item=ensureProject(state,id);
+ const links=item.links||[];
+ if(!Number.isInteger(index)||index<0||index>=links.length)throw Error('指定的工程映射不存在');
+ links.forEach((link,n)=>{link.isPrimary=n===index});
+ return save(state);
+});
 ipcMain.handle('remove-link',(_e,id,index)=>{const s=db(),p=ensureProject(s,id);if(index<0||index>=(p.links||[]).length)throw Error('无效映射');p.links.splice(index,1);return save(s)});
 ipcMain.handle('open-path',async(_e,loc)=>{loc=local(loc);if(!fs.existsSync(loc))throw Error('文件不存在：'+loc);const err=await shell.openPath(loc);if(err)throw Error(err);return true});
 ipcMain.handle('reveal-path',(_e,loc)=>{loc=local(loc);if(!fs.existsSync(loc))throw Error('文件不存在：'+loc);shell.showItemInFolder(loc);return true});
-ipcMain.handle('open-project',async(_e,id)=>{const p=ensureProject(db(),id);const links=(p.links||[]).filter(x=>fs.existsSync(x.path));const item=links.find(x=>x.type==='file')||links[0];if(!item)throw Error('请先通过“添加文件夹”或“添加主工程”关联项目');const err=await shell.openPath(item.path);if(err)throw Error(err);return true});
+ipcMain.handle('open-project',async(_e,id)=>{const p=ensureProject(db(),id);const links=(p.links||[]).filter(x=>fs.existsSync(x.path));const item=links.find(x=>x.isPrimary)||links.find(x=>x.type==='file')||links[0];if(!item)throw Error('请先通过“添加文件夹”或“添加主工程”关联项目');const err=await shell.openPath(item.path);if(err)throw Error(err);return true});
 ipcMain.handle('create-work',(_e,title)=>{title=String(title||'').trim().slice(0,120);if(!title)throw Error('请输入工作内容');const s=db();s.works.unshift({id:uid(),title,done:false,date:new Date().toISOString()});return save(s)});
 ipcMain.handle('toggle-work',(_e,id)=>{const s=db(),w=s.works.find(x=>x.id===id);if(!w)throw Error('没有这项工作');w.done=!w.done;return save(s)});
 ipcMain.handle('add-root',async e=>{const x=await dialog.showOpenDialog(BrowserWindow.fromWebContents(e.sender),{title:'授权扫描的文件夹',properties:['openDirectory']});const s=db();if(!x.canceled)for(const v of x.filePaths)if(!s.roots.includes(v))s.roots.push(v);return save(s)});
 function category(name){if(/solidworks|ansys|fluent|unity|blender|keyshot|autocad|cad|arduino|keil|matlab/i.test(name))return '工程设计';if(/word|wps|excel|pdf|powerpoint|浏览器|chrome|edge|office/i.test(name))return '学习办公';if(/visual studio|vs code|github|git|dev-c|python/i.test(name))return '开发工具';return '其他'}
-function crawl(dir,limit,out,depth=0){if(depth>2||out.length>=limit||!fs.existsSync(dir))return;let items=[];try{items=fs.readdirSync(dir,{withFileTypes:true})}catch{return}for(const item of items){if(out.length>=limit)break;const loc=path.join(dir,item.name);if(item.isDirectory())crawl(loc,limit,out,depth+1);else if(/\.(lnk|exe)$/i.test(item.name)&&!/(卸载|uninstall|update|updater|helper|readme|配置|settings|license)/i.test(item.name)){out.push({id:uid(),name:item.name.replace(/\.(lnk|exe)$/i,''),path:loc,kind:category(item.name),pinned:false})}}}
-ipcMain.handle('scan-apps',()=>{const roots=[app.getPath('desktop'),path.join(process.env.APPDATA||'','Microsoft','Windows','Start Menu','Programs'),path.join(process.env.PROGRAMDATA||'','Microsoft','Windows','Start Menu','Programs')];const found=[];for(const r of roots)crawl(r,900,found);const uniq=new Map();for(const x of found){const name=x.name.trim().toLowerCase();if(!uniq.has(name))uniq.set(name,x)}const s=db(),old=new Map((s.apps||[]).map(x=>[x.path.toLowerCase(),x]));s.apps=[...uniq.values()].map(x=>({...x,pinned:old.get(x.path.toLowerCase())?.pinned||false}));return save(s)});
+function stableAppId(location){return crypto.createHash('sha256').update(location.toLowerCase()).digest('hex').slice(0,24)}
+function crawl(dir,limit,out,depth=0){if(depth>2||out.length>=limit||!fs.existsSync(dir))return;let items=[];try{items=fs.readdirSync(dir,{withFileTypes:true})}catch{return}for(const item of items){if(out.length>=limit)break;const loc=path.join(dir,item.name);if(item.isDirectory())crawl(loc,limit,out,depth+1);else if(/\.(lnk|exe)$/i.test(item.name)&&!/(卸载|uninstall|update|updater|helper|readme|配置|settings|license)/i.test(item.name)){out.push({id:stableAppId(loc),name:item.name.replace(/\.(lnk|exe)$/i,''),path:loc,kind:category(item.name),pinned:false})}}}
+ipcMain.handle('scan-apps',()=>{const roots=[app.getPath('desktop'),path.join(process.env.APPDATA||'','Microsoft','Windows','Start Menu','Programs'),path.join(process.env.PROGRAMDATA||'','Microsoft','Windows','Start Menu','Programs')];const found=[];for(const r of roots)crawl(r,900,found);const uniq=new Map();for(const x of found){const name=x.name.trim().toLowerCase();if(!uniq.has(name))uniq.set(name,x)}const s=db(),old=new Map((s.apps||[]).map(x=>[x.path.toLowerCase(),x]));
+ s.apps=[...uniq.values()].map(x=>({...x,id:old.get(x.path.toLowerCase())?.id||x.id,pinned:old.get(x.path.toLowerCase())?.pinned||false}));
+ appIconCache.clear();
+ return save(s)});
+
+const appIconCache=new Map();
+ipcMain.handle('app-icon',async(_e,appId)=>{
+ const item=(db().apps||[]).find(x=>x.id===appId);
+ if(!item||!fs.existsSync(item.path))return null;
+ const cached=appIconCache.get(item.path);
+ if(cached)return cached;
+ let source=item.path;
+ if(process.platform==='win32'&&/\.lnk$/i.test(source)){
+  try{
+   const target=shell.readShortcutLink(source)?.target;
+   if(target&&fs.existsSync(target))source=target;
+  }catch{} 
+ }
+ try{
+  const icon=await app.getFileIcon(source,{size:'large'});
+  if(!icon||icon.isEmpty())return null;
+  const data=icon.toDataURL();
+  if(appIconCache.size>240)appIconCache.delete(appIconCache.keys().next().value);
+  appIconCache.set(item.path,data);
+  return data;
+ }catch{return null}
+});
 ipcMain.handle('pin-app',(_e,id)=>{const s=db(),a=s.apps.find(x=>x.id===id);if(!a)throw Error('软件不存在');a.pinned=!a.pinned;return save(s)});
 ipcMain.handle('run-app',async(_e,id)=>{const a=db().apps.find(x=>x.id===id);if(!a)throw Error('软件不存在');if(!fs.existsSync(a.path))throw Error('快捷方式路径不存在');const err=await shell.openPath(a.path);if(err)throw Error(err);return true});
 const profiles={
