@@ -62,4 +62,14 @@ body{background:radial-gradient(circle at 75% -20%,#173e55 0%,transparent 46%),#
 .command-footer{color:#95b6c9;font-size:11px;border-top:1px solid #31516a;padding:11px 18px}
 @media(max-width:1080px){.content{padding:20px 24px 44px}.hero{padding:22px}.radar-item{flex-wrap:wrap}.radar-item>.actions{width:100%}.build-item{flex-wrap:wrap}}
 @media(max-width:740px){.hero-mark{display:none}.top{flex-wrap:wrap}.health-check-list{grid-template-columns:1fr}.mode-grid{grid-template-columns:1fr}.graph-branches{grid-template-columns:1fr}.tools-nav{flex-wrap:nowrap;overflow-x:auto}.tool-panel,.panel{max-width:100%}}
+
+/* 手动截图编辑与指定窗口选择 */
+.screenshot-editor{padding:4vh 16px;align-items:center;backdrop-filter:blur(12px)}
+.editor-panel{background:#122437;border:1px solid #467693;border-radius:17px;width:min(94vw,1500px);max-height:92vh;padding:16px 20px;display:flex;flex-direction:column;box-shadow:0 32px 90px #0009}
+.editor-panel>.row-between{gap:14px;flex-wrap:wrap}.editor-panel h3{margin:0 0 6px}.editor-panel .toolbar{margin:0}
+.editor-scroll{min-height:0;flex:1;overflow:auto;display:grid;place-items:center;padding:10px;background:#081321;border-radius:12px;margin-top:13px}
+.editor-scroll canvas{max-width:100%;max-height:72vh;width:auto;height:auto;cursor:crosshair;touch-action:none;box-shadow:0 12px 35px #0007}
+.screenshot-window-picker select{margin:14px 0}
+.image-preview .toolbar{display:flex;gap:8px}.image-preview button{font-size:12px;padding:7px 11px}
+.float .modal-overlay{inset:0}.float .editor-panel{max-height:96vh;padding:10px}.float .editor-scroll canvas{max-height:62vh}
 </style></head><body><div id="root"></div><script src="./renderer.js"></script></body></html>
