@@ -1,12 +1,12 @@
 {
   "name": "project-nexus",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "private": true,
   "description": "中文 Windows 工程工作站",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "node --check main.js && node --check preload.js && node --check renderer.js && node --check nexus-memory.js && node test-memory.js",
+    "test": "node --check main.js && node --check preload.js && node --check renderer.js && node --check nexus-memory.js && node --check nexus-features.js && node test-memory.js && node test-features.js",
     "build": "electron-builder --win nsis portable --x64"
   },
   "devDependencies": {
@@ -25,7 +25,9 @@
       "renderer.js",
       "index.html",
       "nexus-memory.js",
-      "!test-memory.js"
+      "!test-memory.js",
+      "nexus-features.js",
+      "!test-features.js"
     ],
     "win": {
       "target": [
@@ -40,6 +42,7 @@
     }
   },
   "dependencies": {
-    "adm-zip": "^0.5.16"
+    "adm-zip": "^0.5.16",
+    "docx": "^9.5.1"
   }
 }
