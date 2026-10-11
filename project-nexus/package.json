@@ -1,8 +1,8 @@
 {
   "name": "project-nexus",
-  "version": "1.6.0",
+  "version": "2.0.0-beta.1",
   "private": true,
-  "description": "中文 Windows 工程工作站",
+  "description": "PROJECT NEXUS 2.0 中文 AI 工程工作站（预览版）",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
