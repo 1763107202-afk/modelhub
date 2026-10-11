@@ -3,9 +3,12 @@ const { app,BrowserWindow,dialog,ipcMain,shell,safeStorage,desktopCapturer,scree
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),http=require('node:http'),https=require('node:https');
 const admzip=require('adm-zip');
 const memory=require('./nexus-memory');
+const auth=require('./nexus-auth');
 const features=require('./nexus-features');
 const diagnostics=require('./nexus-log-diagnostics');
 let mainWin=null, chatWin=null;
+let lockController=null;
+
 const home=()=>app.getPath('userData'),f=n=>path.join(home(),n);
 function read(n,defaultValue){
  const target=f(n);
@@ -35,7 +38,7 @@ function floatWindow(){
  chatWin=new BrowserWindow({width:460,height:700,minWidth:380,minHeight:480,alwaysOnTop:true,autoHideMenuBar:true,title:'NEXUS AI · 悬浮助手',backgroundColor:'#0d1724',webPreferences:{preload:path.join(__dirname,'preload.js'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
  chatWin.loadFile(path.join(__dirname,'index.html'),{query:{float:'1'}});chatWin.on('closed',()=>chatWin=null);return true;
 }
-app.whenReady().then(()=>{mainWindow();
+app.whenReady().then(()=>{lockController=auth.createController(app.getPath('userData'));mainWindow();
  globalShortcut.register('Control+Alt+N',()=>{if(!mainWin||mainWin.isDestroyed()){mainWindow();return}if(mainWin.isMinimized())mainWin.restore();mainWin.show();mainWin.focus()});
  globalShortcut.register('Control+Alt+J',()=>floatWindow());
  app.on('activate',()=>{if(!mainWin)mainWindow()});
@@ -43,6 +46,21 @@ app.whenReady().then(()=>{mainWindow();
 app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit()});
 function local(p){if(typeof p!=='string'||!path.isAbsolute(p))throw Error('路径不合法');return p}
 function ensureProject(s,id){const p=project(s,id);if(!p)throw Error('项目不存在');return p}
+
+// 所有具名 IPC 除解锁与密码设置外均在主进程校验，不能仅通过前端隐藏内容绕过。
+const noAuth=new Set(['auth-status','auth-setup','auth-unlock','auth-lock']);
+const registerIpc=ipcMain.handle.bind(ipcMain);
+ipcMain.handle=(channel,handler)=>{
+ registerIpc(channel,async(event,...args)=>{
+  if(!noAuth.has(channel))lockController?.assertUnlocked();
+  return handler(event,...args);
+ });
+};
+ipcMain.handle('auth-status',()=>lockController.status());
+ipcMain.handle('auth-setup',(_event,password,confirm)=>lockController.setup(password,confirm));
+ipcMain.handle('auth-unlock',(_event,password)=>lockController.unlock(password));
+ipcMain.handle('auth-lock',()=>lockController.lock());
+
 ipcMain.handle('load',()=>db());
 ipcMain.handle('create-project',(_e,name,kind='自定义')=>{name=String(name||'').trim().slice(0,100);if(!name)throw Error('请填写项目名称');const s=db();s.projects.push({id:uid(),name,kind:String(kind).slice(0,40),links:[],tasks:[],createdAt:new Date().toISOString()});return save(s)});
 ipcMain.handle('task-add',(_e,id,title)=>{const s=db(),p=ensureProject(s,id);title=String(title||'').trim().slice(0,120);if(!title)throw Error('请填写任务名称');p.tasks??=[];p.tasks.push({id:uid(),title,verified:false,weight:1});return save(s)});
