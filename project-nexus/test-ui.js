@@ -9,6 +9,8 @@ const {window}=dom,doc=window.document;
 const p={id:'p1',name:'测试桥梁',kind:'机械',links:[{path:'C:\\Demo\\Bridge_V15.wbpj',type:'file',date:'2026-01-01T08:00:00.000Z'}],tasks:[],createdAt:'2026-01-01T08:00:00.000Z'};
 const state={projects:[p],works:[],apps:[{id:'a1',name:'ANSYS Workbench',kind:'工程设计',path:'C:\\Demo\\Workbench.lnk',pinned:true}],roots:[]};
 window.nexus={
+ authStatus:async()=>({needsSetup:false,unlocked:true,remainingSeconds:0}),
+ listFolders:async()=>({folders:[],warnings:[]}),
  profiles:async()=>({DeepSeek:{endpoint:'https://api.deepseek.com/chat/completions',model:'deepseek-chat'}}),
  getSettings:async()=>({provider:'DeepSeek',model:'deepseek-chat',endpoint:'https://api.deepseek.com/chat/completions',hasKey:false}),
  load:async()=>state,listHistory:async()=>[],getProjectChat:async()=>[],getMemory:async()=>'',radarGet:async()=>({files:[],warnings:[]}),
