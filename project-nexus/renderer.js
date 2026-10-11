@@ -14,12 +14,12 @@ const fileType=link=>{
  return {icon:item[0],type:item[1]};
 };
 const btn=(name,act,more='')=>'<button type="button" data-act="'+act+'" '+more+'>'+name+'</button>';
-let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',profiles={},settings={},uploadImage='',chatMessages=[],busy=false,query='',appKind='常用',activeError='',chatDraft='',historyAllowed=false,historyItems=[],notesText='',radarData={files:[],warnings:[]},radarQuery='',modeData=[],modePreview=null,modeChoice='mechanical',toolTab='modes',projectTab='timeline',projectEvents=[],projectGraph=null,projectSnapshots=[],versionGroups=[],githubRuns=[],healthData=null,githubError='',logReport=null,folderIndex={folders:[],warnings:[]},folderSuggestions=[];
+let db={projects:[],works:[],apps:[],roots:[]},page=isFloat?'ai':'home',pid='',profiles={},settings={},uploadImage='',chatMessages=[],busy=false,query='',appKind='常用',activeError='',chatDraft='',historyAllowed=false,historyItems=[],notesText='',radarData={files:[],warnings:[]},radarQuery='',modeData=[],modePreview=null,modeChoice='mechanical',toolTab='modes',projectTab='timeline',projectEvents=[],projectGraph=null,projectSnapshots=[],versionGroups=[],githubRuns=[],healthData=null,githubError='',logReport=null,folderIndex={folders:[],warnings:[]},folderSuggestions=[],imageStudioCfg={endpoint:'https://api.openai.com/v1/images/generations',model:'gpt-image-1'},imagePrompt='',imageResult=null,imageSize='1024x1024',studioCode='',codeTask='',codeLanguage='python',studioBusy=false;
 function safeErr(e){const x=String(e?.message||e||'未知错误');return x.replace(/^Error invoking remote method '[^']+': Error:\s*/,'').slice(0,1100)}
 function notify(message,kind='ok'){const t=$('toast');if(!t)return;t.textContent=message;t.style.color=kind==='error'?'#ffacb5':'#95ecd2';}
 function frame(){
  $('root').innerHTML='<div class="layout"><aside class="sidebar"><div class="brand">◆ NEXUS</div><div class="muted" style="margin:0 9px 18px">中文工程 · 智能工作中心</div><div id="navigation"></div><div class="side-foot">● 本地工作站<br><small>源工程保持原位 · 离线可用</small></div></aside><main class="main"><header class="top"><div><div class="muted">PROJECT NEXUS / ENGINEERING CONSOLE</div><div class="title" id="section-title">工程指挥中心</div></div><div class="top-actions">'+btn('⌕ 搜索 Ctrl+K','command-open','class="nav-search"')+btn('✧ AI 悬浮窗','float-open')+btn('⛶ 全屏切换','fullscreen-toggle')+btn('⌑ 锁定','lock-now')+'</div></header><div class="content" id="content"></div></main></div><div id="toast" role="status" aria-live="polite" class="toast"></div>';
- const nav=[['home','▦ 指挥中心'],['projects','◈ 工程项目'],['files','▤ 智能文件柜'],['work','☷ 工作任务'],['apps','▷ 软件启动台'],['tools','▥ 效率工具'],['ai','✧ AI 智能助手'],['settings','⚙ 设置 / 数据']];
+ const nav=[['home','▦ 指挥中心'],['projects','◈ 工程项目'],['files','▤ 智能文件柜'],['work','☷ 工作任务'],['apps','▷ 软件启动台'],['tools','▥ 效率工具'],['ai','✧ AI 智能助手'],['studio-image','◉ AI 图像工作室'],['studio-code','⌘ AI 代码工作室'],['settings','⚙ 设置 / 数据']];
  $('navigation').innerHTML=nav.map(([id,title])=>'<button type="button" class="nav '+(page===id?'active':'')+'" data-act="nav" data-id="'+id+'">'+title+'</button>').join('');
 }
 function percentage(p){const a=p.tasks||[];return a.length?Math.round(100*a.filter(x=>x.verified).length/a.length):null}
@@ -127,8 +127,39 @@ function ai(){
  const options=Object.keys(profiles).map(x=>'<option '+(settings.provider===x?'selected':'')+'>'+esc(x)+'</option>').join('');
  return breadcrumb('NEXUS AI · 工程助手','聊天悬浮窗、项目上下文、多模型服务；发送截图和聊天历史必须由你主动确认。')+'<div class="columns chat-area"><section class="panel ai-settings float-hide"><h3>01 · 模型与接口</h3><div class="field"><label>服务平台</label><select id="provider">'+options+'</select></div><div class="field"><label>接口地址</label><input id="endpoint" value="'+esc(settings.endpoint||'')+'" spellcheck="false"></div><div class="field"><label>模型 ID</label><input id="model-id" value="'+esc(settings.model||'')+'" spellcheck="false"></div><div class="field"><label>API Key '+(settings.hasKey?'（已保存，可留空）':'（未配置）')+'</label><input id="api-key" type="password" placeholder="仅输入新密钥时才会覆盖原密钥" autocomplete="off"></div>'+btn('保存 AI 配置','settings-save','class="primary"')+btn('清除此平台密钥','clear-key')+'<p class="muted">密钥只存本机 Windows 加密存储。云端 AI 需要该平台的 API 额度。</p><h3>02 · 项目记忆</h3>'+btn('导入 ChatGPT conversations.json','history-import')+'<p class="muted">一键打开 ChatGPT 官方导出入口，在官网“设置 → 数据控制 → 导出数据”申请导出；收到 ZIP 后直接选择整个压缩包。</p><div class="toolbar">'+btn('① 打开 ChatGPT 官网','open-chatgpt')+btn('② 导入官方 ZIP / JSON','history-import')+'</div><h3>03 · 当前项目长期记忆</h3><p class="muted">只对当前选中项目生效，可记录版本、决策、待解决问题和下一步计划。</p><textarea id="project-notes" placeholder="填写已核实的项目长期资料、方案和进度，模型在本项目聊天时自动参考。">'+esc(notesText)+'</textarea><div class="toolbar">'+btn('保存项目记忆','memory-save','class="primary"')+'</div><div class="history-list">'+historyItems.slice(0,60).map(h=>'<div class="history-row"><span>'+esc(h.title)+(h.suggestionProjectId&&!h.projectId?' <small class="muted">· 建议归属：'+esc(db.projects.find(p=>p.id===h.suggestionProjectId)?.name||'未知项目')+'（请核对）</small>':'')+'</span><select data-history="'+esc(h.id)+'"><option value="">未关联项目</option>'+projectOptions(h.projectId)+'</select></div>').join('')+'</div></section><section class="panel"><div class="row-between"><h3>✧ 与 AI 对话</h3><span class="pill">'+esc(settings.provider||'未设置')+' · '+esc(settings.model||'未选模型')+'</span></div><div class="field"><label>关联项目（可选）</label><select id="chat-project"><option value="">不关联项目</option>'+projectOptions(pid)+'</select></div><label class="inline-check"><input type="checkbox" id="include-history" '+(historyAllowed?'checked':'')+'> 允许本次消息包含本地历史项目摘录</label><div class="chat-log" id="chat-log" aria-live="polite">'+chatMessages.map(m=>'<div class="bubble '+(m.role==='user'?'user':m.role==='error'?'error':'')+'"><small>'+({'user':'我','assistant':'NEXUS AI','error':'请求失败'}[m.role])+'</small><div>'+esc(m.text)+'</div></div>').join('')+'</div><div id="chat-status" class="status">'+esc(activeError)+'</div><div id="image-box">'+(uploadImage?'<div class="image-preview"><img class="preview" id="screenshot-preview" src="'+esc(uploadImage)+'" alt="待发送截图">'+btn('标注截图','annotate-image')+btn('移除截图','remove-image')+'<p class="muted">发送前请确认截图不包含私密信息。</p></div>':'')+'</div><textarea class="chat-input" id="chat-input" placeholder="例如：这个 Fluent 边界为什么为零？也可以粘贴 Win+Shift+S 的截图。">'+esc(chatDraft)+'</textarea><div class="toolbar">'+btn('截取屏幕','capture')+btn('指定窗口截图','window-picker')+btn('清空对话','clear-chat')+btn(busy?'正在请求…':'发送问题','send-chat','class="primary" '+(busy?'disabled':''))+'</div><p class="muted">截图仅在你点击发送后上传至所选模型；不支持图片的模型请先切换。</p></section></div>';
 }
+
+function imageStudio(){
+ return breadcrumb('AI 图像工作室','独立生图模型 · 提示词创作 · 工程效果图预览与保存。生成前由你主动确认。')+
+ '<div class="columns studio-layout"><section class="panel"><h3>01 · 图像生成模型</h3><p class="muted">生图与文字聊天使用不同的 API 配置；普通 DeepSeek 文本接口不能生成图片。</p>'+
+ '<div class="field"><label>图像生成接口 URL</label><input id="image-endpoint" spellcheck="false" value="'+esc(imageStudioCfg.endpoint||'')+'"></div>'+
+ '<div class="field"><label>生图模型 ID</label><input id="image-model" spellcheck="false" value="'+esc(imageStudioCfg.model||'')+'"></div>'+
+ '<div class="field"><label>生图专用 API Key '+(imageStudioCfg.hasKey?'（已保存，可留空）':'（尚未设置）')+'</label><input id="image-key" type="password" autocomplete="off" placeholder="仅输入新密钥时更新"></div>'+
+ '<div class="toolbar">'+btn('保存生图模型配置','studio-image-settings-save','class="primary"')+'</div>'+
+ '<h3>02 · 创作描述</h3><textarea id="studio-image-prompt" rows="6" placeholder="例如：未来感船舶分段智能制造车间，真实比例的龙门吊，专业工业设计渲染…">'+esc(imagePrompt)+'</textarea>'+
+ '<div class="field"><label>输出画幅</label><select id="studio-image-size">'+[['1024x1024','正方形 · 1024 × 1024'],['1536x1024','横向 · 1536 × 1024'],['1024x1536','纵向 · 1024 × 1536']].map(([v,label])=>'<option value="'+v+'" '+(v===imageSize?'selected':'')+'>'+label+'</option>').join('')+'</select></div>'+
+ btn(studioBusy?'正在生成…':'生成工程效果图','studio-image-generate','class="primary" '+(studioBusy?'disabled':''))+
+ '<p class="muted">模型和服务商可能收费。内容仅在你点击“生成”后发送；生成图片不会自动修改工程文件。</p></section>'+
+ '<section class="panel"><div class="row-between"><h3>图像预览</h3>'+(imageResult?btn('保存图片到本机','studio-image-save','class="primary"'):'')+'</div>'+
+ (imageResult?'<div class="studio-image-frame"><img src="'+esc(imageResult.dataUrl)+'" alt="AI 生成的效果图"></div><p class="muted">模型：'+esc(imageResult.model||'')+' · 保存时可自主选择项目文件夹</p>':
+ '<div class="studio-placeholder">◉<h3>效果图将在这里显示</h3><p>先设置支持生图的服务商，输入描述，然后点击生成。</p></div>')+
+ '</section></div>';
+}
+function codeStudio(){
+ const types=[['python','Python'],['cpp','C++'],['c','C'],['csharp','Unity C#'],['javascript','JavaScript'],['typescript','TypeScript'],['arduino','ESP32 / Arduino'],['html','HTML'],['css','CSS'],['json','JSON'],['powershell','PowerShell'],['matlab','MATLAB'],['text','纯文本']];
+ return breadcrumb('AI 代码工作室','工程代码生成 · 审查与修改 · 复制或保存源码。不会自动执行生成的程序。')+
+ '<div class="columns studio-layout"><section class="panel"><h3>01 · 代码需求</h3><p class="muted">使用「NEXUS AI」已配置的文本模型，可引用当前工程长期笔记。</p>'+
+ '<div class="field"><label>关联工程</label><select id="studio-code-project"><option value="">不关联项目</option>'+projectOptions(pid)+'</select></div>'+
+ '<div class="field"><label>目标编程语言</label><select id="studio-code-language">'+types.map(([v,label])=>'<option value="'+v+'" '+(v===codeLanguage?'selected':'')+'>'+label+'</option>').join('')+'</select></div>'+
+ '<textarea id="studio-code-task" rows="9" placeholder="例如：生成 ESP32 WiFi 控制的双电机差速小车程序，需要转向与前进同时响应…">'+esc(codeTask)+'</textarea>'+
+ '<div class="toolbar">'+btn(studioBusy?'正在生成…':'生成代码','studio-code-generate','class="primary" '+(studioBusy?'disabled':''))+'</div>'+
+ '<p class="muted">生成结果需要你审查、编译和测试；不会直接运行脚本或覆盖现有文件。</p></section>'+
+ '<section class="panel"><div class="row-between"><h3>02 · 代码预览与编辑</h3><div class="toolbar">'+(studioCode?btn('复制代码','studio-code-copy')+btn('另存为源文件','studio-code-save','class="primary"'):'')+'</div></div>'+
+ '<textarea class="studio-code-editor" id="studio-code-editor" spellcheck="false" placeholder="模型输出将在此显示，允许在保存前直接编辑。">'+esc(studioCode)+'</textarea>'+
+ '<p class="muted">支持单文件生成与保存，多文件工程和版本差异对比将在后续版本验证。建议始终保存为新文件。</p></section></div>';
+}
+
 function settingsPage(){return breadcrumb('设置与数据','所有数据保存在本机，工程源文件不会自动移动。')+'<div class="panel"><h3>应用设置</h3><p>当前客户端：PROJECT NEXUS · Electron 中文桌面版</p><p class="muted">F11 及右上角按钮可切换全屏。AI 悬浮窗口可置顶其他软件。</p>'+btn('AI 模型设置','navigate-ai')+'</div><div class="panel"><h3>数据与隐私</h3><p class="muted">工程映射仅存储本地路径；聊天导出必须由你主动选择；API Key 用 Windows 安全存储加密。请勿将私人聊天、截图、密钥上传到公开 GitHub 仓库。</p></div>'}
-function render(){frame();$('section-title').textContent={home:'指挥中心',projects:'工程项目',files:'智能文件柜',work:'工作中心',apps:'软件启动台',ai:'NEXUS AI',tools:'效率工具',settings:'设置与数据'}[page]||'指挥中心';$('content').innerHTML={home,projects,files,work,apps,ai,tools,settings:settingsPage}[page]();if(page==='ai'){const box=$('chat-log');box.scrollTop=box.scrollHeight;const input=$('chat-input');input?.focus()}if(page==='apps')loadVisibleAppIcons()}
+function render(){frame();$('section-title').textContent={home:'指挥中心',projects:'工程项目',files:'智能文件柜',work:'工作中心',apps:'软件启动台',ai:'NEXUS AI',tools:'效率工具','studio-image':'AI 图像工作室','studio-code':'AI 代码工作室',settings:'设置与数据'}[page]||'指挥中心';$('content').innerHTML={home,projects,files,work,apps,ai,tools,'studio-image':imageStudio,'studio-code':codeStudio,settings:settingsPage}[page]();if(page==='ai'){const box=$('chat-log');box.scrollTop=box.scrollHeight;const input=$('chat-input');input?.focus()}if(page==='apps')loadVisibleAppIcons()}
 async function loadVisibleAppIcons(){const nodes=[...document.querySelectorAll('[data-app-icon]')].slice(0,90);for(const node of nodes){const id=node.dataset.appIcon;try{const src=await api.getAppIcon(id);if(src&&node.isConnected){const img=document.createElement('img');img.src=src;img.alt='';img.loading='lazy';node.replaceChildren(img)}}catch{}}}
 
 async function showWindowPicker(){
@@ -229,10 +260,13 @@ document.addEventListener('compositionend',e=>{
 });
 document.addEventListener('input',e=>{
  if(e.target.id==='chat-input')chatDraft=e.target.value;
+ if(e.target.id==='studio-image-prompt')imagePrompt=e.target.value;
+ if(e.target.id==='studio-code-task')codeTask=e.target.value;
+ if(e.target.id==='studio-code-editor')studioCode=e.target.value;
  if(e.target.id==='app-search'){if(e.isComposing||e.target.dataset.composing==='true')return;query=e.target.value;updateAppResults()}
  if(e.target.id==='radar-search'){if(e.isComposing||e.target.dataset.composing==='true')return;radarQuery=e.target.value;updateRadarResults()}
 });
-document.addEventListener('change',e=>{if(e.target.id==='include-history')historyAllowed=e.target.checked;if(e.target.id==='chat-project'){execute(()=>switchProject(e.target.value))}if(e.target.id==='project-notes')notesText=e.target.value;if(e.target.dataset.history){execute(async()=>{await api.assignHistory(e.target.dataset.history,e.target.value);historyItems=await api.listHistory();notify('历史记录已关联到项目，只有授权时才会发送摘要。')})}if(e.target.id==='provider'){const p=e.target.value;settings.provider=p;settings.endpoint=profiles[p]?.endpoint||'';settings.model=profiles[p]?.model||'';settings.hasKey=false;render()}if(e.target.dataset.act==='toggle-task')execute(async()=>{db=await api.toggleTask(e.target.dataset.id,e.target.dataset.task);render()});if(e.target.dataset.act==='toggle-work')execute(async()=>{db=await api.toggleWork(e.target.dataset.id);render()})});
+document.addEventListener('change',e=>{if(e.target.id==='include-history')historyAllowed=e.target.checked;if(e.target.id==='studio-image-size')imageSize=e.target.value;if(e.target.id==='studio-code-language')codeLanguage=e.target.value;if(e.target.id==='studio-code-project')pid=e.target.value;if(e.target.id==='chat-project'){execute(()=>switchProject(e.target.value))}if(e.target.id==='project-notes')notesText=e.target.value;if(e.target.dataset.history){execute(async()=>{await api.assignHistory(e.target.dataset.history,e.target.value);historyItems=await api.listHistory();notify('历史记录已关联到项目，只有授权时才会发送摘要。')})}if(e.target.id==='provider'){const p=e.target.value;settings.provider=p;settings.endpoint=profiles[p]?.endpoint||'';settings.model=profiles[p]?.model||'';settings.hasKey=false;render()}if(e.target.dataset.act==='toggle-task')execute(async()=>{db=await api.toggleTask(e.target.dataset.id,e.target.dataset.task);render()});if(e.target.dataset.act==='toggle-work')execute(async()=>{db=await api.toggleWork(e.target.dataset.id);render()})});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommandPalette();return}if(e.key==='Escape'&&$('nexus-commands')){$('nexus-commands').remove();return}if(e.key==='Enter'&&e.ctrlKey&&e.target.id==='chat-input'){e.preventDefault();execute(()=>ask(e.target.value))}if(e.key==='F11'){e.preventDefault();execute(()=>api.toggleFullscreen())}});
 document.addEventListener('paste',e=>{if(page!=='ai')return;const item=[...(e.clipboardData?.items||[])].find(x=>x.type.startsWith('image/'));if(!item)return;e.preventDefault();const reader=new FileReader();reader.onload=()=>{uploadImage=String(reader.result);render();notify('已粘贴截图。发送前请确认隐私信息。')};reader.readAsDataURL(item.getAsFile())});
 document.addEventListener('click',e=>{
@@ -241,7 +275,51 @@ document.addEventListener('click',e=>{
  execute(async()=>{
   switch(a){
 
-   case 'tool-tab':toolTab=el.dataset.tool||'modes';render();return;
+   
+   case 'studio-image-settings-save':{
+    imageStudioCfg=await api.studioSaveImageSettings({endpoint:$('image-endpoint').value,model:$('image-model').value,key:$('image-key').value});
+    render();notify('生图模型配置已安全保存');return;
+   }
+   case 'studio-image-generate':{
+    imagePrompt=$('studio-image-prompt')?.value||imagePrompt;
+    imageSize=$('studio-image-size')?.value||imageSize;
+    if(!imagePrompt.trim())throw Error('请输入效果图描述');
+    if(!confirm('即将向你配置的生图平台发送描述并可能产生 API 费用，确定生成吗？'))return;
+    studioBusy=true;render();
+    try{imageResult=await api.studioGenerateImage({prompt:imagePrompt,size:imageSize});notify('图片已生成；可选择保存到本机')}finally{studioBusy=false;render()}
+    return;
+   }
+   case 'studio-image-save':{
+    if(!imageResult)throw Error('请先生成图片');
+    const result=await api.studioSaveImage(imageResult.dataUrl);
+    if(!result.canceled)notify('图片已保存：'+result.path);
+    return;
+   }
+   case 'studio-code-generate':{
+    codeTask=$('studio-code-task')?.value||codeTask;
+    codeLanguage=$('studio-code-language')?.value||codeLanguage;
+    pid=$('studio-code-project')?.value||'';
+    if(!codeTask.trim())throw Error('请说明需要生成的代码');
+    studioBusy=true;render();
+    try{
+     const result=await api.studioGenerateCode({task:codeTask,language:codeLanguage,projectId:pid});
+     studioCode=result.code;notify('代码已生成，请审核后复制或保存');
+    }finally{studioBusy=false;render()}
+    return;
+   }
+   case 'studio-code-copy':{
+    studioCode=$('studio-code-editor')?.value||studioCode;
+    if(!studioCode)throw Error('没有可复制的代码');
+    await navigator.clipboard.writeText(studioCode);notify('代码已复制');return;
+   }
+   case 'studio-code-save':{
+    studioCode=$('studio-code-editor')?.value||studioCode;
+    if(!studioCode)throw Error('尚无代码');
+    const result=await api.studioSaveCode(studioCode,codeLanguage);
+    if(!result.canceled)notify('代码已保存：'+result.path);
+    return;
+   }
+case 'tool-tab':toolTab=el.dataset.tool||'modes';render();return;
    case 'mode-choice':modeChoice=el.dataset.mode||'mechanical';modePreview=null;render();return;
    case 'mode-preview':{
     const chosen=$('mode-id')?.value||modeChoice;
@@ -387,7 +465,7 @@ function showLockScreen(state){
  $('auth-pass').focus();
 }
 async function initializeWorkspace(){
- profiles=await api.profiles();settings=await api.getSettings();db=await api.load();
+ profiles=await api.profiles();settings=await api.getSettings();try{imageStudioCfg=await api.studioImageSettings()}catch(e){console.warn('图像模型配置尚未初始化',e)}db=await api.load();
  historyItems=await api.listHistory();
  try{radarData=await api.radarGet();modeData=await api.listModes()}catch(e){console.warn('部分扩展模块读取失败',e)}
  if(db.projects?.length)pid=db.projects[0].id;
