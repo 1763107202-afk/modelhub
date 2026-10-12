@@ -6,7 +6,7 @@
   const loadMainApp=script?.dataset.app!=="false";
   const VERSION_KEY="justLabTokyoV2SiteVersionV1";
   const VERSION_CHECK_KEY="justLabTokyoV2SiteVersionCheckedAtV1";
-  const BOOTSTRAP_VERSION="tokyo-v2-20261012.3";
+  const BOOTSTRAP_VERSION="tokyo-v2-20261012.4";
   const VERSION_CHECK_INTERVAL=2*60*1000;
   let routeVersion=BOOTSTRAP_VERSION;
 
