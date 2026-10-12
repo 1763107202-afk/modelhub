@@ -53,7 +53,7 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
   <section class="section">
   <div class="panel"><h2>文件下载连通性诊断</h2>
   <p style="color:#9eb4cd;font-size:13px">仅主管理员可运行，检查七牛云一份已迁移 PPT 的 HTTP 响应头，不下载文件正文，不通过 Supabase 中转文件，不返回签名地址或密钥。</p>
-  <button id="qiniuDownloadProbeBtn" class="btn" type="button">检测 HTTP HEAD</button><button id="qiniuRangeProbeBtn" class="btn" type="button">检测实际 GET（1 字节）</button>
+  <button id="qiniuDownloadProbeBtn" class="btn" type="button">检测 HTTP HEAD</button><button id="qiniuRangeProbeBtn" class="btn" type="button">检测实际 GET（1 字节）</button> <button id="qiniuHttpsProbeBtn" class="btn" type="button">检测七牛云 HTTPS 备用线路</button>
   <div id="qiniuDownloadProbeResult" class="msg" role="status" aria-live="polite">尚未检测 · 容量统计正常不等于文件下载正常</div>
   </div>
 </section>
@@ -283,6 +283,24 @@ q("#qiniuRangeProbeBtn").onclick=async()=>{
     out.className="msg "+(d.originHealthy?"ok":"bad");
   }catch(e){out.textContent="检测失败："+(e?.message||"未知错误");out.className="msg bad"}
   finally{btn.disabled=false}
+};
+
+q("#qiniuHttpsProbeBtn").onclick=async()=>{
+  const btn=q("#qiniuHttpsProbeBtn"),out=q("#qiniuDownloadProbeResult");
+  btn.disabled=true;
+  out.textContent="正在验证七牛云 HTTPS 备用线路（不下载文件正文）…";
+  try{
+    const result=await supabase.functions.invoke("qiniu-https-route-check",{body:{target:"reference"}});
+    if(result.error)throw new Error("备用线路检测接口调用失败");
+    const d=result.data||{};
+    if(d.error)throw new Error(d.error);
+    const ok=d.httpStatus===206&&d.rangeOK===true;
+    out.textContent=ok?"HTTPS 备用线路：HTTP 206，小范围下载正常；全文件下载仍需验收。":"HTTPS 备用线路：HTTP "+(d.httpStatus??"无响应")+"，"+(d.errorType||"暂未通过验证");
+    out.className="msg "+(ok?"ok":"bad");
+  }catch(e){
+    out.textContent="HTTPS 线路测试失败："+(e?.message||"未知错误");
+    out.className="msg bad";
+  }finally{btn.disabled=false}
 };
 q("#refreshBtn").onclick=refresh;
 q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();location.reload()};
