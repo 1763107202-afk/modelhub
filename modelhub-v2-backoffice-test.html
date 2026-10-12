@@ -73,7 +73,7 @@ const qiniuStatus=async r=>{
    const err=r.value.error;
    const http=err.context?.status||"未知";
    let upstream=null;
-   try{const response=err.context?.clone?.()||err.context; const json=await response?.json?.();const n=Number(json?.status);if(Number.isInteger(n)&&n>=100&&n<=599)upstream=n;}catch(_e){}
+   try{const response=err.context?.clone?.()||err.context; const json=await response?.json?.();const n=Number(json?.upstreamStatus ?? json?.status);if(Number.isInteger(n)&&n>=100&&n<=599)upstream=n;}catch(_e){}
    return "Edge HTTP "+http+(upstream?" / 七牛 API HTTP "+upstream:"")+"；未展示密钥及敏感返回内容";
  }
  if(r.value.data?.error)return "业务错误（无敏感详情）";
