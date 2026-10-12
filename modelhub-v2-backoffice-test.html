@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer"><title>ModelHub V2 · 后台与私人运维只读验收</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#071423;color:#ecf4ff;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 0% 0%,#173354,transparent 45%),#071423;min-height:100vh}
+main{max-width:860px;margin:0 auto;padding:30px 18px 80px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+a{color:#87c0ff}h1{font-size:clamp(27px,5vw,39px);margin:20px 0 9px}h2{font-size:20px}
+p{line-height:1.7;color:#acc0d8}
+.card{background:#13233a;border:1px solid #2c425f;border-radius:18px;padding:24px;margin:18px 0}
+.notice{background:#30271b;border:1px solid #84673b;border-radius:12px;padding:13px;color:#ffdfb0;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.kv{background:#0b192d;padding:13px;border:1px solid #2c425f;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;font-size:14px}
+label{display:block;margin:14px 0 5px;color:#bcd0e8;font-size:14px}
+input{width:100%;border:1px solid #3b5375;background:#0d1b2f;color:white;padding:13px 14px;border-radius:9px;font:inherit}
+button{border:0;border-radius:10px;background:linear-gradient(125deg,#297fdc,#7558e9);color:white;font:inherit;font-weight:700;padding:12px 17px;cursor:pointer;margin:13px 10px 5px 0}
+button.secondary{background:#243d5a}
+button:disabled{opacity:.5;cursor:wait}
+.log{white-space:pre-wrap;overflow-wrap:anywhere;background:#081528;border:1px solid #294563;border-radius:12px;min-height:60px;padding:15px;color:#b7d6f6;font:13px/1.75 ui-monospace,monospace}
+small{display:block;color:#9bacc3;line-height:1.65;margin-top:10px}
+.pill{font-size:12px;padding:5px 9px;border-radius:99px;background:#274965;color:#d3e9ff}
+</style></head>
+<body><main>
+<header><span class="pill">MODELHUB V2 · TOKYO / READ ONLY</span><a href="./modelhub-v2-login-test.html">返回基础登录测试</a></header>
+<h1>后台与私人运维 · 验收台</h1>
+<p>只读测试副管理员后台、成员权限、主管理员和私人运维的访问链路。连接东京 Supabase，不连接旧项目，也不会修改、删除、重置任何成员数据。</p>
+<div class="notice">此页面地址不作为身份保密措施。所有真实数据仍须由 Supabase Auth、RLS 与服务端权限校验保护。正式后台与私人运维页面暂未切换。</div>
+<section class="card"><h2>01 · 账号身份核验</h2>
+<form id="loginForm" autocomplete="off"><label for="email">原网站邮箱</label><input id="email" type="email" required autocomplete="off">
+<label for="password">原网站登录密码</label><input id="password" type="password" required autocomplete="off">
+<button id="login" type="submit">登录并核验权限</button><button class="secondary" type="button" id="logout" disabled>退出测试</button></form>
+<div class="log" id="loginOut" role="status" aria-live="polite">等待登录</div>
+</section>
+<section class="card"><h2>02 · 后台模块只读检查</h2>
+<div class="grid">
+<div><h3>主管理后台</h3><div class="kv" id="mainAdmin">等待核验</div></div>
+<div><h3>成员管理后台</h3><div class="kv" id="memberAdmin">等待核验</div></div>
+<div><h3>全员账号管理</h3><div class="kv" id="accountAdmin">等待核验</div></div>
+<div><h3>私人运维状态</h3><div class="kv" id="ownerOps">等待核验</div></div>
+</div><button id="check" disabled>重新运行只读检查</button><div class="log" id="extra">尚未开始</div>
+<small>本页不会调用任何写入、密码重置、删除、上传或权限变更 API。私人运维必须为非指导老师的主管理员账号才开放指标测试。</small></section>
+</main>
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const sb=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef",{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}}});
+const $=id=>document.getElementById(id), log=x=>$("extra").textContent=x;
+let profile=null,busy=false;
+function setBusy(v){busy=v;$("login").disabled=v;$("check").disabled=v||!profile;$("logout").disabled=v||!profile}
+function errorMessage(e){let x=String(e?.message||e||"未知错误");if(/invalid login credentials/i.test(x))return "原账号密码校验失败";if(/failed to fetch/i.test(x))return "网络或跨域连接失败";return x.slice(0,220)}
+function roleLabel(p){return p.progress_exempt?"指导老师":p.role==="super_admin"?"主管理员":p.role==="admin"?"副管理员":"普通成员"}
+function clearBoxes(){for(const name of ["mainAdmin","memberAdmin","accountAdmin","ownerOps"])$(name).textContent="等待核验";}
+async function runChecks(){if(!profile)return;setBusy(true);log("正在执行只读接口检查…");
+const isAdmin=["admin","super_admin"].includes(profile.role)||profile.progress_exempt===true,owner=profile.role==="super_admin"&&profile.progress_exempt!==true;
+$("mainAdmin").textContent=isAdmin?"已通过管理员身份判断，准备检查管理指标 RPC":"无管理权限（预期拒绝）";
+$("memberAdmin").textContent=isAdmin?"正在检查成员目录可见性…":"普通成员不应访问管理后台";
+$("accountAdmin").textContent=owner?"正在检查全员账号目录可见性…":"此功能仅主管理员可用";
+$("ownerOps").textContent=owner?"正在检查私人运维指标…":"非私人运维主管理员：禁止访问";
+let results=[];
+if(isAdmin){
+ const [m,c]=await Promise.allSettled([sb.rpc("get_member_admin_metrics"),sb.from("profiles").select("id",{count:"exact",head:true})]);
+ if(m.status==="fulfilled"&&!m.value.error){$("mainAdmin").textContent="✓ 管理指标 RPC 可访问（仅验证通路）";results.push("管理指标 RPC：成功");}
+ else{$("mainAdmin").textContent="× 管理指标 RPC 出错："+errorMessage(m.status==="fulfilled"?m.value.error:m.reason);results.push("管理指标 RPC：失败")}
+ if(c.status==="fulfilled"&&!c.value.error){$("memberAdmin").textContent="✓ 成员目录计数成功："+String(c.value.count??"未知")+" 条";results.push("成员目录：成功");if(owner)$("accountAdmin").textContent="✓ 全员账号目录只读可访问（未执行编辑）";}
+ else{$("memberAdmin").textContent="× 成员目录访问失败："+errorMessage(c.status==="fulfilled"?c.value.error:c.reason);if(owner)$("accountAdmin").textContent="× 成员目录权限需检查";}
+}
+if(owner){
+const [a,b,q]=await Promise.allSettled([sb.rpc("get_chatgpt_guide_visit_stats_owner"),sb.rpc("get_owner_site_visit_stats"),sb.functions.invoke("qiniu-storage-stats",{body:{}})]);
+const format=r=>r.status!=="fulfilled"?"请求失败":r.value.error?"接口错误："+errorMessage(r.value.error):r.value.data?.error?"业务错误："+String(r.value.data.error).slice(0,120):"正常";
+const names=["教程站访客指标","主站访问指标","七牛云容量指标"],rows=[a,b,q].map((r,i)=>names[i]+"："+format(r));
+$("ownerOps").textContent=rows.join("\n");results.push(...rows);
+}
+log(results.length?results.join("\n"):"当前身份无需访问后台指标，已阻止敏感模块检查。");setBusy(false);}
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();setBusy(true);clearBoxes();$("loginOut").textContent="正在登录东京项目…";const email=$("email").value.trim(),password=$("password").value;$("password").value="";
+try{const r=await sb.auth.signInWithPassword({email,password});if(r.error)throw r.error;
+const u=r.data.user;if(!u)throw Error("未获得登录用户");
+const p=await sb.from("profiles").select("id,role,full_name,progress_exempt").eq("id",u.id).maybeSingle();if(p.error||!p.data)throw p.error||Error("未读取到本人资料");profile=p.data;
+$("loginOut").textContent="✓ Auth 登录成功\n✓ 本人资料读取成功\n成员："+(profile.full_name||"未设置")+"\n角色："+roleLabel(profile)+"\n账号 ID 一致："+String(profile.id===u.id);
+setBusy(false);await runChecks();
+}catch(err){$("loginOut").textContent="失败："+errorMessage(err);await sb.auth.signOut();profile=null;setBusy(false);}
+});
+$("logout").addEventListener("click",async()=>{setBusy(true);try{await sb.auth.signOut()}catch(e){}profile=null;$("loginForm").reset();$("loginOut").textContent="已退出并结束测试";clearBoxes();log("已结束");setBusy(false)});
+$("check").addEventListener("click",runChecks);
+</script></body></html>
