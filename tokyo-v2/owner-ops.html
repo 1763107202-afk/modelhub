@@ -53,7 +53,7 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
   <section class="section">
   <div class="panel"><h2>文件下载连通性诊断</h2>
   <p style="color:#9eb4cd;font-size:13px">仅主管理员可运行，检查七牛云一份已迁移 PPT 的 HTTP 响应头，不下载文件正文，不通过 Supabase 中转文件，不返回签名地址或密钥。</p>
-  <button id="qiniuDownloadProbeBtn" class="btn" type="button">检测七牛云下载源站</button>
+  <button id="qiniuDownloadProbeBtn" class="btn" type="button">检测 HTTP HEAD</button><button id="qiniuRangeProbeBtn" class="btn" type="button">检测实际 GET（1 字节）</button>
   <div id="qiniuDownloadProbeResult" class="msg" role="status" aria-live="polite">尚未检测 · 容量统计正常不等于文件下载正常</div>
   </div>
 </section>
@@ -267,6 +267,21 @@ q("#qiniuDownloadProbeBtn").onclick=async()=>{
        "服务端无法连接文件域名（"+String(d.errorType||"网络错误")+"）；需要检查 DNS 与源站可达性。");
     output.className="msg "+(ok?"ok":"bad");
   }catch(e){output.textContent="检测失败："+(e?.message||"未知错误");output.className="msg bad"}
+  finally{btn.disabled=false}
+};
+q("#qiniuRangeProbeBtn").onclick=async()=>{
+  const btn=q("#qiniuRangeProbeBtn"),out=q("#qiniuDownloadProbeResult");
+  btn.disabled=true;out.textContent="正在检查过程装备参考文件的 1 字节 GET 响应…";
+  try{
+    const r=await supabase.from("resource_shares").select("file_path").ilike("title","%过程装备参考%").eq("file_storage_backend","qiniu").limit(1).maybeSingle();
+    if(r.error||!r.data?.file_path)throw new Error("过程装备参考的七牛文件记录不存在");
+    const result=await supabase.functions.invoke("qiniu-download-url",{body:{key:r.data.file_path,expiresIn:90,probe:true,probeMode:"range"}});
+    if(result.error)throw new Error("下载诊断接口返回错误");
+    const d=result.data||{};
+    if(d.error)throw new Error(d.error);
+    out.textContent=d.httpStatus===206&&d.rangeRespected?"GET HTTP 206，Range 0-0 正常。若你的浏览器仍报 502，重点检查本机网络或完整 GET 传输链路。":d.httpStatus?"GET 返回 HTTP "+d.httpStatus+"；Range 已遵守："+Boolean(d.rangeRespected)+"。文件响应异常可能来自源站或签名链路。":"GET 请求失败："+String(d.errorType||"未知网络错误");
+    out.className="msg "+(d.originHealthy?"ok":"bad");
+  }catch(e){out.textContent="检测失败："+(e?.message||"未知错误");out.className="msg bad"}
   finally{btn.disabled=false}
 };
 q("#refreshBtn").onclick=refresh;
