@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>ModelHub V2 东京环境连接测试</title>
+<style>body{font-family:system-ui,"Microsoft YaHei",sans-serif;background:#0b1526;color:#eaf2ff;max-width:680px;padding:40px 24px;margin:auto}article{background:#17253d;border:1px solid #314565;border-radius:18px;padding:28px}button{background:#456de0;color:white;border:0;border-radius:8px;padding:12px 18px;cursor:pointer}pre{white-space:pre-wrap;word-break:break-word;background:#07101d;padding:12px;border-radius:8px;color:#bcd2ef}</style>
+</head><body><article><h1>ModelHub V2 · 东京项目连接测试</h1><p>这是独立测试页面。不会修改正式网站或数据库。</p><p>目标后端：东京 ap-northeast-1</p><button id="probe">测试后端可访问性</button><pre id="output">尚未开始检测</pre><p>本页面不收集账号或密码，业务登录待测试版审核后单独验证。</p></article>
+<script>
+document.getElementById("probe").onclick=async()=>{const out=document.getElementById("output");out.textContent="正在检查…";try{const r=await fetch("https://qqkudaaxudxbfyeepyqw.supabase.co/auth/v1/health",{method:"GET",cache:"no-store"});out.textContent="HTTP 状态："+r.status+"。服务器"+(r.ok?"正常响应":"已响应，但返回非成功状态")+"。该检测不代表登录或 RLS 权限已经通过。";}catch(e){out.textContent="浏览器未能连接后端，请检查网络及 CORS。";}}
+</script></body></html>
