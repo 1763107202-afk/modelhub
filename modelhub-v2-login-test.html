@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><title>ModelHub V2 · 东京后端独立验收</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#091321;color:#eef4ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 12% 0%,#153354,transparent 35%),#091321;}
+main{max-width:720px;margin:0 auto;padding:44px 18px 72px}.eyebrow{font-size:12px;letter-spacing:2px;color:#7ba8e5;text-transform:uppercase}
+h1{font-size:clamp(27px,6vw,40px);margin:10px 0}p{line-height:1.7;color:#a8bad0}
+.panel{background:#122037;border:1px solid #2a405d;border-radius:17px;padding:23px;margin:22px 0;box-shadow:0 12px 34px #0002}
+.kvs{display:grid;grid-template-columns:115px 1fr;gap:12px;border-top:1px solid #253955;padding-top:15px;font-size:14px}
+.kvs span{color:#9daec8}.kvs strong{word-break:break-word}.notice{padding:12px 15px;border-left:3px solid #f6bb5f;background:#30251555;border-radius:6px;font-size:13px;color:#ffdfa8}
+label{display:block;margin:14px 0 5px;color:#abc1da;font-size:13px}input{width:100%;border:1px solid #355073;border-radius:10px;padding:13px 14px;background:#081626;color:#fff;font:inherit}
+input:focus{outline:2px solid #4791ed}button{padding:12px 18px;background:linear-gradient(130deg,#2f84ef,#6b55ed);border:0;border-radius:11px;color:#fff;font-weight:700;cursor:pointer;margin:12px 9px 3px 0}button.secondary{background:#253950}button:disabled{opacity:.55;cursor:wait}
+.output{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1829;padding:13px 15px;border:1px solid #27425c;border-radius:9px;min-height:45px;color:#c3deff;font:13px/1.6 ui-monospace,SFMono-Regular,monospace}
+small{color:#8198b9;line-height:1.7;display:block;margin-top:16px}
+</style></head><body><main><div class="eyebrow">Jiangsu University of Science and Technology · Laboratory</div>
+<h1>ModelHub V2 后端验收</h1>
+<p>GitHub Pages 独立测试页，连接东京 Supabase。此页面与现有正式网站隔离，只验证接口连接、账号登录和当前用户自己的成员资料。</p>
+<div class="notice">测试模式 · 不修改业务记录 · 不上传附件 · 不使用旧 Supabase · 不保留登录状态。15 个旧文件尚未补传，暂不测试附件。</div>
+<section class="panel"><h2>01 / 项目信息</h2><div class="kvs"><span>运行区域</span><strong>东京 ap-northeast-1</strong><span>目标后端</span><strong>ModelHub-V2</strong><span>数据库编号</span><strong>qqkudaaxudxbfyeepyqw</strong></div>
+<button id="probe" type="button">测试匿名 API 连接</button><div id="probeOut" class="output" role="status" aria-live="polite">等待检测</div></section>
+<section class="panel"><h2>02 / 登录与权限测试</h2>
+<p>使用原网站已存在的成员账号测试。邮箱和密码仅发送至当前东京 Supabase Auth，不记录到此页面或浏览器存储。</p>
+<form id="loginForm" autocomplete="off"><label for="email">成员邮箱</label><input id="email" type="email" required autocomplete="off" spellcheck="false">
+<label for="password">原网站登录密码</label><input id="password" type="password" required autocomplete="off">
+<button id="login" type="submit">验证登录与本人资料</button><button class="secondary" id="logout" type="button" disabled>退出本次测试</button></form>
+<div id="loginOut" class="output" role="status" aria-live="polite">未登录</div>
+<small>提示：这不是正式网站。运行测试时不要提交作业、编辑权限或上传文件。测试后点击“退出本次测试”；此页不会存储登录 Token。</small>
+</section><small>安全提示：此页为独立测试入口，请确认浏览器地址属于 1763107202-afk.github.io/modelhub/，并且通过官方东京 Supabase Auth 验证登录。</small>
+</main><script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const url="https://qqkudaaxudxbfyeepyqw.supabase.co", key="sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef";
+const sb=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}}});
+const probe=document.getElementById("probe"), out=document.getElementById("probeOut");
+const form=document.getElementById("loginForm"), submit=document.getElementById("login"), loginOut=document.getElementById("loginOut"),logout=document.getElementById("logout");
+const setBusy=v=>{submit.disabled=v;probe.disabled=v;logout.disabled=v||!hasSession;};
+let hasSession=false;
+function eMessage(e){const s=String(e?.message||e||"未知错误");return /invalid login credentials/i.test(s)?"邮箱或密码验证失败":/email not confirmed/i.test(s)?"此邮箱未完成验证":/failed to fetch/i.test(s)?"网络无法访问东京 Supabase，可能是网络或浏览器拦截":s.slice(0,170)}
+probe.addEventListener("click",async()=>{probe.disabled=true;out.textContent="正在连接东京 API…";try{const r=await sb.rpc("get_member_count");if(r.error)throw r.error;out.textContent="连接成功 · 匿名 RPC 可用 · 成员数量："+String(r.data??"未知");}catch(e){out.textContent="连接失败："+eMessage(e)}finally{probe.disabled=false;}});
+form.addEventListener("submit",async event=>{event.preventDefault();setBusy(true);loginOut.textContent="正在验证登录…";const email=document.getElementById("email").value.trim();const password=document.getElementById("password").value;document.getElementById("password").value="";
+try{const r=await sb.auth.signInWithPassword({email,password});if(r.error)throw r.error;const u=r.data.user;if(!u?.id)throw Error("登录成功但未取得用户编号");hasSession=true;const p=await sb.from("profiles").select("id,full_name,role").eq("id",u.id).maybeSingle();if(p.error)throw p.error;if(!p.data)throw Error("登录成功，但当前成员资料读取失败：请检查 profiles RLS");
+loginOut.textContent="登录成功 ✓\n成员资料读取成功 ✓\n姓名："+(p.data.full_name||"未设置")+"\n成员角色："+(p.data.role||"未设置")+"\n用户 ID 与个人资料匹配 ✓\n本次操作未修改业务数据。";
+}catch(e){loginOut.textContent="未完全通过："+eMessage(e)}finally{setBusy(false);logout.disabled=!hasSession;}});
+logout.addEventListener("click",async()=>{logout.disabled=true;try{await sb.auth.signOut()}catch(e){}finally{hasSession=false;form.reset();loginOut.textContent="已结束本次测试";setBusy(false);}});
+</script></body></html>
