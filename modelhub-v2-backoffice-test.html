@@ -67,7 +67,20 @@ if(isAdmin){
 if(owner){
 const [a,b,q]=await Promise.allSettled([sb.rpc("get_chatgpt_guide_visit_stats_owner"),sb.rpc("get_owner_site_visit_stats"),sb.functions.invoke("qiniu-storage-stats",{body:{}})]);
 const format=r=>r.status!=="fulfilled"?"请求失败":r.value.error?"接口错误："+errorMessage(r.value.error):r.value.data?.error?"业务错误："+String(r.value.data.error).slice(0,120):"正常";
-const names=["教程站访客指标","主站访问指标","七牛云容量指标"],rows=[a,b,q].map((r,i)=>names[i]+"："+format(r));
+const qiniuStatus=async r=>{
+ if(r.status!=="fulfilled")return "请求失败";
+ if(r.value.error){
+   const err=r.value.error;
+   const http=err.context?.status||"未知";
+   let upstream=null;
+   try{const response=err.context?.clone?.()||err.context; const json=await response?.json?.();const n=Number(json?.status);if(Number.isInteger(n)&&n>=100&&n<=599)upstream=n;}catch(_e){}
+   return "Edge HTTP "+http+(upstream?" / 七牛 API HTTP "+upstream:"")+"；未展示密钥及敏感返回内容";
+ }
+ if(r.value.data?.error)return "业务错误（无敏感详情）";
+ return "正常";
+};
+const names=["教程站访客指标","主站访问指标","七牛云容量指标"],rows=[a,b].map((r,i)=>names[i]+"："+format(r));
+rows.push(names[2]+"："+await qiniuStatus(q));
 $("ownerOps").textContent=rows.join("\n");results.push(...rows);
 }
 log(results.length?results.join("\n"):"当前身份无需访问后台指标，已阻止敏感模块检查。");setBusy(false);}
