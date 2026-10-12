@@ -100,7 +100,7 @@ function showGate(title,text){
 function latestOf(rows){return rows.filter(Boolean).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0]||null}
 async function attachmentButton(row){
   if(!row?.attachment_path)return "";
-  if(/^(progress|team-progress)\//.test(row.attachment_path)){const r=await supabase.functions.invoke("qiniu-download-url",{body:{key:row.attachment_path,expiresIn:300}});if(r.error||!r.data?.url)return "";return '<a class="btn sec" target="_blank" rel="noopener noreferrer" href="'+esc(r.data.url)+'">查看附件 · '+esc(row.attachment_name||"文件")+'</a>'}
+  if(/^(progress|team-progress)\//.test(row.attachment_path)){const r=await supabase.functions.invoke("qiniu-https-route-check",{body:{key:row.attachment_path,action:"download"}});if(r.error||!r.data?.url)return "";return '<a class="btn sec" target="_blank" rel="noopener noreferrer" href="'+esc(r.data.url)+'">查看附件 · '+esc(row.attachment_name||"文件")+'</a>'}
    const s=await supabase.storage.from("progress-files").createSignedUrl(row.attachment_path,600);
   if(s.error||!s.data?.signedUrl)return "";
   return '<a class="btn sec" target="_blank" rel="noopener" href="'+esc(s.data.signedUrl)+'">查看附件'+(row.attachment_name?' · '+esc(row.attachment_name):'')+'</a>';
