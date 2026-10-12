@@ -1225,7 +1225,15 @@ async function removeQiniuObjectSafe(key){
     return {data:null,error};
   }
 }
+function isRestrictedLegacyStorageUrl(url=""){
+  const raw=String(url||"");
+  return /^https?:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\//i.test(raw) && !raw.includes(PROJECT_REF+".supabase.co");
+}
+function pendingLegacyFileMarkup(label="旧文件"){
+  return '<span class="notice" role="status" title="原 Supabase 文件尚未补传">'+esc(label)+' · 待补传七牛云</span>';
+}
 function resourcePreview(x){
+  if(isRestrictedLegacyStorageUrl(x.video_url))return '<div class="docPreview"><div class="docIcon">!</div><strong>'+esc(x.file_name||x.title||"旧教程")+'</strong><span>历史文件尚未迁入七牛云，原数据库记录仍保留。请等待管理员补传。</span></div>';
   const type=x.resource_type||"video",url=x.video_url||"";
   if(x.storage_backend==="qiniu"&&x.storage_path){
     const icon=type==="video"?"VID":type==="archive"?"ZIP":type==="pdf"?"PDF":type==="word"?"DOCX":"FILE";
@@ -1258,7 +1266,7 @@ function showImportantAnnouncement(x){
     q("#importantAnnouncementContent").insertAdjacentHTML("beforebegin",'<img id="importantAnnouncementImage" class="importantAnnouncementImage hidden" alt="公告图片">');
     img=q("#importantAnnouncementImage");
   }
-  if(x.image_url){img.src=x.image_url;img.classList.remove("hidden")}else{img.removeAttribute("src");img.classList.add("hidden")}
+  if(x.image_url&&!isRestrictedLegacyStorageUrl(x.image_url)){img.src=x.image_url;img.classList.remove("hidden")}else{img.removeAttribute("src");img.classList.add("hidden")}
   q("#importantAnnouncementMeta").textContent="发布人："+(x.publisher_name||"管理员")+" · 发布时间："+fmt(x.created_at);
   q("#closeImportantAnnouncement").onclick=()=>{sessionStorage.setItem(key,"seen");d.close()};
   d.addEventListener("cancel",()=>sessionStorage.setItem(key,"seen"),{once:true});
@@ -1281,7 +1289,7 @@ async function loadAnnouncements(adminMode=false){
     const box=q("#adminAnnouncementList");
     const count=q("#adminAnnouncementCount");if(count)count.textContent=String(data.length);
     if(!box)return;
-    box.innerHTML=data.length?data.map(x=>'<article class="announcement adminAnnouncement '+(x.level==="important"?"important ":"")+(x.pinned?"pinned":"")+'"><div class="announcementTop"><div><div class="announcementBadges">'+badges(x)+'</div><h3>'+esc(x.title)+'</h3></div><div class="rowActions"><button class="btn '+(x.pinned?"ghost":"sec")+' togglePinAnnouncement" data-id="'+esc(x.id)+'" data-pinned="'+(x.pinned?"1":"0")+'">'+(x.pinned?"取消置顶":"置顶")+'</button><button class="btn danger delAnnouncement" data-id="'+esc(x.id)+'" data-path="'+esc(x.image_path||"")+'">删除</button></div></div>'+(x.image_url?'<img class="announcementImage" src="'+esc(x.image_url)+'" alt="公告图片">':'')+(x.content?'<p>'+esc(x.content)+'</p>':'')+'<div class="publisherMeta">发布人：'+esc(x.publisher_name||"管理员")+'</div><small>'+fmt(x.created_at)+'</small></article>').join(""):'<div class="empty">暂无公告。</div>';
+    box.innerHTML=data.length?data.map(x=>'<article class="announcement adminAnnouncement '+(x.level==="important"?"important ":"")+(x.pinned?"pinned":"")+'"><div class="announcementTop"><div><div class="announcementBadges">'+badges(x)+'</div><h3>'+esc(x.title)+'</h3></div><div class="rowActions"><button class="btn '+(x.pinned?"ghost":"sec")+' togglePinAnnouncement" data-id="'+esc(x.id)+'" data-pinned="'+(x.pinned?"1":"0")+'">'+(x.pinned?"取消置顶":"置顶")+'</button><button class="btn danger delAnnouncement" data-id="'+esc(x.id)+'" data-path="'+esc(x.image_path||"")+'">删除</button></div></div>'+(x.image_url&&!isRestrictedLegacyStorageUrl(x.image_url)?'<img class="announcementImage" src="'+esc(x.image_url)+'" alt="公告图片">':'')+(x.content?'<p>'+esc(x.content)+'</p>':'')+'<div class="publisherMeta">发布人：'+esc(x.publisher_name||"管理员")+'</div><small>'+fmt(x.created_at)+'</small></article>').join(""):'<div class="empty">暂无公告。</div>';
     document.querySelectorAll(".togglePinAnnouncement").forEach(b=>b.onclick=async()=>{
       const now=b.dataset.pinned!=="1";
       const u=await supabase.from("announcements").update({pinned:now,pinned_at:now?new Date().toISOString():null}).eq("id",b.dataset.id);
@@ -1305,7 +1313,7 @@ async function loadAnnouncements(adminMode=false){
     const box=q("#announcementList"),section=q("#announcementSection");
     if(!box||!section)return;
     section.classList.remove("hidden");
-    box.innerHTML=data.length?data.map(x=>'<article class="announcement '+(x.level==="important"?"important ":"")+(x.pinned?"pinned":"")+'"><div class="announcementTop"><div><div class="announcementBadges">'+badges(x)+'</div><h3>'+esc(x.title)+'</h3></div><div class="announcementMeta"><span class="publisherMeta">发布人：'+esc(x.publisher_name||"管理员")+'</span><small>'+fmt(x.created_at)+'</small></div></div>'+(x.image_url?'<img class="announcementImage" src="'+esc(x.image_url)+'" alt="公告图片">':'')+(x.content?'<p>'+esc(x.content)+'</p>':'')+'</article>').join(""):'<div class="empty">暂无公告。</div>';
+    box.innerHTML=data.length?data.map(x=>'<article class="announcement '+(x.level==="important"?"important ":"")+(x.pinned?"pinned":"")+'"><div class="announcementTop"><div><div class="announcementBadges">'+badges(x)+'</div><h3>'+esc(x.title)+'</h3></div><div class="announcementMeta"><span class="publisherMeta">发布人：'+esc(x.publisher_name||"管理员")+'</span><small>'+fmt(x.created_at)+'</small></div></div>'+(x.image_url&&!isRestrictedLegacyStorageUrl(x.image_url)?'<img class="announcementImage" src="'+esc(x.image_url)+'" alt="公告图片">':'')+(x.content?'<p>'+esc(x.content)+'</p>':'')+'</article>').join(""):'<div class="empty">暂无公告。</div>';
     if(important?.error)console.error("重要公告加载失败",important.error);
     else showImportantAnnouncement((important?.data||[])[0]);
   }
@@ -1357,7 +1365,7 @@ async function initWorks(){
     return;
   }
   const data=r.data||[];
-  q("#worksGrid").innerHTML=data.map(x=>'<article class="workCard"><div class="workCover">'+(x.cover_url?'<img src="'+esc(x.cover_url)+'" alt="'+esc(x.title)+'">':'<div class="workFallback">⚙</div>')+'</div><div class="workBody"><div class="workTop"><h3>'+esc(x.title)+'</h3>'+(x.year?'<span class="workYear">'+esc(x.year)+' 届</span>':'')+'</div><div class="workMeta">'+esc(x.team_name||"机械创新实验室")+'</div><p>'+esc(x.description||"暂无作品简介")+'</p><div class="actions">'+(x.detail_url?'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.detail_url)+'">查看详情</a>':'')+(isAdmin()?'<button class="btn ghost editWork" data-id="'+esc(x.id)+'">编辑作品</button><button class="btn danger delWork" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除作品</button>':'')+'</div></div></article>').join("");
+  q("#worksGrid").innerHTML=data.map(x=>'<article class="workCard"><div class="workCover">'+(x.cover_url&&!isRestrictedLegacyStorageUrl(x.cover_url)?'<img src="'+esc(x.cover_url)+'" alt="'+esc(x.title)+'">':'<div class="workFallback">⚙</div>')+'</div><div class="workBody"><div class="workTop"><h3>'+esc(x.title)+'</h3>'+(x.year?'<span class="workYear">'+esc(x.year)+' 届</span>':'')+'</div><div class="workMeta">'+esc(x.team_name||"机械创新实验室")+'</div><p>'+esc(x.description||"暂无作品简介")+'</p><div class="actions">'+(x.detail_url?'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(x.detail_url)+'">查看详情</a>':'')+(isAdmin()?'<button class="btn ghost editWork" data-id="'+esc(x.id)+'">编辑作品</button><button class="btn danger delWork" data-id="'+esc(x.id)+'" data-path="'+esc(x.storage_path||"")+'">删除作品</button>':'')+'</div></div></article>').join("");
   q("#worksEmpty").classList.toggle("hidden",data.length>0);
 
   document.querySelectorAll(".editWork").forEach(b=>b.onclick=()=>{
@@ -1456,6 +1464,7 @@ function examAttachmentMarkup(exam){
   }
   const url=exam.file_url||(path?supabase.storage.from("exams").getPublicUrl(path).data.publicUrl:"");
   if(!/^https?:\/\//i.test(url))return "";
+  if(isRestrictedLegacyStorageUrl(url))return pendingLegacyFileMarkup("作业附件");
   const isPdf=/\.pdf(?:$|[?#])/i.test(exam.file_name||path||url);
   return '<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+(isPdf?"查看 / 下载 PDF":"打开 / 下载附件")+'</a>';
 }
@@ -1518,11 +1527,11 @@ async function initTutorials(){
     });
     if(count)count.textContent=String(data.length);
     q("#videoGrid").innerHTML=data.map(x=>{
-      const type=x.resource_type||"video",url=x.video_url||"",action=type==="video"?"打开 / 播放视频":type==="pdf"?"查看 / 下载 PDF":type==="word"?"打开 / 下载 Word":type==="archive"?"下载压缩包":"打开 / 下载 PPT";
+      const type=x.resource_type||"video",url=x.video_url||"",legacyFile=isRestrictedLegacyStorageUrl(url),action=type==="video"?"打开 / 播放视频":type==="pdf"?"查看 / 下载 PDF":type==="word"?"打开 / 下载 Word":type==="archive"?"下载压缩包":"打开 / 下载 PPT";
       const qiniuAction=x.storage_backend==="qiniu"&&x.storage_path
         ?'<button class="btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.storage_path)+'">'+action+'</button>'
         :"";
-      const normalAction=qiniuAction?"":((type==="video"&&(!/^https?:/i.test(url)||isOwnPlatformUrl(url)))?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>');
+      const normalAction=qiniuAction?"":(legacyFile?pendingLegacyFileMarkup("教程文件"):((type==="video"&&(!/^https?:/i.test(url)||isOwnPlatformUrl(url)))?"":'<a class="btn sec" target="_blank" rel="noopener" href="'+esc(url)+'">'+action+'</a>'));
       return '<article class="video"><div class="frame '+(type!=="video"?"docFrame":"")+'">'+resourcePreview(x)+'</div><div class="info"><span class="resourceType">'+resourceTypeName(type)+'</span><h3>'+esc(x.title)+'</h3><p style="color:#8fa4bd">'+esc(x.description||"暂无简介")+'</p><div class="actions">'+qiniuAction+normalAction+(isAdmin()&&!x.storage_path&&!isOwnPlatformUrl(url)?'<button class="btn ghost editTutorialUrl" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'">修改链接</button>':'')+(isAdmin()?'<button class="btn danger delTutorial" data-id="'+esc(x.id)+'" data-url="'+esc(url)+'" data-path="'+esc(x.storage_path||"")+'" data-backend="'+esc(x.storage_backend||"supabase")+'">删除教程</button>':'')+'</div></div></article>';
     }).join("");
     q("#videoEmpty").classList.toggle("hidden",data.length>0);
@@ -1583,7 +1592,7 @@ async function loadResourceShares(){
   q("#resourceShareCount")&&(q("#resourceShareCount").textContent=String(data.length));
   box.innerHTML=data.length?data.map(x=>{
     const link=x.link_url||"";
-    return '<article class="shareCard">'+(x.image_url?'<img class="shareImage" src="'+esc(x.image_url)+'" alt="资料分享图片">':'')+'<div class="shareBody"><div class="fileTop"><span class="resourceType">资料分享</span><small>'+fmt(x.created_at)+'</small></div><h3>'+esc(x.title)+'</h3>'+(x.content?'<p>'+esc(x.content)+'</p>':'')+'<div class="actions">'+(link?'<a class="btn sec" href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">打开链接</a>':'')+(isAdmin()?'<button class="btn danger delResourceShare" data-id="'+esc(x.id)+'" data-path="'+esc(x.image_path||"")+'">删除分享</button>':'')+'</div></div></article>';
+    return '<article class="shareCard">'+(x.image_url&&!isRestrictedLegacyStorageUrl(x.image_url)?'<img class="shareImage" src="'+esc(x.image_url)+'" alt="资料分享图片">':'')+'<div class="shareBody"><div class="fileTop"><span class="resourceType">资料分享</span><small>'+fmt(x.created_at)+'</small></div><h3>'+esc(x.title)+'</h3>'+(x.content?'<p>'+esc(x.content)+'</p>':'')+'<div class="actions">'+(link?'<a class="btn sec" href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">打开链接</a>':'')+(isAdmin()?'<button class="btn danger delResourceShare" data-id="'+esc(x.id)+'" data-path="'+esc(x.image_path||"")+'">删除分享</button>':'')+'</div></div></article>';
   }).join(""):'<div class="empty">暂时还没有资料分享。</div>';
   document.querySelectorAll(".delResourceShare").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条资料分享吗？"))return;
@@ -1661,13 +1670,13 @@ async function initFiles(){
           const url=x._source==="share"&&x.file_url
             ?x.file_url
             :supabase.storage.from("lab-files").getPublicUrl(x.storage_path).data.publicUrl;
-          action='<a class="btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开 / 下载</a>';
+          action=isRestrictedLegacyStorageUrl(url)?pendingLegacyFileMarkup("资料附件"):'<a class="btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开 / 下载</a>';
         }
       }else if(mode==="link"&&x.external_url){
         action='<a class="btn sec" href="'+esc(x.external_url)+'" target="_blank" rel="noopener noreferrer">打开链接</a>';
       }
       const meta=x._source==="share"?"资料分享":mode==="file"?(esc(x.file_name||"文件")+' · '+bytesText(Number(x.file_size||0))):mode==="link"?"外部链接":"文字资料";
-      const image=x.image_url?'<img class="libraryShareImage" loading="lazy" decoding="async" src="'+esc(x.image_url)+'" alt="资料图片">':'';
+      const image=x.image_url&&!isRestrictedLegacyStorageUrl(x.image_url)?'<img class="libraryShareImage" loading="lazy" decoding="async" src="'+esc(x.image_url)+'" alt="资料图片">':'';
       return '<article class="fileCard '+esc(mode)+'Mode">'+
         '<div class="fileIcon '+esc(x.category)+'">'+labFileIcon(x.category)+'</div>'+
         '<div class="fileBody"><div class="fileTop"><span class="resourceType">'+labFileTypeName(x.category)+'</span><small>'+fmt(x.created_at)+'</small></div>'+
