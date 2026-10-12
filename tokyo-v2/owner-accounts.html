@@ -84,7 +84,7 @@ async function saveEdit(){
  const r=await supabase.from("profiles").update(data).eq("id",id);if(r.error){q("#editMsg").textContent="保存失败："+r.error.message;return}q("#editDialog").close();await load();
 }
 function openPwd(id){const m=members.find(x=>x.id===id);if(!m)return;pwdSelf=id===me.id;q("#pwdId").value=id;q("#pwdCurrent").value="";q("#pwd1").value="";q("#pwd2").value="";q("#pwdMsg").textContent="";q("#pwdCurrentField").classList.toggle("hidden",!pwdSelf);q("#pwdTarget").textContent=pwdSelf?"正在修改当前主管理员账号的登录密码":"正在为 "+(m.full_name||m.email)+" 重置登录密码";q("#pwdDialog").showModal()}
-async function savePwd(){alert("东京 V2 试运行：此操作暂不开放。");return;
+async function savePwd(){
  const id=q("#pwdId").value,m=members.find(x=>x.id===id);if(!m)return;const a=q("#pwd1").value,b=q("#pwd2").value;
  if(a.length<8||!/[A-Za-z]/.test(a)||!/[0-9]/.test(a)){q("#pwdMsg").textContent="密码至少 8 位，并同时包含字母和数字";return}
  if(a!==b){q("#pwdMsg").textContent="两次密码不一致";return}
@@ -96,7 +96,7 @@ async function savePwd(){alert("东京 V2 试运行：此操作暂不开放。")
  }
  const r=await supabase.functions.invoke("reset-member-password",{body:{user_id:id,password:a}});if(r.error||r.data?.error){q("#pwdMsg").textContent="重置失败："+(r.data?.error||r.error?.message);return}q("#pwdDialog").close();alert("密码已重置成功");
 }
-async function removeUser(id){alert("东京 V2 试运行：此操作暂不开放。");return;
+async function removeUser(id){
  const m=members.find(x=>x.id===id);if(!m||m.role==="super_admin"||id===me.id)return;
  if(!confirm("确定删除 "+(m.full_name||m.email)+" 的账号吗？此操作不可撤销。"))return;
  const typed=prompt("请输入成员姓名确认：");if(typed!==(m.full_name||""))return;
