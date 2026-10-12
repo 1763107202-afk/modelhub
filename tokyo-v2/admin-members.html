@@ -580,7 +580,7 @@ function openPasswordReset(id){
   q("#passwordDialog").showModal();
   setTimeout(()=>q("#passwordNew")?.focus(),50);
 }
-async function resetMemberPassword(){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+async function resetMemberPassword(){
   if(state.profile?.role!=="super_admin")return alert("只有主管理员可以重置成员密码");
   const id=q("#passwordUserId").value;
   const target=state.members.find(x=>x.id===id);if(!target)return;
@@ -602,7 +602,7 @@ async function resetMemberPassword(){alert("东京 V2 试运行：成员及存�
   }catch(e){msg.textContent="重置失败："+(e?.message||String(e))}
   finally{btn.disabled=false;btn.textContent=old}
 }
-async function kickMember(id){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+async function kickMember(id){
   if(state.profile?.role!=="super_admin")return alert("只有主管理员可以踢出成员");
   const target=state.members.find(x=>x.id===id);if(!target)return;
   if(target.role==="super_admin")return alert("不能踢出主管理员");
