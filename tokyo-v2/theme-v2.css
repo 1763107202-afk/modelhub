@@ -1,0 +1,215 @@
+/* JUST Mechanical Innovation Lab - complete light theme v2 */
+html[data-theme="light"]{color-scheme:light;background:#f5f8fc}
+html[data-theme="light"] body{background:#f5f8fc!important;color:#1e2f45!important}
+html[data-theme="light"] main,
+html[data-theme="light"] section{color:inherit}
+
+/* Header / navigation / footer */
+html[data-theme="light"] .siteHeader,
+html[data-theme="light"] .top{background:rgba(255,255,255,.96)!important;border-bottom-color:#d9e4ef!important;box-shadow:0 8px 28px rgba(27,53,82,.08)!important}
+html[data-theme="light"] .brand,
+html[data-theme="light"] .brandText b{color:#172a40!important}
+html[data-theme="light"] .brandText small{color:#6f8399!important}
+html[data-theme="light"] .nav a{color:#536a83!important}
+html[data-theme="light"] .nav a:hover{color:#173b63!important;background:#edf4fb!important;border-color:#d5e1ee!important}
+html[data-theme="light"] .nav a.active{color:#fff!important;background:linear-gradient(135deg,#3479dd,#6755d8)!important;border-color:#5a7fc4!important}
+html[data-theme="light"] .navSep{background:#d6e1ec!important}
+html[data-theme="light"] .foot{border-top-color:#dbe5ef!important;color:#6d8198!important}
+html[data-theme="light"] .footInner small{color:#72869b!important}
+html[data-theme="light"] .brand img,
+html[data-theme="light"] .labHero img,
+html[data-theme="light"] .labIntroTop img,
+html[data-theme="light"] .footInner img{background:#fff!important;box-shadow:0 0 0 1px #dce6ef!important}
+
+/* Headings and muted text */
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] strong,
+html[data-theme="light"] .downloadTitle,
+html[data-theme="light"] .moduleCard h3,
+html[data-theme="light"] .workBody h3,
+html[data-theme="light"] .labIntro h3,
+html[data-theme="light"] .labPoint b,
+html[data-theme="light"] .profileSummary h3,
+html[data-theme="light"] .adminLink b,
+html[data-theme="light"] .item h3,
+html[data-theme="light"] .cell b{color:#1c2f46!important}
+html[data-theme="light"] .pageHero p,
+html[data-theme="light"] .heroGrid p,
+html[data-theme="light"] .head p,
+html[data-theme="light"] .moduleCard p,
+html[data-theme="light"] .card p,
+html[data-theme="light"] .workBody p,
+html[data-theme="light"] .workMeta,
+html[data-theme="light"] .meta,
+html[data-theme="light"] .profileSummary p,
+html[data-theme="light"] .profileHint,
+html[data-theme="light"] .labIntro p,
+html[data-theme="light"] .labPoint span,
+html[data-theme="light"] .adminLink span,
+html[data-theme="light"] .muted,
+html[data-theme="light"] .note,
+html[data-theme="light"] .downloadNote{color:#647990!important}
+html[data-theme="light"] .eyebrow{color:#397bd2!important}
+
+/* Cards / surfaces */
+html[data-theme="light"] .glass,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .moduleCard,
+html[data-theme="light"] .card,
+html[data-theme="light"] .workCard,
+html[data-theme="light"] .video,
+html[data-theme="light"] .profileCard,
+html[data-theme="light"] .profileSummary,
+html[data-theme="light"] .adminLink,
+html[data-theme="light"] .labPoint,
+html[data-theme="light"] .downloadCard,
+html[data-theme="light"] .downloadFeature,
+html[data-theme="light"] .tutorialToolbar,
+html[data-theme="light"] .fileToolbar,
+html[data-theme="light"] .fileCard,
+html[data-theme="light"] .shareCard,
+html[data-theme="light"] .progressCard,
+html[data-theme="light"] .progressSummary,
+html[data-theme="light"] .progressForm,
+html[data-theme="light"] .mineCard,
+html[data-theme="light"] .loginbox,
+html[data-theme="light"] .toolbar,
+html[data-theme="light"] .tablewrap,
+html[data-theme="light"] .cell,
+html[data-theme="light"] .item{background:#fff!important;border-color:#d8e4ef!important;box-shadow:0 10px 30px rgba(31,57,87,.07)!important}
+html[data-theme="light"] .stat,
+html[data-theme="light"] .progressColumns section,
+html[data-theme="light"] .detailItem,
+html[data-theme="light"] .memberMetaCell{background:#f6f9fd!important;border-color:#dbe5ef!important;color:#24384f!important}
+html[data-theme="light"] .stat span,
+html[data-theme="light"] .cell small{color:#6b8097!important}
+html[data-theme="light"] .stat b{color:#20364f!important}
+
+/* Tables */
+html[data-theme="light"] .table,
+html[data-theme="light"] .tablewrap{background:#fff!important;border-color:#d9e4ef!important}
+html[data-theme="light"] table{background:#fff!important}
+html[data-theme="light"] th{background:#eef4fa!important;color:#607790!important;border-bottom-color:#d9e4ef!important}
+html[data-theme="light"] td{color:#263b52!important;border-bottom-color:#e3eaf2!important}
+
+/* Inputs and forms */
+html[data-theme="light"] input,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select,
+html[data-theme="light"] .profileRead{background:#fff!important;color:#20344b!important;border-color:#cbd9e7!important}
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder{color:#8b9caf!important}
+html[data-theme="light"] input:focus,
+html[data-theme="light"] textarea:focus,
+html[data-theme="light"] select:focus{border-color:#4f8cff!important;box-shadow:0 0 0 3px rgba(79,140,255,.11)!important}
+html[data-theme="light"] label{color:#405a75!important}
+html[data-theme="light"] .drop{background:#f7faff!important;border-color:#b9cde0!important;color:#2a4058!important}
+html[data-theme="light"] .drop small{color:#71859b!important}
+
+/* Buttons and pills */
+html[data-theme="light"] .sec{color:#315879!important;background:#edf4fb!important;border-color:#cbdceb!important}
+html[data-theme="light"] .ghost{color:#405d79!important;background:#fff!important;border-color:#cbd9e7!important}
+html[data-theme="light"] .danger{color:#a22d3b!important;background:#fff0f2!important;border-color:#edbec5!important}
+html[data-theme="light"] .pill{background:#edf5ff!important;color:#37668f!important;border-color:#c8def3!important}
+html[data-theme="light"] .status{background:#e8f7ef!important;color:#247752!important}
+html[data-theme="light"] .tag,
+html[data-theme="light"] .resourceType,
+html[data-theme="light"] .workYear,
+html[data-theme="light"] .announcementBadge{background:#eaf4ff!important;color:#2e6697!important;border-color:#c9def1!important}
+html[data-theme="light"] .themeToggle{background:#fff8e5!important;color:#795715!important;border-color:#ead79f!important}
+
+/* Tutorial filters */
+html[data-theme="light"] .tutorialFilterBtn{background:#f2f6fb!important;color:#577089!important;border-color:#cfdae7!important}
+html[data-theme="light"] .tutorialFilterBtn:hover{color:#245b8d!important;border-color:#a9c5df!important}
+html[data-theme="light"] .tutorialFilterBtn.active{color:#fff!important;background:linear-gradient(135deg,#3979ca,#6552c9)!important;border-color:#607fc0!important}
+
+/* File and document icons - pastel light variants */
+html[data-theme="light"] .fileIcon,
+html[data-theme="light"] .docIcon{background:#eaf3fd!important;border-color:#bfd5ea!important;color:#316a9e!important}
+html[data-theme="light"] .fileIcon.sheet{background:#e9f8f0!important;border-color:#b8dfca!important;color:#277753!important}
+html[data-theme="light"] .fileIcon.word,
+html[data-theme="light"] .docIcon.word{background:#eaf3ff!important;border-color:#b9d4f2!important;color:#326ca8!important}
+html[data-theme="light"] .fileIcon.ppt,
+html[data-theme="light"] .docIcon.ppt{background:#fff2e8!important;border-color:#efcbaa!important;color:#a35b24!important}
+html[data-theme="light"] .fileIcon.archive,
+html[data-theme="light"] .docIcon.archive{background:#f3edff!important;border-color:#d5c7ee!important;color:#7456a6!important}
+html[data-theme="light"] .fileIcon.video{background:#fff0f4!important;border-color:#ecc4d0!important;color:#a74866!important}
+html[data-theme="light"] .fileIcon.pdf,
+html[data-theme="light"] .docIcon.pdf{background:#fff0f1!important;border-color:#efc4c8!important;color:#ad3f4a!important}
+html[data-theme="light"] .fileIcon.image{background:#ecf8f2!important;border-color:#c0e1d1!important;color:#31775a!important}
+html[data-theme="light"] .fileIcon.cad{background:#ecf8fa!important;border-color:#badde3!important;color:#327581!important}
+html[data-theme="light"] .fileCard.linkMode .fileIcon{background:#eaf3fd!important;border-color:#bfd5ea!important;color:#316a9e!important}
+html[data-theme="light"] .fileCard.textMode .fileIcon{background:#f2effa!important;border-color:#d6cdea!important;color:#6e5b96!important}
+html[data-theme="light"] .docFrame,
+html[data-theme="light"] .frame{background:#edf2f7!important}
+html[data-theme="light"] .docPreview{color:#263b52!important}
+
+/* Announcements */
+html[data-theme="light"] .announcement{background:#fff!important;border-color:#d5e2ee!important;box-shadow:0 8px 24px rgba(31,57,87,.06)!important}
+html[data-theme="light"] .announcement.important{background:#fffaf2!important;border-color:#efd6ad!important}
+html[data-theme="light"] .announcement.important .announcementBadge{background:#fff0d8!important;color:#9a651e!important}
+html[data-theme="light"] .announcement.pinned{border-color:#c8c5ed!important;box-shadow:0 0 0 1px rgba(101,91,189,.06) inset!important}
+html[data-theme="light"] .announcement.pinned:not(.important){background:#f7f6ff!important}
+html[data-theme="light"] .pinnedBadge{background:#efedff!important;color:#66569b!important;border-color:#cdc7eb!important}
+html[data-theme="light"] .announcementImage,
+html[data-theme="light"] .announcementImagePreviewImg,
+html[data-theme="light"] .importantAnnouncementImage,
+html[data-theme="light"] .shareImage,
+html[data-theme="light"] .progressMedia{background:#f2f5f9!important;border-color:#d5e0eb!important}
+html[data-theme="light"] .importantAnnouncementDialog::backdrop{background:rgba(29,43,59,.38)!important}
+html[data-theme="light"] .importantAnnouncementBox{background:#fffdf8!important;border-color:#edd5ad!important;color:#24384f!important;box-shadow:0 24px 70px rgba(35,51,70,.18)!important}
+html[data-theme="light"] .importantAnnouncementIcon{background:#fff0d8!important;border-color:#e8c991!important;color:#9b671e!important}
+
+/* Progress */
+html[data-theme="light"] .progressNameChip{background:#eaf4ff!important;border-color:#c7ddef!important;color:#346a99!important}
+html[data-theme="light"] .progressReminder{background:#fffaf0!important;border-color:#ead6ae!important;box-shadow:0 10px 28px rgba(111,80,25,.05)!important}
+html[data-theme="light"] .progressReminderItem{background:#fffdf8!important;border-color:#eadfca!important;color:#263b52!important}
+html[data-theme="light"] .progressReminderMeta{color:#776a58!important}
+html[data-theme="light"] .progressReminderOk{background:#edf8f2!important;border-color:#bfe0ce!important;color:#2b7655!important}
+html[data-theme="light"] .progressNoSubmitter{color:#71849a!important}
+
+/* Submission */
+html[data-theme="light"] .submitCountCard{background:#fff!important;border-color:#d5e3ef!important;box-shadow:0 10px 28px rgba(31,57,87,.06)!important}
+html[data-theme="light"] .submitStatus{color:#607992!important}
+html[data-theme="light"] .submitStatus.success{color:#277552!important}
+html[data-theme="light"] .submitStatus.error{color:#b03b48!important}
+html[data-theme="light"] .submitStatus.warn{color:#9a671f!important}
+
+/* Lab */
+html[data-theme="light"] .labTags span{background:#eaf4ff!important;color:#316a98!important;border-color:#c7ddef!important}
+
+/* Dialogs / toast */
+html[data-theme="light"] .dialog::backdrop{background:rgba(27,42,59,.36)!important}
+html[data-theme="light"] .dialogbox{background:#fff!important;color:#21354c!important;border-color:#d2deea!important;box-shadow:0 24px 70px rgba(27,49,74,.18)!important}
+html[data-theme="light"] .toast{background:#fff!important;color:#28445f!important;border-color:#bcd0e2!important;box-shadow:0 10px 28px rgba(31,57,87,.12)!important}
+
+/* Standalone member admin */
+html[data-theme="light"] .top .brand{color:#1c3047!important}
+html[data-theme="light"] .role{background:#e9f8f0!important;color:#287754!important}
+html[data-theme="light"] .role.admin{background:#f0edff!important;color:#67549a!important}
+html[data-theme="light"] .role.super{background:#fff0df!important;color:#965c20!important}
+html[data-theme="light"] .membership{background:#eaf4ff!important;color:#326a99!important}
+html[data-theme="light"] .membership.freshman{background:#e8f8ef!important;color:#277651!important}
+
+/* Standalone member submissions */
+html[data-theme="light"] .profile .cell{background:#fff!important;border-color:#d8e4ef!important}
+html[data-theme="light"] .list .item{background:#fff!important;border-color:#d8e4ef!important}
+html[data-theme="light"] .list .item .note{color:#60758d!important}
+
+/* Inline legacy colors */
+html[data-theme="light"] [style*="color:#8fa4bd"],
+html[data-theme="light"] [style*="color: #8fa4bd"],
+html[data-theme="light"] [style*="color:#7890aa"],
+html[data-theme="light"] [style*="color: #7890aa"]{color:#647990!important}
+
+/* empty state */
+html[data-theme="light"] .empty{color:#71849a!important;border-color:#cbd9e6!important;background:#fbfdff!important}
+
+/* Keep primary CTA vivid */
+html[data-theme="light"] .pri{color:#fff!important;background:linear-gradient(135deg,#4f8cff,#7758ff)!important}
+
+/* Smooth switch */
+body,.siteHeader,.top,.glass,.panel,.moduleCard,.card,.workCard,.video,.table,.profileCard,.profileSummary,.adminLink,.labPoint,.fileCard,.shareCard,.progressCard,.dialogbox,input,textarea,select{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease}
+@media(max-width:650px){.themeToggle{min-width:auto!important;padding:9px 11px!important}.themeToggle .themeLabel{display:none}}

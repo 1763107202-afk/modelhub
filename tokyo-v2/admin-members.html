@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>成员管理后台 | 江苏科技大学机械创新实验室</title>
+<style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#07111f;color:#edf5ff;line-height:1.6}button,input,select{font:inherit}a{color:inherit;text-decoration:none}
+.wrap{width:min(1240px,calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;background:#07111ff2;border-bottom:1px solid #ffffff12;backdrop-filter:blur(14px)}.topin{min-height:76px;display:flex;align-items:center;gap:16px}.brand{display:flex;align-items:center;gap:12px;font-weight:900}.brand img{width:54px;height:54px;object-fit:contain;border-radius:50%}.brand span{display:flex;flex-direction:column;line-height:1.25}.brand small{font-size:11px;color:#7fa0bf;font-weight:600;margin-top:4px}.nav{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{border:0;border-radius:12px;padding:10px 15px;cursor:pointer;font-weight:800}.pri{color:#fff;background:linear-gradient(135deg,#4f8cff,#7758ff)}.sec{color:#dfeeff;background:#11233a;border:1px solid #29415d}.ghost{color:#cad9eb;background:transparent;border:1px solid #2a3e56}.danger{color:#ffd7d7;background:#3a171b;border:1px solid #6a2930}.hidden{display:none!important}
+.hero{padding:44px 0 22px}.eyebrow{font-size:12px;letter-spacing:.15em;color:#76abff;font-weight:900}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.08;margin:8px 0 10px}.hero p{color:#8fa4bd;margin:0}.statusbar{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pill{font-size:12px;padding:7px 10px;border-radius:999px;background:#102946;color:#a5cffb;border:1px solid #274d75}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:20px 0;align-items:stretch}.stat{padding:16px 18px;border:1px solid #1c3049;border-radius:18px;background:linear-gradient(180deg,#0e1d30,#0a1726);display:flex;flex-direction:column;min-height:156px}.stat span{font-size:12px;color:#8299b3}.stat b{display:block;font-size:30px;margin-top:4px;line-height:1.12}.stat small{display:block;margin-top:auto;padding-top:10px;color:#6f88a5;font-size:11px;line-height:1.45}.storageTrack{height:6px;margin-top:10px;border-radius:999px;background:#14263a;overflow:hidden}.storageTrack i{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#4f8cff,#7758ff);transition:width .25s ease}.glass{background:linear-gradient(180deg,#14233acc,#0b1728dd);border:1px solid #ffffff14;box-shadow:0 22px 60px #0004}
+.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 190px 160px 180px auto;gap:12px;padding:15px;border-radius:18px;margin:16px 0}input,select{width:100%;padding:11px 12px;border:1px solid #223a57;border-radius:11px;background:#081524;color:#edf6ff;outline:none}input:focus,select:focus{border-color:#5e91ff}
+.tablewrap{overflow:auto;border-radius:18px;border:1px solid #1c3049;background:#0b192a}table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:13px 14px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:middle}th{position:sticky;top:0;background:#091625;color:#7890aa;z-index:2;white-space:nowrap}th:nth-child(1),td:nth-child(1){min-width:170px}th:nth-child(2),td:nth-child(2){min-width:160px}th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4){min-width:68px;text-align:center}th:nth-child(5),td:nth-child(5){min-width:160px;max-width:190px}th:nth-child(6),td:nth-child(6){min-width:300px;padding-left:8px}.actions{margin-left:0}.member{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#31598a,#6b4bd6);font-weight:900}.muted{color:#7890aa}.role{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#123326;color:#78ddb0}.role.admin{background:#2d234b;color:#c9b7ff}.role.super{background:#4b2b15;color:#ffd39b}.membership{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;background:#14304a;color:#a9d6ff}.membership.freshman{background:#173f31;color:#86edba}.actions{display:flex;gap:7px;white-space:nowrap}
+.empty{padding:40px;text-align:center;color:#7890aa}.foot{padding:35px 0 50px;color:#6f849e}.loginbox{width:min(430px,calc(100% - 28px));margin:70px auto;padding:24px;border-radius:22px;display:grid;gap:14px}.loginbox h2{margin:0}.loginbox p{margin:0;color:#8fa4bd}.msg{font-size:13px;color:#92a8c0}
+.dialog{border:0;background:transparent}.dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}.dialogbox{width:min(720px,calc(100vw - 28px));padding:22px;border:1px solid #29415e;border-radius:20px;background:#0c1929;color:#eef6ff}.dialogbox h2{margin:0 0 14px}.detailList{display:grid;gap:9px;max-height:55vh;overflow:auto}.detailItem{padding:14px;border-radius:13px;background:#091625;border:1px solid #1b3048}.detailItem b{display:block}.detailItem small{color:#7890aa}.detailTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.detailActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.memberMetaGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}.memberMetaCell{padding:10px 12px;border-radius:11px;background:#081524;border:1px solid #1b3048}.memberMetaCell small{display:block;color:#7890aa}.memberMetaCell b{display:block;margin-top:2px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;font-size:13px;color:#cbd9ea}.dialogActions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+@media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.topin{align-items:flex-start;padding:10px 0;flex-wrap:wrap}.nav{width:100%;margin-left:0}.brand small{display:none}}@media(max-width:520px){.stats{grid-template-columns:1fr}.two,.memberMetaGrid{grid-template-columns:1fr}.brand span b{font-size:14px}}
+
+
+.storageStatTop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.storageDetailBtn{border:0;background:transparent;color:#86b8ef;font-size:11px;font-weight:800;padding:3px 0;cursor:pointer;white-space:nowrap}
+.storageDetailBtn:hover{color:#c9e4ff}
+.storageHealthDialog{padding:0;max-width:none;max-height:none}
+.storageHealthBox{width:min(980px,calc(100vw - 28px));max-height:min(88vh,900px);overflow:auto}
+.storageHealthHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.storageHealthHead h2{margin:2px 0 2px!important}
+.storageHealthGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.storageHealthCard{padding:16px;border:1px solid #213850;border-radius:15px;background:#091625}
+.storageHealthCard span{display:block;font-size:12px;color:#8299b3}
+.storageHealthCard b{display:block;font-size:27px;line-height:1.05;margin:8px 0 6px}
+.storageHealthCard small{display:block;color:#6f88a5;font-size:11px;line-height:1.4}
+.storageHealthActions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 10px}
+.storageHealthDetails{margin-top:14px}.storageHealthDetails>summary{cursor:pointer;font-weight:800;color:#9db4cc}
+.storageHealthTableWrap{overflow:auto;margin-top:10px;border:1px solid #1c3049;border-radius:14px}
+.storageHealthTable{min-width:760px!important}
+.storageHealthTable th,.storageHealthTable td{min-width:0!important;max-width:none!important;text-align:left!important;padding:11px 12px!important}
+.storageHealthTable th{position:static!important}
+.storagePathList{max-width:280px;white-space:normal;word-break:break-all;color:#7890aa}
+.storagePathList details{margin-top:5px}.storagePathList summary{cursor:pointer}
+.storageHealthStatus.ok{color:#74c69d}.storageHealthStatus.warn{color:#f6bd60}.storageHealthStatus.bad{color:#ef8a91}
+.storageHealthNote{margin:12px 0 0;color:#71869e;font-size:12px;line-height:1.6}
+html[data-theme="light"] .storageDetailBtn{color:#3f78ac}
+html[data-theme="light"] .storageHealthCard{background:#f6f9fd;border-color:#d9e4ef}
+html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
+@media(max-width:760px){
+  .storageHealthGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .storageHealthBox{width:calc(100vw - 18px);max-height:92vh;padding:17px}
+}
+@media(max-width:480px){
+  .storageHealthGrid{grid-template-columns:1fr 1fr;gap:8px}
+  .storageHealthCard{padding:12px}.storageHealthCard b{font-size:22px}
+  .storageHealthActions{display:grid;grid-template-columns:1fr 1fr}
+  .storageHealthActions .btn{padding:9px 8px;font-size:13px}
+}
+
+/* Unified standalone logo frame */
+.brand img{background:#fff!important;border:1px solid rgba(86,121,158,.18)!important;box-shadow:0 8px 22px rgba(4,17,31,.18)!important;padding:4px!important}
+</style><link rel="stylesheet" data-cache-managed href="./theme-v3.css">
+<script src="./theme-init-v2.js?v=20260924-1910"></script></head>
+<body>
+<header class="top">
+  <div class="wrap topin">
+    <a class="brand" href="./index.html"><img src="./assets/lab-logo-transparent.svg?v=2" alt="实验室 Logo"><span><b>机械创新实验室 · 成员后台</b><small>Member Administration Center</small></span></a>
+    <div class="nav"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><a class="btn ghost" href="./index.html">返回主站</a><button id="logoutBtn" class="btn sec hidden">退出登录</button></div>
+  </div>
+</header>
+
+<section id="loginView" class="loginbox glass">
+  <span class="eyebrow">ADMIN LOGIN</span>
+  <h2>管理员登录</h2>
+  <p>此页面仅供机械创新实验室管理员使用。</p>
+  <label class="field">邮箱<input id="loginEmail" type="email" autocomplete="email" placeholder="管理员邮箱"></label>
+  <label class="field">密码<input id="loginPassword" type="password" autocomplete="current-password" placeholder="密码"></label>
+  <button id="loginBtn" class="btn pri">登录后台</button>
+  <div id="loginMsg" class="msg"></div>
+</section>
+
+<main id="adminView" class="wrap hidden">
+  <section class="hero">
+    <span class="eyebrow">MEMBER ADMINISTRATION</span>
+    <h1>实验室成员管理后台</h1>
+    <p>集中查看成员身份资料与作业提交概况。副管理员仅可查看成员主页与作业；主管理员和指导老师可进行成员管理，其中高风险权限仅限主管理员。</p>
+    <div class="statusbar"><span id="adminBadge" class="pill"></span><span id="updatedAt" class="pill"></span></div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><span>注册成员</span><b id="memberCount">0</b><small id="memberCountHint">成员结构正在统计…</small></div>
+    <div class="stat"><span>大一新生</span><b id="freshmanCount">0</b><small id="freshmanCountHint">占全部成员 —</small></div>
+    <div class="stat"><span>正式成员</span><b id="formalCount">0</b><small id="formalCountHint">占全部成员 —</small></div>
+    <div class="stat"><span>周期内进度更新人数</span><b id="periodProgressCount">—</b><small id="periodProgressHint">最近 14 天 · 正式成员去重</small></div>
+    <div class="stat storageStat"><div class="storageStatTop"><span>七牛云实时存储</span><button id="qiniuStorageOpen" class="storageDetailBtn" type="button">管理 ›</button></div><b id="qiniuRealtimePercent">—</b><small id="qiniuRealtimeHint">正在读取七牛云实时用量…</small></div>
+    <div class="stat storageStat"><div class="storageStatTop"><span>Supabase 存储占用率</span><button id="storageHealthOpen" class="storageDetailBtn" type="button">查看详情 ›</button></div><b id="storagePercent">—</b><small id="storageHint">正在统计 Supabase Storage 1 GiB 空间。</small><div class="storageTrack"><i id="storageBar"></i></div></div>
+  </section>
+
+  <section class="toolbar glass">
+    <input id="searchInput" placeholder="搜索姓名或专业">
+    <select id="majorFilter"><option value="">全部专业</option></select>
+    <select id="membershipFilter" aria-label="成员分类">
+      <option value="">全部成员</option>
+      <option value="freshman">大一新生</option>
+      <option value="formal">正式成员</option>
+    </select>
+    <select id="progressStatusFilter" aria-label="进度状态">
+      <option value="">全部进度状态</option>
+      <option value="updated">两周内已更新</option>
+      <option value="overdue">两周未更新</option>
+    </select>
+    <button id="exportBtn" class="btn sec" type="button">导出成员 CSV</button>
+  </section>
+
+  <section class="tablewrap">
+    <table>
+      <thead><tr><th>成员</th><th>专业</th><th>作业</th><th>进度</th><th>最近动态</th><th>操作</th></tr></thead>
+      <tbody id="memberBody"></tbody>
+    </table>
+    <div id="empty" class="empty hidden">没有符合条件的成员。</div>
+  </section>
+  <footer class="foot">江苏科技大学机械创新实验室 · 成员管理后台</footer>
+</main>
+
+<dialog id="detailDialog" class="dialog">
+  <div class="dialogbox">
+    <h2 id="detailTitle">成员设置</h2>
+    <div id="detailMeta" class="memberMetaGrid"></div>
+    <div style="margin:4px 0 10px;font-weight:800">已提交作业</div>
+    <div id="detailList" class="detailList"></div>
+    <div class="dialogActions"><button id="closeDetail" class="btn ghost">关闭</button></div>
+  </div>
+</dialog>
+
+<dialog id="editDialog" class="dialog">
+  <form id="editForm" class="dialogbox">
+    <h2>编辑成员资料</h2>
+    <input id="editId" type="hidden">
+    <div class="two">
+      <label class="field">姓名<input id="editName" maxlength="40" required></label>
+      <label class="field">专业<input id="editMajor" maxlength="60" required></label><label class="field">电话<input id="editPhone" maxlength="30" placeholder="可选"></label><label class="field">QQ<input id="editQQ" maxlength="20" placeholder="可选"></label>
+    </div>
+    <div class="dialogActions"><button id="cancelEdit" type="button" class="btn ghost">取消</button><button class="btn pri">保存修改</button></div>
+  </form>
+</dialog>
+
+<dialog id="passwordDialog" class="dialog">
+  <form id="passwordForm" class="dialogbox">
+    <h2>重置成员密码</h2>
+    <input id="passwordUserId" type="hidden">
+    <p id="passwordTargetHint" class="muted" style="margin-top:-4px"></p>
+    <div class="two">
+      <label class="field">新密码<input id="passwordNew" type="password" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="至少 8 位，包含字母和数字"></label>
+      <label class="field">再次确认<input id="passwordConfirm" type="password" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="再次输入新密码"></label>
+    </div>
+    <div id="passwordMsg" class="msg"></div>
+    <div class="dialogActions"><button id="cancelPassword" type="button" class="btn ghost">取消</button><button id="passwordSubmit" class="btn pri">确认重置</button></div>
+  </form>
+</dialog>
+
+
+<dialog id="storageHealthDialog" class="dialog storageHealthDialog">
+  <div class="dialogbox storageHealthBox">
+    <div class="storageHealthHead">
+      <div>
+        <span class="eyebrow">STORAGE HEALTH</span>
+        <h2>Supabase 存储管理</h2>
+        <small id="storageHealthUpdated" class="muted">打开后自动扫描</small>
+      </div>
+      <button id="storageHealthClose" class="btn ghost" type="button">关闭</button>
+    </div>
+    <div class="storageHealthGrid">
+      <article class="storageHealthCard"><span>已用空间</span><b id="storageUsed">—</b><small>Supabase Storage · 1 GiB</small><div class="storageTrack"><i id="storageUsageBar"></i></div></article>
+      <article class="storageHealthCard"><span>Storage 文件</span><b id="storageObjectCount">—</b><small>图片、PDF、Word、PPT 等常规文件</small></article>
+      <article class="storageHealthCard"><span>孤立文件</span><b id="storageOrphanCount">—</b><small id="storageOrphanBytes">可释放 —</small></article>
+      <article class="storageHealthCard"><span>失效引用</span><b id="storageMissingCount">—</b><small>数据库有记录，但 Storage 文件缺失</small></article>
+    </div>
+    <div class="storageHealthActions">
+      <button id="storageHealthScan" class="btn sec" type="button">重新扫描</button>
+      <button id="storageHealthClean" class="btn danger" type="button" disabled>安全清理孤立文件</button>
+    </div>
+    <div id="storageHealthStatus" class="msg">点击“重新扫描”可核对 Supabase Storage 与数据库引用。</div>
+    <details class="storageHealthDetails">
+      <summary>查看 Supabase 各存储桶详细状态</summary>
+      <div class="storageHealthTableWrap">
+        <table class="storageHealthTable">
+          <thead><tr><th>存储桶</th><th>文件 / 占用</th><th>已引用</th><th>孤立文件</th><th>失效引用</th><th>状态</th></tr></thead>
+          <tbody id="storageHealthBody"><tr><td colspan="6">尚未扫描。</td></tr></tbody>
+        </table>
+      </div>
+    </details>
+    <p class="storageHealthNote">安全清理只删除扫描时确认没有数据库记录引用的 Supabase Storage 对象；七牛云文件请从“七牛云实时存储”卡片进入管理。</p>
+  </div>
+</dialog>
+
+<dialog id="qiniuStorageDialog" class="dialog storageHealthDialog">
+  <div class="dialogbox storageHealthBox">
+    <div class="storageHealthHead">
+      <div>
+        <span class="eyebrow">QINIU KODO</span>
+        <h2>七牛云实时存储管理</h2>
+        <small id="qiniuStorageUpdated" class="muted">打开后自动刷新</small>
+      </div>
+      <button id="qiniuStorageClose" class="btn ghost" type="button">关闭</button>
+    </div>
+    <div class="storageHealthGrid">
+      <article class="storageHealthCard"><span>实时已用</span><b id="qiniuStoragePercent">—</b><small id="qiniuStorageUsedHint">正在计算七牛云容量…</small></article>
+      <article class="storageHealthCard"><span>对象总数</span><b id="qiniuObjectCount">—</b><small>七牛 Kodo 当前对象数量</small></article>
+      <article class="storageHealthCard"><span>视频文件</span><b id="qiniuVideoCount">—</b><small id="qiniuVideoBytes">占用 —</small></article>
+      <article class="storageHealthCard"><span>压缩包</span><b id="qiniuArchiveCount">—</b><small id="qiniuArchiveBytes">占用 —</small></article>
+      <article class="storageHealthCard"><span>作业文件</span><b id="qiniuSubmissionCount">—</b><small id="qiniuSubmissionBytes">占用 —</small></article>
+      <article class="storageHealthCard"><span>存储策略</span><b style="font-size:20px">大文件云端</b><small>视频与 ZIP / RAR / 7Z 强制走七牛云</small></article>
+    </div>
+    <div class="storageHealthActions">
+      <button id="qiniuStorageRefresh" class="btn sec" type="button">刷新实时数据</button>
+      <a class="btn ghost" href="https://portal.qiniu.com/kodo/bucket" target="_blank" rel="noopener noreferrer">打开七牛云控制台</a>
+    </div>
+    <div id="qiniuStorageStatus" class="msg">正在读取七牛云实时存储数据…</div>
+    <p class="storageHealthNote">此处显示七牛云当前实时统计。网站中的视频和压缩包会自动写入七牛云；具体文件删除仍由对应资料、教程、作业或进度页面同步执行。</p>
+  </div>
+</dialog>
+
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const supabase=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef");
+const q=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
+const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KiB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MiB";return (v/1024**3).toFixed(2)+" GiB"};
+function renderAdminMetrics(row){
+  if(!row)return;
+  state.metrics=row;
+  const days=Number(row.period_days||14);
+  const updatedMembers=Number(row.progress_updated_members||0);
+  const formalMembers=state.members?.filter(x=>x.membership_status!=="freshman").length||0;
+  q("#periodProgressCount").textContent=String(updatedMembers);
+  q("#periodProgressHint").textContent="最近 "+days+" 天 · 更新率 "+(formalMembers?(updatedMembers/formalMembers*100).toFixed(1):"—")+"%";
+  const used=Number(row.storage_used_bytes||0),limit=Number(row.storage_limit_bytes||1073741824),remaining=Number(row.storage_remaining_bytes||Math.max(limit-used,0));
+  const pct=Math.max(0,Math.min(100,Number(row.storage_used_percent||0)));
+  q("#storagePercent").textContent=pct.toFixed(pct>=10?1:2)+"%";
+  q("#storageHint").textContent="已用 "+bytes(used)+" · 剩余 "+bytes(remaining)+" / 1 GiB";
+  q("#storageBar").style.width=pct+"%";
+  const storageOpen=q("#storageHealthOpen");if(storageOpen)storageOpen.classList.toggle("hidden",isDeputyAdmin());
+  const qiniuOpen=q("#qiniuStorageOpen");if(qiniuOpen)qiniuOpen.classList.toggle("hidden",isDeputyAdmin());
+}
+async function loadAdminMetrics(){
+  if(!state.user)return;
+  const r=await supabase.rpc("get_member_admin_metrics");
+  if(r.error){
+    console.warn("后台统计加载失败",r.error);
+    q("#storageHint").textContent="空间统计暂时不可用";
+    return;
+  }
+  const row=Array.isArray(r.data)?r.data[0]:r.data;
+  renderAdminMetrics(row);
+}
+
+const STORAGE_HEALTH_PLAN_BYTES=1024*1024*1024;
+let storageHealthRows=[];
+function storageHealthPathDetails(paths=[]){
+  const rows=Array.isArray(paths)?paths:[];
+  if(!rows.length)return "—";
+  const visible=rows.slice(0,15);
+  return '<div class="storagePathList"><details><summary>'+rows.length+' 个路径</summary>'+visible.map(x=>'<div>'+esc(x)+'</div>').join("")+(rows.length>visible.length?'<div>…其余 '+(rows.length-visible.length)+' 个</div>':'')+'</details></div>';
+}
+function renderStorageHealth(rows=[]){
+  storageHealthRows=rows;
+  const totals=rows.reduce((a,x)=>{
+    a.objects+=Number(x.object_count||0);
+    a.bytes+=Number(x.total_bytes||0);
+    a.orphans+=Number(x.orphan_count||0);
+    a.orphanBytes+=Number(x.orphan_bytes||0);
+    a.missing+=Number(x.missing_reference_count||0);
+    return a;
+  },{objects:0,bytes:0,orphans:0,orphanBytes:0,missing:0});
+  q("#storageUsed").textContent=bytes(totals.bytes);
+  q("#storageObjectCount").textContent=String(totals.objects);
+  q("#storageOrphanCount").textContent=String(totals.orphans);
+  q("#storageOrphanBytes").textContent="可释放 "+bytes(totals.orphanBytes);
+  q("#storageMissingCount").textContent=String(totals.missing);
+  q("#storageUsageBar").style.width=Math.min(100,Math.max(0,totals.bytes/STORAGE_HEALTH_PLAN_BYTES*100)).toFixed(1)+"%";
+  q("#storageHealthUpdated").textContent="扫描于 "+new Date().toLocaleString("zh-CN",{hour12:false});
+  q("#storageHealthClean").disabled=totals.orphans===0;
+  q("#storageHealthStatus").textContent=(totals.orphans||totals.missing)
+    ?"发现 "+totals.orphans+" 个孤立文件、"+totals.missing+" 个失效引用。"
+    :"Supabase Storage 与数据库引用目前一致。";
+  q("#storageHealthBody").innerHTML=rows.map(x=>{
+    const orphanN=Number(x.orphan_count||0),missingN=Number(x.missing_reference_count||0);
+    const cls=missingN?"bad":orphanN?"warn":"ok";
+    const label=missingN?"需检查":orphanN?"可清理":"正常";
+    return '<tr><td><b>'+esc(x.bucket_name)+'</b></td><td>'+esc(x.object_count||0)+' 个<br><small>'+bytes(Number(x.total_bytes||0))+'</small></td><td>'+esc(x.referenced_object_count||0)+'</td><td>'+esc(orphanN)+'<br><small>'+bytes(Number(x.orphan_bytes||0))+'</small>'+storageHealthPathDetails(x.orphan_paths)+'</td><td>'+esc(missingN)+storageHealthPathDetails(x.missing_reference_paths)+'</td><td><span class="storageHealthStatus '+cls+'">'+label+'</span></td></tr>';
+  }).join("")||'<tr><td colspan="6">没有可显示的数据。</td></tr>';
+}
+async function loadStorageHealth(){
+  if(!state.user||!canFullyManageMembers())return;
+  const scan=q("#storageHealthScan"),clean=q("#storageHealthClean"),status=q("#storageHealthStatus");
+  const old=scan.textContent;
+  scan.disabled=true;scan.textContent="扫描中…";clean.disabled=true;
+  status.textContent="正在核对 Supabase Storage 对象与数据库引用…";
+  try{
+    const r=await supabase.rpc("get_storage_health");
+    if(r.error)throw r.error;
+    renderStorageHealth(r.data||[]);
+  }catch(err){
+    console.error("存储健康扫描失败",err);
+    status.textContent="扫描失败："+(err?.message||String(err));
+    q("#storageHealthBody").innerHTML='<tr><td colspan="6">扫描失败。</td></tr>';
+  }finally{
+    scan.disabled=false;scan.textContent=old;
+  }
+}
+let qiniuRealtimeData=null;
+function renderQiniuStorage(data){
+  qiniuRealtimeData=data||null;
+  if(!data){
+    q("#qiniuRealtimePercent").textContent="—";
+    q("#qiniuRealtimeHint").textContent="七牛云实时统计暂时不可用";
+    return;
+  }
+  const used=Number(data.totalBytes||0),objects=Number(data.objectCount||0);
+  const freeQuota=Number(data.freeQuotaBytes||10*1024*1024*1024);
+  const over=Boolean(data.overFreeQuota)||used>freeQuota;
+  const overage=Number(data.overageBytes??Math.max(used-freeQuota,0));
+  q("#qiniuRealtimePercent").textContent=bytes(used);
+  q("#qiniuRealtimeHint").textContent=over
+    ?"已超过免费额度 "+bytes(overage)+" · 当前可能产生存储费用"
+    :"当前仍在七牛免费额度内";
+  q("#qiniuStoragePercent").textContent=bytes(used);
+  q("#qiniuStorageUsedHint").textContent=over
+    ?"免费额度 10 GiB · 已超出 "+bytes(overage)
+    :"免费额度 10 GiB · 尚未超额";
+  q("#qiniuObjectCount").textContent=String(objects);
+  q("#qiniuVideoCount").textContent=String(data.videoCount??0);
+  q("#qiniuVideoBytes").textContent="占用 "+bytes(Number(data.videoBytes||0));
+  q("#qiniuArchiveCount").textContent=String(data.archiveCount??0);
+  q("#qiniuArchiveBytes").textContent="占用 "+bytes(Number(data.archiveBytes||0));
+  q("#qiniuSubmissionCount").textContent=String(data.submissionCount??0);
+  q("#qiniuSubmissionBytes").textContent="占用 "+bytes(Number(data.submissionBytes||0));
+  const bucketHint=q("#qiniuBucketHint");
+  if(bucketHint)bucketHint.textContent="Bucket："+(data.bucket||"justjxcxsys");
+  const storageUpdated=q("#qiniuStorageUpdated");
+  if(storageUpdated)storageUpdated.textContent="刷新于 "+new Date().toLocaleString("zh-CN",{hour12:false});
+  q("#qiniuStorageStatus").textContent=over
+    ?"七牛云当前共 "+objects+" 个对象，实时占用 "+bytes(used)+"，已超过 10 GiB 免费额度 "+bytes(overage)+"。"
+    :"七牛云当前共 "+objects+" 个对象，实时占用 "+bytes(used)+"，当前仍在 10 GiB 免费额度内。";
+}
+async function loadQiniuStorage(){
+  if(!state.user||!canFullyManageMembers())return;
+  const refresh=q("#qiniuStorageRefresh");
+  const old=refresh?.textContent||"刷新实时数据";
+  if(refresh){refresh.disabled=true;refresh.textContent="刷新中…"}
+  q("#qiniuRealtimeHint").textContent="正在读取七牛云实时用量…";
+  const status=q("#qiniuStorageStatus");
+  if(status)status.textContent="正在读取七牛云实时存储数据…";
+  try{
+    const r=await supabase.functions.invoke("qiniu-storage-stats",{body:{}});
+    if(r.error)throw r.error;
+    if(r.data?.error)throw new Error(r.data.error);
+    renderQiniuStorage(r.data||{});
+  }catch(err){
+    console.error("七牛云实时统计失败",err);
+    q("#qiniuRealtimePercent").textContent="—";
+    q("#qiniuRealtimeHint").textContent="实时统计失败，点击“管理”重试";
+        if(status)status.textContent="读取失败："+(err?.message||String(err));
+  }finally{
+    if(refresh){refresh.disabled=false;refresh.textContent=old}
+  }
+}
+async function removeStorageBatch(bucket,paths=[]){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  const unique=[...new Set((paths||[]).filter(Boolean))];
+  if(!bucket||!unique.length)return {error:null};
+  let result={error:null};
+  for(let i=0;i<3;i++){
+    try{result=await supabase.storage.from(bucket).remove(unique)}catch(error){result={error}}
+    if(!result?.error)return result;
+    if(i<2)await new Promise(resolve=>setTimeout(resolve,i===0?700:1500));
+  }
+  return result;
+}
+async function cleanStorageOrphans(){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  if(!state.user||!canFullyManageMembers())return;
+  const clean=q("#storageHealthClean"),scan=q("#storageHealthScan"),status=q("#storageHealthStatus");
+  clean.disabled=true;scan.disabled=true;
+  try{
+    status.textContent="正在重新核对孤立文件…";
+    const fresh=await supabase.rpc("get_storage_health");
+    if(fresh.error)throw fresh.error;
+    const rows=fresh.data||[];
+    const beforeCount=rows.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const beforeBytes=rows.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    if(!beforeCount){renderStorageHealth(rows);alert("当前没有孤立文件需要清理。");return}
+    if(!confirm("确认安全清理 "+beforeCount+" 个孤立文件吗？\n\n预计释放 "+bytes(beforeBytes)+"。\n只会删除当前扫描确认没有数据库引用的文件。"))return;
+    status.textContent="正在清理孤立文件…";
+    for(const row of rows){
+      const paths=Array.isArray(row.orphan_paths)?row.orphan_paths:[];
+      if(!paths.length)continue;
+      const rm=await removeStorageBatch(row.bucket_name,paths);
+      if(rm?.error)console.warn("Storage 批量清理失败",row.bucket_name,rm.error);
+    }
+    const verify=await supabase.rpc("get_storage_health");
+    if(verify.error)throw verify.error;
+    const after=verify.data||[];
+    const afterCount=after.reduce((n,x)=>n+Number(x.orphan_count||0),0);
+    const afterBytes=after.reduce((n,x)=>n+Number(x.orphan_bytes||0),0);
+    renderStorageHealth(after);
+    await loadAdminMetrics();
+    const removed=Math.max(0,beforeCount-afterCount),released=Math.max(0,beforeBytes-afterBytes);
+    if(afterCount===0)alert("清理完成：已删除 "+removed+" 个孤立文件，释放 "+bytes(released)+"。");
+    else alert("已清理 "+removed+" 个，仍有 "+afterCount+" 个未清理。");
+  }catch(err){
+    console.error("孤立文件清理失败",err);
+    status.textContent="清理失败："+(err?.message||String(err));
+    alert("清理失败："+(err?.message||String(err)));
+  }finally{
+    scan.disabled=false;
+    clean.disabled=storageHealthRows.reduce((n,x)=>n+Number(x.orphan_count||0),0)===0;
+  }
+}
+
+const state={user:null,profile:null,members:[],subs:[],progress:[],teamProgress:[],teamMembers:[],filtered:[],metrics:null};
+function canFullyManageMembers(){return state.profile?.role==="super_admin"||state.profile?.progress_exempt===true}
+function isDeputyAdmin(){return state.profile?.role==="admin"&&!state.profile?.progress_exempt}
+
+const THEME_KEY="justLabTokyoV2Theme";
+function preferredTheme(){try{const saved=localStorage.getItem(THEME_KEY);if(saved==="light"||saved==="dark")return saved}catch(_e){}return matchMedia?.("(prefers-color-scheme: light)")?.matches?"light":"dark"}
+function applyTheme(theme,save=false){const next=theme==="light"?"light":"dark";document.documentElement.dataset.theme=next;document.documentElement.style.colorScheme=next;if(save){try{localStorage.setItem(THEME_KEY,next)}catch(_e){}}const btn=q("#themeToggle");if(btn)btn.innerHTML=next==="light"?'☾ <span class="themeLabel">深色</span>':'☀ <span class="themeLabel">浅色</span>'}
+applyTheme(preferredTheme());
+
+function showLogin(msg=""){
+  q("#loginView").classList.remove("hidden");
+  q("#adminView").classList.add("hidden");
+  q("#logoutBtn").classList.add("hidden");
+  q("#loginMsg").textContent=msg;
+}
+function showAdmin(){
+  q("#loginView").classList.add("hidden");
+  q("#adminView").classList.remove("hidden");
+  q("#logoutBtn").classList.remove("hidden");
+}
+function aggregate(){
+  const byUser=new Map();
+  for(const s of state.subs){
+    if(!byUser.has(s.user_id))byUser.set(s.user_id,[]);
+    byUser.get(s.user_id).push(s);
+  }
+  for(const arr of byUser.values())arr.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  return byUser;
+}
+function aggregateProgress(){
+  const byUser=new Map();
+  const push=(userId,row)=>{
+    if(!userId)return;
+    if(!byUser.has(userId))byUser.set(userId,[]);
+    byUser.get(userId).push(row);
+  };
+  for(const p of state.progress){
+    push(p.user_id,{...p,_kind:"personal",_title:p.current_progress||"个人进度已更新"});
+  }
+  const teamById=new Map(state.teamProgress.map(x=>[x.id,x]));
+  for(const m of state.teamMembers){
+    const t=teamById.get(m.team_progress_id);
+    if(!t)continue;
+    push(m.member_id,{...t,_kind:"team",_title:t.competition_name||"队伍进度已更新"});
+  }
+  for(const arr of byUser.values())arr.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  return byUser;
+}
+function populateMajorFilter(){
+  const majors=[...new Set(state.members.map(x=>(x.major||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"zh-CN"));
+  q("#majorFilter").innerHTML='<option value="">全部专业</option>'+majors.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join("");
+}
+function initialProgressReference(m){
+  const created=m?.created_at?new Date(m.created_at):null;
+  const formal=m?.formal_since?new Date(m.formal_since):null;
+  const promotedLater=created&&formal&&(formal-created)>60000;
+  return promotedLater?formal:new Date("2026-09-21T00:00:00+08:00");
+}
+function render(){
+  const byUser=aggregate(), byProgress=aggregateProgress(), term=q("#searchInput").value.trim().toLowerCase(), mf=q("#majorFilter").value, membership=q("#membershipFilter").value, progressStatus=q("#progressStatusFilter")?.value||"";
+  const progressCutoff=Date.now()-14*24*60*60*1000;
+  const matchesProgressStatus=m=>{
+    if(!progressStatus)return true;
+    if(m.membership_status==="freshman"||m.progress_exempt)return false;
+    const parr=byProgress.get(m.id)||[];
+    const latest=parr[0];
+    const reference=latest?.created_at?new Date(latest.created_at):initialProgressReference(m);
+    const ts=reference?.getTime?.()||0;
+    return progressStatus==="updated"
+      ? !!latest&&ts>=progressCutoff
+      : progressStatus==="overdue"&&ts<progressCutoff;
+  };
+  const actionCount=m=>{
+    let count=isDeputyAdmin()?2:3; // 副管理员仅主页+作业；完整管理者另含编辑
+    if(canFullyManageMembers()&&m.membership_status==="freshman")count+=1;
+    if(state.profile?.role==="super_admin"&&m.role!=="super_admin")count+=1;
+    if(state.profile?.role==="super_admin"&&m.id!==state.user?.id)count+=1;
+    if(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id)count+=1
+    return count;
+  };
+  const actionSignature=m=>{
+    const parts=[
+      m.membership_status==="freshman"?"freshman":"formal",
+      m.role==="super_admin"?"super":m.role==="admin"?"admin":"student",
+      m.id===state.user?.id?"self":"other"
+    ];
+    return parts.join("|");
+  };
+  state.filtered=state.members.filter(m=>{
+    const hay=[m.full_name,m.major].join(" ").toLowerCase();
+    return (!term||hay.includes(term))
+      &&(!mf||m.major===mf)
+      &&(!membership||(membership==="freshman"?m.membership_status==="freshman":m.membership_status!=="freshman"))
+      &&matchesProgressStatus(m);
+  }).sort((a,b)=>{
+    const teacherId="cf11c958-920b-4669-8bee-1931e4585ae7";
+    const teacherDiff=(a.id===teacherId?0:1)-(b.id===teacherId?0:1);
+    if(teacherDiff)return teacherDiff;
+    const roleRank=m=>m.role==="super_admin"?0:m.role==="admin"?1:2;
+    const roleDiff=roleRank(a)-roleRank(b);
+    if(roleDiff)return roleDiff;
+    const countDiff=actionCount(a)-actionCount(b);
+    if(countDiff)return countDiff;
+    const signatureDiff=actionSignature(a).localeCompare(actionSignature(b),"zh-CN");
+    if(signatureDiff)return signatureDiff;
+    return (a.full_name||a.email||"").localeCompare(b.full_name||b.email||"","zh-CN");
+  });
+  q("#memberBody").innerHTML=state.filtered.map(m=>{
+    const arr=byUser.get(m.id)||[], latest=arr[0], parr=byProgress.get(m.id)||[], latestProgress=parr[0];
+    const initial=(m.full_name||m.email||"?").trim().slice(0,1).toUpperCase();
+    return '<tr>'+
+      '<td><div class="member"><div class="avatar">'+esc(initial)+'</div><div><b>'+esc(m.full_name||"未填写姓名")+'</b>'+(m.progress_exempt?'<div class="muted" style="color:#ffd39b">指导老师</div>':'')+'<div class="muted">'+esc(m.id.slice(0,8))+'…</div></div></div></td>'+
+      '<td>'+esc(m.major||"未填写")+'</td>'+
+      '<td><b>'+arr.length+'</b></td>'+
+      '<td><b>'+parr.length+'</b></td>'+
+      '<td>'+(m.membership_status==="freshman"
+        ? (latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">新生作业 · '+fmt(latest.created_at)+'</div>':'<span class="muted">暂无作业</span>')
+        : (latestProgress?'<b>'+esc(latestProgress._kind==="team"?(latestProgress.competition_name||"队伍进度已更新"):(latestProgress.current_progress||"个人进度已更新"))+'</b><div class="muted">'+(latestProgress._kind==="team"?"队伍进度 · ":"个人进度 · ")+fmt(latestProgress.created_at)+'</div>':'<b>初始进度周期</b><div class="muted">'+fmt(initialProgressReference(m))+'</div>'))+'</td>'+
+      '<td><div class="actions"><a class="btn ghost" href="./member.html?id='+encodeURIComponent(m.id)+'">主页</a><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a>'+(isDeputyAdmin()?"":('<button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为管理")+'</button>':"")+(state.profile?.role==="super_admin"&&m.id!==state.user?.id?'<button class="btn sec resetPwdBtn" data-id="'+esc(m.id)+'">重置密码</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")))+'</div></td>'+
+    '</tr>';
+  }).join("");
+  q("#empty").classList.toggle("hidden",state.filtered.length>0);
+  const totalMembers=state.members.length;
+  const freshmanMembers=state.members.filter(x=>x.membership_status==="freshman").length;
+  const formalMembers=state.members.filter(x=>x.membership_status!=="freshman").length;
+  q("#memberCount").textContent=totalMembers;
+  q("#freshmanCount").textContent=freshmanMembers;
+  q("#formalCount").textContent=formalMembers;
+  q("#memberCountHint").textContent="大一新生 "+freshmanMembers+" · 正式成员 "+formalMembers;
+  q("#freshmanCountHint").textContent="占全部成员 "+(totalMembers?(freshmanMembers/totalMembers*100).toFixed(1):"0.0")+"%";
+  q("#formalCountHint").textContent="占全部成员 "+(totalMembers?(formalMembers/totalMembers*100).toFixed(1):"0.0")+"%";
+  if(state.metrics){
+    const updated=Number(state.metrics.progress_updated_members||0);
+    q("#periodProgressHint").textContent="最近 "+Number(state.metrics.period_days||14)+" 天 · 更新率 "+(formalMembers?(updated/formalMembers*100).toFixed(1):"0.0")+"%";
+  }
+  document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".resetPwdBtn").forEach(b=>b.onclick=()=>openPasswordReset(b.dataset.id));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));
+}
+function openDetail(id){
+  const m=state.members.find(x=>x.id===id), arr=state.subs.filter(x=>x.user_id===id).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  q("#detailTitle").textContent=(m?.full_name||m?.email||"成员")+" · 设置";
+  q("#detailMeta").innerHTML='<div class="memberMetaCell"><small>姓名</small><b>'+esc(m?.full_name||"未填写")+'</b></div><div class="memberMetaCell"><small>专业</small><b>'+esc(m?.major||"未填写")+'</b></div><div class="memberMetaCell"><small>邮箱</small><b>'+esc(m?.email||"—")+'</b></div><div class="memberMetaCell"><small>成员状态</small><b>'+(m?.membership_status==="freshman"?"大一新生":"正式成员")+'</b></div><div class="memberMetaCell"><small>提交数量</small><b>'+arr.length+' 次</b></div>';
+  q("#detailList").innerHTML=arr.length?arr.map(s=>'<div class="detailItem"><div class="detailTop"><div><b>'+esc(s.exams?.title||"未关联试卷")+'</b><div>'+esc(s.file_name||"—")+'</div></div><span class="status">'+esc(s.status||"—")+'</span></div><small>提交时间：'+fmt(s.created_at)+(s.submitter_name?' · 提交人：'+esc(s.submitter_name):"")+(s.note?' · 备注：'+esc(s.note):"")+'</small><div class="detailActions">'+(s.storage_path?'<button class="btn sec memberDl" data-p="'+esc(s.storage_path)+'">下载作业</button>':"")+'</div></div>').join(""):'<div class="empty">该成员暂无提交作业。</div>';
+  document.querySelectorAll(".memberDl").forEach(b=>b.onclick=async()=>{const r=await supabase.storage.from("submissions").createSignedUrl(b.dataset.p,120);if(r.error)return alert("下载失败："+r.error.message);window.open(r.data.signedUrl,"_blank")});
+  q("#detailDialog").showModal();
+}
+async function promoteMember(id){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  const target=state.members.find(x=>x.id===id);if(!target)return;
+  if(!canFullyManageMembers())return alert("只有主管理员或指导老师可以修改成员状态");
+  if(target.membership_status!=="freshman")return;
+  if(!confirm("确定将 "+(target.full_name||target.email)+" 转为正式成员吗？"))return;
+  const r=await supabase.from("profiles").update({membership_status:"formal",formal_since:new Date().toISOString()}).eq("id",id);
+  if(r.error){alert("成员状态修改失败："+r.error.message);return}
+  await loadAdminData();
+}
+function openPasswordReset(id){
+  if(state.profile?.role!=="super_admin")return alert("只有主管理员可以重置成员密码");
+  const target=state.members.find(x=>x.id===id);if(!target)return;
+  if(target.id===state.user?.id)return alert("不能在成员后台重置当前登录账号自己的密码");
+  q("#passwordUserId").value=id;
+  q("#passwordNew").value="";
+  q("#passwordConfirm").value="";
+  q("#passwordMsg").textContent="";
+  q("#passwordTargetHint").textContent="正在为 "+(target.full_name||target.email||"成员")+" 重置登录密码";
+  q("#passwordDialog").showModal();
+  setTimeout(()=>q("#passwordNew")?.focus(),50);
+}
+async function resetMemberPassword(){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  if(state.profile?.role!=="super_admin")return alert("只有主管理员可以重置成员密码");
+  const id=q("#passwordUserId").value;
+  const target=state.members.find(x=>x.id===id);if(!target)return;
+  const password=q("#passwordNew").value;
+  const confirmPassword=q("#passwordConfirm").value;
+  const msg=q("#passwordMsg"),btn=q("#passwordSubmit");
+  msg.textContent="";
+  if(password.length<8||password.length>72){msg.textContent="密码长度需为 8-72 位";return}
+  if(!/[A-Za-z]/.test(password)||!/[0-9]/.test(password)){msg.textContent="密码必须同时包含字母和数字";return}
+  if(password!==confirmPassword){msg.textContent="两次输入的密码不一致";return}
+  if(!confirm("确定重置 "+(target.full_name||target.email)+" 的登录密码吗？"))return;
+  const old=btn.textContent;btn.disabled=true;btn.textContent="正在重置…";
+  try{
+    const r=await supabase.functions.invoke("reset-member-password",{body:{user_id:id,password}});
+    if(r.error)throw r.error;
+    if(r.data?.error)throw new Error(r.data.error);
+    q("#passwordDialog").close();
+    alert("密码已重置成功。请将新的临时密码单独告知该成员。");
+  }catch(e){msg.textContent="重置失败："+(e?.message||String(e))}
+  finally{btn.disabled=false;btn.textContent=old}
+}
+async function kickMember(id){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  if(state.profile?.role!=="super_admin")return alert("只有主管理员可以踢出成员");
+  const target=state.members.find(x=>x.id===id);if(!target)return;
+  if(target.role==="super_admin")return alert("不能踢出主管理员");
+  if(!confirm("确定踢出 "+(target.full_name||target.email)+" 吗？\n\n该账号将被删除，其个人作业和近期进度记录也会删除。此操作不可撤销。"))return;
+  const typed=prompt("为防止误操作，请输入该成员姓名确认：");
+  if(typed!==(target.full_name||""))return alert("确认姓名不匹配，已取消");
+  const r=await supabase.functions.invoke("remove-member",{body:{user_id:id}});
+  if(r.error){alert("踢出失败："+r.error.message);return}
+  if(r.data?.error){alert("踢出失败："+r.data.error);return}
+  alert("成员已踢出");
+  await loadAdminData();
+}
+async function toggleRole(id,currentRole){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;if(state.profile?.role!=="super_admin")return alert("只有主管理员可以设置副管理员");const target=state.members.find(x=>x.id===id);if(!target)return;const next=currentRole==="admin"?"student":"admin";const action=next==="admin"?"设为副管理员":"取消副管理员";if(!confirm("确定将 "+(target.full_name||target.email)+" "+action+"吗？"))return;const r=await supabase.from("profiles").update({role:next}).eq("id",id);if(r.error){alert("权限修改失败："+r.error.message);return}await loadAdminData();}
+function openEdit(id){
+  const m=state.members.find(x=>x.id===id); if(!m)return;
+  q("#editId").value=id;q("#editName").value=m.full_name||"";q("#editMajor").value=m.major||"";q("#editPhone").value=m.phone||"";q("#editQQ").value=m.qq||"";
+  q("#editDialog").showModal();
+}
+async function loadAdminData(){
+  const [p,s,pr,tp,tm,mr]=await Promise.all([
+    supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,progress_exempt,created_at,formal_since").order("created_at",{ascending:false}),
+    supabase.from("submissions").select("id,user_id,submitter_name,file_name,status,note,storage_path,created_at,exam_id,exams(title)").order("created_at",{ascending:false}),
+    supabase.from("progress_updates").select("id,user_id,current_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
+    supabase.from("team_progress_updates").select("id,competition_name,team_progress,next_goal,project_id,created_at").order("created_at",{ascending:false}),
+    supabase.from("team_progress_members").select("team_progress_id,member_id"),
+    supabase.rpc("get_member_admin_metrics")
+  ]);
+  if(p.error)throw p.error;if(s.error)throw s.error;if(pr.error)throw pr.error;if(tp.error)throw tp.error;if(tm.error)throw tm.error;
+  state.members=p.data||[];
+  state.subs=s.data||[];
+  state.progress=pr.data||[];
+  state.teamProgress=tp.data||[];
+  state.teamMembers=tm.data||[];
+  if(!mr.error)renderAdminMetrics(Array.isArray(mr.data)?mr.data[0]:mr.data);
+  if(canFullyManageMembers())void loadQiniuStorage();
+  populateMajorFilter();render();
+  q("#updatedAt").textContent="更新时间："+new Date().toLocaleString("zh-CN",{hour12:false});
+}
+function setupAdminRealtime(){
+  if(window.__memberAdminRealtime)return;
+  let timer=null;
+  const refresh=()=>{clearTimeout(timer);timer=setTimeout(()=>loadAdminData().catch(console.error),250)};
+  const metricsOnly=()=>loadAdminMetrics().catch(console.error);
+  const ch=supabase.channel("member-admin-live")
+    .on("postgres_changes",{event:"*",schema:"public",table:"profiles"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"submissions"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"progress_updates"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_updates"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"team_progress_members"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"projects"},refresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"project_members"},refresh)
+    .subscribe();
+  window.__memberAdminRealtime=ch;
+  if(!window.__memberAdminMetricsTimer){
+    window.__memberAdminMetricsTimer=setInterval(()=>{
+      if(document.visibilityState==="visible"){
+        loadAdminMetrics().catch(console.error);
+        if(canFullyManageMembers())loadQiniuStorage().catch(console.error);
+      }
+    },30000);
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      loadAdminMetrics().catch(console.error);
+      if(canFullyManageMembers())loadQiniuStorage().catch(console.error);
+    }
+  });
+}
+async function enter(){
+  const sess=await supabase.auth.getSession();
+  state.user=sess.data.session?.user||null;
+  if(!state.user){showLogin();return}
+  const me=await supabase.from("profiles").select("id,email,role,full_name,major,phone,qq,membership_status,progress_exempt").eq("id",state.user.id).maybeSingle();
+  if(me.error){showLogin("无法读取管理员资料："+me.error.message);return}
+  state.profile=me.data;
+  if(!["admin","super_admin"].includes(state.profile?.role)&&!state.profile?.progress_exempt){showLogin("当前账号没有成员后台访问权限。");return}
+  showAdmin();
+  q("#adminBadge").textContent=(state.profile.full_name||state.profile.email)+" · "+(state.profile.role==="super_admin"?"主管理员":state.profile.progress_exempt?"指导老师":"副管理员 · 只读");q("#exportBtn").classList.toggle("hidden",isDeputyAdmin());
+  try{await loadAdminData();setupAdminRealtime()}catch(e){q("#memberBody").innerHTML='<tr><td colspan="6" class="muted">加载失败：'+esc(e.message)+'</td></tr>'}
+}
+q("#themeToggle").onclick=()=>window.JUSTTheme?.toggle();
+q("#loginBtn").onclick=async()=>{
+  q("#loginMsg").textContent="正在登录…";
+  const r=await supabase.auth.signInWithPassword({email:q("#loginEmail").value.trim(),password:q("#loginPassword").value});
+  if(r.error){q("#loginMsg").textContent=r.error.message;return}
+  await enter();
+};
+q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();state.user=null;state.profile=null;showLogin("已退出登录。")};
+q("#searchInput").oninput=render;
+q("#majorFilter").onchange=render;
+q("#membershipFilter").onchange=()=>{
+  if(q("#membershipFilter").value==="freshman"&&q("#progressStatusFilter"))q("#progressStatusFilter").value="";
+  render();
+};
+q("#progressStatusFilter").onchange=()=>{
+  if(q("#progressStatusFilter").value)q("#membershipFilter").value="formal";
+  render();
+};
+q("#closeDetail").onclick=()=>q("#detailDialog").close();
+q("#cancelEdit").onclick=()=>q("#editDialog").close();
+q("#cancelPassword").onclick=()=>q("#passwordDialog").close();
+
+q("#qiniuStorageOpen").onclick=async()=>{
+  const d=q("#qiniuStorageDialog");
+  if(!d.open)d.showModal();
+  await loadQiniuStorage();
+};
+q("#qiniuStorageClose").onclick=()=>q("#qiniuStorageDialog").close();
+q("#qiniuStorageRefresh").onclick=()=>loadQiniuStorage();
+q("#qiniuStorageDialog").addEventListener("click",e=>{if(e.target===q("#qiniuStorageDialog"))q("#qiniuStorageDialog").close()});
+
+q("#storageHealthOpen").onclick=async()=>{
+  const d=q("#storageHealthDialog");
+  if(!d.open)d.showModal();
+  await loadStorageHealth();
+};
+q("#storageHealthClose").onclick=()=>q("#storageHealthDialog").close();
+q("#storageHealthScan").onclick=()=>loadStorageHealth();
+q("#storageHealthClean").onclick=()=>cleanStorageOrphans();
+q("#storageHealthDialog").addEventListener("click",e=>{if(e.target===q("#storageHealthDialog"))q("#storageHealthDialog").close()});
+
+q("#passwordForm").onsubmit=async e=>{e.preventDefault();await resetMemberPassword()};
+q("#editForm").onsubmit=async e=>{
+  e.preventDefault();alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  const id=q("#editId").value, full_name=q("#editName").value.trim(), major=q("#editMajor").value.trim(), phone=q("#editPhone").value.trim(), qq=q("#editQQ").value.trim();
+  if(!full_name||!major)return;
+  if(phone&&!/^[0-9+()\-\s]{5,30}$/.test(phone))return alert("请输入有效电话号码");
+  if(qq&&!/^\d{5,20}$/.test(qq))return alert("QQ 号应为 5-20 位数字");
+  const r=await supabase.from("profiles").update({full_name,major,phone:phone||null,qq:qq||null}).eq("id",id);
+  if(r.error){alert("保存失败："+r.error.message);return}
+  q("#editDialog").close();await loadAdminData();
+};
+q("#exportBtn").onclick=async()=>{
+  const btn=q("#exportBtn"),oldText=btn.textContent;
+  try{
+    const list=Array.isArray(state.filtered)?state.filtered:[];
+    if(!list.length){alert("当前筛选条件下没有可导出的成员数据");return}
+    btn.disabled=true;btn.textContent="正在导出…";
+
+    const byUser=aggregate();
+    const byProgress=aggregateProgress();
+    const periodDays=Number(state.metrics?.period_days||14);
+    const cutoff=Date.now()-periodDays*24*60*60*1000;
+    let overdueCount=0;
+
+    const rows=[["姓名","专业","成员分类","电话","QQ","邮箱","作业次数","进度次数","进度状态","最近动态类型","最近动态时间"]];
+    for(const m of list){
+      const arr=byUser.get(m.id)||[];
+      const parr=byProgress.get(m.id)||[];
+      const latest=arr[0],latestProgress=parr[0],isFreshman=m.membership_status==="freshman";
+      const initialProgressAt=initialProgressReference(m);
+      const progressReference=latestProgress?new Date(latestProgress.created_at):initialProgressAt;
+      const overdue=!isFreshman&&progressReference.getTime()<cutoff;
+      if(overdue)overdueCount+=1;
+      const progressStatus=isFreshman?"新生（不纳入进度提醒）":overdue?"【两周未更新】":"周期内已更新";
+      rows.push([
+        m.full_name||"",
+        m.major||"",
+        isFreshman?"大一新生":"正式成员",
+        m.phone||"",
+        m.qq||"",
+        m.email||"",
+        String(arr.length),
+        String(parr.length),
+        progressStatus,
+        isFreshman?"新生作业":(latestProgress?"正式成员进度":"初始进度周期"),
+        isFreshman?(latest?fmt(latest.created_at):""):(latestProgress?fmt(latestProgress.created_at):fmt(initialProgressAt))
+      ]);
+    }
+
+    const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+
+    const membership=q("#membershipFilter").value;
+    const major=q("#majorFilter").value.trim();
+    const term=q("#searchInput").value.trim();
+    const membershipLabel=membership==="freshman"?"大一新生":membership==="formal"?"正式成员":"全部成员";
+    const safe=s=>String(s).replace(/[\\/:*?"<>|]/g,"-").replace(/\s+/g," ").trim();
+    const now=new Date();
+    const localDate=[now.getFullYear(),String(now.getMonth()+1).padStart(2,"0"),String(now.getDate()).padStart(2,"0")].join("-");
+    const nameParts=["实验室成员名单",membershipLabel];
+    if(major)nameParts.push(major);
+    if(term)nameParts.push("搜索-"+term);
+    const filename=nameParts.map(safe).filter(Boolean).join("_")+"_"+localDate+".csv";
+
+    const summary="\n导出人数："+list.length+" 人"+(overdueCount?"\n其中两周未更新："+overdueCount+" 人（已在“进度状态”列标记）":"\n两周未更新：0 人");
+
+    if(typeof window.showSaveFilePicker==="function"){
+      try{
+        const handle=await window.showSaveFilePicker({
+          suggestedName:filename,
+          types:[{description:"CSV 表格文件",accept:{"text/csv":[".csv"]}}]
+        });
+        const writable=await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        btn.textContent="保存成功";
+        alert("成员名单已保存到你刚刚选择的位置。\n文件名："+filename+summary);
+      }catch(saveError){
+        if(saveError?.name==="AbortError"){
+          btn.textContent="已取消";
+          return;
+        }
+        throw saveError;
+      }
+    }else if(typeof navigator.msSaveOrOpenBlob==="function"){
+      navigator.msSaveOrOpenBlob(blob,filename);
+      btn.textContent="已开始下载";
+      alert("成员名单已交给浏览器下载。\n文件名："+filename+summary+"\n如果没有弹出保存窗口，请按 Ctrl + J 查看下载记录。");
+    }else{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url;
+      a.download=filename;
+      a.style.display="none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),3000);
+      btn.textContent="已开始下载";
+      alert("成员名单已开始下载。\n文件名："+filename+summary+"\n通常保存在浏览器默认“下载”文件夹；可按 Ctrl + J 查看下载记录并定位文件。");
+    }
+  }catch(e){
+    console.error("成员导出失败",e);
+    btn.textContent="导出失败";
+    alert("导出失败："+(e?.message||String(e)));
+  }finally{
+    setTimeout(()=>{btn.disabled=false;btn.textContent=oldText},1500);
+  }
+};
+supabase.auth.onAuthStateChange(async(_event,session)=>{state.user=session?.user||null;if(!state.user)showLogin()});
+await enter();
+</script>
+<script src="./cache-loader.js?v=2026.09.29.2" data-app="false"></script>
+</body>
+</html>

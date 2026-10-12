@@ -1,0 +1,156 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><title>近期进度 | 江苏科技大学机械创新实验室交流平台</title><link rel="stylesheet" data-cache-managed href="./styles-v39.css"><link rel="stylesheet" data-cache-managed href="./theme-v3.css"><script src="./theme-init-v2.js?v=20260924-1910"></script><style>
+.progressLayout{display:block!important}
+.progressForm{position:static!important;top:auto!important}
+.progressTopGrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(330px,1fr);gap:22px;align-items:stretch;margin-bottom:30px}
+.progressDualEntry{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;min-width:0}
+.progressDualEntry>.progressForm{width:100%;min-width:0;height:100%;display:flex;flex-direction:column}
+.progressDualEntry>.progressForm>.btn[type="submit"]{width:100%;height:64px;min-height:64px;max-height:64px;flex:0 0 64px;margin-top:auto;padding:0 22px;display:flex;align-items:center;justify-content:center}
+.personalStatusPanel{flex:1;min-height:150px;margin-top:12px;padding:16px 18px;border:1px solid #1d334c;border-radius:16px;background:linear-gradient(180deg,#0b192a,#0a1726);display:flex;flex-direction:column;justify-content:center;gap:10px}
+.personalStatusPanel h4{margin:4px 0 0;font-size:17px}
+.personalStatusPanel p{margin:2px 0 0;color:#7890aa;font-size:12px;line-height:1.65}
+.personalStatusRow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid rgba(120,144,170,.15)}
+.personalStatusRow span{color:#7890aa;font-size:13px}
+.personalStatusRow b{font-size:13px}
+html[data-theme="light"] .personalStatusPanel{background:linear-gradient(180deg,#f8fbff,#f3f8fd);border-color:#d8e4ef}
+html[data-theme="light"] .personalStatusPanel p,html[data-theme="light"] .personalStatusRow span{color:#6f8296}
+.progressOverview{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:16px;min-width:0;height:100%;min-height:0}
+.progressOverview>.progressReminder,.progressOverview .progressSummary{margin:0;min-height:0;height:100%;display:flex;flex-direction:column}
+.progressStatusGrid{display:contents}
+.progressOverview .progressReminderList,.progressOverview .progressNameList{flex:1;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;align-content:flex-start}
+.progressOverview .progressReminderList{margin-top:14px}
+.progressOverview .progressReminderList::-webkit-scrollbar,.progressOverview .progressNameList::-webkit-scrollbar{width:7px}
+.progressOverview .progressReminderList::-webkit-scrollbar-thumb,.progressOverview .progressNameList::-webkit-scrollbar-thumb{background:rgba(120,144,170,.55);border-radius:999px}
+.progressOverview .progressReminderList::-webkit-scrollbar-track,.progressOverview .progressNameList::-webkit-scrollbar-track{background:transparent}
+.progressFeedGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;width:100%;margin-top:2px}
+.progressFeedGrid>section{min-width:0;width:100%}
+.progressTabs{display:block!important;width:100%}
+.progressFeedSearchBar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;margin:0 0 18px;padding:16px 18px;border:1px solid #1d334c;border-radius:18px;background:#0b192a}
+.progressFeedSearchMain{min-width:0}
+.progressFeedSearchMain input{margin:0;width:100%}
+.progressFeedSearchMeta{display:flex;align-items:center;gap:12px;justify-content:flex-end;flex-wrap:wrap}
+.progressFeedSearchMeta small{color:#7890aa;white-space:nowrap}
+.progressFeedSearchBar .btn{min-height:44px;padding:0 16px}
+html[data-theme="light"] .progressFeedSearchBar{background:#fff;border-color:#d8e4ef}
+@media(max-width:760px){.progressFeedSearchBar{grid-template-columns:1fr}.progressFeedSearchMeta{justify-content:space-between}.progressFeedSearchMeta small{white-space:normal}}
+.teamMemberHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.teamMemberHeader label{margin:0}
+.teamMemberSearch{margin-bottom:8px}
+.teamMemberOptions{display:grid;grid-template-columns:1fr;gap:8px;max-height:300px;overflow:auto;padding:10px;border:1px solid #213a57;border-radius:14px;background:#081524}
+.teamMemberChoice{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;padding:11px 12px;border-radius:11px;background:#0b192a;border:1px solid #1d334c;cursor:pointer;min-width:0}
+.teamMemberChoice input{width:auto;margin:0}
+.teamMemberText{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0}
+.teamMemberText b{font-size:14px;white-space:nowrap}
+.teamMemberText small{font-size:12px;color:#7890aa;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.teamMemberSearchEmpty{padding:18px;text-align:center;color:#7890aa}
+.teamSelectedPreview{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;min-height:26px}
+.teamSelectedChip{display:inline-flex;padding:5px 9px;border-radius:999px;background:#102b48;border:1px solid #28527b;color:#b9dcff;font-size:12px;font-weight:800}
+html[data-theme="light"] .teamSelectedChip{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
+.teamProgressCard{padding:20px;border:1px solid #1c3049;border-radius:20px;background:#0b192a}
+.teamProgressMembers{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.teamProgressMember{font-size:12px;padding:5px 8px;border-radius:999px;background:#102b48;border:1px solid #28527b;color:#b9dcff}
+html[data-theme="light"] .teamMemberOptions{background:#f7faff;border-color:#cbd9e6}
+html[data-theme="light"] .teamMemberChoice{background:#fff;border-color:#d8e4ef;color:#263b52}
+html[data-theme="light"] .teamProgressCard{background:#fff;border-color:#d8e4ef;color:#263b52}
+html[data-theme="light"] .teamProgressMember{background:#eaf4ff;border-color:#c7ddef;color:#346a99}
+@media(max-width:1180px){.progressTopGrid{grid-template-columns:1fr}.progressOverview{grid-template-rows:repeat(3,minmax(220px,auto));height:auto}}
+@media(max-width:900px){.progressDualEntry,.progressFeedGrid{grid-template-columns:1fr}.progressDualEntry>.progressForm>.btn[type="submit"]{height:58px;min-height:58px;max-height:58px;flex-basis:58px}.progressOverview{grid-template-rows:repeat(3,minmax(220px,auto))}}
+.mergeProjectList{display:grid;gap:10px;margin:14px 0}.mergeProjectOption{width:100%;text-align:left;padding:13px 14px;border:1px solid #24405f;border-radius:14px;background:#0a1828;color:#eef6ff;cursor:pointer}.mergeProjectOption:hover{border-color:#5e91ff}.mergeProjectOption b{display:block}.mergeProjectOption small{display:block;color:#7890aa;margin-top:3px}.mergeProjectName{font-weight:900;color:#8db8ff}.mergeDialogHint{color:#8fa4bd;margin:0 0 10px}.mergeDialogActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}html[data-theme="light"] .mergeProjectOption{background:#fff;color:#24384e;border-color:#d4e0ec}html[data-theme="light"] .mergeProjectOption small,html[data-theme="light"] .mergeDialogHint{color:#6f8296}
+@media(max-width:650px){.teamMemberText{display:block}.teamMemberText small{display:block;text-align:left;margin-top:3px;white-space:normal}.teamMemberHeader{align-items:flex-start}}
+</style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
+<div class="progressTopGrid">
+<div class="progressDualEntry">
+  <form id="progressForm" class="form glass progressForm">
+    <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">仿真、论文、科研、专利、课程设计等都可以作为个人项目；也可以不关联项目，单独记录普通个人进度。</p></div>
+    <label>项目名称<input id="progressProject" list="progressProjectList" maxlength="160" required placeholder="请输入项目名称，例如：桥梁桁架有限元分析"></label>
+    <datalist id="progressProjectList"></datalist>
+    <small class="profileHint">项目名称必须填写。提交时会先让你确认是否合并到已有个人项目或团队项目；选择团队项目后，个人进度仍会更新，同时同步到该团队项目。</small>
+    <label>近期个人进度<textarea id="progressCurrent" rows="6" maxlength="5000" required placeholder="这段时间个人完成了什么、目前做到哪一步、遇到哪些问题"></textarea></label>
+    <label>下一时期个人目标<textarea id="progressGoal" rows="5" maxlength="5000" required placeholder="下一阶段个人准备完成哪些任务、达到什么目标"></textarea></label>
+    <label>相关链接（可选）<input id="progressLink" type="url" placeholder="https://..."></label>
+    <label>附件（可选）<input id="progressFile" type="file"></label>
+    <div id="progressFilePreview" class="progressFilePreview"></div>
+    <small class="profileHint">支持图片、视频、PPT、PDF、Word、压缩包及其他常用文件；每次提交可附带 1 个文件和 1 个链接。</small>
+    <div class="personalStatusPanel">
+      <div><span class="eyebrow">MY STATUS</span><h4>本周期个人状态</h4></div>
+      <div class="personalStatusRow"><span>当前状态</span><b id="personalStatusLabel">正在加载…</b></div>
+      <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div>
+      <p>每个项目分别保留你的最新一条个人进度；同一项目再次提交后会替换旧记录，并自动清理上一条附件。</p>
+    </div>
+    <button class="btn pri" type="submit">提交个人进度</button>
+  </form>
+
+  <form id="teamProgressForm" class="form glass progressForm">
+    <div><span class="eyebrow">TEAM PROGRESS</span><h3>队伍进度</h3><p class="profileHint">可直接关联“项目 / 队伍管理”里的团队项目；也可以像以前一样临时填写比赛名称和成员。</p></div>
+    <label>关联已有团队项目（可选）<select id="teamProject"><option value="">不关联已有项目，按比赛 / 队伍填写</option></select></label>
+    <small id="teamProjectHint" class="profileHint">可关联已有团队项目；也可以直接填写新的比赛 / 队伍进度。</small>
+    <label>比赛 / 项目名称<input id="teamCompetitionName" maxlength="160" placeholder="例如：全国大学生机械创新设计大赛"></label>
+    <label>队伍进度<textarea id="teamCurrentProgress" rows="6" maxlength="5000" required placeholder="本阶段队伍完成了什么、目前整体进展到哪一步"></textarea></label>
+    <label>下一阶段队伍目标（可选）<textarea id="teamNextGoal" rows="5" maxlength="5000" placeholder="下一阶段队伍计划完成的工作"></textarea></label>
+    <label>相关链接（可选）<input id="teamProgressLink" type="url" placeholder="https://..."></label>
+    <div>
+      <div class="teamMemberHeader"><label>队伍成员</label><span id="teamMemberSelectedCount" class="pill">已选 0 人</span></div>
+      <input id="teamMemberSearch" class="teamMemberSearch" type="search" placeholder="搜索姓名、年级、校区或专业">
+      <div id="teamMemberOptions" class="teamMemberOptions"><div class="empty">正在加载正式成员…</div></div>
+      <div id="teamSelectedPreview" class="teamSelectedPreview"><span class="profileHint">本次将计入：正在加载…</span></div>
+      <label>队伍负责人<select id="teamLeader"><option value="">请先选择队伍成员</option></select></label>
+      <small id="teamLeaderHint" class="profileHint">负责人必须从已选队伍成员中选择；提交后会同步到项目负责人。</small>
+      <small class="profileHint">这里只显示正式成员。搜索不会取消已勾选成员；上方“本次将计入”名单就是提交后进入队伍进度统计的成员。</small>
+    </div>
+    <label>附件（可选）<input id="teamProgressFile" type="file"></label>
+    <div id="teamProgressFilePreview" class="progressFilePreview"></div>
+    <button class="btn pri" type="submit">提交队伍进度</button>
+  </form>
+</div>
+<div class="progressOverview"><section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div><div class="progressSubmitterCount"><b id="progressReminderCount">0</b><span>人</span></div></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
+<section class="progressSummary glass">
+  <div class="progressSummaryHead"><div><span class="eyebrow">PERSONAL UPDATED</span><h2>个人进度已更新</h2></div><div class="progressSubmitterCount"><b id="personalUpdatedCount">0</b><span>人</span></div></div>
+  <div id="personalUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有个人进度更新</span></div>
+</section>
+<section class="progressSummary glass">
+  <div class="progressSummaryHead"><div><span class="eyebrow">TEAM UPDATED</span><h2>队伍进度已更新</h2></div><div class="progressSubmitterCount"><b id="teamUpdatedCount">0</b><span>人</span></div></div>
+  <div id="teamUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有队伍进度更新</span></div>
+</section>
+</div>
+</div>
+</div>
+<div class="progressFeedSearchBar glass">
+  <div class="progressFeedSearchMain">
+    <input id="progressFeedSearch" type="search" placeholder="搜索个人 / 队伍进度：姓名、专业、比赛名称、进度内容、目标…">
+  </div>
+  <div class="progressFeedSearchMeta">
+    <small id="progressFeedSearchResult">可搜索姓名、专业、比赛名称、进度内容和下一阶段目标</small>
+    <button id="progressFeedSearchClear" class="btn sec hidden" type="button">清空</button>
+  </div>
+</div>
+<div class="progressFeedGrid">
+<section><div class="progressSectionHead"><div><span class="eyebrow">PERSONAL FEED</span><h2>个人进度动态</h2></div><small>共 <b id="progressAllCount">0</b> 条</small></div><div id="progressFeed" class="progressList"></div></section>
+<section><div class="progressSectionHead"><div><span class="eyebrow">TEAM FEED</span><h2>队伍进度动态</h2></div><small>共 <b id="teamProgressCount">0</b> 条</small></div><div id="teamProgressFeed" class="progressList"></div></section>
+</div>
+<section class="myProgressSection"><div class="progressSectionHead"><div><span class="eyebrow">MY PERSONAL RECORDS</span><h2>我的个人进度记录</h2></div><small>共 <b id="progressMineCount">0</b> 条</small></div><div id="myProgressList" class="progressList"></div></section></div></section></main>
+<dialog id="teamMergeDialog" class="dialog">
+  <div class="dialogbox">
+    <span class="eyebrow">TEAM PROJECT MATCH</span>
+    <h2 style="margin:4px 0 8px">这条队伍进度是否属于已有团队项目？</h2>
+    <p class="mergeDialogHint">你当前填写的队伍 / 项目名称：<span id="teamMergeEnteredName" class="mergeProjectName">—</span></p>
+    <p class="mergeDialogHint">检测到你已经加入其他团队项目，但本次填写的名称与它们不同。请选择是否合并，避免重复建立相似团队。</p>
+    <div id="teamMergeProjectList" class="mergeProjectList"></div>
+    <div class="mergeDialogActions">
+      <button id="teamMergeIndependent" class="btn sec" type="button">保持当前名称，按新队伍提交</button>
+      <button id="teamMergeCancel" class="btn ghost" type="button">返回修改</button>
+    </div>
+  </div>
+</dialog>
+<dialog id="personalMergeDialog" class="dialog">
+  <div class="dialogbox">
+    <span class="eyebrow">PROJECT MATCH</span>
+    <h2 style="margin:4px 0 8px">这条个人进度是否属于团队项目？</h2>
+    <p class="mergeDialogHint">你当前填写的项目名称：<span id="personalMergeEnteredName" class="mergeProjectName">—</span></p>
+    <p class="mergeDialogHint">检测到以下团队项目包含你的名字。若这条进度实际属于其中一个项目，直接合并即可，避免重复创建相似项目。</p>
+    <div id="personalMergeProjectList" class="mergeProjectList"></div>
+    <div class="mergeDialogActions">
+      <button id="personalMergeIndependent" class="btn sec" type="button">保持为独立个人项目</button>
+      <button id="personalMergeCancel" class="btn ghost" type="button">返回修改</button>
+    </div>
+  </div>
+</dialog>
+<div id="siteFooter"></div><script src="./cache-loader.js?v=2026.09.29.2"></script></body></html>
