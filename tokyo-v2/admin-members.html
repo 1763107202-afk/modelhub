@@ -559,7 +559,7 @@ function openDetail(id){
   document.querySelectorAll(".memberDl").forEach(b=>b.onclick=async()=>{const key=b.dataset.p||"";if(key.startsWith("submissions/")){const q=await supabase.functions.invoke("qiniu-https-route-check",{body:{key,action:"download"}});if(q.error||!q.data?.url)return alert("七牛云下载链接生成失败");window.open(q.data.url,"_blank","noopener");return}const r=await supabase.storage.from("submissions").createSignedUrl(key,120);if(r.error)return alert("下载失败："+r.error.message);window.open(r.data.signedUrl,"_blank")});
   q("#detailDialog").showModal();
 }
-async function promoteMember(id){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+async function promoteMember(id){
   const target=state.members.find(x=>x.id===id);if(!target)return;
   if(!canFullyManageMembers())return alert("只有主管理员或指导老师可以修改成员状态");
   if(target.membership_status!=="freshman")return;
@@ -615,7 +615,7 @@ async function kickMember(id){alert("东京 V2 试运行：成员及存储的高
   alert("成员已踢出");
   await loadAdminData();
 }
-async function toggleRole(id,currentRole){alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;if(state.profile?.role!=="super_admin")return alert("只有主管理员可以设置副管理员");const target=state.members.find(x=>x.id===id);if(!target)return;const next=currentRole==="admin"?"student":"admin";const action=next==="admin"?"设为副管理员":"取消副管理员";if(!confirm("确定将 "+(target.full_name||target.email)+" "+action+"吗？"))return;const r=await supabase.from("profiles").update({role:next}).eq("id",id);if(r.error){alert("权限修改失败："+r.error.message);return}await loadAdminData();}
+async function toggleRole(id,currentRole){if(state.profile?.role!=="super_admin")return alert("只有主管理员可以设置副管理员");const target=state.members.find(x=>x.id===id);if(!target)return;const next=currentRole==="admin"?"student":"admin";const action=next==="admin"?"设为副管理员":"取消副管理员";if(!confirm("确定将 "+(target.full_name||target.email)+" "+action+"吗？"))return;const r=await supabase.from("profiles").update({role:next}).eq("id",id);if(r.error){alert("权限修改失败："+r.error.message);return}await loadAdminData();}
 function openEdit(id){
   const m=state.members.find(x=>x.id===id); if(!m)return;
   q("#editId").value=id;q("#editName").value=m.full_name||"";q("#editMajor").value=m.major||"";q("#editPhone").value=m.phone||"";q("#editQQ").value=m.qq||"";
@@ -726,7 +726,7 @@ q("#storageHealthDialog").addEventListener("click",e=>{if(e.target===q("#storage
 
 q("#passwordForm").onsubmit=async e=>{e.preventDefault();await resetMemberPassword()};
 q("#editForm").onsubmit=async e=>{
-  e.preventDefault();alert("东京 V2 试运行：成员及存储的高风险修改暂不开放。");return;
+  e.preventDefault();
   const id=q("#editId").value, full_name=q("#editName").value.trim(), major=q("#editMajor").value.trim(), phone=q("#editPhone").value.trim(), qq=q("#editQQ").value.trim();
   if(!full_name||!major)return;
   if(phone&&!/^[0-9+()\-\s]{5,30}$/.test(phone))return alert("请输入有效电话号码");
