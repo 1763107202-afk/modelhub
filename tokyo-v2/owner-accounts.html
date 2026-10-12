@@ -76,7 +76,7 @@ async function load(){
 function openEdit(id){
  const m=members.find(x=>x.id===id);if(!m)return;q("#editId").value=id;q("#editName").value=m.full_name||"";q("#editMajor").value=m.major||"";q("#editPhone").value=m.phone||"";q("#editQQ").value=m.qq||"";q("#editMembership").value=m.membership_status;q("#editRole").value=m.role==="admin"?"admin":"student";q("#editRole").disabled=m.role==="super_admin";q("#editMembership").disabled=m.role==="super_admin"&&m.progress_exempt;q("#editMsg").textContent=m.role==="super_admin"?"最高权限账号受保护，不允许在这里修改其权限。":"";q("#editDialog").showModal();
 }
-async function saveEdit(){alert("东京 V2 试运行：此操作暂不开放。");return;
+async function saveEdit(){
  const id=q("#editId").value,m=members.find(x=>x.id===id);if(!m)return;
  const data={full_name:q("#editName").value.trim(),major:q("#editMajor").value.trim(),phone:q("#editPhone").value.trim()||null,qq:q("#editQQ").value.trim()||null};
  if(!data.full_name||!data.major){q("#editMsg").textContent="姓名和专业不能为空";return}
