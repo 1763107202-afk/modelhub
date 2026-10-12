@@ -1121,10 +1121,10 @@ function qiniuPublicUrlFromKey(key=""){
 }
 async function qiniuSignedInfo(key,expiresIn=300){
   if(!key)throw new Error("缺少七牛云文件路径");
-  const r=await supabase.functions.invoke("qiniu-download-url",{body:{key,expiresIn}});
+  const r=await supabase.functions.invoke("qiniu-https-route-check",{body:{key,action:"download"}});
   if(r.error)throw new Error(r.error.message||"七牛私有下载链接生成失败");
   if(r.data?.error)throw new Error(r.data.error);
-  if(!r.data?.url)throw new Error("七牛私有下载链接为空");
+  if(!r.data?.url||r.data.httpStatus!==206||r.data.rangeOK!==true||!r.data.url.startsWith("https://"))throw new Error("七牛 HTTPS 下载线路未通过验证，请稍后重试");
   return r.data;
 }
 async function qiniuSignedUrl(key,expiresIn=3600){
