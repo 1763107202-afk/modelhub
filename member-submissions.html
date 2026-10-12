@@ -44,7 +44,7 @@
 
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
+const supabase=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef");
 const q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
 let admin=null;
 const memberId=new URLSearchParams(location.search).get("id");
@@ -90,7 +90,7 @@ async function loadMember(){
     try{
       try{popup=window.open("about:blank","_blank")}catch(_e){}
       if((b.dataset.backend||"supabase")==="qiniu"){
-        const r=await supabase.functions.invoke("qiniu-download-url",{body:{key:b.dataset.path,expiresIn:3600}});
+        const r=await supabase.functions.invoke("qiniu-https-route-check",{body:{key:b.dataset.path,action:"download"}});
         if(r.error)throw new Error(r.error.message||"七牛下载链接生成失败");
         if(r.data?.error)throw new Error(r.data.error);
         if(!r.data?.url)throw new Error("七牛下载链接为空");

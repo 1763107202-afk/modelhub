@@ -73,7 +73,7 @@ html[data-theme="light"]{color-scheme:light}html[data-theme="light"] body{backgr
 
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-const supabase=createClient("https://yodtphuzgngxpihnfwop.supabase.co","sb_publishable_VHuHgObgmWWdY8PBl65OeQ_T7prL9wX");
+const supabase=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef");
 const q=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
@@ -100,7 +100,8 @@ function showGate(title,text){
 function latestOf(rows){return rows.filter(Boolean).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0]||null}
 async function attachmentButton(row){
   if(!row?.attachment_path)return "";
-  const s=await supabase.storage.from("progress-files").createSignedUrl(row.attachment_path,600);
+  if(/^(progress|team-progress)\//.test(row.attachment_path)){const r=await supabase.functions.invoke("qiniu-https-route-check",{body:{key:row.attachment_path,action:"download"}});if(r.error||!r.data?.url)return "";return '<a class="btn sec" target="_blank" rel="noopener noreferrer" href="'+esc(r.data.url)+'">查看附件 · '+esc(row.attachment_name||"文件")+'</a>'}
+   const s=await supabase.storage.from("progress-files").createSignedUrl(row.attachment_path,600);
   if(s.error||!s.data?.signedUrl)return "";
   return '<a class="btn sec" target="_blank" rel="noopener" href="'+esc(s.data.signedUrl)+'">查看附件'+(row.attachment_name?' · '+esc(row.attachment_name):'')+'</a>';
 }
