@@ -51,6 +51,14 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
   </section>
 
   <section class="section">
+  <div class="panel"><h2>文件下载连通性诊断</h2>
+  <p style="color:#9eb4cd;font-size:13px">仅主管理员可运行，检查七牛云一份已迁移 PPT 的 HTTP 响应头，不下载文件正文，不通过 Supabase 中转文件，不返回签名地址或密钥。</p>
+  <button id="qiniuDownloadProbeBtn" class="btn" type="button">检测七牛云下载源站</button>
+  <div id="qiniuDownloadProbeResult" class="msg" role="status" aria-live="polite">尚未检测 · 容量统计正常不等于文件下载正常</div>
+  </div>
+</section>
+
+<section class="section">
     <div class="sectionHead"><div><h2>站内入口</h2><p>全部主要页面集中访问，不在主站公开添加此页入口。</p></div></div>
     <div class="links" id="internalLinks"></div>
   </section>
@@ -242,6 +250,24 @@ q("#loginBtn").onclick=async()=>{
   if(r.error){q("#loginMsg").textContent="登录失败："+r.error.message;return}
   if(!(await authorize())){await supabase.auth.signOut();q("#loginMsg").textContent="该账号没有此私人页面权限。";return}
   q("#loginMsg").textContent="";await refresh();
+};
+q("#qiniuDownloadProbeBtn").onclick=async()=>{
+  const btn=q("#qiniuDownloadProbeBtn"),output=q("#qiniuDownloadProbeResult");
+  btn.disabled=true;output.textContent="正在执行 HEAD 请求（最多 8 秒），不读取 PPT 内容…";
+  try{
+    const {data,error}=await supabase.from("tutorials").select("storage_path").eq("storage_backend","qiniu").not("storage_path","is",null).limit(1).maybeSingle();
+    if(error||!data?.storage_path)throw new Error("未能取得已迁移 PPT 文件路径");
+    const r=await supabase.functions.invoke("qiniu-download-url",{body:{key:data.storage_path,expiresIn:90,probe:true}});
+    if(r.error)throw new Error("下载链路诊断接口失败");
+    const d=r.data||{};
+    if(d.error)throw new Error(d.error);
+    const ok=d.originHealthy===true;
+    output.textContent=ok?"源站响应正常 · HTTP "+d.httpStatus+"；如果浏览器仍然502，请检查本机 DNS/代理/网络链路。":
+       (d.httpStatus?"七牛源站返回 HTTP "+d.httpStatus+"；当前下载异常在服务端也可复现。请检查七牛云下载域名绑定、CNAME/源站和回源服务。":
+       "服务端无法连接文件域名（"+String(d.errorType||"网络错误")+"）；需要检查 DNS 与源站可达性。");
+    output.className="msg "+(ok?"ok":"bad");
+  }catch(e){output.textContent="检测失败："+(e?.message||"未知错误");output.className="msg bad"}
+  finally{btn.disabled=false}
 };
 q("#refreshBtn").onclick=refresh;
 q("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();location.reload()};
