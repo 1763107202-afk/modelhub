@@ -103,6 +103,7 @@ globalThis.addEventListener?.("just-network-fallback",()=>{
   if(pass?.open&&passMsg)passMsg.textContent="WiFi 线路不稳定，已自动切换移动数据备用线路继续注册…";
 });
 const state={user:null,profile:null,authz:null};
+let __passwordChangeReauthBusy=false;
 const teamMemberSelection=new Set();
 const teamMemberDirectory=new Map();
 const THEME_KEY="justLabTokyoV2Theme";
@@ -325,9 +326,9 @@ function renderChrome(){
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
     navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html?v=20260924-2458","资料库")+navLink("projects","./projects.html","项目管理")+navLink("progress","./progress.html","近期进度")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html?v=20260925-profilehome11","个人主页")+navLink("download","./download.html","软件下载")+
-    '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><button id="notifyOpen" class="btn ghost hidden" type="button" aria-label="站内通知" title="站内通知">🔔<span id="notifyDot" class="notifyDot hidden"></span></button><a id="adminQuick" class="btn sec hidden" href="./admin.html">管理后台</a><span id="badge" class="pill hidden"></span><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
+    '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><button id="notifyOpen" class="btn ghost hidden" type="button" aria-label="站内通知" title="站内通知">🔔<span id="notifyDot" class="notifyDot hidden"></span></button><a id="adminQuick" class="btn sec hidden" href="./admin.html">管理后台</a><span id="badge" class="pill hidden"></span><button id="changePasswordOpen" class="btn ghost hidden" type="button" title="修改当前账号的登录密码">修改密码</button><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo-transparent.svg?v=3" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
-  document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 id="authModeTitle" style="margin:0">成员登录</h2><p id="authModeHint" style="margin:0;color:#8fa4bd">已注册成员只需要邮箱和密码即可登录。</p><div id="registerFields" class="two hidden"><label>姓名（首次注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>年级 / 校区 / 专业（首次注册必填）<input id="regMajor" maxlength="60" placeholder="例如：24级东校区机械工程；苏理工机械工程"></label><label>是否为大一新生<select id="regFreshman"><option value="">请选择</option><option value="yes">是，我是大一新生</option><option value="no">否，我是正式成员</option></select></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><label id="rememberLoginWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#9db0c5;cursor:pointer"><input id="rememberLogin" type="checkbox" checked style="width:16px;height:16px;margin:0">记住登录状态 <span style="opacity:.72">（下次打开无需重新登录）</span></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="retryLogin" class="btn sec hidden" type="button">重新连接</button><button id="showRegister" class="btn sec" type="button">首次注册</button><button id="continueRegister" class="btn pri hidden" type="button">继续注册</button><button id="backLogin" class="btn ghost hidden" type="button">返回登录</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">通行证只在首次注册时验证，之后登录无需再次填写。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="notifyDialog" class="dialog"><div class="dialogbox notifyDialogBox"><div class="notifyHead"><div><span class="eyebrow">NOTIFICATIONS</span><h2 style="margin:0">站内通知</h2></div><button id="notifyClose" class="btn ghost" type="button">关闭</button></div><div class="notifyToolbar"><span id="notifySummary">正在加载…</span><button id="notifyReadAll" class="btn sec" type="button">全部标为已读</button></div><div id="notifyList" class="notifyList"><div class="empty">正在加载通知…</div></div></div></dialog><style id="notifyStyles">#notifyOpen{position:relative;min-width:44px}.notifyDot{position:absolute;right:6px;top:5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e45b66;color:white;font-size:10px;line-height:17px;text-align:center;border:2px solid rgba(15,22,32,.9)}.notifyDialogBox{width:min(720px,92vw);max-height:82vh}.notifyHead,.notifyToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.notifyToolbar{margin-top:10px;color:#8fa4bd;font-size:13px}.notifyList{display:flex;flex-direction:column;gap:10px;margin-top:14px;max-height:58vh;overflow:auto;padding-right:3px}.notifyItem{display:block;text-decoration:none;border:1px solid #26384d;border-radius:14px;padding:13px 14px;background:#101a27;color:inherit}.notifyItem.unread{border-color:#426b9e;background:#122238;box-shadow:0 0 0 1px #426b9e24}.notifyItem:hover{transform:translateY(-1px)}.notifyItemTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.notifyItem b{font-size:14px}.notifyItem p{margin:5px 0 0;color:#a9b8ca;font-size:13px;line-height:1.55}.notifyItem time{white-space:nowrap;color:#708399;font-size:11px}.notifyType{display:inline-flex;align-items:center;gap:5px;margin-bottom:5px;font-size:11px;color:#7ea8d8}.notifyUnreadMark{width:7px;height:7px;border-radius:50%;background:#5ba6ff;display:inline-block}.notifyEmpty{padding:28px 10px;text-align:center;color:#8092a7}.notifyItem[data-type="deadline"].unread,.notifyItem[data-type="progress"].unread{border-color:#8b4950;background:#2b171b}html[data-theme="light"] .notifyItem{background:#fff;border-color:#dbe4ee}html[data-theme="light"] .notifyItem.unread{background:#f2f7ff;border-color:#8db5e6}html[data-theme="light"] .notifyItem p{color:#5f6f81}html[data-theme="light"] .notifyDot{border-color:#fff}@media(max-width:620px){.notifyItemTop{flex-direction:column}.notifyToolbar{align-items:flex-start;flex-direction:column}}.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(210px,255px) minmax(360px,760px) max-content;grid-template-areas:"brand search acct" "nav nav nav";row-gap:7px}.siteHeader.homeSearchHeader .brand{grid-area:brand}.siteHeader.homeSearchHeader .globalSearch{grid-area:search;position:relative;width:100%;justify-self:center;z-index:70}.siteHeader.homeSearchHeader .acct{grid-area:acct;justify-self:end}.siteHeader.homeSearchHeader .nav{grid-area:nav;justify-content:flex-start;border-top:1px solid #ffffff0d;padding:6px 0 2px}.globalSearchInputWrap{height:44px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid #2a4665;border-radius:14px;background:#0a192acc;box-shadow:0 7px 24px #0002}.globalSearchInputWrap:focus-within{border-color:#5b8bc2;box-shadow:0 0 0 3px #4c83bd20,0 8px 26px #0003}.globalSearchIcon{font-size:21px;color:#77a7d8;line-height:1}.globalSearchInputWrap input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#edf5ff;padding:0;font-size:14px}.globalSearchInputWrap input::placeholder{color:#7189a5}.globalSearchClear{width:28px;height:28px;border:0;border-radius:9px;background:#162b43;color:#9fb8d2;cursor:pointer;font-size:18px;line-height:1}.globalSearchResults{position:absolute;top:calc(100% + 8px);left:0;right:0;max-height:min(64vh,560px);overflow:auto;padding:7px;border:1px solid #284563;border-radius:16px;background:#081522f7;box-shadow:0 20px 60px #0008;backdrop-filter:blur(18px)}.globalSearchItem{display:grid;grid-template-columns:36px minmax(0,1fr) 18px;gap:10px;align-items:center;padding:10px 11px;border-radius:11px}.globalSearchItem:hover{background:#102941}.globalSearchItemIcon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#102a44;font-size:16px}.globalSearchItemBody{display:flex;flex-direction:column;min-width:0}.globalSearchItemBody b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.globalSearchItemBody small{font-size:11px;color:#8299b3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.globalSearchArrow{color:#6385a9;font-size:20px}.globalSearchMessage{padding:18px 14px;text-align:center;color:#8198b2;font-size:13px}html[data-theme="light"] .globalSearchInputWrap{background:#fff;border-color:#c8d9e8;box-shadow:0 7px 24px #31557910}html[data-theme="light"] .globalSearchInputWrap input{color:#18314c}html[data-theme="light"] .globalSearchResults{background:#fff;border-color:#ccdae7;box-shadow:0 20px 50px #28435b24}html[data-theme="light"] .globalSearchItem:hover{background:#f0f6fb}html[data-theme="light"] .globalSearchItemIcon{background:#edf5fb}@media(max-width:1200px){.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"brand acct" "search search" "nav nav"}.siteHeader.homeSearchHeader .globalSearch{max-width:none}}@media(max-width:720px){.globalSearchInputWrap{height:42px}.globalSearchInputWrap input{font-size:13px}.siteHeader.homeSearchHeader .headerInner{grid-template-areas:"brand acct" "search search" "nav nav"}}</style><div id="toast" class="toast"></div>');
+  document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 id="authModeTitle" style="margin:0">成员登录</h2><p id="authModeHint" style="margin:0;color:#8fa4bd">已注册成员只需要邮箱和密码即可登录。</p><div id="registerFields" class="two hidden"><label>姓名（首次注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>年级 / 校区 / 专业（首次注册必填）<input id="regMajor" maxlength="60" placeholder="例如：24级东校区机械工程；苏理工机械工程"></label><label>是否为大一新生<select id="regFreshman"><option value="">请选择</option><option value="yes">是，我是大一新生</option><option value="no">否，我是正式成员</option></select></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><label id="rememberLoginWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#9db0c5;cursor:pointer"><input id="rememberLogin" type="checkbox" checked style="width:16px;height:16px;margin:0">记住登录状态 <span style="opacity:.72">（下次打开无需重新登录）</span></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="retryLogin" class="btn sec hidden" type="button">重新连接</button><button id="showRegister" class="btn sec" type="button">首次注册</button><button id="continueRegister" class="btn pri hidden" type="button">继续注册</button><button id="backLogin" class="btn ghost hidden" type="button">返回登录</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passwordChangeDialog" class="dialog"><form id="passwordChangeForm" class="dialogbox" style="width:min(470px,92vw)" autocomplete="off"><div><span class="eyebrow">ACCOUNT SECURITY</span><h2 style="margin:5px 0 0">修改登录密码</h2><p style="color:#8fa4bd;font-size:13px;line-height:1.65;margin:8px 0 2px">请先验证当前密码。修改成功后，下次登录请使用新密码。</p></div><label>当前密码<input id="passwordCurrent" type="password" autocomplete="current-password" required placeholder="请输入当前登录密码"></label><label>新密码<input id="passwordNext" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="8–72 位，须同时包含字母和数字"></label><label>确认新密码<input id="passwordNextConfirm" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="再次输入新密码"></label><small id="passwordChangeMessage" role="status" aria-live="polite" style="color:#9db0c5;min-height:1.3em"></small><div class="actions"><button id="passwordChangeCancel" class="btn ghost" type="button">取消</button><button id="passwordChangeSubmit" class="btn pri" type="submit">保存新密码</button></div></form></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">通行证只在首次注册时验证，之后登录无需再次填写。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="notifyDialog" class="dialog"><div class="dialogbox notifyDialogBox"><div class="notifyHead"><div><span class="eyebrow">NOTIFICATIONS</span><h2 style="margin:0">站内通知</h2></div><button id="notifyClose" class="btn ghost" type="button">关闭</button></div><div class="notifyToolbar"><span id="notifySummary">正在加载…</span><button id="notifyReadAll" class="btn sec" type="button">全部标为已读</button></div><div id="notifyList" class="notifyList"><div class="empty">正在加载通知…</div></div></div></dialog><style id="notifyStyles">#notifyOpen{position:relative;min-width:44px}.notifyDot{position:absolute;right:6px;top:5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e45b66;color:white;font-size:10px;line-height:17px;text-align:center;border:2px solid rgba(15,22,32,.9)}.notifyDialogBox{width:min(720px,92vw);max-height:82vh}.notifyHead,.notifyToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.notifyToolbar{margin-top:10px;color:#8fa4bd;font-size:13px}.notifyList{display:flex;flex-direction:column;gap:10px;margin-top:14px;max-height:58vh;overflow:auto;padding-right:3px}.notifyItem{display:block;text-decoration:none;border:1px solid #26384d;border-radius:14px;padding:13px 14px;background:#101a27;color:inherit}.notifyItem.unread{border-color:#426b9e;background:#122238;box-shadow:0 0 0 1px #426b9e24}.notifyItem:hover{transform:translateY(-1px)}.notifyItemTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.notifyItem b{font-size:14px}.notifyItem p{margin:5px 0 0;color:#a9b8ca;font-size:13px;line-height:1.55}.notifyItem time{white-space:nowrap;color:#708399;font-size:11px}.notifyType{display:inline-flex;align-items:center;gap:5px;margin-bottom:5px;font-size:11px;color:#7ea8d8}.notifyUnreadMark{width:7px;height:7px;border-radius:50%;background:#5ba6ff;display:inline-block}.notifyEmpty{padding:28px 10px;text-align:center;color:#8092a7}.notifyItem[data-type="deadline"].unread,.notifyItem[data-type="progress"].unread{border-color:#8b4950;background:#2b171b}html[data-theme="light"] .notifyItem{background:#fff;border-color:#dbe4ee}html[data-theme="light"] .notifyItem.unread{background:#f2f7ff;border-color:#8db5e6}html[data-theme="light"] .notifyItem p{color:#5f6f81}html[data-theme="light"] .notifyDot{border-color:#fff}@media(max-width:620px){.notifyItemTop{flex-direction:column}.notifyToolbar{align-items:flex-start;flex-direction:column}}.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(210px,255px) minmax(360px,760px) max-content;grid-template-areas:"brand search acct" "nav nav nav";row-gap:7px}.siteHeader.homeSearchHeader .brand{grid-area:brand}.siteHeader.homeSearchHeader .globalSearch{grid-area:search;position:relative;width:100%;justify-self:center;z-index:70}.siteHeader.homeSearchHeader .acct{grid-area:acct;justify-self:end}.siteHeader.homeSearchHeader .nav{grid-area:nav;justify-content:flex-start;border-top:1px solid #ffffff0d;padding:6px 0 2px}.globalSearchInputWrap{height:44px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid #2a4665;border-radius:14px;background:#0a192acc;box-shadow:0 7px 24px #0002}.globalSearchInputWrap:focus-within{border-color:#5b8bc2;box-shadow:0 0 0 3px #4c83bd20,0 8px 26px #0003}.globalSearchIcon{font-size:21px;color:#77a7d8;line-height:1}.globalSearchInputWrap input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#edf5ff;padding:0;font-size:14px}.globalSearchInputWrap input::placeholder{color:#7189a5}.globalSearchClear{width:28px;height:28px;border:0;border-radius:9px;background:#162b43;color:#9fb8d2;cursor:pointer;font-size:18px;line-height:1}.globalSearchResults{position:absolute;top:calc(100% + 8px);left:0;right:0;max-height:min(64vh,560px);overflow:auto;padding:7px;border:1px solid #284563;border-radius:16px;background:#081522f7;box-shadow:0 20px 60px #0008;backdrop-filter:blur(18px)}.globalSearchItem{display:grid;grid-template-columns:36px minmax(0,1fr) 18px;gap:10px;align-items:center;padding:10px 11px;border-radius:11px}.globalSearchItem:hover{background:#102941}.globalSearchItemIcon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#102a44;font-size:16px}.globalSearchItemBody{display:flex;flex-direction:column;min-width:0}.globalSearchItemBody b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.globalSearchItemBody small{font-size:11px;color:#8299b3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.globalSearchArrow{color:#6385a9;font-size:20px}.globalSearchMessage{padding:18px 14px;text-align:center;color:#8198b2;font-size:13px}html[data-theme="light"] .globalSearchInputWrap{background:#fff;border-color:#c8d9e8;box-shadow:0 7px 24px #31557910}html[data-theme="light"] .globalSearchInputWrap input{color:#18314c}html[data-theme="light"] .globalSearchResults{background:#fff;border-color:#ccdae7;box-shadow:0 20px 50px #28435b24}html[data-theme="light"] .globalSearchItem:hover{background:#f0f6fb}html[data-theme="light"] .globalSearchItemIcon{background:#edf5fb}@media(max-width:1200px){.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"brand acct" "search search" "nav nav"}.siteHeader.homeSearchHeader .globalSearch{max-width:none}}@media(max-width:720px){.globalSearchInputWrap{height:42px}.globalSearchInputWrap input{font-size:13px}.siteHeader.homeSearchHeader .headerInner{grid-template-areas:"brand acct" "search search" "nav nav"}}</style><div id="toast" class="toast"></div>');
   const themeBtn=q("#themeToggle");
   if(themeBtn){
     applyTheme(document.documentElement.dataset.theme||preferredTheme());
@@ -337,6 +338,7 @@ function renderChrome(){
     };
   }
   bindAuth();
+  bindPasswordChange();
   bindNotifications();
   bindGlobalSearch();
   enableNavPrefetch();
@@ -424,7 +426,7 @@ function enableNavPrefetch(){
 }
 function updateAuthUI(){
   const on=!!state.user;
-  q("#authOpen").classList.toggle("hidden",on);q("#logout").classList.toggle("hidden",!on);q("#badge").classList.toggle("hidden",!on);const no=q("#notifyOpen");if(no)no.classList.toggle("hidden",!on);
+  q("#authOpen").classList.toggle("hidden",on);q("#logout").classList.toggle("hidden",!on);q("#badge").classList.toggle("hidden",!on);q("#changePasswordOpen")?.classList.toggle("hidden",!on);const no=q("#notifyOpen");if(no)no.classList.toggle("hidden",!on);
   const who=state.profile?.full_name||state.user?.email||"";
   const memberStatus=membershipStatus();
   q("#badge").textContent=on?who+(state.profile?.major?" · "+state.profile.major:"")+(memberStatus==="freshman"&&!isAdmin()?" · 大一新生":"")+(isAdmin()?" · "+roleName(authzRole()):""):"";
@@ -627,6 +629,81 @@ function bindNotifications(){
     toast("已全部标为已读");
   };
 }
+
+function bindPasswordChange(){
+  const dialog=q("#passwordChangeDialog");
+  const form=q("#passwordChangeForm");
+  const openMain=q("#changePasswordOpen");
+  const openProfile=q("#openProfilePassword");
+  const cancel=q("#passwordChangeCancel");
+  const status=q("#passwordChangeMessage");
+  const submit=q("#passwordChangeSubmit");
+  if(!dialog||!form||!submit||!status)return;
+  const clearFields=()=>{
+    form.reset();
+    status.textContent="";
+  };
+  const openDialog=()=>{
+    if(!state.user){
+      q("#authOpen")?.click();
+      return;
+    }
+    clearFields();
+    dialog.showModal();
+    q("#passwordCurrent")?.focus();
+  };
+  if(openMain)openMain.onclick=openDialog;
+  if(openProfile)openProfile.onclick=openDialog;
+  if(cancel)cancel.onclick=()=>dialog.close();
+  dialog.addEventListener("close",clearFields);
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(submit.disabled||__passwordChangeReauthBusy)return;
+    if(!state.user?.email){
+      status.textContent="登录状态已失效，请重新登录后再试。";
+      return;
+    }
+    const current=q("#passwordCurrent").value;
+    const next=q("#passwordNext").value;
+    const confirm=q("#passwordNextConfirm").value;
+    if(!current){status.textContent="请输入当前密码。";return}
+    if(next.length<8||next.length>72||!/[A-Za-z]/.test(next)||!/[0-9]/.test(next)){
+      status.textContent="新密码须为 8–72 位，且同时包含字母和数字。";
+      return;
+    }
+    if(next===current){status.textContent="新密码不能与当前密码相同。";return}
+    if(next!==confirm){status.textContent="两次输入的新密码不一致。";return}
+    const email=state.user.email;
+    submit.disabled=true;
+    if(cancel)cancel.disabled=true;
+    submit.textContent="正在验证并保存…";
+    status.textContent="正在验证当前密码…";
+    __passwordChangeReauthBusy=true;
+    try{
+      // 实际向认证服务器验证旧密码，避免只靠前端表单判断。
+      const verified=await supabase.auth.signInWithPassword({email,password:current});
+      if(verified.error){
+        const code=String(verified.error.message||"").toLowerCase();
+        throw new Error(/invalid login credentials|invalid email or password/.test(code)
+          ?"当前密码不正确，请重新输入。":friendlyAuthError(verified.error));
+      }
+      if(verified.data?.user?.id!==state.user?.id)throw new Error("账号校验异常，请重新登录。");
+      status.textContent="当前密码已验证，正在更新…";
+      const updated=await supabase.auth.updateUser({current_password:current,password:next});
+      if(updated.error)throw new Error(friendlyAuthError(updated.error));
+      dialog.close();
+      toast("密码修改成功！下次登录请使用新密码。");
+    }catch(err){
+      status.textContent=err?.message||"修改失败，请稍后重试。";
+    }finally{
+      __passwordChangeReauthBusy=false;
+      submit.disabled=false;
+      if(cancel)cancel.disabled=false;
+      submit.textContent="保存新密码";
+    }
+  });
+}
+
 function bindAuth(){
   const setAuthMode=mode=>{
     const reg=mode==="register";
@@ -3583,6 +3660,12 @@ if(state.user){
 
 supabase.auth.onAuthStateChange(async(event,session)=>{
   const nextUser=session?.user||null;
+
+  // 自助改密中的旧密码再验证会更新 session；此时不要重新初始化整页。
+  if(__passwordChangeReauthBusy&&["SIGNED_IN","TOKEN_REFRESHED","USER_UPDATED"].includes(event)){
+    if(nextUser)state.user=nextUser;
+    return;
+  }
 
   if(__authRegisterBusy&&event==="SIGNED_IN"){
     state.user=nextUser;
