@@ -206,8 +206,10 @@ function applyTheme(theme,save=false){
   if(save){try{localStorage.setItem(THEME_KEY,next)}catch(_e){}}
   const btn=q("#themeToggle");
   if(btn){
-    btn.setAttribute("aria-label",next==="light"?"切换为深色模式":"切换为浅色模式");
-    btn.innerHTML=next==="light"?'☾ <span class="themeLabel">深色</span>':'☀ <span class="themeLabel">浅色</span>';
+    const hint=next==="light"?"切换为深色模式":"切换为浅色模式";
+    btn.setAttribute("aria-label",hint);
+    btn.setAttribute("title",hint);
+    btn.innerHTML=next==="light"?"<svg class=\"themeGlyph\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.85\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M20.985 12.486A9 9 0 0 1 11.514 3.015a9 9 0 1 0 9.47 9.47\"/></svg>":"<svg class=\"themeGlyph\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.85\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42\"/></svg>";
   }
 }
 applyTheme(preferredTheme());
@@ -3617,6 +3619,8 @@ async function enforceRememberLoginPolicy(){
 }
 async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
 renderChrome();
+// Older cached theme-init scripts may rerender labels on DOMContentLoaded; keep the compact icon in control.
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>applyTheme(document.documentElement.dataset.theme||preferredTheme()),{once:true});
 void flushStorageCleanupQueue();
 window.addEventListener("online",()=>{void flushStorageCleanupQueue()});
 setStartupSplashStatus("正在恢复账号状态…");
