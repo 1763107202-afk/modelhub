@@ -623,3 +623,14 @@ body[data-page="home"] .startupSplashLogo{
   overflow:hidden!important;
   object-fit:contain!important;
 }
+
+/* Compact accessible theme control — v20261013 */
+.siteHeader .acct #themeToggle{gap:0;white-space:nowrap;overflow:hidden;line-height:1}
+.siteHeader .acct #themeToggle .themeGlyph{display:block;width:20px;height:20px;min-width:20px;flex:0 0 20px;pointer-events:none}
+.siteHeader .acct #themeToggle .themeLabel{display:none!important}
+@media(max-width:720px){
+  .siteHeader .acct #themeToggle{width:38px!important;min-width:38px!important;max-width:38px!important;height:38px!important;flex:0 0 38px!important;padding:0!important;border-radius:12px!important;align-items:center!important;justify-content:center!important}
+}
+@media(max-width:360px){
+  .siteHeader .acct #themeToggle{width:35px!important;min-width:35px!important;max-width:35px!important;height:35px!important;flex-basis:35px!important}
+}
