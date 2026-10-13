@@ -104,6 +104,7 @@
           </div>
           <div class="myHeroActions">
             <a class="btn sec" href="./progress.html">更新进度</a>
+            <button id="openProfilePassword" class="btn sec" type="button">修改密码</button>
             <button id="openProfileEdit" class="btn pri" type="button">编辑资料</button>
           </div>
         </article>
@@ -175,6 +176,21 @@
         <button id="closeProfileEdit" class="btn ghost" type="button">取消</button>
         <button class="btn pri" type="submit">保存个人资料</button>
       </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="profilePasswordDialog" class="dialog">
+    <form id="profilePasswordForm" class="dialogbox profileEditBox">
+      <div><span class="eyebrow">ACCOUNT SECURITY</span><h2>修改登录密码</h2>
+        <p class="profileHint">仅修改当前账号的登录密码，不影响成员资料或管理员权限。</p></div>
+      <div class="profileEditGrid">
+        <label class="profileEditFull">当前密码<input id="currentProfilePassword" type="password" autocomplete="current-password" required placeholder="请输入原密码"></label>
+        <label class="profileEditFull">新密码<input id="newProfilePassword" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="至少 8 位，同时包含字母与数字"></label>
+        <label class="profileEditFull">确认新密码<input id="confirmProfilePassword" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="请再次输入新密码"></label>
+      </div>
+      <p id="profilePasswordStatus" role="status" aria-live="polite" class="profileHint" style="margin:0">密码仅用于登录，请勿告知他人。</p>
+      <div class="actions"><button id="cancelProfilePassword" class="btn ghost" type="button">取消</button><button id="saveProfilePassword" class="btn pri" type="submit">确认修改密码</button></div>
     </form>
   </dialog>
 

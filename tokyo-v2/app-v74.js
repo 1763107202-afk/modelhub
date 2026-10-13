@@ -2884,8 +2884,55 @@ function renderOwnProfileIdentity(){
     q("#profileJoinDate")&&(q("#profileJoinDate").textContent="注册时间暂无");
   }
 }
+
+function bindProfilePasswordChange(){
+  const open=q("#openProfilePassword"),dlg=q("#profilePasswordDialog"),form=q("#profilePasswordForm"),
+    cancel=q("#cancelProfilePassword"),msg=q("#profilePasswordStatus"),save=q("#saveProfilePassword");
+  if(!open||!dlg||!form||!cancel||!msg||!save)return;
+  const clear=()=>{form.reset();msg.textContent="密码仅用于登录，请勿告知他人。"};
+  open.onclick=()=>{if(!state.user){toast("请先登录");return}clear();dlg.showModal();q("#currentProfilePassword")?.focus()};
+  cancel.onclick=()=>dlg.close();
+  dlg.onclose=clear;
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    if(save.disabled)return;
+    const uid=state.user?.id,email=state.user?.email;
+    if(!uid||!email){msg.textContent="登录状态已失效，请重新登录";return}
+    let current=q("#currentProfilePassword").value;
+    const next=q("#newProfilePassword").value,repeat=q("#confirmProfilePassword").value;
+    if(next!==repeat){msg.textContent="两次输入的新密码不一致";return}
+    if(next.length<8||!/[A-Za-z]/.test(next)||!/[0-9]/.test(next)){msg.textContent="新密码至少 8 位，且同时包含字母与数字";return}
+    if(new TextEncoder().encode(next).length>72){msg.textContent="新密码超过 72 字节，请缩短";return}
+    if(current===next){msg.textContent="新密码必须与旧密码不同";return}
+    save.disabled=true;cancel.disabled=true;save.textContent="正在验证原密码…";msg.textContent="正在连接认证服务…";
+    try{
+      // 独立客户端只在内存持有验证会话，不改动当前页面登录状态。
+      const verifyClient=createClient(SUPABASE_URL,SUPABASE_KEY,{
+        auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+        global:{fetch:__platformFetch}
+      });
+      const verified=await verifyClient.auth.signInWithPassword({email,password:current});
+      current="";q("#currentProfilePassword").value="";
+      if(verified.error||verified.data?.user?.id!==uid){msg.textContent="原密码错误或验证失败，请重新输入";return}
+      const session=await supabase.auth.getUser();
+      if(session.error||session.data?.user?.id!==uid)throw Error("当前登录状态已失效，请重新登录");
+      save.textContent="正在保存新密码…";
+      const updated=await supabase.auth.updateUser({password:next});
+      if(updated.error)throw updated.error;
+      clear();msg.textContent="密码修改成功！下次登录请使用新密码；其他设备建议重新登录。";
+      toast("密码已修改成功");
+    }catch(err){
+      const detail=String(err?.message||"未知错误");
+      msg.textContent=/same password|different from the old/i.test(detail)?"新密码不能与旧密码相同":
+        /weak password|password should|password must/i.test(detail)?"密码不符合安全规则，请提高强度":
+        /failed to fetch|network|timeout/i.test(detail)?"网络异常，请稍后重试":
+        "修改失败："+detail;
+    }finally{current="";save.disabled=false;cancel.disabled=false;save.textContent="确认修改密码"}
+  };
+}
 async function initProfile(){
   if(!requireLogin())return;
+  bindProfilePasswordChange();
   const home=q("#profileHome");
   if(home)home.classList.remove("hidden");
   renderOwnProfileIdentity();
