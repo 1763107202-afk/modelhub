@@ -395,3 +395,7 @@ body[data-page="home"] .startupSplashLogo{
   padding:5px!important;
   border:1px solid rgba(86,121,158,.18)!important;
 }
+
+/* Unify header account action surfaces in light mode. */
+html[data-theme="light"] .siteHeader .acct #themeToggle{color:#43627e!important;background:#fff!important;border-color:#cbd9e7!important;box-shadow:none!important}
+html[data-theme="light"] .siteHeader .acct #themeToggle:hover{background:#f2f7fd!important;border-color:#a8bfd6!important}
