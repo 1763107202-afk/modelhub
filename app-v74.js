@@ -1340,9 +1340,10 @@ async function privateImageUrl(key){
   const entry=privateImageCache.get(key);
   if(entry&&entry.until>Date.now())return entry.url;
   return singleFlight(authScopedKey("qiniu-image:"+key),async()=>{
-    const info=await qiniuSignedInfo(key,300);
-    privateImageCache.set(key,{url:info.url,until:Date.now()+120000});
-    return info.url;
+    const response=await supabase.functions.invoke("qiniu-image-preview",{body:{key}});
+    if(response.error||response.data?.error||!response.data?.url)throw new Error(response.data?.error||response.error?.message||"安全预览地址获取失败");
+    privateImageCache.set(key,{url:response.data.url,until:Date.now()+120000});
+    return response.data.url;
   });
 }
 function siteImageMarkup(url="",path="",imageClass="",alt="图片"){
