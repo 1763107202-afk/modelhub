@@ -1369,10 +1369,19 @@ function bindSiteMedia(scope=document){
         const url=await privateImageUrl(key);
         if(!img.isConnected)return;
         await new Promise((resolve,reject)=>{
-          img.onload=()=>resolve();
-          img.onerror=()=>reject(new Error("图片地址未能加载"));
+          let settled=false;
+          const finish=error=>{
+            if(settled)return;
+            settled=true;
+            clearTimeout(timer);
+            img.onload=null;img.onerror=null;
+            if(error)reject(error);else resolve();
+          };
+          const timer=setTimeout(()=>finish(new Error("图片加载超时，请重试")),15000);
+          img.onload=()=>finish();
+          img.onerror=()=>finish(new Error("图片 HTTPS 预览失败"));
           img.src=url;
-          if(img.complete&&img.naturalWidth>0)resolve();
+          if(img.complete&&img.naturalWidth>0)finish();
         });
         if(!img.isConnected)return;
         img.classList.remove("securedMediaHidden");
