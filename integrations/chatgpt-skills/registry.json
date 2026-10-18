@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "owner_repository": "1763107202-afk/modelhub",
+  "branch": "chatgpt-skills-integration",
+  "scope": "Standalone bridge and instruction adapters. No live upstream integration is assumed.",
+  "providers": [
+    {
+      "key": "taste",
+      "name": "Taste-Skill",
+      "repository": "Leonxlnx/taste-skill",
+      "skill": "design-taste-frontend",
+      "mode": "prompt_skill",
+      "status": "adapter_spec_only"
+    },
+    {
+      "key": "agent_reach",
+      "name": "Agent-Reach",
+      "repository": "Panniantong/Agent-Reach",
+      "skill": "agent-reach-research",
+      "mode": "cli_and_tools",
+      "status": "adapter_spec_only"
+    },
+    {
+      "key": "archify",
+      "name": "Archify",
+      "repository": "tt-a1i/archify",
+      "skill": "archify-system-diagrams",
+      "mode": "prompt_skill_and_renderer",
+      "status": "adapter_spec_only"
+    },
+    {
+      "key": "voicestudio",
+      "name": "VoiceStudio",
+      "repository": "debpalash/VoiceStudio",
+      "skill": "voicestudio-audio",
+      "mode": "local_api_or_mcp",
+      "status": "adapter_spec_only"
+    },
+    {
+      "key": "mirofish",
+      "name": "MiroFish",
+      "repository": "666ghj/MiroFish",
+      "skill": "mirofish-simulation",
+      "mode": "dedicated_backend",
+      "status": "adapter_spec_only"
+    }
+  ]
+}
