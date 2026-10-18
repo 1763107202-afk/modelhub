@@ -1,0 +1,66 @@
+openapi: 3.0.3
+info:
+  title: Personal Five Skill Adapter Gateway
+  version: 0.1.0
+  description: |
+    Experimental gateway. Each provider requires an independently deployed and tested
+    adapter. A configured URL does not prove that the upstream application works.
+servers:
+  - url: https://REPLACE_WITH_YOUR_HTTPS_DOMAIN
+paths:
+  /health:
+    get:
+      operationId: getIntegrationHealth
+      summary: Report gateway availability and adapter configuration
+      responses:
+        "200":
+          description: Gateway health (not proof of backend readiness)
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/execute:
+    post:
+      operationId: executeSkillIntegration
+      summary: Execute a configured adapter task
+      security:
+        - IntegrationKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [provider, task]
+              properties:
+                provider:
+                  type: string
+                  enum: [taste, agent_reach, archify, voicestudio, mirofish]
+                task:
+                  type: string
+                  maxLength: 4000
+                input:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Successfully executed by configured adapter
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Invalid request
+        "401":
+          description: Missing or invalid API key
+        "503":
+          description: Provider adapter not configured
+        "502":
+          description: Adapter error or timeout
+components:
+  securitySchemes:
+    IntegrationKey:
+      type: apiKey
+      in: header
+      name: X-Integration-Key
+
