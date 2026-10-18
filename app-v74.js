@@ -2841,6 +2841,7 @@ async function initProgress(){
       await loadProgressPage();
       const wantsPersonal=confirm("队伍进度已更新。\n\n你是否还有个人进度需要更新？\n没有个人进度可选择“取消”，本次到此结束。");
       if(wantsPersonal){
+        window.JUSTProgressSetTab?.("personal",false);
         q("#progressCurrent")?.focus();
         q("#progressForm")?.scrollIntoView({behavior:"smooth",block:"start"});
       }
