@@ -1,0 +1,21 @@
+{
+  "name": "engineering-five-skills",
+  "version": "0.1.0",
+  "description": "Personal bundle of five instructional skills. Runtime integrations require separately deployed services.",
+  "skills": "./skills/",
+  "repository": "https://github.com/1763107202-afk/modelhub",
+  "interface": {
+    "displayName": "Engineering Five Skills",
+    "shortDescription": "UI、检索、架构图、语音和仿真工作流",
+    "longDescription": "Bundle of five original workflow guides. Upstream engines and services require separate deployment and authentication.",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "defaultPrompt": [
+      "用 Taste-Skill 优化我的产品界面，并给出可实施的前端方案。",
+      "用 Archify 思路梳理我的系统架构、接口和数据流。",
+      "梳理 VoiceStudio 的接入方案，但不要假称音频已经生成。"
+    ]
+  }
+}
