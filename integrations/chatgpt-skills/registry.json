@@ -58,9 +58,20 @@
       "instruction_status": "available",
       "runtime_status": "not_connected",
       "skill_path": "skills/mirofish-simulation/SKILL.md"
+    },
+    {
+      "key": "anatomy",
+      "name": "Anatomy",
+      "repository": "wheresryan22/anatomy",
+      "skill": "anatomy",
+      "mode": "prompt_skill_and_optional_node_renderer",
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/anatomy/SKILL.md"
     }
   ],
-  "package_version": "0.1.1",
+  "package_version": "0.2.0",
   "capabilities": {
     "instruction_adapters": true,
     "bundled_upstream_binaries": false,

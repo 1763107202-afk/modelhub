@@ -18,6 +18,7 @@ EXPECTED = {
     'archify': 'archify-system-diagrams',
     'voicestudio': 'voicestudio-audio',
     'mirofish': 'mirofish-simulation',
+    'anatomy': 'anatomy',
 }
 
 
@@ -32,7 +33,7 @@ def validate(root):
     assert interface == overlay['interface'], 'Portable and compatibility presentation differ'
     for field in ['displayName', 'shortDescription', 'longDescription', 'developerName', 'category']:
         assert isinstance(interface[field], str) and interface[field].strip(), field
-    assert interface['displayName'] == 'Engineering Five Skills'
+    assert interface['displayName'] == 'Engineering Six Skills'
     assert len(interface['shortDescription']) <= 30
     assert interface['capabilities'] == [], 'Instruction-only package declares no tool capabilities'
     prompts = interface['defaultPrompt']
@@ -96,11 +97,11 @@ def package(destination):
             assert not PurePosixPath(item.filename).is_absolute()
             assert not stat.S_ISLNK(item.external_attr >> 16)
             assert not any(p in {'gateway', 'node_modules', '.git', '__pycache__', '.env'} for p in parts)
-        assert sum(n.endswith('/SKILL.md') for n in names) == 5
-        assert sum(n.endswith('/agents/openai.yaml') for n in names) == 5
+        assert sum(n.endswith('/SKILL.md') for n in names) == len(EXPECTED)
+        assert sum(n.endswith('/agents/openai.yaml') for n in names) == len(EXPECTED)
         packed_manifest = json.loads(archive.read(manifest['name']+'/plugin.json'))
         assert packed_manifest == manifest
-    return {'archive': str(destination), 'sha256': hashlib.sha256(destination.read_bytes()).hexdigest(), 'files': len(paths), 'skills': 5, 'runtime_connections': 0, 'version': manifest['version']}
+    return {'archive': str(destination), 'sha256': hashlib.sha256(destination.read_bytes()).hexdigest(), 'files': len(paths), 'skills': len(EXPECTED), 'runtime_connections': 0, 'version': manifest['version']}
 
 
 if __name__ == '__main__':
@@ -111,4 +112,4 @@ if __name__ == '__main__':
         print(json.dumps(package(args.output), ensure_ascii=False, indent=2))
     else:
         data = validate(ROOT)
-        print(json.dumps({'status': 'compatibility_preflight_passed', 'version': data['version'], 'skills': 5, 'runtime_connections': 0}))
+        print(json.dumps({'status': 'compatibility_preflight_passed', 'version': data['version'], 'skills': len(EXPECTED), 'runtime_connections': 0}))

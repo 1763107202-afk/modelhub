@@ -28,6 +28,7 @@ test("gateway authenticates requests, reports missing adapters and relays a mock
     const health = await (await fetch(root + "/health")).json();
     assert.equal(health.providers.taste.configured, true);
     assert.equal(health.providers.mirofish.configured, false);
+    assert.equal(health.providers.anatomy.configured, false);
 
     const unauthorized = await fetch(root + "/v1/execute", {
       method: "POST", headers: { "content-type": "application/json" },
@@ -41,6 +42,13 @@ test("gateway authenticates requests, reports missing adapters and relays a mock
       body: JSON.stringify({ provider: "mirofish", task: "simulate" })
     });
     assert.equal(missing.status, 503);
+
+    const noAnatomy = await fetch(root + "/v1/execute", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-integration-key": "an-example-secret-123456" },
+      body: JSON.stringify({ provider: "anatomy", task: "render", input: { mode: "svg" } })
+    });
+    assert.equal(noAnatomy.status, 503);
 
     const success = await fetch(root + "/v1/execute", {
       method: "POST",

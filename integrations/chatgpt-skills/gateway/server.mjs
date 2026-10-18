@@ -3,13 +3,14 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const PROVIDERS = Object.freeze(["taste", "agent_reach", "archify", "voicestudio", "mirofish"]);
+export const PROVIDERS = Object.freeze(["taste", "agent_reach", "archify", "voicestudio", "mirofish", "anatomy"]);
 const ENV_NAMES = {
   taste: "TASTE_ADAPTER_URL",
   agent_reach: "AGENT_REACH_ADAPTER_URL",
   archify: "ARCHIFY_ADAPTER_URL",
   voicestudio: "VOICESTUDIO_ADAPTER_URL",
-  mirofish: "MIROFISH_ADAPTER_URL"
+  mirofish: "MIROFISH_ADAPTER_URL",
+  anatomy: "ANATOMY_ADAPTER_URL"
 };
 const MAX_BYTES = 64 * 1024;
 

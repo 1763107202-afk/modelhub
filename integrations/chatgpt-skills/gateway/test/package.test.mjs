@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const repo = resolve(root, "../..");
-const five = ["design-taste-frontend","agent-reach-research","archify-system-diagrams","voicestudio-audio","mirofish-simulation"];
+const six = ["design-taste-frontend","agent-reach-research","archify-system-diagrams","voicestudio-audio","mirofish-simulation","anatomy"];
 
-test("portable and compatibility manifests declare all five skills", () => {
+test("portable and compatibility manifests declare all six skills", () => {
  const portable=JSON.parse(readFileSync(resolve(root,"plugin.json"),"utf8"));
  const compat=JSON.parse(readFileSync(resolve(root,".codex-plugin/plugin.json"),"utf8"));
  assert.equal(portable.name,"engineering-five-skills");
@@ -16,11 +16,11 @@ test("portable and compatibility manifests declare all five skills", () => {
  assert.equal(compat.skills,"./skills/");
  assert.equal(portable.version,compat.version);
  assert.deepEqual(portable.extensions["com.openai"].interface,compat.interface);
- assert.equal(compat.interface.displayName,"Engineering Five Skills");
+ assert.equal(compat.interface.displayName,"Engineering Six Skills");
  assert.ok(compat.interface.shortDescription.length<=30);
  assert.deepEqual(compat.interface.capabilities,[]);
  for(const legacy of ["skills","mcpServers","apps","interface"]) assert.equal(legacy in portable,false);
- for(const name of five){
+ for(const name of six){
   const location=resolve(root,"skills",name,"SKILL.md");
   assert.equal(existsSync(location),true,location);
   const content=readFileSync(location,"utf8");

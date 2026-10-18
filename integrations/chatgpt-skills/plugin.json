@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "engineering-five-skills",
-  "version": "0.1.1",
-  "description": "Five lightweight instruction adapters for frontend design, research, architecture, voice workflow planning and scenario design. No upstream runtime or backend connection is bundled.",
+  "version": "0.2.0",
+  "description": "Six lightweight instruction adapters for frontend design, research, architecture, voice workflow planning, simulation planning and interactive mechanism visualization. No upstream runtime or backend connection is bundled.",
   "repository": "https://github.com/1763107202-afk/modelhub",
   "keywords": [
     "engineering",
@@ -10,7 +10,8 @@
     "research",
     "architecture",
     "speech",
-    "simulation"
+    "simulation",
+    "mechanism-visualization"
   ],
   "author": {
     "name": "1763107202-afk"
@@ -18,15 +19,15 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Engineering Five Skills",
-        "shortDescription": "UI、检索、架构图、语音和仿真工作流",
-        "longDescription": "Bundle of five original workflow guides. Upstream engines and services require separate deployment and authentication.",
+        "displayName": "Engineering Six Skills",
+        "shortDescription": "UI、检索、架构、语音、仿真与机械原理可视化",
+        "longDescription": "Six original workflow instruction adapters for engineering tasks. Upstream executable engines, browser validation and backend services require separate setup; none are bundled or connected.",
         "category": "Productivity",
         "capabilities": [],
         "defaultPrompt": [
-          "用 Taste-Skill 优化我的产品界面，并给出可实施的前端方案。",
-          "用 Archify 思路梳理我的系统架构、接口和数据流。",
-          "梳理 VoiceStudio 的接入方案，但不要假称音频已经生成。"
+          "使用 Taste-Skill 审阅我的工程界面，按设备尺寸给出可验证的修改方案。",
+          "使用 Archify 与 Anatomy 设计系统流程和可交互机械原理示意图，标注验证限制。",
+          "规划 VoiceStudio 和 MiroFish 的接入，但未部署时不宣称运行成功。"
         ],
         "developerName": "1763107202-afk"
       }

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anatomy"
+  short_description: "交互式机械原理、等轴测示意与结构拆解设计"
+  default_prompt: "Use $anatomy to explain my mechanical mechanism with an interactive isometric diagram, and clearly distinguish visualization from CAD validation."
