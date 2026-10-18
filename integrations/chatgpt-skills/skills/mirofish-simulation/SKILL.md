@@ -1,10 +1,7 @@
 ---
 name: mirofish-simulation
-description: 用于可解释的多智能体情景推演，明确区分模拟假设和现实预测。
+description: 用于 MiroFish 多智能体情景推演、利益相关者交互和 what-if 分析，定义种子材料、假设和指标；未连接后端时只提供推演计划。
 ---
-
-## Use when
-User requests multi-agent what-if scenarios, stakeholder interactions or simulated developments.
 
 ## Procedure
 1. Define the problem, seed documents, assumptions, agents, timeline and evaluation metrics.

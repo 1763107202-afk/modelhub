@@ -1,10 +1,7 @@
 ---
 name: voicestudio-audio
-description: 规划和调用有权限的语音合成、转写或配音工作流。
+description: 用于 VoiceStudio 语音设计、转写、配音和获授权的语音合成，检查真实后端及音频输出；未连接时只提供脚本、参数和接入方案。
 ---
-
-## Use when
-User asks for voice design, transcription, dubbing or authorized voice synthesis.
 
 ## Procedure
 1. Confirm the requested language, source audio, voice consent and output format.
@@ -12,7 +9,7 @@ User asks for voice design, transcription, dubbing or authorized voice synthesis
 3. Only submit audio when the user is authorized to process or clone the voice.
 4. Record engine/model, latency, sample rate, success/error state and final output location when real calls succeed.
 5. Never claim audio generation or natural-sounding output succeeded without returned files and playback inspection.
-6. If no backend is connected, give explicit deployment steps and do not fabricate generated speech.
+6. If no backend is connected, offer a narration script and parameters when useful, then give explicit deployment steps and do not fabricate generated speech.
 
 ## Upstream
 https://github.com/debpalash/VoiceStudio

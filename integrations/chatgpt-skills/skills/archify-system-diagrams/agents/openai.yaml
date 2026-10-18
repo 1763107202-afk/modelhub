@@ -1,0 +1,4 @@
+interface:
+  display_name: "Archify"
+  short_description: "Traceable architecture specifications and evidence maps"
+  default_prompt: "Use $archify-system-diagrams to map my repository architecture and data flows."

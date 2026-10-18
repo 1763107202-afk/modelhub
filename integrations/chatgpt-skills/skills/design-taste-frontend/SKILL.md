@@ -1,10 +1,7 @@
 ---
 name: design-taste-frontend
-description: 为网页或产品前端提供高质量的视觉方向、设计审核与前端实现建议。
+description: 用于 Taste-Skill 风格的前端设计、UI 审核、响应式布局和图片转界面任务，给出可实施的组件规范；这是指令适配，不包含上游脚本。
 ---
-
-## Use when
-User requests frontend design, UI improvement, landing pages, dashboard redesign or image-to-code workflows.
 
 ## Procedure
 1. Gather the functional goal, existing UI constraints, brand references, target devices and accessibility needs.

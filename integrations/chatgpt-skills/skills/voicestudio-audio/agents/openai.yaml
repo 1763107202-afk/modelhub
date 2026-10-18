@@ -1,0 +1,4 @@
+interface:
+  display_name: "VoiceStudio"
+  short_description: "Plan authorized speech workflows and verify returned audio"
+  default_prompt: "Use $voicestudio-audio to plan Mandarin narration and check backend readiness."

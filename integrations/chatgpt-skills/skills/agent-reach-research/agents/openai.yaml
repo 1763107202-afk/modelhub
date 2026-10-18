@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent-Reach"
+  short_description: "Evidence-based research with available authorized tools"
+  default_prompt: "Use $agent-reach-research to research public engineering sources with citations."

@@ -10,7 +10,10 @@
       "repository": "Leonxlnx/taste-skill",
       "skill": "design-taste-frontend",
       "mode": "prompt_skill",
-      "status": "adapter_spec_only"
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/design-taste-frontend/SKILL.md"
     },
     {
       "key": "agent_reach",
@@ -18,7 +21,10 @@
       "repository": "Panniantong/Agent-Reach",
       "skill": "agent-reach-research",
       "mode": "cli_and_tools",
-      "status": "adapter_spec_only"
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/agent-reach-research/SKILL.md"
     },
     {
       "key": "archify",
@@ -26,7 +32,10 @@
       "repository": "tt-a1i/archify",
       "skill": "archify-system-diagrams",
       "mode": "prompt_skill_and_renderer",
-      "status": "adapter_spec_only"
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/archify-system-diagrams/SKILL.md"
     },
     {
       "key": "voicestudio",
@@ -34,7 +43,10 @@
       "repository": "debpalash/VoiceStudio",
       "skill": "voicestudio-audio",
       "mode": "local_api_or_mcp",
-      "status": "adapter_spec_only"
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/voicestudio-audio/SKILL.md"
     },
     {
       "key": "mirofish",
@@ -42,7 +54,16 @@
       "repository": "666ghj/MiroFish",
       "skill": "mirofish-simulation",
       "mode": "dedicated_backend",
-      "status": "adapter_spec_only"
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/mirofish-simulation/SKILL.md"
     }
-  ]
+  ],
+  "package_version": "0.1.1",
+  "capabilities": {
+    "instruction_adapters": true,
+    "bundled_upstream_binaries": false,
+    "configured_mcp_servers": 0
+  }
 }

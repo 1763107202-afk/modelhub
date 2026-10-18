@@ -1,0 +1,4 @@
+interface:
+  display_name: "MiroFish"
+  short_description: "Design reproducible scenarios without inventing simulation runs"
+  default_prompt: "Use $mirofish-simulation to design an engineering scenario and its validation metrics."

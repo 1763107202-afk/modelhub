@@ -1,57 +1,47 @@
-# ChatGPT 五项目接入工作区（独立开发分支）
+# Engineering Five Skills
 
-位置：integrations/chatgpt-skills/ 。这个目录与现有 modelhub 网站功能隔离。
-当前阶段：**已提交适配设计、5 份轻量指导 Skill、独立 API 网关源码和单元测试；没有把 5 个第三方程序安装到 ChatGPT 网页版或部署为线上服务。**
+五份轻量指令适配组成的个人插件，包名 `engineering-five-skills`，版本 `0.1.1`。来源为 `1763107202-afk/modelhub` 的 `chatgpt-skills-integration` 分支。它们是本仓库独立编写的工作规约，不是五个上游项目的完整代码、二进制程序或已连接账号。
 
-## 上游原项目
-
-| Skill | 上游 | 本目录内容 | 仍待完成 |
+| 显示名称 | Skill 名称 | 当前可以做什么 | 上游运行状态 |
 | --- | --- | --- | --- |
-| Taste-Skill | https://github.com/Leonxlnx/taste-skill | design guidance | 原生浏览器工作流、运行验证 |
-| Agent-Reach | https://github.com/Panniantong/Agent-Reach | search guidance | CLI + 第三方认证、适配服务 |
-| Archify | https://github.com/tt-a1i/archify | architecture guidance | 真实渲染器、schema/导出适配 |
-| VoiceStudio | https://github.com/debpalash/VoiceStudio | audio guidance | 本地语音服务、API/MCP、模型 |
-| MiroFish | https://github.com/666ghj/MiroFish | simulation guidance | LLM/Zep 和独立运行环境 |
+| Taste-Skill | `design-taste-frontend` | 界面审阅、组件规范、响应式设计和验收计划 | 上游脚本未连接 |
+| Agent-Reach | `agent-reach-research` | 使用当前环境确实可用且有授权的检索工具整理证据 | Agent-Reach CLI 未连接 |
+| Archify | `archify-system-diagrams` | 基于代码编写架构说明、图源与证据映射 | Archify 渲染器未连接 |
+| VoiceStudio | `voicestudio-audio` | 旁白脚本、语音参数与接入计划 | 语音后端未连接，不会据此生成音频 |
+| MiroFish | `mirofish-simulation` | 推演计划、假设、代理角色和复现规范 | MiroFish/LLM/Zep 未连接，不会据此运行仿真 |
 
-本目录 SKILL.md 是新写的简化工作规约，不是五个原版仓库的完整代码。调用需满足真实权限、API、平台条款及上游许可证；不得上传密钥、cookie 或人物敏感音频。特别注意 VoiceStudio 源代码 AGPL-3.0 和模型的独立权利约束。
+Skill 可以结合宿主实际开放的工具工作。宿主原有 GitHub、搜索、Mermaid 或其他工具的成功使用，不代表同名上游程序已经安装。
 
-## 网关运行（Node.js 20+）
+## 清单与打包
 
-在 gateway 目录运行：
+- 根 `plugin.json` 使用 Agent Plugins 1.0，OpenAI 展示信息在 `extensions.com.openai.interface`。
+- `.codex-plugin/plugin.json` 保留旧客户端兼容层，两份清单的名称、版本、展示信息和默认提示语一致。
+- 五份 Skill 均放在 `skills/<声明名称>/SKILL.md`，各自带有 `agents/openai.yaml`。
+- 发布包包含五份指令及元数据。没有 `mcp.json`、`.app.json`、后端地址、密钥或外部工具依赖。
+- `gateway/` 仅为仓库中的实验性 REST 网关，未部署、不是 MCP，且从插件发布包排除。不能把 `/health` 或 `/v1/execute` 填成 MCP 地址。
 
-1. 设置环境变量 INTEGRATION_KEY（随机强密钥，至少 16 位，绝不提交到仓库）。
-2. 按 .env.example 配置专用适配器 URL。网关**不会直接兼容**五款原始应用 API；每个适配器须独立实现下述请求/响应契约。
-3. 运行 npm test；运行 npm start。本地默认监听 127.0.0.1:8787。
-4. GET http://127.0.0.1:8787/health 查看网关和适配器 URL 配置状态。
+在源码目录运行兼容性预检（需要 PyYAML）：
 
-POST /v1/execute 的请求体为：
+```bash
+python scripts/build_plugin.py
+```
 
-    { "provider": "taste", "task": "audit website navigation", "input": {"site": "example"} }
+在目录外生成内部安装归档：
 
-鉴权请求头：
+```bash
+python scripts/build_plugin.py --output /absolute/path/engineering-five-skills-0.1.1.zip
+```
 
-    X-Integration-Key: <your-secret>
+脚本解析 JSON/YAML，检查五个 Skill 的名称、目录、展示元数据、默认提示语和状态，随后检查归档层级、引用文件、软链接及排除项。预检通过不代表账号已创建或安装插件。
 
-适配器服务器必须接受 POST JSON：
+## 个人插件安装与验收
 
-    { "task": "audit website navigation", "input": {"site": "example"} }
+见 [PLUGIN_CREATOR_SETUP.md](PLUGIN_CREATOR_SETUP.md)。只有账号保存操作成功并返回插件身份后，才可称为“已创建”；只有账号侧启用并成功加载五份 Skill 后，才可称为“已安装”。GitHub 分支、marketplace 配置和 ZIP 文件本身都不是账号安装证明。
 
-并返回 HTTP 2xx + 有效 JSON。网关返回包装后的 result。未配置提供方时返回 HTTP 503，绝不生成假结果。只允许环境变量中预配置 HTTPS 地址或本机回环 HTTP 地址，不能由用户动态指定上游 URL。
+## 实验性网关
 
-## 在 ChatGPT 网页版使用
+源码位于本目录的 `gateway/`。Node.js 20+ 可运行 `npm test`；单元测试使用本地 mock 适配器，不能视为真实上游验收。
 
-A. **技能指导路径**：本目录五个 SKILL.md 可用于兼容的开发代理/Skill 环境作为自定义工作规约；它们不会自动注入普通聊天，也不代表成功安装了原生 Skill。
+网关直启监听 `127.0.0.1:8787`。执行接口要求至少 16 字符的 `INTEGRATION_KEY`，通过 `X-Integration-Key` 验证。每个提供方需要独立适配器，接受 `POST {"task":"...","input":{}}` 并返回 JSON；不能直接指向原项目首页。未配置提供方返回 `503 adapter_not_configured`。`GET /health` 只报告 URL 配置，不验证连通性。公网部署和 MCP 接入需另行实现和验证。
 
-B. **自定义 GPT Action 路径（需要账号支持）**：把 gateway/openapi.yaml 中 servers.url 替换为自己的公网 HTTPS 域名，使用可信的反向代理 / 托管服务将请求转发至本地网关，设置 API key 鉴权（X-Integration-Key；以产品界面当下支持的认证配置为准），再在 GPT Actions 中导入 OpenAPI schema 并单独逐项测试。不支持该认证方式时应调整兼容的认证实现，而不是关闭认证。仅有 GitHub 仓库不能替代部署。
-
-C. **插件路径**：如 ChatGPT Plugin Creator 允许创建自定义插件，可把相同网关作为后端，按插件开发规范建立 manifest/权限并在网页端明确启用。是否支持当前账号中的个人插件发布、配置和生效，必须在 UI 实测。
-
-## 当前状态和验收标准
-
-- 已完成：独立分支、上游项目链接核对、工作流说明、五份适配 Skill、网关代码、OpenAPI、mock 适配器自动化测试代码。
-- 待执行：在有 Node 环境的 runner 跑 npm test；部署真实网关和 HTTPS；逐个部署五个不同上游服务/指令运行器；配置环境变量；执行各平台健康检查和实际功能用例。
-- 可验证的交付条件：实际服务成功返回内容/音频/架构图/仿真报告；对每个功能保存真实测试证据；普通网页版是否原生调用须在登录后的 ChatGPT 环境进行测试。
-- 安全约束：公开仓库不放 token，认证和 HTTPS 必须开启。真实部署建议实施最小权限、请求限流、任务级审计和数据保留政策。/health 仅表示配置了 URL，不是已连通。
-
-禁止声称“已在 ChatGPT 全局安装五个 Skill”或“已部署五个后端”，除非有账号侧启用、真实运行结果和功能验收证据。
-
+上游出处见 `registry.json`，未复制上游代码或模型。使用第三方程序时需另行核对其许可证与模型、语音使用权。禁止提交令牌、cookie、私密录音或其他秘密。

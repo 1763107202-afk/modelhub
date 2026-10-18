@@ -1,10 +1,7 @@
 ---
 name: agent-reach-research
-description: 统一研究检索流程，优先使用当前环境确实具有的搜索或网站访问工具。
+description: 用于 Agent-Reach 风格的公开网页、视频、GitHub、RSS 和社交平台资料检索，核对来源与时间；仅使用当前确实可用且有授权的工具。
 ---
-
-## Use when
-User asks to research public web sources, videos, repositories, RSS or social platforms.
 
 ## Procedure
 1. Identify the source, timeframe and information required.
