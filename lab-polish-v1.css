@@ -1,0 +1,82 @@
+/* Laboratory visual refinement · 2026-10-18 · presentation only */
+:root{--lab-ink:#edf4f9;--lab-muted:#a2b5c5;--lab-surface:#101f2c;--lab-edge:#2b4152;--lab-accent:#8fc6db;--lab-highlight:#e0b682}
+html[data-theme="light"]{--lab-ink:#193247;--lab-muted:#556c7d;--lab-surface:#fff;--lab-edge:#cbdbe5;--lab-accent:#1a6785;--lab-highlight:#98642f}
+body{font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background-color:#091723;background-image:linear-gradient(rgba(151,193,219,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(151,193,219,.025) 1px,transparent 1px);background-size:48px 48px;letter-spacing:.005em}
+html[data-theme="light"] body{background-color:#f4f7f8!important;background-image:linear-gradient(rgba(23,76,107,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(23,76,107,.028) 1px,transparent 1px)!important}
+.wrap{width:min(1240px,calc(100% - 44px))}
+.siteHeader{background:rgba(8,22,34,.95);border-bottom:1px solid rgba(143,198,219,.14);box-shadow:0 14px 38px rgba(0,0,0,.10)}
+.siteHeader .brandText b{font-weight:850;letter-spacing:.02em}
+.siteHeader .nav a{font-weight:650;border-radius:9px;transition:color .16s,border-color .16s,background-color .16s}
+.siteHeader .nav a:hover{color:#f7fcff;background:#152c3c;border-color:#2e5064}
+.siteHeader .nav a.active{background:#17384a!important;border-color:#42758b!important;color:#f5fcff!important;box-shadow:inset 0 -2px 0 #c7a574}
+html[data-theme="light"] .siteHeader{background:rgba(250,252,252,.97)!important;border-bottom-color:#d4e1e9!important;box-shadow:0 9px 27px rgba(29,65,84,.07)!important}
+html[data-theme="light"] .siteHeader .nav a.active{background:#e5eff3!important;border-color:#b4cfdc!important;color:#164b64!important;box-shadow:inset 0 -2px 0 #af7f48}
+html[data-theme="light"] .siteHeader .nav a:hover{background:#edf4f6!important;color:#164b64!important}
+.eyebrow{color:var(--lab-accent);font-size:11px;letter-spacing:.22em;font-weight:800}
+.section{padding-top:34px;padding-bottom:64px}
+.head{margin-bottom:24px;align-items:end}
+.head h2{font-size:clamp(24px,2.6vw,33px);line-height:1.2;letter-spacing:-.028em}
+.head h2:after{content:"";display:block;width:39px;height:3px;background:var(--lab-highlight);margin-top:13px;border-radius:2px}
+.head p{font-size:13px;max-width:330px}
+body[data-page="home"] .heroGrid{position:relative;isolation:isolate;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:32px;margin-top:30px;margin-bottom:12px;padding:64px 50px 62px;border:1px solid var(--lab-edge);border-radius:25px;background:linear-gradient(110deg,rgba(21,46,63,.92),rgba(9,25,38,.94));box-shadow:0 23px 60px rgba(0,0,0,.14);overflow:hidden}
+body[data-page="home"] .heroGrid:before{content:"";position:absolute;inset:0 0 auto auto;width:34%;height:100%;background:repeating-linear-gradient(135deg,transparent 0 22px,rgba(151,193,219,.045) 22px 23px);pointer-events:none;z-index:-1}
+body[data-page="home"] .heroGrid>div:first-child{min-width:0}
+body[data-page="home"] .heroGrid .eyebrow{display:inline-flex;align-items:center;gap:8px;letter-spacing:.12em;font-size:10px}
+body[data-page="home"] .heroGrid .eyebrow:before{content:"";width:21px;height:1px;background:var(--lab-highlight)}
+body[data-page="home"] .heroTitleV18{margin:22px 0 21px!important;gap:7px}
+body[data-page="home"] .heroTitleV18 .heroSchoolV18{font-size:clamp(29px,3.1vw,43px);font-weight:680}
+body[data-page="home"] .heroTitleV18 .heroLabV18{font-size:clamp(41px,4.1vw,59px);letter-spacing:-.05em}
+body[data-page="home"] .heroTitleV18 .heroCommunityV18{color:#dfbb8b!important;-webkit-text-fill-color:#dfbb8b!important;font-size:clamp(26px,2.6vw,36px);letter-spacing:.14em}
+body[data-page="home"] .heroGrid p{max-width:480px;line-height:1.85;font-size:15px;color:#abc0cf}
+body[data-page="home"] .heroGrid .actions{margin-top:27px;gap:11px}
+body[data-page="home"] .heroGrid .actions .btn{min-height:45px;padding:11px 19px;border-radius:10px}
+.btn.pri{background:#286e88;color:#fff;box-shadow:0 7px 19px rgba(0,0,0,.09)}
+.btn.pri:hover{background:#3584a0}
+html[data-theme="light"] .pri{background:#246d89!important;color:#fff!important}
+html[data-theme="light"] .pri:hover{background:#195770!important}
+.btn.sec,.btn.ghost{border-color:#315064;background:#122a3c;color:#e1edf4}
+body[data-page="home"] .heroGrid>.panel{min-width:0;border-radius:19px;border:1px solid rgba(153,202,225,.23);background:rgba(8,25,37,.90);box-shadow:0 22px 50px rgba(0,0,0,.17);padding:28px;position:relative}
+body[data-page="home"] .heroGrid>.panel:before{content:"";position:absolute;left:28px;right:28px;top:0;height:2px;background:linear-gradient(90deg,#dfb47c,transparent 68%)}
+body[data-page="home"] .labHero{align-items:center;gap:20px}
+body[data-page="home"] .labHero strong{display:block;line-height:1.45;font-size:18px}
+body[data-page="home"] .labHero p{font-size:12px;line-height:1.7}
+body[data-page="home"] .stats{gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-page="home"] .stat{background:#0d2534;border:1px solid #244657;border-radius:12px;padding:17px 11px;text-align:left}
+body[data-page="home"] .stat b{font-size:32px;line-height:1.1;font-weight:850;font-variant-numeric:tabular-nums;color:#f0f8fb}
+body[data-page="home"] .stat span{display:block;margin-top:8px;font-size:12px;color:#9fb8c9}
+body[data-page="home"] .moduleGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+body[data-page="home"] .moduleCard{position:relative;min-height:212px;padding:23px 24px;background:#102331;border:1px solid #2a4253;border-radius:17px;box-shadow:0 10px 24px rgba(0,0,0,.06);transition:transform .19s,border-color .19s,box-shadow .19s}
+body[data-page="home"] .moduleCard:after{content:"↗";position:absolute;right:21px;top:21px;font-size:20px;color:#84adbf;font-weight:400;transition:transform .18s}
+body[data-page="home"] .moduleCard:hover{transform:translateY(-4px);border-color:#6da5bc;box-shadow:0 22px 36px rgba(0,0,0,.16)}
+body[data-page="home"] .moduleCard:hover:after{transform:translate(2px,-2px)}
+body[data-page="home"] .moduleCard .icon{width:52px;height:52px;display:grid;place-items:center;font-size:25px;background:#193a4c;border:1px solid #345a6b;border-radius:14px}
+body[data-page="home"] .moduleCard h3{margin:16px 0 7px;font-size:19px;letter-spacing:-.025em}
+body[data-page="home"] .moduleCard p{margin:0 0 13px;font-size:13px;line-height:1.72;color:#a5bac9}
+body[data-page="home"] .moduleCard .tag{background:none;border:0;padding:0;color:#e1ba86;letter-spacing:.07em;font-weight:760;font-size:11px}
+body[data-page="home"] .moduleCard:nth-child(3n + 1){border-top:2px solid #7baec0}
+body[data-page="home"] .moduleCard:nth-child(3n + 2){border-top:2px solid #be9360}
+body[data-page="home"] .moduleCard:nth-child(3n){border-top:2px solid #78939e}
+.pageHero{padding:55px 0 36px;border-bottom:1px solid rgba(149,183,202,.14)}
+.pageHero h1{font-weight:850;letter-spacing:-.043em}
+.pageHero p{line-height:1.8}
+.card,.workCard,.adminLink,.projectCardV2,.progressCard,.adminDashCard,.adminActionCard{border-radius:16px;border-color:#294252;background:#102331}
+.card:hover,.workCard:hover,.adminLink:hover{border-color:#628fa3}
+.announcement{border-color:#294252}
+.announcementTop h3{line-height:1.4}
+input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid #88c9e3;outline-offset:3px}
+html[data-theme="light"] body[data-page="home"] .heroGrid{background:linear-gradient(115deg,#ecf3f5,#f8faf9);box-shadow:0 18px 42px rgba(45,82,103,.09)}
+html[data-theme="light"] body[data-page="home"] .heroGrid>.panel{background:#fff;border-color:#d3e2e9;box-shadow:0 16px 35px rgba(46,84,109,.09)}
+html[data-theme="light"] body[data-page="home"] .heroGrid p{color:#51697c!important}
+html[data-theme="light"] body[data-page="home"] .heroTitleV18 .heroCommunityV18{color:#98642f!important;-webkit-text-fill-color:#98642f!important}
+html[data-theme="light"] body[data-page="home"] .stat{background:#f2f7f8;border-color:#d8e5eb}
+html[data-theme="light"] body[data-page="home"] .stat b{color:#1c394b!important}
+html[data-theme="light"] body[data-page="home"] .stat span{color:#587181}
+html[data-theme="light"] body[data-page="home"] .moduleCard{background:#fff!important;border-color:#d5e2e7!important;box-shadow:0 9px 25px rgba(31,77,102,.07)}
+html[data-theme="light"] body[data-page="home"] .moduleCard:hover{border-color:#86b3c2!important;box-shadow:0 19px 30px rgba(31,77,102,.12)}
+html[data-theme="light"] body[data-page="home"] .moduleCard .icon{background:#ebf4f6;border-color:#d3e6eb}
+html[data-theme="light"] body[data-page="home"] .moduleCard .tag{color:#93622c!important}
+html[data-theme="light"] .card,html[data-theme="light"] .workCard,html[data-theme="light"] .projectCardV2,html[data-theme="light"] .adminDashCard,html[data-theme="light"] .adminActionCard{background:#fff!important;border-color:#d4e1e8!important}
+@media(max-width:1040px){body[data-page="home"] .heroGrid{padding:42px 34px;grid-template-columns:1fr}body[data-page="home"] .moduleGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.wrap{width:calc(100% - 28px)}.section{padding-top:24px;padding-bottom:42px}.head{align-items:flex-start;flex-direction:column;gap:9px}body[data-page="home"] .heroGrid{margin-top:13px;padding:34px 20px;gap:26px;border-radius:18px}body[data-page="home"] .heroTitleV18 .heroSchoolV18{font-size:clamp(28px,7.8vw,36px)}body[data-page="home"] .heroTitleV18 .heroLabV18{font-size:clamp(36px,9vw,43px)}body[data-page="home"] .heroTitleV18 .heroCommunityV18{font-size:clamp(23px,6.5vw,31px)}body[data-page="home"] .heroGrid>.panel{padding:18px}body[data-page="home"] .labHero{gap:11px}body[data-page="home"] .labHero strong{font-size:14px}body[data-page="home"] .labHero img{width:75px;height:75px}body[data-page="home"] .stat{padding:13px 10px}body[data-page="home"] .stat b{font-size:27px}body[data-page="home"] .moduleGrid{grid-template-columns:1fr;gap:12px}body[data-page="home"] .moduleCard{min-height:180px;padding:18px 19px}.siteHeader .nav{padding-bottom:5px}}
+@media(max-width:365px){body[data-page="home"] .heroGrid{padding:26px 14px}body[data-page="home"] .heroGrid .actions .btn{padding:9px 12px}body[data-page="home"] .labHero{flex-direction:column;align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){body[data-page="home"] .moduleCard,body[data-page="home"] .moduleCard:after{transition:none}body[data-page="home"] .moduleCard:hover{transform:none}}
