@@ -1,0 +1,31 @@
+name: Verify ChatGPT Skills Gateway
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - chatgpt-skills-integration
+    paths:
+      - "integrations/chatgpt-skills/gateway/**"
+      - ".github/workflows/chatgpt-skills-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  gateway-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify syntax
+        working-directory: integrations/chatgpt-skills/gateway
+        run: |
+          node --check server.mjs
+          node --check test/server.test.mjs
+      - name: Execute gateway tests
+        working-directory: integrations/chatgpt-skills/gateway
+        run: npm test
