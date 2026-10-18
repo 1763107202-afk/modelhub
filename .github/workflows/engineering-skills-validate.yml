@@ -29,3 +29,10 @@ jobs:
           python scripts/build_plugin.py --output "$RUNNER_TEMP/engineering-five-skills-0.2.0.zip"
       - name: Gateway mock contract tests
         run: cd integrations/chatgpt-skills/gateway && npm test
+      - name: Upload installable plugin archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: engineering-five-skills-0.2.0-installable
+          path: ${{ runner.temp }}/engineering-five-skills-0.2.0.zip
+          if-no-files-found: error
+          retention-days: 30
