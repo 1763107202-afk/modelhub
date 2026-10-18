@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nature Skills"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $nature-academic-workflows to guide my task and identify unverified steps."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Search Pro"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $literature-evidence-search to guide my task and identify unverified steps."

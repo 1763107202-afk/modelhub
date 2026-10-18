@@ -1,0 +1,4 @@
+interface:
+  display_name: "SolidPilot"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $solidworks-cad-bridge to guide my task and identify unverified steps."

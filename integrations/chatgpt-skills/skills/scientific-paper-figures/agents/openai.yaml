@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nature Figure"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $scientific-paper-figures to guide my task and identify unverified steps."

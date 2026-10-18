@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex PPT Skill"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $academic-presentation to guide my task and identify unverified steps."

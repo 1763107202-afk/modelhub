@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity MCP"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $unity-vr-bridge to guide my task and identify unverified steps."

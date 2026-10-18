@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Skills"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $engineering-simulation to guide my task and identify unverified steps."

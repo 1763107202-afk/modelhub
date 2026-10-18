@@ -1,0 +1,4 @@
+interface:
+  display_name: "CN Patent Disclosure"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $cn-patent-disclosure to guide my task and identify unverified steps."

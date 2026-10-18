@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nature Response"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $peer-review-response to guide my task and identify unverified steps."

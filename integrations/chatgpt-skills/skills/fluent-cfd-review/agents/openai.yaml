@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fluent CFD Skill"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $fluent-cfd-review to guide my task and identify unverified steps."

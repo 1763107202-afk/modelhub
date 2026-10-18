@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Automation"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $research-automation-planning to guide my task and identify unverified steps."

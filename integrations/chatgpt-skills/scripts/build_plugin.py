@@ -19,6 +19,21 @@ EXPECTED = {
     'voicestudio': 'voicestudio-audio',
     'mirofish': 'mirofish-simulation',
     'anatomy': 'anatomy',
+    'scientific_agent_research': 'scientific-agent-research',
+    'nature_academic_workflows': 'nature-academic-workflows',
+    'academic_research_critique': 'academic-research-critique',
+    'fluent_cfd_review': 'fluent-cfd-review',
+    'engineering_simulation': 'engineering-simulation',
+    'solidworks_cad_bridge': 'solidworks-cad-bridge',
+    'unity_vr_bridge': 'unity-vr-bridge',
+    'blender_modeling_bridge': 'blender-modeling-bridge',
+    'literature_evidence_search': 'literature-evidence-search',
+    'cn_patent_disclosure': 'cn-patent-disclosure',
+    'academic_presentation': 'academic-presentation',
+    'scientific_paper_figures': 'scientific-paper-figures',
+    'peer_review_response': 'peer-review-response',
+    'research_automation_planning': 'research-automation-planning',
+    'paper_to_patent_review': 'paper-to-patent-review',
 }
 
 
@@ -33,7 +48,7 @@ def validate(root):
     assert interface == overlay['interface'], 'Portable and compatibility presentation differ'
     for field in ['displayName', 'shortDescription', 'longDescription', 'developerName', 'category']:
         assert isinstance(interface[field], str) and interface[field].strip(), field
-    assert interface['displayName'] == 'Engineering Six Skills'
+    assert interface['displayName'] == 'Engineering Research Suite'
     assert len(interface['shortDescription']) <= 30
     assert interface['capabilities'] == [], 'Instruction-only package declares no tool capabilities'
     prompts = interface['defaultPrompt']

@@ -1,19 +1,19 @@
 {
   "name": "engineering-five-skills",
-  "version": "0.2.0",
-  "description": "Six lightweight instruction adapters for frontend design, research, architecture, voice workflow planning, simulation planning and interactive mechanism visualization. No upstream runtime or backend connection is bundled.",
+  "version": "0.3.0",
+  "description": "21 independent engineering and research instruction adapters. External CAD/CFD/Unity/Blender runtimes are not connected.",
   "skills": "./skills/",
   "repository": "https://github.com/1763107202-afk/modelhub",
   "interface": {
-    "displayName": "Engineering Six Skills",
-    "shortDescription": "UI、检索、架构、语音、仿真与机械原理可视化",
-    "longDescription": "Six original workflow instruction adapters for engineering tasks. Upstream executable engines, browser validation and backend services require separate setup; none are bundled or connected.",
+    "displayName": "Engineering Research Suite",
+    "shortDescription": "机械、仿真、三维、科研、论文与专利",
+    "longDescription": "21 independently authored skill adapters. Upstream CAD, CFD, Unity, Blender, browser and academic services require separate installation.",
     "category": "Productivity",
     "capabilities": [],
     "defaultPrompt": [
-      "使用 Taste-Skill 审阅我的工程界面，按设备尺寸给出可验证的修改方案。",
-      "使用 Archify 与 Anatomy 设计系统流程和可交互机械原理示意图，标注验证限制。",
-      "规划 VoiceStudio 和 MiroFish 的接入，但未部署时不宣称运行成功。"
+      "使用工程仿真技能检查我的 Fluent 网格、边界条件与收敛性。",
+      "使用科研与 Nature 工作流核查论文证据、科研绘图和专利交底。",
+      "为 SolidWorks 和 Unity 制定真实可执行的 MCP 部署与验证步骤。"
     ],
     "developerName": "1763107202-afk"
   }

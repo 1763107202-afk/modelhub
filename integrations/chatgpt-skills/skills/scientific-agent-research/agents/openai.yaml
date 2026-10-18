@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scientific Agent Skills"
+  short_description: "Research and engineering workflow validation"
+  default_prompt: "Use $scientific-agent-research to guide my task and identify unverified steps."
