@@ -1,0 +1,22 @@
+{
+  "name": "modelhub-engineering-plugins",
+  "interface": {
+    "displayName": "ModelHub Engineering Plugins"
+  },
+  "plugins": [
+    {
+      "name": "engineering-five-skills",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/1763107202-afk/modelhub.git",
+        "path": "./integrations/chatgpt-skills",
+        "ref": "chatgpt-skills-integration"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
