@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "engineering-five-skills",
+  "version": "0.1.0",
+  "description": "Five engineering-oriented reusable skills covering UI design, web research, architecture diagrams, speech workflows and multi-agent simulations. Guidance skills only until separate backend adapters are connected.",
+  "repository": "https://github.com/1763107202-afk/modelhub",
+  "keywords": [
+    "engineering",
+    "frontend-design",
+    "research",
+    "architecture",
+    "speech",
+    "simulation"
+  ]
+}
