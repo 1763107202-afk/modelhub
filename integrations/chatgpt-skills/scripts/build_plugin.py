@@ -34,6 +34,7 @@ EXPECTED = {
     'peer_review_response': 'peer-review-response',
     'research_automation_planning': 'research-automation-planning',
     'paper_to_patent_review': 'paper-to-patent-review',
+    'anti_defensive_writing': 'anti-defensive-writing',
 }
 
 
