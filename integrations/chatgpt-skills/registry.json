@@ -249,9 +249,22 @@
       "runtime_status": "not_connected",
       "skill_path": "skills/paper-to-patent-review/SKILL.md",
       "source_status": "reference_verified"
+    },
+    {
+      "key": "anti_defensive_writing",
+      "name": "Anti-Defensive Writing",
+      "repository": "Adkid-Zephyr/anti-defensive-writing-Skill",
+      "skill": "anti-defensive-writing",
+      "mode": "instruction_adapter",
+      "status": "adapter_spec_only",
+      "instruction_status": "available",
+      "runtime_status": "not_connected",
+      "skill_path": "skills/anti-defensive-writing/SKILL.md",
+      "source_status": "reference_verified",
+      "note": "Chinese MIT-licensed skill adapted with mandatory evidence and engineering accuracy guardrails."
     }
   ],
-  "package_version": "0.3.0",
+  "package_version": "0.3.1",
   "capabilities": {
     "instruction_adapters": true,
     "bundled_upstream_binaries": false,
