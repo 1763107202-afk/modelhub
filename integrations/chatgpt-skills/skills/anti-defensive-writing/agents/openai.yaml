@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anti-Defensive Writing"
+  short_description: "Evidence-preserving academic and engineering writing"
+  default_prompt: "Use $anti-defensive-writing to revise my paper or engineering report with clear evidence-grounded claims."
