@@ -596,6 +596,16 @@ async function applyRegisteredSession(session){
   return true;
 }
 
+async function fetchTeacherNotices(){
+  if(!state.user)return [];
+  const r=await supabase.from("progress_member_notices").select("id,sender_name,message_type,message,progress_type,progress_id,created_at,read_at").eq("recipient_id",state.user.id).order("created_at",{ascending:false}).limit(40);
+  if(r.error){console.warn("定向通知暂不可用",r.error.message);return []}
+  return r.data||[];
+}
+function teacherNoticeUrl(x){
+  if(x.progress_type&&x.progress_id)return "./space.html?type="+encodeURIComponent(x.progress_type)+"&id="+encodeURIComponent(x.progress_id);
+  return "./progress.html";
+}
 function notificationTypeName(t){
   return t==="announcement"?"公告":t==="task"?"新任务":t==="deadline"?"截止提醒":t==="progress"?"进度提醒":t==="membership"?"成员状态":"通知";
 }
@@ -617,7 +627,10 @@ async function loadSiteNotifications(openDialog=false){
     if(openDialog&&list)list.innerHTML='<div class="notifyEmpty">通知加载失败：'+esc(r.error.message)+'</div>';
     return [];
   }
-  const rows=r.data||[], unread=rows.filter(x=>!x.is_read).length;
+  const privateNotes=await fetchTeacherNotices();
+  const converted=privateNotes.map(x=>({notification_key:"teacher:"+x.id,notification_type:"progress",title:x.message_type==="teacher_comment"?"老师给你转发了评语":"老师提醒你更新进度",body:(x.sender_name||"实验室老师")+"："+x.message,created_at:x.created_at,link_url:teacherNoticeUrl(x),is_read:!!x.read_at}));
+  const rows=[...(r.data||[]),...converted].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)), unread=rows.filter(x=>!x.is_read).length;
+    globalThis.__notifyCache={rows,at:Date.now()};
   globalThis.__notifyCache={rows,at:Date.now()};
   if(dot){
     dot.textContent=unread>99?"99+":String(unread);
@@ -631,7 +644,8 @@ async function loadSiteNotifications(openDialog=false){
     }).join(""):'<div class="notifyEmpty">当前没有新的站内通知。</div>';
     list.querySelectorAll(".notifyItem").forEach(el=>el.addEventListener("click",async()=>{
       const key=el.dataset.key;
-      if(key){try{await supabase.rpc("mark_site_notification_read",{p_notification_key:key})}catch(_e){}}
+      if(key?.startsWith("teacher:")){try{await supabase.rpc("mark_progress_notice_read",{p_notice_id:key.slice(8)})}catch(_e){}}
+      else if(key){try{await supabase.rpc("mark_site_notification_read",{p_notification_key:key})}catch(_e){}}
     }));
   }
   if(openDialog&&q("#notifyDialog")&&!q("#notifyDialog").open)q("#notifyDialog").showModal();
@@ -647,7 +661,10 @@ function bindNotifications(){
     const r=await supabase.rpc("mark_all_site_notifications_read");
     all.disabled=false;
     if(r.error)return toast("操作失败："+r.error.message);
-    await loadSiteNotifications(false);
+    const notes=await fetchTeacherNotices();
+    await Promise.all(notes.filter(x=>!x.read_at).map(x=>supabase.rpc("mark_progress_notice_read",{p_notice_id:x.id})));
+    globalThis.__notifyCache=null;
+    await loadSiteNotifications(true);
     toast("已全部标为已读");
   };
 }
