@@ -2298,6 +2298,48 @@ async function loadPersonalProgressFeed(){
   ]);
   applyProgressFeedSearch();
 }
+let progressBulkEligible=[];
+let progressBulkReady=false;
+async function sendBulkReminders(){
+ const selected=[...q("#progressBulkChoices").querySelectorAll('input:checked')].map(x=>x.value);
+ const eligible=new Map(progressBulkEligible.map(x=>[x.user_id,x]));
+ const ids=selected.filter(id=>eligible.has(id));
+ if(!ids.length){q("#progressBulkStatus").textContent="请至少选择一名成员";return}
+ if(!confirm("确定对选中的 "+ids.length+" 名逾期成员逐一发送提醒？"))return;
+ const btn=q("#progressBulkSend"),cancel=q("#progressBulkCancel");btn.disabled=true;cancel.disabled=true;
+ let site=0,push=0,failed=0,skipped=0;
+ for(let i=0;i<ids.length;i++){
+   const id=ids[i];q("#progressBulkStatus").textContent="正在处理 "+(i+1)+"/"+ids.length+"；站内成功 "+site+"，微信已接受 "+push+"，跳过 "+skipped+"，失败 "+failed;
+   try{
+     const row={sender_id:state.user.id,recipient_id:id,message_type:"reminder",message:"你的近期项目进度已经超过两周没有更新，请及时登录实验室网站补充当前成果与下一步计划。"};
+     const result=await supabase.from("progress_member_notices").insert(row).select("id").single();
+     if(result.error){skipped++;continue}
+     site++;
+     try{const remote=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});if(!remote.error&&remote.data?.ok)push++;else failed++}catch(_e){failed++}
+   }catch(_e){failed++}
+ }
+ q("#progressBulkStatus").textContent="已完成：站内 "+site+" 条；微信接口接受 "+push+" 条；微信未成功 "+failed+" 条；重复提醒或限制跳过 "+skipped+" 条。微信是否实际收到需成员确认。";
+ btn.textContent="已执行";cancel.disabled=false;
+}
+function setupProgressBulkReminder(reminders){
+ const actions=q("#progressBulkActions"),dialog=q("#progressBulkDialog");
+ if(!actions||!dialog||!state.user)return;
+ // A member can read the overdue list, but may not send without server authorization.
+ const eligible=reminders.filter(x=>x.user_id&&x.user_id!==state.user.id);
+ progressBulkEligible=eligible;
+ if(!progressBulkReady){
+  progressBulkReady=true;
+  q("#progressBulkOpen").onclick=()=>{
+   q("#progressBulkChoices").innerHTML=progressBulkEligible.map(x=>'<label><input type="checkbox" value="'+esc(x.user_id)+'" checked><span>'+esc(x.member_name||"成员")+' · 已 '+esc(x.days_since)+' 天未更新</span></label>').join("");
+   q("#progressBulkStatus").textContent="将向勾选成员发送站内提醒并尝试微信推送。";
+   q("#progressBulkSend").disabled=false;q("#progressBulkSend").textContent="确认发送";
+   dialog.showModal();
+  };
+  q("#progressBulkCancel").onclick=()=>dialog.close();
+  q("#progressBulkForm").onsubmit=e=>{e.preventDefault();void sendBulkReminders()};
+ }
+ actions.hidden=!eligible.length;
+}
 async function loadProgressOverview(){
   if(!state.user)return;
   const [statusReq,teamMemberReq,teamProgressReq,reminderReq]=await Promise.all([
@@ -2336,6 +2378,10 @@ async function loadProgressOverview(){
   if(tn)tn.innerHTML=team.length?team.map(x=>'<span class="progressNameChip">'+esc(x.member_name||"成员")+(x.competition_name?' · '+esc(x.competition_name):'')+'</span>').join(""):'<span class="progressNoSubmitter">暂时还没有队伍进度更新</span>';
 
   const reminders=reminderReq.error?[]:(reminderReq.data||[]);
+  const permission=await supabase.from("profiles").select("role,progress_exempt").eq("id",state.user.id).maybeSingle();
+  const authorized=!permission.error&&(permission.data?.role==="super_admin"||permission.data?.progress_exempt===true);
+  if(authorized)setupProgressBulkReminder(reminders);
+  else if(q("#progressBulkActions"))q("#progressBulkActions").hidden=true;
   const rc=q("#progressReminderCount");if(rc)rc.textContent=String(reminders.length);
   const rb=q("#progressReminderList");
   if(rb){
@@ -3904,7 +3950,7 @@ function spaceTeacherDialog({mode,commentId=null,item=null}){
  dialog.className="spaceTeacherDialog";
  const title=mode==="teacher_comment"?"转发我的评语":"提醒成员更新";
  const suggested=item?.owner||state.user.id;
- dialog.innerHTML='<form class="spaceTeacherForm"><h3>'+title+'</h3><p class="spaceTeacherDescription">'+(c?esc(c.content):"发送私密站内提醒，成员登录后可在通知铃铛中查看。")+'</p><label>选择接收成员<select name="recipient" required>'+target.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===suggested?" selected":"")+'>'+esc(t.name)+(t.id===state.user.id?"（我自己 · 测试）":"")+'</option>').join("")+'</select></label>'+(mode==="reminder"?'<label>提醒内容<textarea name="message" maxlength="500" rows="3" required>请及时更新近期项目进度，并补充阶段成果和下一步计划。</textarea></label>':'')+'<p class="spaceTeacherFeedback" role="status">当前发送站内通知。微信推送暂未接通。</p><div class="spaceTeacherActions"><button type="button" class="btn sec" data-cancel>取消</button><button type="submit" class="btn pri">确认发送</button></div></form>';
+ dialog.innerHTML='<form class="spaceTeacherForm"><h3>'+title+'</h3><p class="spaceTeacherDescription">'+(c?esc(c.content):"发送私密站内提醒，成员登录后可在通知铃铛中查看。")+'</p><label>选择接收成员<select name="recipient" required>'+target.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===suggested?" selected":"")+'>'+esc(t.name)+(t.id===state.user.id?"（我自己 · 测试）":"")+'</option>').join("")+'</select></label>'+(mode==="reminder"?'<label>提醒内容<textarea name="message" maxlength="500" rows="3" required>请及时更新近期项目进度，并补充阶段成果和下一步计划。</textarea></label>':'')+'<p class="spaceTeacherFeedback" role="status">站内通知优先保存，然后尝试微信推送；发送结果会在下方显示。</p><div class="spaceTeacherActions"><button type="button" class="btn sec" data-cancel>取消</button><button type="submit" class="btn pri">确认发送</button></div></form>';
  document.body.append(dialog);
  dialog.querySelector("[data-cancel]").onclick=()=>dialog.close();
  dialog.onclose=()=>dialog.remove();
