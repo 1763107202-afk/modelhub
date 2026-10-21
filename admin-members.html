@@ -606,9 +606,25 @@ async function kickMember(id){
   if(state.profile?.role!=="super_admin")return alert("只有主管理员可以踢出成员");
   const target=state.members.find(x=>x.id===id);if(!target)return;
   if(target.role==="super_admin")return alert("不能踢出主管理员");
-  if(!confirm("确定踢出 "+(target.full_name||target.email)+" 吗？\n\n请核对邮箱及注册时间，避免误删同名的新账号。\n注册时间："+new Date(target.created_at).toLocaleString("zh-CN")+"\n\n注意：旧账号的个人进度与团队、项目关联可能丢失。建议先完成账号合并或数据交接。此操作不可撤销。"))return;
-  const typed=prompt("为防止误操作，请输入该成员姓名确认：");
-  if(typed!==(target.full_name||""))return alert("确认姓名不匹配，已取消");
+  // Use an in-page confirmation form instead of blocked browser prompt dialogs.
+  const approved=await new Promise(resolve=>{
+    const dialog=document.createElement("dialog");
+    dialog.className="dialog";
+    dialog.innerHTML='<form class="dialogbox"><h2>核对成员账号</h2><p class="msg">请仔细核对以下账号。已合并的重要资料应先确认保留在新账号。</p>'
+      +'<div class="memberMetaGrid"><div class="memberMetaCell"><small>姓名</small><b>'+esc(target.full_name)+'</b></div><div class="memberMetaCell"><small>注册时间</small><b>'+esc(fmt(target.created_at))+'</b></div><div class="memberMetaCell"><small>邮箱</small><b style="overflow-wrap:anywhere">'+esc(target.email)+'</b></div><div class="memberMetaCell"><small>账号 ID</small><b style="overflow-wrap:anywhere">'+esc(target.id)+'</b></div></div>'
+      +'<label class="field">输入成员姓名以确认操作<input autocomplete="off" required placeholder="请输入姓名"></label><div class="msg" aria-live="polite">确认后将请求服务器执行，成功或失败都会显示结果。</div><div class="dialogActions"><button class="btn ghost" type="button" data-cancel>取消</button><button class="btn danger" type="submit" disabled>确认操作</button></div></form>';
+    document.body.append(dialog);
+    const input=dialog.querySelector("input");
+    const submit=dialog.querySelector('[type="submit"]');
+    let settled=false;
+    const done=value=>{if(settled)return;settled=true;dialog.close();dialog.remove();resolve(value)};
+    dialog.querySelector("[data-cancel]").onclick=()=>done(false);
+    input.oninput=()=>{submit.disabled=input.value.trim()!==target.full_name};
+    dialog.querySelector("form").onsubmit=e=>{e.preventDefault();if(input.value.trim()===target.full_name)done(true)};
+    dialog.oncancel=e=>{e.preventDefault();done(false)};
+    dialog.showModal();input.focus();
+  });
+  if(!approved)return;
   const r=await supabase.functions.invoke("remove-member",{body:{user_id:id}});
   if(r.error){
     let detail=r.error.message||"删除接口调用失败";
