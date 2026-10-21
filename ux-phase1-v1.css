@@ -72,3 +72,109 @@ html[data-theme="light"] .uxNavMore[open]>summary,html[data-theme="light"] .uxNa
 @media(prefers-reduced-motion:reduce){.uxBottomNav *,.uxNavMore *{transition:none!important;animation:none!important}}
 /* Progress space: the comments inbox remains a distinct conversation feature, not a second system bell. */
 .uxSpaceInboxShortcut{position:static!important;box-shadow:none!important;margin:8px 0 14px;min-height:40px}
+
+/* UX hotfix: one scroll owner inside the notification dialog on every page,
+   including pages still using styles-v39.css. */
+#notifyDialog.dialog[open]{
+  box-sizing:border-box!important;
+  width:min(670px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:min(740px,calc(100dvh - 24px))!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+  margin:auto!important;
+  border-radius:20px!important;
+}
+#notifyDialog .notifyDialogBox{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  height:min(720px,calc(100dvh - 28px))!important;
+  max-height:calc(100dvh - 28px)!important;
+  min-height:0!important;
+  padding:20px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  gap:10px!important;
+}
+#notifyDialog .notifyHead{
+  flex:0 0 auto!important;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+#notifyDialog .notifyHead h2{font-size:clamp(21px,4.5vw,26px)!important;line-height:1.18}
+#notifyDialog .notifyToolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto!important;min-width:0!important;margin:0!important}
+#notifyDialog .notifyToolbar #notifySummary{min-width:0;overflow-wrap:anywhere}
+#notifyDialog .notifyToolbar #notifyReadAll{white-space:nowrap}
+#notifyDialog .notifyList{
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  flex:1 1 0!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  margin:0!important;
+  padding:2px 2px 4px!important;
+  gap:10px!important;
+}
+#notifyDialog .notifyItem{
+  flex:0 0 auto!important;
+  box-sizing:border-box;
+  min-width:0!important;
+  width:100%!important;
+  padding:13px!important;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+#notifyDialog .notifyItemTop,#notifyDialog .notifyItemTop b,#notifyDialog .notifyItem p{min-width:0;overflow-wrap:anywhere}
+#notifyDialog .notifyItemTop time{white-space:normal}
+@media(max-width:620px){
+ #notifyDialog.dialog[open]{
+   width:calc(100vw - 20px)!important;
+   max-width:calc(100vw - 20px)!important;
+   max-height:calc(100dvh - 20px)!important;
+   border-radius:18px!important;
+ }
+ #notifyDialog .notifyDialogBox{
+   height:calc(100dvh - 24px)!important;
+   max-height:calc(100dvh - 24px)!important;
+   padding:15px 14px!important;
+   gap:10px!important;
+ }
+ #notifyDialog .notifyHead{gap:8px}
+ #notifyDialog .notifyHead h2{font-size:22px!important}
+ #notifyDialog #notifyClose{padding:8px 11px!important;min-height:38px}
+ #notifyDialog .notifyToolbar{flex-wrap:wrap;align-items:center}
+ #notifyDialog #notifyReadAll{padding:7px 10px!important;min-height:36px!important;font-size:12px!important}
+ #notifyDialog .notifyItem{padding:12px!important}
+ #notifyDialog .notifyItemTop{gap:5px;flex-wrap:wrap}
+ #notifyDialog .notifyItem p{font-size:13px;line-height:1.55}
+}
+@media(max-width:375px){
+ #notifyDialog .notifyDialogBox{padding:13px 12px!important}
+ #notifyDialog .notifyToolbar{align-items:flex-start;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){#notifyDialog .notifyItem:hover{transform:none}}
+/* Teacher actions: align to the normal action hierarchy; progress submission stays primary. */
+body[data-page="progress"] .progressDashboardIntro{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+body[data-page="progress"] .progressDashboardIntro .progressJump{min-height:42px;padding:10px 16px;border-radius:12px}
+body[data-page="progress"] #progressBulkActions{scroll-margin-top:130px}
+body[data-page="progress"] #progressBulkOpen{min-height:42px;padding:10px 15px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:none;white-space:normal}
+body[data-page="progress"] #progressBulkActions{align-items:center}
+body[data-page="progress"] #progressBulkActions small{font-size:12px;line-height:1.4}
+body[data-page="space"] .spaceTop .uxSpaceTopActions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;justify-content:flex-end}
+body[data-page="space"] .spaceTop .uxSpaceTopActions .btn{min-height:42px;padding:10px 15px;border-radius:12px;font-size:14px;box-shadow:none}
+@media(max-width:720px){
+ body[data-page="progress"] #progressBulkActions{gap:7px}
+ body[data-page="space"] .spaceTop{align-items:flex-start;flex-direction:column;gap:15px;padding:24px 0 16px}
+ body[data-page="space"] .spaceTop .uxSpaceTopActions{width:100%;justify-content:flex-start}
+ body[data-page="space"] .spaceTop .uxSpaceTopActions .btn{min-width:0;white-space:normal}
+}
+
+/* Respect role-gated teacher link even when global .btn sets display. */
+#spaceTeacherBulkLink[hidden]{display:none!important}

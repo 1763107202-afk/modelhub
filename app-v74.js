@@ -2415,7 +2415,7 @@ function setupProgressBulkReminder(reminders){
   q("#progressBulkForm").onsubmit=e=>{e.preventDefault();void sendBulkReminders()};
  }
  actions.hidden=false;
- const bulkButton=q("#progressBulkOpen");if(bulkButton){bulkButton.disabled=!eligible.length;bulkButton.textContent=eligible.length?"🔔 提醒 "+eligible.length+" 名逾期成员":"暂无逾期成员";}
+ const bulkButton=q("#progressBulkOpen");if(bulkButton){bulkButton.disabled=!eligible.length;bulkButton.textContent=eligible.length?"🔔 批量提醒（"+eligible.length+"）":"暂无逾期成员";}
 
 }
 async function loadProgressOverview(){
@@ -3966,6 +3966,7 @@ async function spaceRefresh(){
  if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return}
  const myTeacher=await supabase.from("profiles").select("role,progress_exempt").eq("id",state.user.id).maybeSingle();
  spaceState.teacherAuthorized=!myTeacher.error&&!!(myTeacher.data?.role==="super_admin"||myTeacher.data?.progress_exempt);
+ q("#spaceTeacherBulkLink")?.toggleAttribute("hidden",!spaceState.teacherAuthorized);
  const memberMap=new Map();(m.data||[]).forEach(x=>{let ar=memberMap.get(x.team_progress_id)||[];ar.push(x.member_name_snapshot);memberMap.set(x.team_progress_id,ar)});
  spaceState.items=[...(a.data||[]).map(x=>({...x,type:"personal",owner:x.user_id,title:x.member_name||"成员",body:x.current_progress,goal:x.next_goal})),...(b.data||[]).map(x=>({...x,type:"team",owner:x.created_by,title:x.competition_name||"队伍",body:x.team_progress,goal:x.next_goal,members:memberMap.get(x.id)||[]}))].sort((x,y)=>new Date(y.created_at)-new Date(x.created_at));
  spaceState.comments=c.error?[]:c.data||[];
