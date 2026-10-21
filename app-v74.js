@@ -2175,7 +2175,15 @@ function bindProgressFeedSearch(){
   applyProgressFeedSearch();
 }
 async function loadTeamProgressFeed(){
-  const box=q("#teamProgressFeed");if(!box)return;
+  const box=q("#teamProgressFeed");
+  if(!box){
+    const metric=q("#progressTeamRecordMetric");
+    if(metric){
+      const {count,error}=await supabase.from("team_progress_updates").select("id",{count:"exact",head:true});
+      if(!error)metric.textContent=String(count||0);
+    }
+    return;
+  }
   const [t,m]=await Promise.all([
     supabase.from("team_progress_updates").select("*").order("created_at",{ascending:false}),
     supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot")
@@ -3755,7 +3763,7 @@ async function enforceRememberLoginPolicy(){
   }catch(_e){}
 }
 
-const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map()};
+const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false};
 function spaceKey(type,id){return type+":"+id}
 function spaceFind(type,id){return spaceState.items.find(x=>x.type===type&&x.id===id)}
 function spaceAlert(message){const e=q("#spaceMessage");if(e){e.textContent=message;e.hidden=!message}}
@@ -3788,7 +3796,9 @@ async function spaceRefresh(){
  spaceState.likes=l.error?[]:l.data||[];
  spaceState.reads=new Set((r.data||[]).map(x=>x.comment_id));
  spaceState.directory=new Map((dir.data||[]).map(x=>[x.id,x.full_name||"成员"]));
- if(c.error||r.error||l.error)spaceAlert("互动功能尚未启用：需在网站生产数据库执行 database/progress-space-interactions.sql，原动态仍可正常查看。");else spaceAlert("");
+ spaceState.interactionsReady=!(c.error||r.error||l.error);
+ if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，评论和点赞服务正在配置中。");else spaceAlert("");
+ q("#spaceInboxOpen").hidden=!spaceState.interactionsReady;
  spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
 }
 function spaceRenderBanner(){
@@ -3848,11 +3858,12 @@ function spaceRenderFeed(){
   return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+esc(avatar)+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
   (x.link_url?'<a class="spaceLink" href="'+esc(x.link_url)+'" rel="noopener noreferrer" target="_blank">查看相关链接 ↗</a>':'')+
   (x.attachment_name?'<div class="spaceAttachment">附件：'+esc(x.attachment_name)+'</div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
-  '<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button></div><div class="spaceComments" hidden><div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
+  (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button></div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">暂无符合条件的动态。</div>';
  void (async()=>{try{await preloadProgressSignedUrls(items);for(const x of items){const target=[...box.querySelectorAll(".spaceMedia")].find(el=>el.dataset.spaceMedia===spaceKey(x.type,x.id));if(target)target.innerHTML=await progressAttachmentHtml(x)}bindQiniuOpenButtons(box);bindSiteMedia(box)}catch(err){console.warn("空间附件加载失败",err)}})();
  box.querySelectorAll(".spacePost").forEach(article=>{
   const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
+  if(!spaceState.interactionsReady)return;
   article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden)spaceReadPost(type,id)};
   article.querySelector(".spaceLike").onclick=async()=>{const liked=spaceState.likes.some(l=>l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id);const data={progress_type:type,progress_id:id,user_id:state.user.id};const result=liked?await supabase.from("progress_space_likes").delete().match(data):await supabase.from("progress_space_likes").insert(data);if(result.error)spaceAlert("点赞失败："+result.error.message);else await spaceRefresh()};
   article.querySelectorAll(".spaceReply").forEach(b=>b.onclick=()=>{const parent=spaceState.comments.find(c=>c.id===b.dataset.replyId);article.querySelector('[name="reply"]').value=parent.id;const hint=article.querySelector(".spaceReplyHint");hint.hidden=false;hint.textContent="正在回复 "+(spaceState.directory.get(parent.author_id)||"成员")+"（点击可取消）";hint.onclick=()=>{article.querySelector('[name="reply"]').value="";hint.hidden=true};article.querySelector("textarea").focus()});
