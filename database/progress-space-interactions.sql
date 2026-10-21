@@ -51,13 +51,13 @@ create or replace function private.space_reply_matches(
 ) returns boolean
 language sql stable security definer
 set search_path = ''
-as $
+as $$
   select exists (
     select 1 from public.progress_space_comments parent
     where parent.id=p_parent and parent.progress_type=p_type
       and parent.progress_id=p_post and parent.author_id=p_recipient
   )
-$;
+$$;
 revoke all on function private.space_reply_matches(uuid,text,uuid,uuid) from public,anon;
 grant usage on schema private to authenticated;
 grant execute on function private.space_reply_matches(uuid,text,uuid,uuid) to authenticated;
