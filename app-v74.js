@@ -2338,7 +2338,9 @@ function setupProgressBulkReminder(reminders){
   q("#progressBulkCancel").onclick=()=>dialog.close();
   q("#progressBulkForm").onsubmit=e=>{e.preventDefault();void sendBulkReminders()};
  }
- actions.hidden=!eligible.length;
+ actions.hidden=false;
+ const bulkButton=q("#progressBulkOpen");if(bulkButton){bulkButton.disabled=!eligible.length;bulkButton.textContent=eligible.length?"🔔 提醒 "+eligible.length+" 名逾期成员":"暂无逾期成员";}
+
 }
 async function loadProgressOverview(){
   if(!state.user)return;
@@ -2381,7 +2383,9 @@ async function loadProgressOverview(){
   const permission=await supabase.from("profiles").select("role,progress_exempt").eq("id",state.user.id).maybeSingle();
   const authorized=!permission.error&&(permission.data?.role==="super_admin"||permission.data?.progress_exempt===true);
   if(authorized)setupProgressBulkReminder(reminders);
-  else if(q("#progressBulkActions"))q("#progressBulkActions").hidden=true;
+  else if(q("#progressBulkActions")){q("#progressBulkActions").hidden=false;q("#progressBulkOpen").disabled=true;q("#progressBulkOpen").textContent="仅指导老师可以批量提醒";}
+  if(reminderReq.error&&authorized){const b=q("#progressBulkOpen");if(b){b.disabled=true;b.textContent="成员名单加载失败，请刷新重试";}}
+
   const rc=q("#progressReminderCount");if(rc)rc.textContent=String(reminders.length);
   const rb=q("#progressReminderList");
   if(rb){
