@@ -326,7 +326,7 @@ function renderChrome(){
     : '';
   q("#siteHeader").innerHTML='<header class="siteHeader '+(page==="home"?"homeSearchHeader":"")+'"><div class="wrap headerInner"><a class="brand" href="./index.html"><img src="./assets/lab-logo-transparent.svg?v=3" alt="实验室标志"><span class="brandText"><b><span class="brandSchoolName">江苏科技大学</span><span class="brandLabName">机械创新实验室</span></b><small>交流平台 · 学习资料 · 项目协作</small></span></a>'+globalSearchMarkup+'<nav class="nav">'+
     navLink("lab","./lab.html","实验室")+navLink("works","./works.html","往届作品")+'<span class="navSep"></span>'+
-    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html?v=20260924-2458","资料库")+navLink("projects","./projects.html","项目管理")+navLink("progress","./progress.html","近期进度")+'<span class="navSep"></span>'+
+    navLink("exams","./exams.html","试卷任务")+navLink("tutorials","./tutorials.html","教程")+navLink("files","./files.html?v=20260924-2458","资料库")+navLink("projects","./projects.html","项目管理")+navLink("progress","./progress.html","近期进度")+navLink("space","./space.html","进度空间")+'<span class="navSep"></span>'+
     navLink("submit","./submit.html","提交作业")+navLink("mine","./mine.html","我的提交")+navLink("profile","./profile.html?v=20260925-profilehome11","个人主页")+navLink("download","./download.html","软件下载")+
     '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct"><button id="themeToggle" class="btn ghost themeToggle" type="button"></button><button id="notifyOpen" class="btn ghost hidden" type="button" aria-label="站内通知" title="站内通知">🔔<span id="notifyDot" class="notifyDot hidden"></span></button><a id="adminQuick" class="btn sec hidden" href="./admin.html">管理后台</a><span id="badge" class="pill hidden"></span><button id="changePasswordOpen" class="btn ghost hidden" type="button" title="修改当前账号的登录密码">修改密码</button><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button><button id="accountMenuToggle" class="btn ghost hidden" type="button" aria-label="打开账户菜单" aria-controls="accountMenuPanel" aria-expanded="false">☰</button><div id="accountMenuPanel" class="hidden" aria-label="账户管理"><div class="accountMenuHeading">账户管理</div><a href="./profile.html" class="accountMenuItem">👤　个人主页</a><a id="accountMenuAdmin" href="./admin.html" class="accountMenuItem hidden">⚙️　管理后台</a><button id="accountMenuPassword" class="accountMenuItem" type="button">🔒　修改密码</button><button id="accountMenuLogout" class="accountMenuItem accountMenuExit" type="button">↪　退出登录</button></div></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo-transparent.svg?v=3" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
@@ -2175,7 +2175,15 @@ function bindProgressFeedSearch(){
   applyProgressFeedSearch();
 }
 async function loadTeamProgressFeed(){
-  const box=q("#teamProgressFeed");if(!box)return;
+  const box=q("#teamProgressFeed");
+  if(!box){
+    const metric=q("#progressTeamRecordMetric");
+    if(metric){
+      const {count,error}=await supabase.from("team_progress_updates").select("id",{count:"exact",head:true});
+      if(!error)metric.textContent=String(count||0);
+    }
+    return;
+  }
   const [t,m]=await Promise.all([
     supabase.from("team_progress_updates").select("*").order("created_at",{ascending:false}),
     supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot")
@@ -3754,7 +3762,123 @@ async function enforceRememberLoginPolicy(){
     if(remember==="0"&&!sessionOnly)await supabase.auth.signOut({scope:"local"});
   }catch(_e){}
 }
-async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
+
+const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false};
+function spaceKey(type,id){return type+":"+id}
+function spaceFind(type,id){return spaceState.items.find(x=>x.type===type&&x.id===id)}
+function spaceAlert(message){const e=q("#spaceMessage");if(e){e.textContent=message;e.hidden=!message}}
+function spaceAllowed(){return !!state.user&&(membershipStatus()==="formal"||isAdmin())}
+async function initSpace(){
+ const gate=q("#spaceGate"),content=q("#spaceContent");
+ if(!spaceAllowed()){gate.innerHTML=state.user?'<div class="notice">进度空间仅正式成员开放。</div>':'<div class="notice">登录后查看实验室进度空间。 <button id="spaceLogin" class="btn sec">登录</button></div>';content.hidden=true;q("#spaceLogin")?.addEventListener("click",()=>q("#authOpen")?.click());return}
+ gate.innerHTML="";content.hidden=false;
+ q("#spaceSearch").oninput=e=>{spaceState.keyword=e.target.value.trim().toLowerCase();spaceRenderFeed()};
+ q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceRenderFeed()};
+ q("#spaceInboxOpen").onclick=()=>{q("#spaceInbox").hidden=false;q("#spaceFeedSection").hidden=true;spaceRenderInbox()};
+ q("#spaceInboxClose").onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false};
+ await spaceRefresh();
+ const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),false);
+}
+async function spaceRefresh(){
+ const [a,b,m,c,l,r,dir]=await Promise.all([
+  supabase.from("progress_updates").select("*").order("created_at",{ascending:false}),
+  supabase.from("team_progress_updates").select("*").order("created_at",{ascending:false}),
+  supabase.from("team_progress_members").select("team_progress_id,member_name_snapshot"),
+  supabase.from("progress_space_comments").select("*").order("created_at",{ascending:true}),
+  supabase.from("progress_space_likes").select("*"),
+  supabase.from("progress_space_comment_reads").select("comment_id").eq("user_id",state.user.id),
+  fetchFormalMemberDirectoryOnce()
+ ]);
+ if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return}
+ const memberMap=new Map();(m.data||[]).forEach(x=>{let ar=memberMap.get(x.team_progress_id)||[];ar.push(x.member_name_snapshot);memberMap.set(x.team_progress_id,ar)});
+ spaceState.items=[...(a.data||[]).map(x=>({...x,type:"personal",owner:x.user_id,title:x.member_name||"成员",body:x.current_progress,goal:x.next_goal})),...(b.data||[]).map(x=>({...x,type:"team",owner:x.created_by,title:x.competition_name||"队伍",body:x.team_progress,goal:x.next_goal,members:memberMap.get(x.id)||[]}))].sort((x,y)=>new Date(y.created_at)-new Date(x.created_at));
+ spaceState.comments=c.error?[]:c.data||[];
+ spaceState.likes=l.error?[]:l.data||[];
+ spaceState.reads=new Set((r.data||[]).map(x=>x.comment_id));
+ spaceState.directory=new Map((dir.data||[]).map(x=>[x.id,x.full_name||"成员"]));
+ spaceState.interactionsReady=!(c.error||r.error||l.error);
+ if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，评论和点赞服务正在配置中。");else spaceAlert("");
+ q("#spaceInboxOpen").hidden=!spaceState.interactionsReady;
+ spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
+}
+function spaceRenderBanner(){
+ const unread=spaceState.comments.filter(c=>c.recipient_id===state.user.id&&c.author_id!==state.user.id&&!spaceState.reads.has(c.id)&&spaceFind(c.progress_type,c.progress_id));
+ const bar=q("#spaceUnreadBar");bar.hidden=!unread.length;
+ q("#spaceUnreadCount").textContent=String(unread.length);
+}
+function spaceRenderInbox(){
+ const inbox=q("#spaceInboxList");
+ const mine=spaceState.comments.filter(c=>c.recipient_id===state.user.id&&c.author_id!==state.user.id&&spaceFind(c.progress_type,c.progress_id)).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+ inbox.innerHTML=mine.length?mine.map(c=>{
+  const item=spaceFind(c.progress_type,c.progress_id),unread=!spaceState.reads.has(c.id);
+  return '<button class="spaceInboxItem '+(unread?'isUnread':'')+'" data-comment="'+esc(c.id)+'"><b>'+esc(spaceState.directory.get(c.author_id)||"实验室成员")+'</b><span>'+esc(c.content)+'</span><small>'+esc(item.title)+' · '+fmt(c.created_at)+'</small></button>'
+ }).join(""):'<div class="empty">暂时没有收到评论。</div>';
+ inbox.querySelectorAll("[data-comment]").forEach(b=>b.onclick=async()=>{
+  const c=spaceState.comments.find(x=>x.id===b.dataset.comment);
+  if(!c)return;
+  await spaceMarkRead([c.id]);
+  q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;
+  spaceState.filter="all";q("#spaceFilter").value="all";spaceState.keyword="";q("#spaceSearch").value="";
+  spaceRenderFeed();spaceJump(c.progress_type,c.progress_id,true);
+ });
+}
+async function spaceMarkRead(ids){
+ const missing=ids.filter(id=>!spaceState.reads.has(id));if(!missing.length)return;
+ const {error}=await supabase.from("progress_space_comment_reads").upsert(missing.map(comment_id=>({comment_id,user_id:state.user.id})),{onConflict:"user_id,comment_id",ignoreDuplicates:true});
+ if(error){spaceAlert("标记已读失败："+error.message);return}
+ missing.forEach(id=>spaceState.reads.add(id));spaceRenderBanner();spaceRenderInbox();
+}
+function spaceJump(type,id,expand=true){
+ const target=[...q("#spaceFeed").querySelectorAll("[data-post-id]")].find(x=>x.dataset.postId===id&&x.dataset.postType===type);
+ if(!target){spaceAlert("对应动态已被删除或暂不可见。");return}
+ if(expand){target.querySelector(".spaceComments")?.removeAttribute("hidden");spaceReadPost(type,id)}
+ target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("spaceFlash");setTimeout(()=>target.classList.remove("spaceFlash"),2300);
+ history.replaceState(null,"","./space.html?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id));
+}
+async function spaceReadPost(type,id){
+ const ids=spaceState.comments.filter(c=>c.progress_type===type&&c.progress_id===id&&c.recipient_id===state.user.id&&!spaceState.reads.has(c.id)).map(c=>c.id);
+ await spaceMarkRead(ids);
+}
+function spaceCommentTree(item){
+ const arr=spaceState.comments.filter(c=>c.progress_type===item.type&&c.progress_id===item.id);
+ return arr.length?arr.map(c=>{
+  const parent=arr.find(x=>x.id===c.parent_id);
+  return '<div class="spaceComment" data-comment-id="'+esc(c.id)+'"><b>'+esc(spaceState.directory.get(c.author_id)||"成员")+'</b>'+(parent?' <small>回复 '+esc(spaceState.directory.get(parent.author_id)||"成员")+'</small>':'')+'<span>：'+esc(c.content)+'</span><button class="spaceReply" data-reply-id="'+esc(c.id)+'" type="button">回复</button>'+(c.author_id===state.user.id||authzRole()==="super_admin"?'<button class="spaceDelete" data-delete-id="'+esc(c.id)+'" type="button">删除</button>':'')+'</div>'
+ }).join(""):'<div class="spaceEmptyComments">还没有评论，来说两句吧。</div>';
+}
+function spaceRenderFeed(){
+ const k=spaceState.keyword,items=spaceState.items.filter(x=>(spaceState.filter==="all"||spaceState.filter===x.type)&&(!k||[x.title,x.body,x.goal,x.created_by_name,(x.members||[]).join(" ")].join(" ").toLowerCase().includes(k)));
+ q("#spaceTotal").textContent=items.length;
+ const box=q("#spaceFeed");
+ box.innerHTML=items.length?items.map(x=>{
+  const key=spaceKey(x.type,x.id),liked=spaceState.likes.some(l=>l.progress_type===x.type&&l.progress_id===x.id&&l.user_id===state.user.id);
+  const cnt=spaceState.likes.filter(l=>l.progress_type===x.type&&l.progress_id===x.id).length;
+  const comments=spaceState.comments.filter(c=>c.progress_type===x.type&&c.progress_id===x.id).length;
+  const avatar=(x.type==="team"?"团":String(x.title||"成").slice(0,1));
+  return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+esc(avatar)+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
+  (x.link_url?'<a class="spaceLink" href="'+esc(x.link_url)+'" rel="noopener noreferrer" target="_blank">查看相关链接 ↗</a>':'')+
+  (x.attachment_name?'<div class="spaceAttachment">附件：'+esc(x.attachment_name)+'</div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
+  (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button></div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
+ }).join(""):'<div class="empty">暂无符合条件的动态。</div>';
+ void (async()=>{try{await preloadProgressSignedUrls(items);for(const x of items){const target=[...box.querySelectorAll(".spaceMedia")].find(el=>el.dataset.spaceMedia===spaceKey(x.type,x.id));if(target)target.innerHTML=await progressAttachmentHtml(x)}bindQiniuOpenButtons(box);bindSiteMedia(box)}catch(err){console.warn("空间附件加载失败",err)}})();
+ box.querySelectorAll(".spacePost").forEach(article=>{
+  const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
+  if(!spaceState.interactionsReady)return;
+  article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden)spaceReadPost(type,id)};
+  article.querySelector(".spaceLike").onclick=async()=>{const liked=spaceState.likes.some(l=>l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id);const data={progress_type:type,progress_id:id,user_id:state.user.id};const result=liked?await supabase.from("progress_space_likes").delete().match(data):await supabase.from("progress_space_likes").insert(data);if(result.error)spaceAlert("点赞失败："+result.error.message);else await spaceRefresh()};
+  article.querySelectorAll(".spaceReply").forEach(b=>b.onclick=()=>{const parent=spaceState.comments.find(c=>c.id===b.dataset.replyId);article.querySelector('[name="reply"]').value=parent.id;const hint=article.querySelector(".spaceReplyHint");hint.hidden=false;hint.textContent="正在回复 "+(spaceState.directory.get(parent.author_id)||"成员")+"（点击可取消）";hint.onclick=()=>{article.querySelector('[name="reply"]').value="";hint.hidden=true};article.querySelector("textarea").focus()});
+  article.querySelectorAll(".spaceDelete").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除此评论？"))return;const r=await supabase.from("progress_space_comments").delete().eq("id",b.dataset.deleteId);if(r.error)spaceAlert("删除评论失败："+r.error.message);else await spaceRefresh()});
+  article.querySelector(".spaceCommentForm").onsubmit=async e=>{
+   e.preventDefault();const form=e.currentTarget,textarea=form.querySelector("textarea"),content=textarea.value.trim(),parent=spaceState.comments.find(c=>c.id===form.querySelector('[name="reply"]').value);if(!content)return;
+   const btn=form.querySelector('[type="submit"]');btn.disabled=true;
+   const result=await supabase.from("progress_space_comments").insert({progress_type:type,progress_id:id,author_id:state.user.id,recipient_id:parent?.author_id||item.owner,parent_id:parent?.id||null,content});
+   btn.disabled=false;
+   if(result.error)spaceAlert("评论失败："+result.error.message);else {await spaceRefresh();const refreshed=[...q("#spaceFeed").querySelectorAll(".spacePost")].find(a=>a.dataset.postType===type&&a.dataset.postId===id);refreshed?.querySelector(".spaceComments")?.removeAttribute("hidden");refreshed?.scrollIntoView({block:"center"})}
+  };
+ });
+}
+
+async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="space")return initSpace();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
 renderChrome();
 // Older cached theme-init scripts may rerender labels on DOMContentLoaded; keep the compact icon in control.
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>applyTheme(document.documentElement.dataset.theme||preferredTheme()),{once:true});
