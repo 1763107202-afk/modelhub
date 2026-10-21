@@ -43,6 +43,25 @@ grant select, insert, delete on public.progress_space_comments to authenticated;
 grant select, insert on public.progress_space_comment_reads to authenticated;
 grant select, insert, delete on public.progress_space_likes to authenticated;
 
+
+-- 回复引用验证放在 private schema 中，以免评论表的 RLS 自引用产生递归错误。
+-- 不返回评论内容，只判断引用是否匹配。
+create or replace function private.space_reply_matches(
+  p_parent uuid,p_type text,p_post uuid,p_recipient uuid
+) returns boolean
+language sql stable security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.progress_space_comments parent
+    where parent.id=p_parent and parent.progress_type=p_type
+      and parent.progress_id=p_post and parent.author_id=p_recipient
+  )
+$;
+revoke all on function private.space_reply_matches(uuid,text,uuid,uuid) from public,anon;
+grant usage on schema private to authenticated;
+grant execute on function private.space_reply_matches(uuid,text,uuid,uuid) to authenticated;
+
 -- 会员资格以服务器端 profiles 为准，不能信任客户端传来的成员角色。
 create policy "space_comments_formal_read" on public.progress_space_comments
 for select to authenticated using (
@@ -69,11 +88,7 @@ for insert to authenticated with check (
         where tu.id=progress_id and tu.created_by=recipient_id))
     ))
     or
-    (parent_id is not null and exists (
-      select 1 from public.progress_space_comments parent
-      where parent.id=parent_id and parent.progress_type=progress_type
-        and parent.progress_id=progress_id and parent.author_id=recipient_id
-    ))
+    (parent_id is not null and private.space_reply_matches(parent_id,progress_type,progress_id,recipient_id))
   )
 );
 create policy "space_comments_author_delete" on public.progress_space_comments
