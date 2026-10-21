@@ -136,7 +136,7 @@ html[data-theme="light"] .progressOverview>.personalStatusPanel{background:#f9fb
  .progressSpaceEntry{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:24px 0;padding:26px;border:1px solid #304b6b;border-radius:22px}.progressSpaceEntry p{opacity:.72}@media(max-width:720px){.progressSpaceEntry{flex-direction:column;align-items:stretch}} </style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
 <div class="progressDashboardIntro">
   <div><span class="eyebrow">PROGRESS WORKSPACE</span><h2>实验室进度总览</h2><p>更新项目进展，查看本周期成员状态与团队动态。</p></div>
-  <a class="btn pri progressJump" href="#progressBulkActions">🔔 集体提醒未更新成员</a> <a class="btn sec progressJump" href="#progressComposer">填写进度 <span aria-hidden="true">↗</span></a>
+  <a class="btn sec progressJump" href="#progressComposer">填写进度 <span aria-hidden="true">↗</span></a>
 </div>
 <div class="progressMetrics" aria-label="近期进度数据">
   <section class="progressMetric progressMetricPrimary"><span>个人进度已更新</span><div><strong id="personalUpdatedCount">0</strong><small>人</small></div><p>本周期个人更新人数</p></section>
@@ -196,7 +196,7 @@ html[data-theme="light"] .progressOverview>.personalStatusPanel{background:#f9fb
       <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div>
       <p>每个项目分别保留你的最新一条个人进度；同一项目再次提交后会替换旧记录，并自动清理上一条附件。</p>
     </div>
-<section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div></div><div id="progressBulkActions" class="progressBulkActions" hidden><button id="progressBulkOpen" class="btn pri" type="button">🔔 一键提醒未更新成员</button><small>仅老师手动触发，发送前可取消勾选</small></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
+<section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div></div><div id="progressBulkActions" class="progressBulkActions" hidden><button id="progressBulkOpen" class="btn sec" type="button">🔔 批量提醒</button><small>仅老师手动触发，发送前可取消勾选</small></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
 <section class="progressSummary glass">
   <div class="progressSummaryHead"><div><span class="eyebrow">PERSONAL UPDATED</span><h2>个人进度已更新</h2></div></div>
   <div id="personalUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有个人进度更新</span></div>
@@ -276,7 +276,7 @@ html[data-theme="light"] .progressOverview>.personalStatusPanel{background:#f9fb
   }
 })();
 </script>
-<div id="siteFooter"></div><script src="./cache-loader.js?v=2026.10.21.bulk-reminder-visible12"></script><dialog id="progressBulkDialog" class="progressBulkDialog"><form id="progressBulkForm"><h2>一键提醒未更新成员</h2><p>仅列出超过 14 天未更新的正式成员。通知将逐人发送，不会自动定时推送，也不会在 QQ 群公开。</p><div id="progressBulkChoices" class="progressBulkChoices"></div><p id="progressBulkStatus" role="status">请确认接收成员。</p><div class="progressBulkFooter"><button type="button" id="progressBulkCancel" class="btn sec">取消</button><button type="submit" id="progressBulkSend" class="btn pri">确认发送</button></div></form></dialog><style>
+<div id="siteFooter"></div><script src="./cache-loader.js?v=2026.10.21.mobile-notice-overflow14"></script><dialog id="progressBulkDialog" class="progressBulkDialog"><form id="progressBulkForm"><h2>一键提醒未更新成员</h2><p>仅列出超过 14 天未更新的正式成员。通知将逐人发送，不会自动定时推送，也不会在 QQ 群公开。</p><div id="progressBulkChoices" class="progressBulkChoices"></div><p id="progressBulkStatus" role="status">请确认接收成员。</p><div class="progressBulkFooter"><button type="button" id="progressBulkCancel" class="btn sec">取消</button><button type="submit" id="progressBulkSend" class="btn pri">确认发送</button></div></form></dialog><style>
 .progressBulkActions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}.progressBulkActions[hidden]{display:none}
 .progressBulkDialog{border:1px solid #6388a8;border-radius:16px;background:#112235;color:#edf6ff;width:min(590px,calc(100% - 30px));max-height:85vh;overflow:auto;padding:24px}.progressBulkDialog::backdrop{background:#0009}.progressBulkDialog form{display:flex;flex-direction:column;gap:13px}
 .progressBulkChoices{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto}.progressBulkChoices label{display:flex;gap:10px;align-items:center;padding:9px;border:1px solid #496583;border-radius:9px}
