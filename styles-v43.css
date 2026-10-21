@@ -677,3 +677,7 @@ img.securedMediaHidden{visibility:hidden!important;opacity:0!important}
 .importantAnnouncementBox>.securedMediaState{margin:12px 0}
 html[data-theme="light"] .securedMediaState,html[data-theme="light"] .securedMediaMessage{background:#edf5fc;color:#45617b;border-color:#c4d6e6}
 html[data-theme="light"] .workCover>.securedMediaState{background:linear-gradient(145deg,#11273e,#203f5c);color:#c1d9f1}
+
+/* Show notification settings on desktop without depending on the mobile account menu. */
+.siteHeader .acct #notifySettingsQuick{white-space:nowrap;align-items:center;justify-content:center}
+@media(max-width:720px){.siteHeader .acct #notifySettingsQuick{display:none!important}}
