@@ -1580,9 +1580,8 @@ async function refreshHomeSummary(){
     ?supabase.from("submissions").select("id",{count:"exact",head:true}).eq("user_id",state.user.id)
     :Promise.resolve({count:null,data:null,error:null});
 
-  const [metricsReq,members,reminderReq,mineReq]=await Promise.all([
+  const [metricsReq,reminderReq,mineReq]=await Promise.all([
     fetchHomeMetricsOnce(),
-    fetchMemberCountOnce(),
     reminderPromise,
     minePromise
   ]);
@@ -1600,7 +1599,14 @@ async function refreshHomeSummary(){
   const hp=q("#homeActiveProjects");if(hp)hp.textContent=metricsReq.error?"—":String(metrics?.active_projects??0);
   const hu=q("#homeUpdatedMembers");if(hu)hu.textContent=metricsReq.error?"—":String(metrics?.updated_members_14d??0);
   const ho=q("#homeOverdueMembers");if(ho)ho.textContent=metricsReq.error?"—":String(metrics?.overdue_members_14d??0);
-  const hm=q("#homeMembers");if(hm)hm.textContent=metrics?.formal_members!=null?String(metrics.formal_members):(members.error?"—":String(members.data??0));
+  const hm=q("#homeMembers");
+  if(hm){
+    if(metrics?.formal_members!=null)hm.textContent=String(metrics.formal_members);
+    else{
+      const members=await fetchMemberCountOnce();
+      hm.textContent=members.error?"—":String(members.data??0);
+    }
+  }
   const mine=q("#homeMine");if(mine)mine.textContent=state.user?(mineReq.error?"—":String(mineReq.count||0)):"—";
 }
 async function initHome(){
@@ -3806,11 +3812,11 @@ async function initSpace(){
 }
 async function spaceRefresh(){
  const [a,b,m,c,l,r,dir]=await Promise.all([
-  supabase.from("progress_updates").select("*").order("created_at",{ascending:false}),
-  supabase.from("team_progress_updates").select("*").order("created_at",{ascending:false}),
+  supabase.from("progress_updates").select("id,user_id,member_name,member_major,current_progress,next_goal,link_url,attachment_path,attachment_name,attachment_mime,attachment_size,created_at,project_id").order("created_at",{ascending:false}),
+  supabase.from("team_progress_updates").select("id,created_by,created_by_name,competition_name,team_progress,next_goal,link_url,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,project_id").order("created_at",{ascending:false}),
   supabase.from("team_progress_members").select("team_progress_id,member_name_snapshot"),
-  supabase.from("progress_space_comments").select("*").order("created_at",{ascending:true}),
-  supabase.from("progress_space_likes").select("*"),
+  supabase.from("progress_space_comments").select("id,progress_type,progress_id,author_id,recipient_id,parent_id,content,created_at").order("created_at",{ascending:true}),
+  supabase.from("progress_space_likes").select("progress_type,progress_id,user_id"),
   supabase.from("progress_space_comment_reads").select("comment_id").eq("user_id",state.user.id),
   fetchFormalMemberDirectoryOnce()
  ]);
@@ -3890,7 +3896,20 @@ function spaceRenderFeed(){
   const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
   if(!spaceState.interactionsReady)return;
   article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden)spaceReadPost(type,id)};
-  article.querySelector(".spaceLike").onclick=async()=>{const liked=spaceState.likes.some(l=>l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id);const data={progress_type:type,progress_id:id,user_id:state.user.id};const result=liked?await supabase.from("progress_space_likes").delete().match(data):await supabase.from("progress_space_likes").insert(data);if(result.error)spaceAlert("点赞失败："+result.error.message);else await spaceRefresh()};
+  article.querySelector(".spaceLike").onclick=async e=>{
+    const btn=e.currentTarget;if(btn.disabled)return;
+    const liked=spaceState.likes.some(l=>l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id);
+    const data={progress_type:type,progress_id:id,user_id:state.user.id};
+    btn.disabled=true;
+    try{
+      const result=liked?await supabase.from("progress_space_likes").delete().match(data):await supabase.from("progress_space_likes").insert(data);
+      if(result.error){spaceAlert("点赞失败："+result.error.message);return}
+      if(liked)spaceState.likes=spaceState.likes.filter(l=>!(l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id));
+      else spaceState.likes.push(data);
+      btn.classList.toggle("isLiked",!liked);
+      btn.textContent="♡ 赞 "+spaceState.likes.filter(l=>l.progress_type===type&&l.progress_id===id).length;
+    }finally{btn.disabled=false}
+  };
   article.querySelectorAll(".spaceReply").forEach(b=>b.onclick=()=>{const parent=spaceState.comments.find(c=>c.id===b.dataset.replyId);article.querySelector('[name="reply"]').value=parent.id;const hint=article.querySelector(".spaceReplyHint");hint.hidden=false;hint.textContent="正在回复 "+(spaceState.directory.get(parent.author_id)||"成员")+"（点击可取消）";hint.onclick=()=>{article.querySelector('[name="reply"]').value="";hint.hidden=true};article.querySelector("textarea").focus()});
   article.querySelectorAll(".spaceDelete").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除此评论？"))return;const r=await supabase.from("progress_space_comments").delete().eq("id",b.dataset.deleteId);if(r.error)spaceAlert("删除评论失败："+r.error.message);else await spaceRefresh()});
   article.querySelector(".spaceCommentForm").onsubmit=async e=>{
