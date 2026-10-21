@@ -404,9 +404,16 @@ function renderChrome(){
     }
     document.body.append(mobileNav);
   }
-  const uxStyle=document.createElement("link");
-  uxStyle.rel="stylesheet";uxStyle.href="./ux-phase1-v1.css?v=2026.10.21.ux-phase1-v1";
-  document.head.append(uxStyle);
+  // Read the current app release from its versioned module URL.
+  // The old fixed stylesheet URL caused mobile browsers to keep using stale styles.
+  const uxModuleVersion=new URL(import.meta.url).searchParams.get("v") || globalThis.JUST_APP_VERSION || "2026.10.21.ui-cache-fix15";
+  const uxStyle=document.querySelector('link[data-lab-ux="true"]') || document.createElement("link");
+  uxStyle.rel="stylesheet";
+  uxStyle.dataset.cacheManaged="";
+  uxStyle.dataset.labUx="true";
+  uxStyle.href="./ux-phase1-v1.css?v="+encodeURIComponent(uxModuleVersion);
+  if(!uxStyle.isConnected)document.head.append(uxStyle);
+  document.documentElement.dataset.labUiVersion=uxModuleVersion;
   const themeBtn=q("#themeToggle");
   if(themeBtn){
     applyTheme(document.documentElement.dataset.theme||preferredTheme());
