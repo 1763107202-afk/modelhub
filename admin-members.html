@@ -620,7 +620,7 @@ async function openTeacherNotice(id){
   q("#teacherNoticeRecipient").textContent="收件人："+(member.full_name||"成员")+" · "+(member.email||"")+"（仅该成员可见）";
   q("#teacherNoticeMessage").value="请在实验室网站更新近期个人或团队项目进度，并补充当前成果与下一步计划。";
   q("#teacherNoticeType").value="reminder";
-  q("#teacherNoticeFeedback").textContent="发送后站内通知将立即保存。QQ 私聊需成员绑定机器人并取得平台授权。";
+  q("#teacherNoticeFeedback").textContent="发送后成员可在站内铃铛查看。Server酱微信推送尚未接通，当前仅验证站内通知。";
   await changeTeacherNoticeType();
   q("#teacherNoticeDialog").showModal();
 }
@@ -649,7 +649,7 @@ q("#teacherNoticeForm").onsubmit=async event=>{
     const row={sender_id:state.user.id,recipient_id:teacherNoticeTarget.id,message_type:type,message:type==="reminder"?body:"转发老师评语",comment_id:type==="teacher_comment"?commentId:null};
     const r=await supabase.from("progress_member_notices").insert(row).select("id").single();
     if(r.error)throw r.error;
-    q("#teacherNoticeFeedback").textContent="已成功发送站内通知。QQ 发送取决于机器人授权和成员绑定情况，不代表已发出 QQ 私聊。";
+    q("#teacherNoticeFeedback").textContent="站内通知已保存。请使用收件人账号查看网站右上角铃铛；微信推送尚未开通，暂不会自动向微信发送。";
     btn.textContent="发送成功";
   }catch(e){q("#teacherNoticeFeedback").textContent="发送失败："+(e?.message||String(e))}
   finally{btn.disabled=false;setTimeout(()=>{btn.textContent="发送站内通知"},2000)}
