@@ -662,7 +662,7 @@ body[data-page="home"] .startupSplashLogo{
 
 
 /* Signed HTTPS image previews across works, notices, resources and progress. */
-img.securedMediaHidden{display:none!important}
+img.securedMediaHidden{visibility:hidden!important;opacity:0!important}
 .securedMediaState,.securedMediaMessage{width:100%;min-height:95px;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;line-height:1.5;border:1px dashed #42617f;border-radius:14px;background:#10243a;color:#a9c5e4;font:inherit;font-size:13px}
 .securedMediaState{cursor:pointer;transition:border-color .16s,background .16s}
 .securedMediaState:hover:not(:disabled){border-color:#6d9bc7;background:#183250}
