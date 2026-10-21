@@ -338,3 +338,4 @@
 .progressReminderMeta{color:#d6b98f;font-size:12px;text-align:right}
 .progressReminderOk{padding:12px 14px;border-radius:14px;background:#0d241c;border:1px solid #24513f;color:#aee0c5}
 @media(max-width:650px){.progressReminderItem{align-items:flex-start;flex-direction:column}.progressReminderMeta{text-align:left}}
+\n/* Qiniu signed-image preview must remain in the render tree while loading. */\nimg.securedMediaHidden{visibility:hidden!important;opacity:0!important}\n
