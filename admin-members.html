@@ -606,11 +606,15 @@ async function kickMember(id){
   if(state.profile?.role!=="super_admin")return alert("只有主管理员可以踢出成员");
   const target=state.members.find(x=>x.id===id);if(!target)return;
   if(target.role==="super_admin")return alert("不能踢出主管理员");
-  if(!confirm("确定踢出 "+(target.full_name||target.email)+" 吗？\n\n该账号将被删除，其个人作业和近期进度记录也会删除。此操作不可撤销。"))return;
+  if(!confirm("确定踢出 "+(target.full_name||target.email)+" 吗？\n\n请核对邮箱及注册时间，避免误删同名的新账号。\n注册时间："+new Date(target.created_at).toLocaleString("zh-CN")+"\n\n注意：旧账号的个人进度与团队、项目关联可能丢失。建议先完成账号合并或数据交接。此操作不可撤销。"))return;
   const typed=prompt("为防止误操作，请输入该成员姓名确认：");
   if(typed!==(target.full_name||""))return alert("确认姓名不匹配，已取消");
   const r=await supabase.functions.invoke("remove-member",{body:{user_id:id}});
-  if(r.error){alert("踢出失败："+r.error.message);return}
+  if(r.error){
+    let detail=r.error.message||"删除接口调用失败";
+    try{const payload=await r.error.context?.json();if(payload?.error)detail=payload.error+(payload.stage?"（阶段："+payload.stage+"）":"")}catch(_e){}
+    alert("踢出失败："+detail+"。账号未确认删除，请联系主管理员排查。");return;
+  }
   if(r.data?.error){alert("踢出失败："+r.data.error);return}
   alert("成员已踢出");
   await loadAdminData();
