@@ -649,7 +649,10 @@ q("#teacherNoticeForm").onsubmit=async event=>{
     const row={sender_id:state.user.id,recipient_id:teacherNoticeTarget.id,message_type:type,message:type==="reminder"?body:"转发老师评语",comment_id:type==="teacher_comment"?commentId:null};
     const r=await supabase.from("progress_member_notices").insert(row).select("id").single();
     if(r.error)throw r.error;
-    q("#teacherNoticeFeedback").textContent="站内通知已保存。请使用收件人账号查看网站右上角铃铛；微信推送尚未开通，暂不会自动向微信发送。";
+    q("#teacherNoticeFeedback").textContent="站内通知已保存，正在尝试微信推送…";
+    const push=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:r.data.id}});
+    const msg=push.error?"微信请求失败（站内通知仍有效）":push.data?.ok?"微信接口已接受（请让成员确认收件）":push.data?.message||push.data?.error||"微信未推送";
+    q("#teacherNoticeFeedback").textContent="站内通知已保存。"+msg;
     btn.textContent="发送成功";
   }catch(e){q("#teacherNoticeFeedback").textContent="发送失败："+(e?.message||String(e))}
   finally{btn.disabled=false;setTimeout(()=>{btn.textContent="发送站内通知"},2000)}
