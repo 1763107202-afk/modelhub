@@ -1336,14 +1336,32 @@ function privateImageKey(path="",url=""){
     return u.pathname.replace(/^\/+|\/+$/g,"").split("/").map(decodeURIComponent).join("/");
   }catch(_e){return ""}
 }
-async function privateImageUrl(key){
+async function privateImageUrl(key,{refresh=false}={}){
   const entry=privateImageCache.get(key);
-  if(entry&&entry.until>Date.now())return entry.url;
-  return singleFlight(authScopedKey("qiniu-image:"+key),async()=>{
+  if(refresh)privateImageCache.delete(key);
+  else if(entry&&entry.until>Date.now())return entry.url;
+  return singleFlight(authScopedKey("qiniu-image:"+key+(refresh?":refresh":"")),async()=>{
     const response=await supabase.functions.invoke("qiniu-image-preview",{body:{key}});
     if(response.error||response.data?.error||!response.data?.url)throw new Error(response.data?.error||response.error?.message||"安全预览地址获取失败");
-    privateImageCache.set(key,{url:response.data.url,until:Date.now()+120000});
+    const until=Math.min(Date.now()+90*1000,Number(response.data?.expiresAt||0)*1000-15000||Date.now()+90*1000);
+    privateImageCache.set(key,{url:response.data.url,until});
     return response.data.url;
+  });
+}
+function loadSignedImage(img,url,timeoutMs=17000){
+  return new Promise((resolve,reject)=>{
+    let settled=false;
+    const timer=setTimeout(()=>finish(new Error("图片加载超时")),timeoutMs);
+    const finish=error=>{
+      if(settled)return;
+      settled=true;clearTimeout(timer);img.onload=null;img.onerror=null;
+      if(error)reject(error);else resolve();
+    };
+    img.loading="eager";
+    img.onload=()=>finish();
+    img.onerror=()=>finish(new Error("图片链接无法加载"));
+    img.src=url;
+    if(img.complete&&img.naturalWidth>0)finish();
   });
 }
 function siteImageMarkup(url="",path="",imageClass="",alt="图片"){
@@ -1354,48 +1372,36 @@ function siteImageMarkup(url="",path="",imageClass="",alt="图片"){
   return url?'<div class="securedMediaMessage" role="status">当前图片地址不支持安全预览</div>':"";
 }
 function bindSiteMedia(scope=document){
-  const load=(img,state)=>{
+  const load=async(img,state)=>{
     if(!img.isConnected||img.dataset.mediaBusy==="1")return;
     const key=img.dataset.secureImageKey;
     if(!key)return;
     img.dataset.mediaBusy="1";
-    state.disabled=true;
-    state.textContent="正在加载安全预览…";
+    state.disabled=true;state.textContent="正在加载七牛云安全预览…";
     state.classList.remove("hidden");
     img.classList.add("securedMediaHidden");
     img.removeAttribute("src");
-    void (async()=>{
-      try{
-        const url=await privateImageUrl(key);
+    try{
+      let lastError;
+      for(let attempt=0;attempt<2;attempt++){
         if(!img.isConnected)return;
-        await new Promise((resolve,reject)=>{
-          let settled=false;
-          const finish=error=>{
-            if(settled)return;
-            settled=true;
-            clearTimeout(timer);
-            img.onload=null;img.onerror=null;
-            if(error)reject(error);else resolve();
-          };
-          const timer=setTimeout(()=>finish(new Error("图片加载超时，请重试")),15000);
-          img.onload=()=>finish();
-          img.onerror=()=>finish(new Error("图片 HTTPS 预览失败"));
-          img.src=url;
-          if(img.complete&&img.naturalWidth>0)finish();
-        });
-        if(!img.isConnected)return;
-        img.classList.remove("securedMediaHidden");
-        state.classList.add("hidden");
-      }catch(err){
-        privateImageCache.delete(key);
-        img.removeAttribute("src");
-        img.classList.add("securedMediaHidden");
-        state.textContent="图片暂不可显示 · 点击重试";
-        state.disabled=false;
-        state.classList.remove("hidden");
-        console.warn("七牛私有图片预览失败",key,err);
-      }finally{delete img.dataset.mediaBusy}
-    })();
+        try{
+          const url=await privateImageUrl(key,{refresh:attempt>0});
+          await loadSignedImage(img,url,attempt===0?16000:19000);
+          if(!img.isConnected)return;
+          img.classList.remove("securedMediaHidden");
+          state.classList.add("hidden");
+          return;
+        }catch(error){
+          lastError=error;privateImageCache.delete(key);
+          img.removeAttribute("src");
+          if(attempt===0){state.textContent="线路繁忙，正在自动重试…";}
+        }
+      }
+      state.textContent="预览暂不可用 · 点击重新尝试";
+      state.disabled=false;state.classList.remove("hidden");
+      console.warn("七牛图片预览失败",key,lastError);
+    }finally{delete img.dataset.mediaBusy}
   };
   let observer=null;
   if(typeof IntersectionObserver!=="undefined"){
@@ -1404,9 +1410,9 @@ function bindSiteMedia(scope=document){
         if(!entry.isIntersecting)continue;
         observer.unobserve(entry.target);
         const img=entry.target.previousElementSibling;
-        if(img?.matches("img.securedMediaImage"))load(img,entry.target);
+        if(img?.matches("img.securedMediaImage"))void load(img,entry.target);
       }
-    },{rootMargin:"280px 0px"});
+    },{rootMargin:"320px 0px"});
   }
   scope.querySelectorAll("img.securedMediaImage[data-secure-image-key]").forEach(img=>{
     if(img.dataset.mediaBound==="1")return;
@@ -1414,14 +1420,12 @@ function bindSiteMedia(scope=document){
     let state=img.nextElementSibling;
     if(!state?.classList?.contains("securedMediaState")){
       state=document.createElement("button");
-      state.type="button";
-      state.className="securedMediaState";
+      state.type="button";state.className="securedMediaState";
       state.textContent="正在准备图片预览…";
       img.insertAdjacentElement("afterend",state);
     }
-    state.onclick=()=>{privateImageCache.delete(img.dataset.secureImageKey);load(img,state)};
-    if(observer)observer.observe(state);
-    else load(img,state);
+    state.onclick=()=>{privateImageCache.delete(img.dataset.secureImageKey);void load(img,state)};
+    if(observer)observer.observe(state);else void load(img,state);
   });
   scope.querySelectorAll("img.externalMediaPreview").forEach(img=>{
     img.onerror=()=>{
