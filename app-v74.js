@@ -1275,7 +1275,25 @@ async function openQiniuKey(key,button=null){
     if(button){button.disabled=false;button.textContent=old;}
   }
 }
+async function playQiniuProgressVideo(btn){
+  const wrapper=btn.closest(".progressSecureVideo");
+  const video=wrapper?.querySelector("video");
+  if(!video)return;
+  const original=btn.textContent;
+  btn.disabled=true;btn.textContent="正在生成七牛云播放链接…";
+  try{
+    const info=await qiniuSignedInfo(btn.dataset.key,1200);
+    if(!info?.url||!info.url.startsWith("https://"))throw new Error("没有可用的 HTTPS 播放线路");
+    video.src=info.url;video.hidden=false;video.load();
+    await video.play();
+    btn.textContent="重新获取播放链接";
+  }catch(error){
+    btn.textContent="播放失败 · 点击重试";
+    toast("视频播放暂不可用："+(error?.message||String(error)));
+  }finally{btn.disabled=false}
+}
 function bindQiniuOpenButtons(scope=document){
+  scope.querySelectorAll(".qiniuPlayBtn").forEach(btn=>{btn.onclick=()=>playQiniuProgressVideo(btn)});
   scope.querySelectorAll(".qiniuOpenBtn").forEach(btn=>{
     btn.onclick=()=>openQiniuKey(btn.dataset.key||"",btn);
   });
@@ -2034,6 +2052,9 @@ async function progressAttachmentHtml(x){
   if(isQiniuStorageKey(x.attachment_path)){
     if(kind==="image")return '<div class="progressSecurePreview">'+siteImageMarkup("",x.attachment_path,"progressMedia progressImage",x.attachment_name||"进度图片")+
       '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'">查看原图 · '+esc(x.attachment_name||"图片")+'</button></div>';
+    if(kind==="video"&&/\\.(mp4|webm)$/i.test(x.attachment_name||x.attachment_path)){
+      return '<div class="progressSecureVideo"><video class="progressMedia progressVideo" controls playsinline preload="none" hidden></video><div class="actions"><button type="button" class="progressAttachment btn pri qiniuPlayBtn" data-key="'+esc(x.attachment_path)+'">▶ 在线播放 · '+esc(x.attachment_name||"视频")+'</button><button type="button" class="progressAttachment btn sec qiniuOpenBtn" data-key="'+esc(x.attachment_path)+'">打开 / 下载原视频</button></div></div>';
+    }
     const label=kind==="video"?"打开 / 下载视频":"打开附件";
     return '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'">'+label+' · '+esc(x.attachment_name||"文件")+'</button>';
   }
