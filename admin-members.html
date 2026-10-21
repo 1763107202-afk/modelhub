@@ -141,6 +141,15 @@ html[data-theme="light"] .storageHealthDetails>summary{color:#486783}
   </form>
 </dialog>
 
+<dialog id="teacherNoticeDialog" class="dialog">
+<form id="teacherNoticeForm" class="dialogbox">
+<h2>向成员发送提醒</h2><p id="teacherNoticeRecipient" class="msg"></p>
+<label class="field">通知方式<select id="teacherNoticeType"><option value="reminder">催更：提醒更新进度</option><option value="teacher_comment">转发我发表的评语</option></select></label>
+<label class="field" id="teacherNoticeCommentWrap" hidden>选择自己发表的评论<select id="teacherNoticeComment"></select></label>
+<label class="field" id="teacherNoticeMessageWrap">提醒内容<textarea id="teacherNoticeMessage" maxlength="500" rows="3" style="width:100%;border-radius:9px;background:#081524;color:#edf6ff;padding:10px"></textarea></label>
+<p id="teacherNoticeFeedback" class="msg" aria-live="polite"></p>
+<div class="dialogActions"><button type="button" class="btn ghost" id="teacherNoticeCancel">取消</button><button class="btn pri" id="teacherNoticeSubmit" type="submit">发送站内通知</button></div>
+</form></dialog>
 <dialog id="passwordDialog" class="dialog">
   <form id="passwordForm" class="dialogbox">
     <h2>重置成员密码</h2>
@@ -532,7 +541,7 @@ function render(){
       '<td>'+(m.membership_status==="freshman"
         ? (latest?'<b>'+esc(latest.exams?.title||"未关联试卷")+'</b><div class="muted">新生作业 · '+fmt(latest.created_at)+'</div>':'<span class="muted">暂无作业</span>')
         : (latestProgress?'<b>'+esc(latestProgress._kind==="team"?(latestProgress.competition_name||"队伍进度已更新"):(latestProgress.current_progress||"个人进度已更新"))+'</b><div class="muted">'+(latestProgress._kind==="team"?"队伍进度 · ":"个人进度 · ")+fmt(latestProgress.created_at)+'</div>':'<b>初始进度周期</b><div class="muted">'+fmt(initialProgressReference(m))+'</div>'))+'</td>'+
-      '<td><div class="actions"><a class="btn ghost" href="./member.html?id='+encodeURIComponent(m.id)+'">主页</a><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a>'+(isDeputyAdmin()?"":('<button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为管理")+'</button>':"")+(state.profile?.role==="super_admin"&&m.id!==state.user?.id?'<button class="btn sec resetPwdBtn" data-id="'+esc(m.id)+'">重置密码</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")))+'</div></td>'+
+      '<td><div class="actions"><a class="btn ghost" href="./member.html?id='+encodeURIComponent(m.id)+'">主页</a><a class="btn pri" href="./member-submissions.html?id='+encodeURIComponent(m.id)+'">作业</a>'+(isDeputyAdmin()?"":('<button class="btn sec teacherNoticeBtn" data-id="'+esc(m.id)+'">🔔 提醒 / 评语</button><button class="btn sec editBtn" data-id="'+esc(m.id)+'">编辑资料</button>'+(m.membership_status==="freshman"?'<button class="btn pri promoteBtn" data-id="'+esc(m.id)+'">转为正式成员</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"?'<button class="btn '+(m.role==="admin"?"danger":"pri")+' roleBtn" data-id="'+esc(m.id)+'" data-role="'+esc(m.role)+'">'+(m.role==="admin"?"取消副管理员":"设为管理")+'</button>':"")+(state.profile?.role==="super_admin"&&m.id!==state.user?.id?'<button class="btn sec resetPwdBtn" data-id="'+esc(m.id)+'">重置密码</button>':"")+(state.profile?.role==="super_admin"&&m.role!=="super_admin"&&m.id!==state.user?.id?'<button class="btn danger kickBtn" data-id="'+esc(m.id)+'">踢出成员</button>':"")))+'</div></td>'+
     '</tr>';
   }).join("");
   q("#empty").classList.toggle("hidden",state.filtered.length>0);
@@ -549,7 +558,7 @@ function render(){
     const updated=Number(state.metrics.progress_updated_members||0);
     q("#periodProgressHint").textContent="最近 "+Number(state.metrics.period_days||14)+" 天 · 更新率 "+(formalMembers?(updated/formalMembers*100).toFixed(1):"0.0")+"%";
   }
-  document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".resetPwdBtn").forEach(b=>b.onclick=()=>openPasswordReset(b.dataset.id));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));
+  document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.id));document.querySelectorAll(".promoteBtn").forEach(b=>b.onclick=()=>promoteMember(b.dataset.id));document.querySelectorAll(".roleBtn").forEach(b=>b.onclick=()=>toggleRole(b.dataset.id,b.dataset.role));document.querySelectorAll(".resetPwdBtn").forEach(b=>b.onclick=()=>openPasswordReset(b.dataset.id));document.querySelectorAll(".kickBtn").forEach(b=>b.onclick=()=>kickMember(b.dataset.id));document.querySelectorAll(".teacherNoticeBtn").forEach(b=>b.onclick=()=>openTeacherNotice(b.dataset.id));
 }
 function openDetail(id){
   const m=state.members.find(x=>x.id===id), arr=state.subs.filter(x=>x.user_id===id).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
@@ -602,6 +611,49 @@ async function resetMemberPassword(){
   }catch(e){msg.textContent="重置失败："+(e?.message||String(e))}
   finally{btn.disabled=false;btn.textContent=old}
 }
+let teacherNoticeTarget=null;
+async function openTeacherNotice(id){
+  if(!canFullyManageMembers())return alert("只有主管理员或指导老师可以发送提醒");
+  const member=state.members.find(x=>x.id===id);
+  if(!member||member.id===state.user?.id)return;
+  teacherNoticeTarget=member;
+  q("#teacherNoticeRecipient").textContent="收件人："+(member.full_name||"成员")+" · "+(member.email||"")+"（仅该成员可见）";
+  q("#teacherNoticeMessage").value="请在实验室网站更新近期个人或团队项目进度，并补充当前成果与下一步计划。";
+  q("#teacherNoticeType").value="reminder";
+  q("#teacherNoticeFeedback").textContent="发送后站内通知将立即保存。QQ 私聊需成员绑定机器人并取得平台授权。";
+  await changeTeacherNoticeType();
+  q("#teacherNoticeDialog").showModal();
+}
+async function changeTeacherNoticeType(){
+  const comment=q("#teacherNoticeType").value==="teacher_comment";
+  q("#teacherNoticeCommentWrap").hidden=!comment;
+  q("#teacherNoticeMessageWrap").hidden=comment;
+  if(!comment)return;
+  const sel=q("#teacherNoticeComment");sel.innerHTML='<option value="">加载评语…</option>';
+  const r=await supabase.from("progress_space_comments").select("id,content,created_at").eq("author_id",state.user.id).order("created_at",{ascending:false}).limit(40);
+  if(r.error){sel.innerHTML='<option value="">评语加载失败</option>';q("#teacherNoticeFeedback").textContent=r.error.message;return}
+  sel.innerHTML='<option value="">选择评论</option>'+(r.data||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc((x.content||"").slice(0,90))+'</option>').join("");
+}
+q("#teacherNoticeType").onchange=()=>void changeTeacherNoticeType();
+q("#teacherNoticeCancel").onclick=()=>q("#teacherNoticeDialog").close();
+q("#teacherNoticeForm").onsubmit=async event=>{
+  event.preventDefault();
+  if(!teacherNoticeTarget||!canFullyManageMembers())return;
+  const type=q("#teacherNoticeType").value,commentId=q("#teacherNoticeComment").value;
+  const body=q("#teacherNoticeMessage").value.trim();
+  if(type==="teacher_comment"&&!commentId){q("#teacherNoticeFeedback").textContent="请选择自己发表的评论";return}
+  if(type==="reminder"&&!body){q("#teacherNoticeFeedback").textContent="请填写提醒内容";return}
+  const btn=q("#teacherNoticeSubmit");btn.disabled=true;
+  q("#teacherNoticeFeedback").textContent="正在发送站内消息…";
+  try{
+    const row={sender_id:state.user.id,recipient_id:teacherNoticeTarget.id,message_type:type,message:type==="reminder"?body:"转发老师评语",comment_id:type==="teacher_comment"?commentId:null};
+    const r=await supabase.from("progress_member_notices").insert(row).select("id").single();
+    if(r.error)throw r.error;
+    q("#teacherNoticeFeedback").textContent="已成功发送站内通知。QQ 发送取决于机器人授权和成员绑定情况，不代表已发出 QQ 私聊。";
+    btn.textContent="发送成功";
+  }catch(e){q("#teacherNoticeFeedback").textContent="发送失败："+(e?.message||String(e))}
+  finally{btn.disabled=false;setTimeout(()=>{btn.textContent="发送站内通知"},2000)}
+};
 async function kickMember(id){
   if(state.profile?.role!=="super_admin")return alert("只有主管理员可以踢出成员");
   const target=state.members.find(x=>x.id===id);if(!target)return;
