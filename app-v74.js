@@ -2157,12 +2157,12 @@ async function progressAttachmentHtml(x){
   const kind=progressFileKind(x.attachment_name,x.attachment_mime);
   if(isQiniuStorageKey(x.attachment_path)){
     if(kind==="image")return '<div class="progressSecurePreview">'+siteImageMarkup("",x.attachment_path,"progressMedia progressImage",x.attachment_name||"进度图片")+
-      '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'">查看原图 · '+esc(x.attachment_name||"图片")+'</button></div>';
-    if(kind==="video"&&/\\.(mp4|webm)$/i.test(x.attachment_name||x.attachment_path)){
-      return '<div class="progressSecureVideo"><video class="progressMedia progressVideo" controls playsinline preload="none" hidden></video><div class="actions"><button type="button" class="progressAttachment btn pri qiniuPlayBtn" data-key="'+esc(x.attachment_path)+'">▶ 在线播放 · '+esc(x.attachment_name||"视频")+'</button><button type="button" class="progressAttachment btn sec qiniuOpenBtn" data-key="'+esc(x.attachment_path)+'">打开 / 下载原视频</button></div></div>';
+      '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'" title="'+esc(x.attachment_name||"图片")+'">查看原图 ↗</button></div>';
+    if(kind==="video"&&/\.(mp4|webm)$/i.test(x.attachment_name||x.attachment_path)){
+      return '<div class="progressSecureVideo"><video class="progressMedia progressVideo" controls playsinline preload="none" hidden></video><div class="actions"><button type="button" class="progressAttachment btn pri qiniuPlayBtn" data-key="'+esc(x.attachment_path)+'" title="'+esc(x.attachment_name||"视频")+'">▶ 在线播放</button><button type="button" class="progressAttachment btn sec qiniuOpenBtn" data-key="'+esc(x.attachment_path)+'" title="'+esc(x.attachment_name||"视频")+'">↗ 打开 / 下载</button></div></div>';
     }
     const label=kind==="video"?"打开 / 下载视频":"打开附件";
-    return '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'">'+label+' · '+esc(x.attachment_name||"文件")+'</button>';
+    return '<button class="progressAttachment btn sec qiniuOpenBtn" type="button" data-key="'+esc(x.attachment_path)+'" title="'+esc(x.attachment_name||"文件")+'">'+label+'</button>';
   }
   let hit=progressSignedUrlCache.get(x.attachment_path);
   if(!hit||hit.expiresAt<=Date.now()){
@@ -2173,7 +2173,7 @@ async function progressAttachmentHtml(x){
   const url=hit.url;
   if(kind==="image")return '<a href="'+esc(url)+'" target="_blank" rel="noopener"><img class="progressMedia progressImage" loading="lazy" decoding="async" src="'+esc(url)+'" alt="'+esc(x.attachment_name||"进度图片")+'"></a>';
   if(kind==="video")return '<video class="progressMedia progressVideo" controls preload="metadata" playsinline src="'+esc(url)+'"></video>';
-  return '<a class="progressAttachment btn sec" href="'+esc(url)+'" target="_blank" rel="noopener">打开附件 · '+esc(x.attachment_name||"文件")+'</a>';
+  return '<a class="progressAttachment btn sec" href="'+esc(url)+'" target="_blank" rel="noopener" title="'+esc(x.attachment_name||"文件")+'">打开附件 ↗</a>';
 }
 async function progressCardHtml(x,adminMode=false){
   const media=await progressAttachmentHtml(x);
@@ -4080,7 +4080,7 @@ function spaceRenderFeed(){
   const avatar=(x.type==="team"?"团":String(x.title||"成").slice(0,1));
   return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+esc(avatar)+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
   (x.link_url?'<a class="spaceLink" href="'+esc(x.link_url)+'" rel="noopener noreferrer" target="_blank">查看相关链接 ↗</a>':'')+
-  (x.attachment_name?'<div class="spaceAttachment">附件：'+esc(x.attachment_name)+'</div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
+  (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
   (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">暂无符合条件的动态。</div>';
  void (async()=>{try{await preloadProgressSignedUrls(items);for(const x of items){const target=[...box.querySelectorAll(".spaceMedia")].find(el=>el.dataset.spaceMedia===spaceKey(x.type,x.id));if(target)target.innerHTML=await progressAttachmentHtml(x)}bindQiniuOpenButtons(box);bindSiteMedia(box)}catch(err){console.warn("空间附件加载失败",err)}})();
