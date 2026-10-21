@@ -3918,7 +3918,9 @@ function spaceTeacherDialog({mode,commentId=null,item=null}){
      const row={sender_id:state.user.id,recipient_id:recipient,message_type:mode,message:mode==="reminder"?form.elements.message.value.trim():"转发评语",comment_id:mode==="teacher_comment"?c.id:null};
      const result=await supabase.from("progress_member_notices").insert(row).select("id").single();
      if(result.error)throw result.error;
-     feedback.textContent="发送成功：收件人可在网站铃铛查看。微信推送尚未接通。";
+     feedback.textContent="站内通知已保存，正在发送微信摘要…";
+     const push=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});
+     feedback.textContent="站内通知已保存。"+(push.error?"微信接口调用失败":push.data?.ok?"微信接口已接受，请让成员确认收件":push.data?.message||push.data?.error||"微信未发送");
      if(recipient===state.user.id){globalThis.__notifyCache=null;void loadSiteNotifications(false)}
      submit.textContent="已发送";
      setTimeout(()=>dialog.close(),1600);
