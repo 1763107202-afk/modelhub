@@ -175,3 +175,6 @@ body[data-page="space"] .spaceTop .uxSpaceTopActions .btn{min-height:42px;paddin
  body[data-page="space"] .spaceTop .uxSpaceTopActions{width:100%;justify-content:flex-start}
  body[data-page="space"] .spaceTop .uxSpaceTopActions .btn{min-width:0;white-space:normal}
 }
+
+/* Respect role-gated teacher link even when global .btn sets display. */
+#spaceTeacherBulkLink[hidden]{display:none!important}
