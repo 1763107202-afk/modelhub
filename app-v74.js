@@ -3961,9 +3961,12 @@ async function initSpace(){
  const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),false);
 }
 async function spaceRefresh(){
+ // 21 days is a visibility window for the community feed only.
+ // Do not remove original progress, project, or attachment records.
+ const spaceCutoff=new Date(Date.now()-21*24*60*60*1000).toISOString();
  const [a,b,m,c,l,r,dir]=await Promise.all([
-  supabase.from("progress_updates").select("id,user_id,member_name,member_major,current_progress,next_goal,link_url,attachment_path,attachment_name,attachment_mime,attachment_size,created_at,project_id").order("created_at",{ascending:false}),
-  supabase.from("team_progress_updates").select("id,created_by,created_by_name,competition_name,team_progress,next_goal,link_url,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,project_id").order("created_at",{ascending:false}),
+  supabase.from("progress_updates").select("id,user_id,member_name,member_major,current_progress,next_goal,link_url,attachment_path,attachment_name,attachment_mime,attachment_size,created_at,project_id").gte("created_at",spaceCutoff).order("created_at",{ascending:false}),
+  supabase.from("team_progress_updates").select("id,created_by,created_by_name,competition_name,team_progress,next_goal,link_url,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,project_id").gte("created_at",spaceCutoff).order("created_at",{ascending:false}),
   supabase.from("team_progress_members").select("team_progress_id,member_name_snapshot"),
   supabase.from("progress_space_comments").select("id,progress_type,progress_id,author_id,recipient_id,parent_id,content,created_at").order("created_at",{ascending:true}),
   supabase.from("progress_space_likes").select("progress_type,progress_id,user_id"),
