@@ -388,3 +388,11 @@ html[data-theme="light"] body[data-page="space"] .spacePrivateFeedback{backgroun
 html[data-theme="light"] body[data-page="space"] .spacePrivateFeedback summary{color:#215c83}
 html[data-theme="light"] body[data-page="space"] .spacePrivateNote{background:#fff}
 @media(max-width:600px){body[data-page="space"] .spacePrivateFeedback{margin-left:0;max-width:100%}body[data-page="space"] .spacePrivateFeedback summary{align-items:flex-start}}
+
+/* UX26: refresh controls and private feedback unread marker */
+body[data-page="space"] .spaceToolbar{flex-wrap:wrap;align-items:center}
+body[data-page="space"] #spaceRefresh{min-height:43px;flex:0 0 auto;padding:9px 14px;white-space:nowrap}
+body[data-page="space"] #spaceRefresh:disabled{opacity:.58;cursor:wait}
+body[data-page="space"] .spaceSyncStatus{margin:-12px 0 13px;font-size:12px;color:#83a9c8;min-height:1.1em}
+body[data-page="space"] .spacePrivateUnread{padding:3px 7px;border-radius:8px;background:#9b3c4b;color:#fff;font-size:11px;font-weight:700}
+@media(max-width:600px){body[data-page="space"] .spaceToolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,125px);gap:9px}body[data-page="space"] #spaceRefresh{grid-column:1/-1;width:100%}}
