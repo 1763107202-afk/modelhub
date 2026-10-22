@@ -686,7 +686,7 @@ async function fetchTeacherNotices(){
   return r.data||[];
 }
 function teacherNoticeUrl(x){
-  if(x.progress_type&&x.progress_id)return "./space.html?type="+encodeURIComponent(x.progress_type)+"&id="+encodeURIComponent(x.progress_id);
+  if(x.progress_type&&x.progress_id)return "./space.html?type="+encodeURIComponent(x.progress_type)+"&id="+encodeURIComponent(x.progress_id)+(x.message_type==="teacher_comment"?"&note="+encodeURIComponent(x.id):"");
   return "./progress.html#progressComposer";
 }
 function notificationTypeName(t){
@@ -3991,7 +3991,7 @@ async function enforceRememberLoginPolicy(){
   }catch(_e){}
 }
 
-const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0,lastRefreshAt:0,pruneTimer:null,expanded:new Set()};
+const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0,lastRefreshAt:0,pruneTimer:null,expanded:new Set(),privateNotes:[],userId:null};
 const SPACE_WINDOW_MS=21*24*60*60*1000;
 function spaceVisibleItems(){const cutoff=Date.now()-SPACE_WINDOW_MS;return spaceState.items.filter(item=>Number.isFinite(Date.parse(item.created_at))&&Date.parse(item.created_at)>=cutoff)}
 function spaceSafeLink(raw){try{const url=new URL(raw,location.href);return ["https:","http:"].includes(url.protocol)?url.href:""}catch(_e){return ""}}
@@ -4021,21 +4021,32 @@ async function initSpace(){
    if(document.visibilityState==="visible"&&spaceAllowed()&&Date.now()-spaceState.lastRefreshAt>10*60*1000)void spaceRefresh();
   });
  }
- const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),params.get("open")==="comments");
+ const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),params.get("open")==="comments",params.get("note"));
 }
 async function spaceRefresh(){
  // 21 days is a visibility window for the community feed only.
  // Do not remove original progress, project, or attachment records.
+ const requestUserId=state.user.id;
+ if(spaceState.userId!==requestUserId){
+   spaceState.userId=requestUserId;
+   spaceState.items=[];spaceState.comments=[];spaceState.likes=[];spaceState.privateNotes=[];
+   spaceState.reads.clear();spaceState.expanded.clear();
+   spaceState.teacherAuthorized=false;
+   q("#spaceFeed").innerHTML='<div class="empty">正在同步当前账号的动态…</div>';
+ }
  const spaceCutoff=new Date(Date.now()-SPACE_WINDOW_MS).toISOString();
- const [a,b,m,c,l,r,dir]=await Promise.all([
+ const teacherCutoff=new Date(Date.now()-15*24*60*60*1000).toISOString();
+ const [a,b,m,c,l,r,dir,privateReply]=await Promise.all([
   supabase.from("progress_updates").select("id,user_id,member_name,member_major,current_progress,next_goal,link_url,attachment_path,attachment_name,attachment_mime,attachment_size,created_at,project_id").gte("created_at",spaceCutoff).order("created_at",{ascending:false}),
   supabase.from("team_progress_updates").select("id,created_by,created_by_name,competition_name,team_progress,next_goal,link_url,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,project_id").gte("created_at",spaceCutoff).order("created_at",{ascending:false}),
   supabase.from("team_progress_members").select("team_progress_id,member_name_snapshot"),
   supabase.from("progress_space_comments").select("id,progress_type,progress_id,author_id,recipient_id,parent_id,content,created_at").gte("created_at",spaceCutoff).order("created_at",{ascending:true}),
   supabase.from("progress_space_likes").select("progress_type,progress_id,user_id").gte("created_at",spaceCutoff),
   supabase.from("progress_space_comment_reads").select("comment_id").eq("user_id",state.user.id),
-  fetchFormalMemberDirectoryOnce()
+  fetchFormalMemberDirectoryOnce(),
+  supabase.from("progress_member_notices").select("id,progress_type,progress_id,sender_id,recipient_id,sender_name,message,created_at,read_at").eq("message_type","teacher_comment").not("progress_id","is",null).gte("created_at",teacherCutoff).order("created_at",{ascending:false}).limit(100)
  ]);
+ if(state.user?.id!==requestUserId)return;
  if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return}
  const myTeacher=await supabase.from("profiles").select("role,progress_exempt").eq("id",state.user.id).maybeSingle();
  spaceState.teacherAuthorized=!myTeacher.error&&!!(myTeacher.data?.role==="super_admin"||myTeacher.data?.progress_exempt);
@@ -4044,6 +4055,7 @@ async function spaceRefresh(){
  spaceState.lastRefreshAt=Date.now();
  spaceState.items=[...(a.data||[]).map(x=>({...x,type:"personal",owner:x.user_id,title:x.member_name||"成员",body:x.current_progress,goal:x.next_goal})),...(b.data||[]).map(x=>({...x,type:"team",owner:x.created_by,title:x.competition_name||"队伍",body:x.team_progress,goal:x.next_goal,members:memberMap.get(x.id)||[]}))].sort((x,y)=>new Date(y.created_at)-new Date(x.created_at));
  spaceState.comments=c.error?[]:c.data||[];
+ spaceState.privateNotes=privateReply.error?[]:(privateReply.data||[]).filter(x=>x.sender_id===requestUserId||x.recipient_id===requestUserId);
  spaceState.likes=l.error?[]:l.data||[];
  spaceState.reads=new Set((r.data||[]).map(x=>x.comment_id));
  spaceState.directory=new Map((dir.data||[]).map(x=>[x.id,x.full_name||"成员"]));
@@ -4079,7 +4091,7 @@ async function spaceMarkRead(ids){
  if(error){spaceAlert("标记已读失败："+error.message);return}
  missing.forEach(id=>spaceState.reads.add(id));spaceRenderBanner();spaceRenderInbox();
 }
-function spaceJump(type,id,expand=true){
+function spaceJump(type,id,expand=true,noteId=null){
  let target=[...q("#spaceFeed").querySelectorAll("[data-post-id]")].find(x=>x.dataset.postId===id&&x.dataset.postType===type);
  if(!target){
   const index=spaceVisibleItems().findIndex(x=>x.id===id&&x.type===type);
@@ -4100,6 +4112,13 @@ function spaceJump(type,id,expand=true){
    return;
  }
  if(expand){spaceState.expanded.add(spaceKey(type,id));target.querySelector(".spaceComments")?.removeAttribute("hidden");spaceReadPost(type,id)}
+ if(noteId){
+   const own=spaceState.privateNotes.find(n=>n.id===noteId&&n.progress_type===type&&n.progress_id===id);
+   if(own){
+     const detail=target.querySelector(".spacePrivateFeedback");
+     if(detail){detail.open=true;const note=[...detail.querySelectorAll("[data-private-note]")].find(n=>n.dataset.privateNote===noteId);note?.classList.add("spacePrivateFocused");note?.scrollIntoView({behavior:"smooth",block:"center"})}
+   }
+ }
  target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("spaceFlash");setTimeout(()=>target.classList.remove("spaceFlash"),2300);
  history.replaceState(null,"","./space.html?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id));
 }
@@ -4169,6 +4188,14 @@ function spaceTeacherDialog({mode,commentId=null,item=null}){
  };
  dialog.showModal();
 }
+function spacePrivateFeedback(item){
+ const notes=spaceState.privateNotes.filter(n=>n.progress_type===item.type&&n.progress_id===item.id);
+ if(!notes.length)return "";
+ return '<details class="spacePrivateFeedback"><summary>🔒 私密教师评语 <strong>'+notes.length+'</strong><small>仅相关发送人与接收人可见</small></summary><div class="spacePrivateFeedbackList">'+notes.map(n=>{
+   const fromMe=n.sender_id===state.user.id,person=fromMe?"我发送的评语":n.sender_name||"指导老师";
+   return '<article class="spacePrivateNote" data-private-note="'+esc(n.id)+'"><div class="spacePrivateNoteMeta"><b>'+esc(person)+'</b><time>'+esc(fmt(n.created_at))+'</time></div><p>'+esc(n.message)+'</p></article>';
+ }).join("")+'</div></details>';
+}
 function spaceCommentTree(item){
  const arr=spaceState.comments.filter(c=>c.progress_type===item.type&&c.progress_id===item.id);
  return arr.length?arr.map(c=>{
@@ -4191,7 +4218,8 @@ function spaceRenderFeed(){
    const safeLink=spaceSafeLink(x.link_url);
   return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+esc(avatar)+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
   (safeLink?'<a class="spaceLink" href="'+esc(safeLink)+'" rel="noopener noreferrer" target="_blank">查看相关链接 ↗</a>':'')+
-  (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
+  spacePrivateFeedback(x)+
+   (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
   (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherPrivate" type="button">✎ 私密评语</button><button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">近21天暂无符合条件的空间动态。历史进度仍可在进度页面查看。</div>';
  box.querySelectorAll(".spacePost").forEach(card=>{if(spaceState.expanded.has(spaceKey(card.dataset.postType,card.dataset.postId)))card.querySelector(".spaceComments")?.removeAttribute("hidden")});
