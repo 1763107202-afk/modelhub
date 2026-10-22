@@ -371,3 +371,20 @@ html[data-theme="light"] body[data-page="space"] .spaceTeacherRecipient{backgrou
  #notifyDialog .notifyToolbar #notifyRefresh,
  #notifyDialog .notifyToolbar #notifyReadAll{min-height:42px}
 }
+
+/* UX24: RLS-scoped private feedback displayed inside related progress card. */
+body[data-page="space"] .spacePrivateFeedback{margin:16px 0 5px 60px;max-width:calc(100% - 60px);min-width:0;border:1px solid #3b6581;border-radius:13px;background:rgba(30,83,117,.10);overflow:hidden}
+body[data-page="space"] .spacePrivateFeedback summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer;list-style:none;padding:12px 14px;color:#a3d6f8;font-size:13px;font-weight:700}
+body[data-page="space"] .spacePrivateFeedback summary::-webkit-details-marker{display:none}
+body[data-page="space"] .spacePrivateFeedback summary strong{border-radius:6px;background:#28516e;color:#f2faff;padding:2px 7px}
+body[data-page="space"] .spacePrivateFeedback summary small{font-weight:400;opacity:.75}
+body[data-page="space"] .spacePrivateFeedbackList{padding:0 12px 12px;display:grid;gap:8px}
+body[data-page="space"] .spacePrivateNote{border-radius:10px;padding:12px;background:rgba(11,30,48,.6);overflow-wrap:anywhere}
+body[data-page="space"] .spacePrivateNoteMeta{display:flex;justify-content:space-between;gap:9px;flex-wrap:wrap;font-size:12px}
+body[data-page="space"] .spacePrivateNoteMeta time{opacity:.66;font-size:11px}
+body[data-page="space"] .spacePrivateNote p{margin:8px 0 0;line-height:1.75;white-space:pre-wrap;font-size:13px}
+body[data-page="space"] .spacePrivateFocused{outline:2px solid #4fbee9;outline-offset:2px}
+html[data-theme="light"] body[data-page="space"] .spacePrivateFeedback{background:#f0f7fc;border-color:#b9d9ed}
+html[data-theme="light"] body[data-page="space"] .spacePrivateFeedback summary{color:#215c83}
+html[data-theme="light"] body[data-page="space"] .spacePrivateNote{background:#fff}
+@media(max-width:600px){body[data-page="space"] .spacePrivateFeedback{margin-left:0;max-width:100%}body[data-page="space"] .spacePrivateFeedback summary{align-items:flex-start}}
