@@ -3944,7 +3944,7 @@ async function enforceRememberLoginPolicy(){
   }catch(_e){}
 }
 
-const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false};
+const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0};
 function spaceKey(type,id){return type+":"+id}
 function spaceFind(type,id){return spaceState.items.find(x=>x.type===type&&x.id===id)}
 function spaceAlert(message){const e=q("#spaceMessage");if(e){e.textContent=message;e.hidden=!message}}
@@ -3953,8 +3953,8 @@ async function initSpace(){
  const gate=q("#spaceGate"),content=q("#spaceContent");
  if(!spaceAllowed()){gate.innerHTML=state.user?'<div class="notice">进度空间仅正式成员开放。</div>':'<div class="notice">登录后查看实验室进度空间。 <button id="spaceLogin" class="btn sec">登录</button></div>';content.hidden=true;q("#spaceLogin")?.addEventListener("click",()=>q("#authOpen")?.click());return}
  gate.innerHTML="";content.hidden=false;
- q("#spaceSearch").oninput=e=>{spaceState.keyword=e.target.value.trim().toLowerCase();spaceRenderFeed()};
- q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceRenderFeed()};
+ q("#spaceSearch").oninput=e=>{spaceState.keyword=e.target.value.trim().toLowerCase();spaceState.visibleCount=10;spaceRenderFeed()};
+ q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceState.visibleCount=10;spaceRenderFeed()};
  q("#spaceInboxOpen").onclick=()=>{q("#spaceInbox").hidden=false;q("#spaceFeedSection").hidden=true;spaceRenderInbox()};
  q("#spaceInboxClose").onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false};
  await spaceRefresh();
@@ -4013,7 +4013,16 @@ async function spaceMarkRead(ids){
  missing.forEach(id=>spaceState.reads.add(id));spaceRenderBanner();spaceRenderInbox();
 }
 function spaceJump(type,id,expand=true){
- const target=[...q("#spaceFeed").querySelectorAll("[data-post-id]")].find(x=>x.dataset.postId===id&&x.dataset.postType===type);
+ let target=[...q("#spaceFeed").querySelectorAll("[data-post-id]")].find(x=>x.dataset.postId===id&&x.dataset.postType===type);
+ if(!target){
+  const index=spaceState.items.findIndex(x=>x.id===id&&x.type===type);
+  if(index>=0){
+    spaceState.keyword="";spaceState.filter="all";spaceState.visibleCount=Math.max(spaceState.visibleCount,index+1);
+    q("#spaceSearch").value="";q("#spaceFilter").value="all";
+    spaceRenderFeed();
+    target=[...q("#spaceFeed").querySelectorAll("[data-post-id]")].find(x=>x.dataset.postId===id&&x.dataset.postType===type);
+  }
+ }
  if(!target){spaceAlert("对应动态已被删除或暂不可见。");return}
  if(expand){target.querySelector(".spaceComments")?.removeAttribute("hidden");spaceReadPost(type,id)}
  target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("spaceFlash");setTimeout(()=>target.classList.remove("spaceFlash"),2300);
@@ -4072,8 +4081,11 @@ function spaceCommentTree(item){
 function spaceRenderFeed(){
  const k=spaceState.keyword,items=spaceState.items.filter(x=>(spaceState.filter==="all"||spaceState.filter===x.type)&&(!k||[x.title,x.body,x.goal,x.created_by_name,(x.members||[]).join(" ")].join(" ").toLowerCase().includes(k)));
  q("#spaceTotal").textContent=items.length;
- const box=q("#spaceFeed");
- box.innerHTML=items.length?items.map(x=>{
+ const box=q("#spaceFeed"),epoch=++spaceState.renderEpoch;
+ const visible=items.slice(0,spaceState.visibleCount);
+ const more=q("#spaceMore");
+ if(more){more.hidden=items.length<=visible.length;more.textContent="加载更多动态（"+visible.length+" / "+items.length+"）";more.onclick=()=>{spaceState.visibleCount+=10;spaceRenderFeed()}}
+ box.innerHTML=items.length?visible.map(x=>{
   const key=spaceKey(x.type,x.id),liked=spaceState.likes.some(l=>l.progress_type===x.type&&l.progress_id===x.id&&l.user_id===state.user.id);
   const cnt=spaceState.likes.filter(l=>l.progress_type===x.type&&l.progress_id===x.id).length;
   const comments=spaceState.comments.filter(c=>c.progress_type===x.type&&c.progress_id===x.id).length;
@@ -4083,7 +4095,32 @@ function spaceRenderFeed(){
   (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
   (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">暂无符合条件的动态。</div>';
- void (async()=>{try{await preloadProgressSignedUrls(items);for(const x of items){const target=[...box.querySelectorAll(".spaceMedia")].find(el=>el.dataset.spaceMedia===spaceKey(x.type,x.id));if(target)target.innerHTML=await progressAttachmentHtml(x)}bindQiniuOpenButtons(box);bindSiteMedia(box)}catch(err){console.warn("空间附件加载失败",err)}})();
+ // Media is loaded as each visible card approaches the viewport, not on every feed render.
+ const mediaTargets=new Map(visible.filter(x=>x.attachment_path).map(x=>[spaceKey(x.type,x.id),x]));
+ const loadMedia=async target=>{
+   const x=mediaTargets.get(target.dataset.spaceMedia);
+   if(!x||target.dataset.mediaLoaded==="true")return;
+   target.dataset.mediaLoaded="true";
+   try{
+     const markup=await progressAttachmentHtml(x);
+     if(spaceState.renderEpoch!==epoch||!target.isConnected)return;
+     target.innerHTML=markup;
+     bindQiniuOpenButtons(target);
+     bindSiteMedia(target);
+   }catch(err){
+     target.dataset.mediaLoaded="false";
+     if(spaceState.renderEpoch===epoch&&target.isConnected)target.textContent="附件暂时无法加载";
+     console.warn("空间附件加载失败",err);
+   }
+ };
+ const mediaElements=[...box.querySelectorAll(".spaceMedia[data-space-media]")];
+ if(typeof IntersectionObserver==="function"){
+   const observer=new IntersectionObserver(entries=>{
+     for(const entry of entries)if(entry.isIntersecting){observer.unobserve(entry.target);void loadMedia(entry.target)}
+   },{rootMargin:"250px 0px",threshold:0});
+   mediaElements.forEach(el=>observer.observe(el));
+ }else mediaElements.forEach(el=>{void loadMedia(el)});
+
  box.querySelectorAll(".spacePost").forEach(article=>{
   const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
   if(!spaceState.interactionsReady)return;
