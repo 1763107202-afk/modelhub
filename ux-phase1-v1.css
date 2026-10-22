@@ -616,3 +616,40 @@ html[data-theme="light"] .siteHeader .headerInner>.nav{border-top-color:#d8e5ee}
 .siteHeader .nav a:focus-visible,.siteHeader #accountMenuToggle:focus-visible{outline:2px solid #67aaf0;outline-offset:2px}
 html[data-theme="light"] .siteHeader.homeSearchHeader .headerInner>.nav{border-top-color:#d9e5ef}
 html[data-theme="light"] .siteHeader .acct .accountMenuAvatar{background:#d9eafb;color:#23547f}
+
+/* UX32: keep the homepage navigation aligned with the centered secondary-page nav.
+   Mobile keeps the existing collapsible menu, avoiding unintended changes. */
+@media (min-width: 721px) {
+  .siteHeader.homeSearchHeader .headerInner > .nav {
+    grid-area: nav !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center;
+    width: 100% !important;
+    min-width: 0;
+    margin: 0 auto !important;
+    padding: 9px 0 4px;
+    gap: 6px;
+    box-sizing: border-box;
+  }
+  .siteHeader.homeSearchHeader .headerInner > .nav > a,
+  .siteHeader.homeSearchHeader .headerInner > .nav > .uxNavMore > summary {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+@media (min-width: 721px) and (max-width: 1024px) {
+  .siteHeader.homeSearchHeader .headerInner > .nav {
+    justify-content: safe center !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .siteHeader.homeSearchHeader .headerInner > .nav::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media (max-width: 720px) {
+  .siteHeader.homeSearchHeader .headerInner > .nav {
+    justify-content: flex-start !important;
+  }
+}
