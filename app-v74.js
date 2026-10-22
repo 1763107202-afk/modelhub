@@ -4042,8 +4042,8 @@ async function spaceRunRefresh(manual=false){
  const button=q("#spaceRefresh"),status=q("#spaceSyncStatus");
  if(button){button.disabled=true;button.textContent="同步中…"}
  try{
-   await spaceRefresh();
-   if(manual&&status)status.textContent="已检查最新动态 · "+new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"});
+   const ok=await spaceRefresh();
+   if(manual&&status)status.textContent=ok?"已检查最新动态 · "+new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"}):"同步未完成，请检查网络后重试";
  }catch(err){
    if(status)status.textContent="同步失败，请点击刷新重试";
    console.warn("空间同步失败",err);
@@ -4110,7 +4110,7 @@ async function spaceRefresh(){
   supabase.from("progress_member_notices").select("id,progress_type,progress_id,sender_id,recipient_id,sender_name,message,created_at,read_at").eq("message_type","teacher_comment").not("progress_id","is",null).gte("created_at",teacherCutoff).order("created_at",{ascending:false}).limit(100)
  ]);
  if(state.user?.id!==requestUserId)return;
- if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return}
+ if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return false}
  const myTeacher=await supabase.from("profiles").select("role,progress_exempt").eq("id",state.user.id).maybeSingle();
  spaceState.teacherAuthorized=!myTeacher.error&&!!(myTeacher.data?.role==="super_admin"||myTeacher.data?.progress_exempt);
  q("#spaceTeacherBulkLink")?.toggleAttribute("hidden",!spaceState.teacherAuthorized);
@@ -4123,10 +4123,13 @@ async function spaceRefresh(){
  spaceState.reads=new Set((r.data||[]).map(x=>x.comment_id));
  spaceState.directory=new Map((dir.data||[]).map(x=>[x.id,x.full_name||"成员"]));
  spaceState.interactionsReady=!(c.error||r.error||l.error);
- if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，评论和点赞服务正在配置中。");else spaceAlert("");
+ if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，但评论或点赞功能加载失败，请刷新重试。");
+ else if(privateReply.error)spaceAlert("动态已加载，但私密教师评语暂时无法读取，请重试或检查权限。");
+ else spaceAlert("");
  q("#spaceInboxOpen").hidden=!spaceState.interactionsReady||!q("#spaceInbox").hidden;
  q("#spaceMobileInboxOpen").hidden=!spaceState.interactionsReady||!q("#spaceInbox").hidden;
  spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
+ return true;
 }
 function spaceRenderDesktop(){
  const own=spaceVisibleItems().filter(x=>x.owner===state.user?.id);
@@ -4202,7 +4205,7 @@ function spaceJump(type,id,expand=true,noteId=null){
    }
  }
  target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("spaceFlash");setTimeout(()=>target.classList.remove("spaceFlash"),2300);
- history.replaceState(null,"","./space.html?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id));
+ history.replaceState(null,"","./space.html?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id)+(expand?"&open=comments":"")+(noteId?"&note="+encodeURIComponent(noteId):""));
 }
 async function spaceReadPost(type,id){
  const ids=spaceState.comments.filter(c=>c.progress_type===type&&c.progress_id===id&&c.recipient_id===state.user.id&&!spaceState.reads.has(c.id)).map(c=>c.id);
@@ -4394,7 +4397,7 @@ function spaceRenderFeed(){
    const btn=form.querySelector('[type="submit"]');btn.disabled=true;
    const result=await supabase.from("progress_space_comments").insert({progress_type:type,progress_id:id,author_id:state.user.id,recipient_id:parent?.author_id||item.owner,parent_id:parent?.id||null,content});
    btn.disabled=false;
-   if(result.error)spaceAlert("评论失败："+result.error.message);else {spaceState.expanded.add(spaceKey(type,id));await spaceRefresh();const refreshed=[...q("#spaceFeed").querySelectorAll(".spacePost")].find(a=>a.dataset.postType===type&&a.dataset.postId===id);refreshed?.querySelector(".spaceComments")?.removeAttribute("hidden");refreshed?.scrollIntoView({block:"center"})}
+   if(result.error)spaceAlert("评论失败："+result.error.message);else {textarea.value="";form.querySelector('[name="reply"]').value="";spaceState.expanded.add(spaceKey(type,id));await spaceRefresh();const refreshed=[...q("#spaceFeed").querySelectorAll(".spacePost")].find(a=>a.dataset.postType===type&&a.dataset.postId===id);refreshed?.querySelector(".spaceComments")?.removeAttribute("hidden");refreshed?.scrollIntoView({block:"center"})}
   };
  });
 }
