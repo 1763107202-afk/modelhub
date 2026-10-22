@@ -196,12 +196,16 @@ html[data-theme="light"] .progressOverview>.personalStatusPanel{background:#f9fb
       <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div>
       <p>每个项目分别保留你的最新一条个人进度；同一项目再次提交后会替换旧记录，并自动清理上一条附件。</p>
     </div>
-<section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div></div><div id="progressBulkActions" class="progressBulkActions" hidden><button id="progressBulkOpen" class="btn sec" type="button">🔔 批量提醒</button><small>仅老师手动触发，发送前可取消勾选</small></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressStatusGrid">
-<section class="progressSummary glass">
+<section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div></div><div id="progressBulkActions" class="progressBulkActions" hidden><button id="progressBulkOpen" class="btn sec" type="button">🔔 批量提醒</button><small>仅老师手动触发，发送前可取消勾选</small></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressMemberSwitcher" role="tablist" aria-label="成员更新列表">
+<button type="button" id="progressMembersPersonal" class="progressMemberTab is-active" role="tab" aria-selected="true" aria-controls="progressMembersPersonalPanel">个人已更新</button>
+<button type="button" id="progressMembersTeam" class="progressMemberTab" role="tab" aria-selected="false" aria-controls="progressMembersTeamPanel">团队已更新</button>
+</div>
+<div class="progressStatusGrid">
+<section class="progressSummary glass" id="progressMembersPersonalPanel" role="tabpanel" aria-labelledby="progressMembersPersonal">
   <div class="progressSummaryHead"><div><span class="eyebrow">PERSONAL UPDATED</span><h2>个人进度已更新</h2></div></div>
   <div id="personalUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有个人进度更新</span></div>
 </section>
-<section class="progressSummary glass">
+<section class="progressSummary glass" id="progressMembersTeamPanel" role="tabpanel" aria-labelledby="progressMembersTeam" hidden>
   <div class="progressSummaryHead"><div><span class="eyebrow">TEAM UPDATED</span><h2>队伍进度已更新</h2></div></div>
   <div id="teamUpdatedNames" class="progressNameList"><span class="progressNoSubmitter">暂时还没有队伍进度更新</span></div>
 </section>
@@ -266,6 +270,31 @@ html[data-theme="light"] .progressOverview>.personalStatusPanel{background:#f9fb
     setProgressTab(next,true);
   }));
   window.JUSTProgressSetTab=setProgressTab;
+  // Desktop and mobile use the same accessible member-list switcher.
+  const memberTabs=[document.getElementById("progressMembersPersonal"),document.getElementById("progressMembersTeam")];
+  const memberPanels=[document.getElementById("progressMembersPersonalPanel"),document.getElementById("progressMembersTeamPanel")];
+  function showMemberPane(index,focus=false){
+    memberPanels.forEach((panel,i)=>{if(panel)panel.hidden=i!==index});
+    memberTabs.forEach((tab,i)=>{
+      if(!tab)return;
+      tab.classList.toggle("is-active",i===index);
+      tab.setAttribute("aria-selected",String(i===index));
+      tab.tabIndex=i===index?0:-1;
+    });
+    if(focus)memberTabs[index]?.focus();
+  }
+  if(memberTabs.every(Boolean)&&memberPanels.every(Boolean)){
+    memberTabs.forEach((tab,i)=>{
+      tab.addEventListener("click",()=>showMemberPane(i));
+      tab.addEventListener("keydown",event=>{
+        if(!["ArrowLeft","ArrowRight","Home","End"].includes(event.key))return;
+        event.preventDefault();
+        const next=event.key==="Home"?0:event.key==="End"?1:1-i;
+        showMemberPane(next,true);
+      });
+    });
+    showMemberPane(0);
+  }
   if(new URLSearchParams(location.search).has("project"))setProgressTab("team",false);
   const original=document.getElementById("teamProgressCount");
   const mirror=document.getElementById("progressTeamRecordMetric");
