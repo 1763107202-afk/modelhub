@@ -290,3 +290,11 @@ body[data-page="space"] .spacePostActions button{
  .uxBottomNav>a,.uxBottomNav>button{max-width:100%;min-width:0!important}
  .uxBottomNav .uxBottomLabel{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
+
+/* UX17: progressive feed list and mobile interaction safeguards */
+#spaceMore{display:block;margin:14px auto 25px;min-height:44px;padding:10px 20px}
+#spaceMore[hidden]{display:none!important}
+body[data-page="space"] .spacePost,body[data-page="space"] .spaceMedia,body[data-page="space"] .spaceComments,body[data-page="space"] .spaceToolbar{min-width:0;max-width:100%;box-sizing:border-box}
+body[data-page="space"] .spaceCommentForm textarea,body[data-page="space"] .spaceToolbar input{min-width:0;max-width:100%;box-sizing:border-box}
+body[data-page="space"] .spacePostHead small,body[data-page="space"] .spaceComment,body[data-page="space"] .spaceLink{overflow-wrap:anywhere;word-break:break-word}
+@media(max-width:720px){body[data-page="space"] .spaceComments{padding:11px}body[data-page="space"] .spacePostActions button,body[data-page="space"] .spaceCommentForm button{min-height:44px}body[data-page="space"] .spaceTeacherDialog{width:calc(100vw - 24px);max-width:calc(100vw - 24px);box-sizing:border-box;padding:17px}body[data-page="space"] .spaceTeacherActions{flex-wrap:wrap}body[data-page="space"] .spaceTeacherForm select,body[data-page="space"] .spaceTeacherForm textarea{box-sizing:border-box;max-width:100%}}
