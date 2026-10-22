@@ -298,3 +298,46 @@ body[data-page="space"] .spacePost,body[data-page="space"] .spaceMedia,body[data
 body[data-page="space"] .spaceCommentForm textarea,body[data-page="space"] .spaceToolbar input{min-width:0;max-width:100%;box-sizing:border-box}
 body[data-page="space"] .spacePostHead small,body[data-page="space"] .spaceComment,body[data-page="space"] .spaceLink{overflow-wrap:anywhere;word-break:break-word}
 @media(max-width:720px){body[data-page="space"] .spaceComments{padding:11px}body[data-page="space"] .spacePostActions button,body[data-page="space"] .spaceCommentForm button{min-height:44px}body[data-page="space"] .spaceTeacherDialog{width:calc(100vw - 24px);max-width:calc(100vw - 24px);box-sizing:border-box;padding:17px}body[data-page="space"] .spaceTeacherActions{flex-wrap:wrap}body[data-page="space"] .spaceTeacherForm select,body[data-page="space"] .spaceTeacherForm textarea{box-sizing:border-box;max-width:100%}}
+
+/* UX19: mobile conversation cards, uncluttered teacher controls, fixed safe-area entry. */
+body[data-page="space"] .spaceInboxItem,body[data-page="space"] .spaceComment,
+body[data-page="space"] .spaceCommentForm,body[data-page="space"] .spacePostHead{min-width:0;max-width:100%;overflow-wrap:anywhere}
+body[data-page="space"] .spaceInboxItem{gap:5px;line-height:1.5;text-align:left}
+body[data-page="space"] .spaceInboxItem span,body[data-page="space"] .spaceInboxItem b,
+body[data-page="space"] .spaceInboxItem small{display:block;min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+body[data-page="space"] .spaceTeacherRemind,body[data-page="space"] .spaceTeacherForward{
+  display:inline-flex;align-items:center;justify-content:center;min-height:38px;
+  padding:7px 10px;border:1px solid #335b78;border-radius:10px;
+  background:rgba(44,111,153,.11);color:#8bd0f4;font-size:12px;font-weight:650;
+  line-height:1.35;white-space:normal;max-width:100%;box-shadow:none
+}
+body[data-page="space"] .spaceTeacherRemind:hover,body[data-page="space"] .spaceTeacherForward:hover{
+  background:rgba(44,111,153,.20);border-color:#5796ba
+}
+body[data-page="space"] .spacePostActions .spaceTeacherRemind{margin-left:auto}
+body[data-page="space"] .spaceComment .spaceTeacherForward{margin-left:4px}
+body[data-page="space"] #spaceInboxOpen[hidden]{display:none!important}
+body[data-page="space"] #spaceInboxOpen{
+  position:fixed!important;right:20px!important;bottom:22px!important;
+  z-index:36!important;max-width:calc(100vw - 30px);white-space:normal;
+  border-radius:999px;box-shadow:0 8px 24px #0004
+}
+body[data-page="progress"] #progressBulkActions[hidden]{display:none!important}
+@media(max-width:720px){
+ body[data-page="space"] .spaceWrap{width:100%;max-width:100vw;padding-left:12px;padding-right:12px}
+ body[data-page="space"] .spacePostHead{align-items:flex-start}
+ body[data-page="space"] .spacePostHead>div:last-child{flex:1;min-width:0}
+ body[data-page="space"] .spacePostHead small{line-height:1.45}
+ body[data-page="space"] .spaceInboxItem{padding:13px 14px;margin:9px 0}
+ body[data-page="space"] .spaceInboxHeader{gap:10px;align-items:flex-start;flex-wrap:wrap}
+ body[data-page="space"] .spaceInboxHeader h2{font-size:20px}
+ body[data-page="space"] #spaceInboxOpen{right:12px!important;bottom:calc(78px + env(safe-area-inset-bottom))!important;font-size:12px;padding:9px 13px;min-height:40px}
+ body[data-page="space"] .spaceComment{line-height:1.55}
+ body[data-page="space"] .spacePostActions .spaceTeacherRemind{margin-left:0}
+ body[data-page="space"] .spaceTeacherActions .btn{flex:1 1 120px;min-width:0}
+ body[data-page="progress"] .progressBulkDialog{box-sizing:border-box;width:calc(100vw - 20px);max-width:calc(100vw - 20px);max-height:calc(100dvh - 24px);padding:16px}
+ body[data-page="progress"] .progressBulkFooter{flex-wrap:wrap}
+ body[data-page="progress"] .progressBulkFooter .btn{min-height:44px;flex:1 1 110px}
+}
+html[data-theme="light"] body[data-page="space"] .spaceTeacherRemind,
+html[data-theme="light"] body[data-page="space"] .spaceTeacherForward{background:#f0f7fd;border-color:#c5daeb;color:#27618b}
