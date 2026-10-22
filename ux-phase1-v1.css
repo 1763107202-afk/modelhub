@@ -470,3 +470,57 @@ html[data-theme="light"] body[data-page="progress"] #progressBulkOpen{background
 }
 @media(max-width:390px){body[data-page="space"] .spaceToolbar{grid-template-columns:minmax(0,1fr) 100px!important}body[data-page="space"] .spaceToolbar select{max-width:100px}body[data-page="home"] .labHero img{width:70px;height:70px}}
 @media(prefers-reduced-motion:reduce){body[data-page="home"] .moduleCard,body[data-page="space"] .spaceInboxItem{transition:none}}
+
+/* UX28: desktop workspace columns and compact member lists */
+@media(min-width:1121px){
+ body[data-page="space"] .spaceWrap{max-width:1260px}
+ body[data-page="space"] .spaceDeskGrid{display:grid;grid-template-columns:minmax(0,1fr) 298px;gap:24px;align-items:start}
+ body[data-page="space"] .spaceDeskMain{min-width:0}
+ body[data-page="space"] .spaceDeskAside{display:grid;gap:15px;position:sticky;top:92px;max-height:calc(100dvh - 105px);overflow-y:auto;scrollbar-width:thin}
+ body[data-page="space"] #spaceInboxOpen{position:static!important;display:flex!important;min-height:44px;align-items:center;justify-content:center;width:100%;margin:0!important;border-radius:10px!important;box-shadow:none!important}
+ body[data-page="space"] #spaceInboxOpen[hidden]{display:none!important}
+ body[data-page="progress"] .progressTopGrid{grid-template-columns:minmax(0,1.55fr) minmax(310px,.75fr);gap:22px}
+}
+body[data-page="space"] .spaceDeskAside{min-width:0}
+body[data-page="space"] .spaceSideCard{padding:19px;border:1px solid #2b455e;background:#0c1c2d;border-radius:16px;min-width:0}
+body[data-page="space"] .spaceSideEyebrow{font-size:10px;color:#84bbeb;letter-spacing:.13em;font-weight:800}
+body[data-page="space"] .spaceSideCard h2{margin:5px 0 8px;font-size:17px}
+body[data-page="space"] .spaceSideCard p{font-size:12px;color:#92adc6;line-height:1.65;margin:0 0 15px}
+body[data-page="space"] .spaceSideStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:16px 0}
+body[data-page="space"] .spaceSideStats>div{min-width:0;text-align:center;background:#10283b;border:1px solid #26455e;border-radius:10px;padding:10px 3px}
+body[data-page="space"] .spaceSideStats strong{display:block;font-size:22px;line-height:1.15;color:#e8f5ff;font-variant-numeric:tabular-nums}
+body[data-page="space"] .spaceSideStats small{font-size:10px;color:#9ab6cf}
+body[data-page="space"] .spaceSidePrimary,body[data-page="space"] .spaceSideInbox,body[data-page="space"] .spaceSidePrivate{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 13px;margin:8px 0 0;border-radius:10px;font-size:13px;font-weight:700;min-height:44px;text-align:left;cursor:pointer}
+body[data-page="space"] .spaceSidePrimary{background:#317ed3;color:#fff;border:1px solid #4c91d7}
+body[data-page="space"] .spaceSideInbox,body[data-page="space"] .spaceSidePrivate{color:#b8d7f0;background:#152c42;border:1px solid #34536b}
+body[data-page="space"] .spaceSidePrivate[hidden],body[data-page="space"] .spaceSideInbox[hidden]{display:none!important}
+body[data-page="space"] #spaceDeskInboxBadge{background:#c05267;color:#fff;border-radius:99px;padding:2px 7px;font-size:11px}
+body[data-page="space"] .spaceSideCardHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+body[data-page="space"] .spaceSideCardHead h2{margin:0}
+body[data-page="space"] .spaceSideCardHead small{font-size:11px;color:#92adc6}
+body[data-page="space"] .spaceSideLatestItem{display:flex;flex-direction:column;align-items:flex-start;width:100%;gap:3px;padding:11px 6px;border:0;border-bottom:1px solid #263d54;background:transparent;color:#dceafa;cursor:pointer;text-align:left}
+body[data-page="space"] .spaceSideLatestItem:last-child{border-bottom:0}
+body[data-page="space"] .spaceSideLatestItem:hover{background:#142b41}
+body[data-page="space"] .spaceSideLatestItem strong{font-size:12px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-page="space"] .spaceSideLatestItem small{font-size:11px;color:#90a9c3}
+body[data-page="space"] .spaceSideFooter{padding:3px 6px;font-size:11px;line-height:1.6;color:#83a0b8}
+body[data-page="progress"] .progressMemberSwitcher{display:flex;gap:6px;background:#0c1b2c;border:1px solid #2c445d;border-radius:12px;padding:5px}
+body[data-page="progress"] .progressMemberTab{flex:1;min-height:42px;border:1px solid transparent;border-radius:9px;background:transparent;color:#a7bed3;cursor:pointer;font:inherit;font-weight:700;font-size:13px}
+body[data-page="progress"] .progressMemberTab.is-active{background:#1a3954;color:#fff;border-color:#396486}
+body[data-page="progress"] .progressStatusGrid [hidden]{display:none!important}
+body[data-page="progress"] .progressOverview .progressStatusGrid{display:block}
+body[data-page="progress"] .progressOverview .progressStatusGrid .progressSummary{margin-top:9px}
+body[data-page="progress"] .progressOverview .progressNameList{max-height:260px}
+html[data-theme="light"] body[data-page="space"] .spaceSideCard{background:#fff;border-color:#d1dfeb}
+html[data-theme="light"] body[data-page="space"] .spaceSideCard h2,html[data-theme="light"] body[data-page="space"] .spaceSideLatestItem{color:#243b50}
+html[data-theme="light"] body[data-page="space"] .spaceSideStats>div,html[data-theme="light"] body[data-page="space"] .spaceSideInbox,html[data-theme="light"] body[data-page="space"] .spaceSidePrivate{background:#f0f6fb;color:#2b5476;border-color:#cbdceb}
+html[data-theme="light"] body[data-page="space"] .spaceSideStats strong{color:#23415c}
+html[data-theme="light"] body[data-page="progress"] .progressMemberSwitcher{background:#eef5fa;border-color:#d4e2ed}
+html[data-theme="light"] body[data-page="progress"] .progressMemberTab{color:#3e607d}
+html[data-theme="light"] body[data-page="progress"] .progressMemberTab.is-active{background:#fff;color:#1a5e90;border-color:#bad3e4}
+@media(max-width:1120px){
+ body[data-page="space"] .spaceDeskGrid{display:block}
+ body[data-page="space"] .spaceDeskAside{display:none!important}
+ body[data-page="progress"] .progressOverview .progressStatusGrid{display:block}
+}
+@media(prefers-reduced-motion:reduce){body[data-page="space"] .spaceSideLatestItem{transition:none}}
