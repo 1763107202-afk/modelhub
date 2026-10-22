@@ -352,3 +352,22 @@ body[data-page="space"] .spacePostActions .spaceTeacherPrivate+.spaceTeacherRemi
 html[data-theme="light"] body[data-page="space"] .spaceTeacherPrivate{background:#e7edf9;color:#34537b;border-color:#ccd8e8}
 html[data-theme="light"] body[data-page="space"] .spaceTeacherRecipient{background:#f2f6fb;border-color:#d5e1ed}
 @media(max-width:720px){body[data-page="space"] .spacePostActions .spaceTeacherPrivate{margin-left:0}body[data-page="space"] .spaceTeacherPrivate{min-height:44px}}
+
+/* UX22: notification toolbar with explicit reload and clearer visual status. */
+#notifyDialog .notifyToolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0}
+#notifyDialog .notifyToolbar #notifySummary{flex:1 1 140px;min-width:0;overflow-wrap:anywhere}
+#notifyDialog .notifyToolbar #notifyRefresh{flex:0 0 auto;min-height:38px;padding:8px 12px;font-size:13px;white-space:nowrap}
+#notifyDialog .notifyToolbar #notifyReadAll{flex:0 0 auto;min-height:38px}
+#notifyDialog .notifyToolbar button:disabled{opacity:.55;cursor:wait}
+#notifyDialog .notifyItem{overflow-wrap:anywhere;word-break:break-word}
+#notifyDialog .notifyItem:focus-visible{outline:2px solid #78c5ff;outline-offset:3px}
+@media(max-width:620px){
+ #notifyDialog .notifyToolbar{flex-direction:row;align-items:center}
+ #notifyDialog .notifyToolbar #notifySummary{flex:1 1 100%;width:100%}
+ #notifyDialog .notifyToolbar #notifyRefresh{flex:1 1 90px}
+ #notifyDialog .notifyToolbar #notifyReadAll{flex:2 1 140px;white-space:normal;text-align:center}
+}
+@media(max-width:380px){
+ #notifyDialog .notifyToolbar #notifyRefresh,
+ #notifyDialog .notifyToolbar #notifyReadAll{min-height:42px}
+}
