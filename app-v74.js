@@ -4081,12 +4081,20 @@ function spaceTeacherDialog({mode,commentId=null,item=null}){
      const row={sender_id:state.user.id,recipient_id:recipient,message_type:mode,message:mode==="reminder"?form.elements.message.value.trim():"转发评语",comment_id:mode==="teacher_comment"?c.id:null};
      const result=await supabase.from("progress_member_notices").insert(row).select("id").single();
      if(result.error)throw result.error;
-     feedback.textContent="站内通知已保存，正在发送微信摘要…";
-     const push=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});
-     feedback.textContent="站内通知已保存。"+(push.error?"微信接口调用失败":push.data?.ok?"微信接口已接受，请让成员确认收件":push.data?.message||push.data?.error||"微信未发送");
+     feedback.textContent="站内通知已保存，正在尝试微信推送…";
+     let accepted=false,details="";
+     try{
+      const push=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});
+      let payload=push.data;
+      if(push.error?.context?.json){try{payload=await push.error.context.json()}catch(_e){}}
+      accepted=!push.error&&payload?.ok===true;
+      const code=payload?.code?"（代码："+String(payload.code).slice(0,40)+"）":"";
+      details=accepted?"微信接口已接受，请接收人确认收到。":"微信推送未确认成功："+String(payload?.message||payload?.error||push.error?.message||"接口未返回成功状态")+code;
+     }catch(pushErr){details="微信推送调用异常："+String(pushErr?.message||pushErr)}
+     feedback.textContent="站内通知已保存。"+details;
      if(recipient===state.user.id){globalThis.__notifyCache=null;void loadSiteNotifications(false)}
-     submit.textContent="已发送";
-     setTimeout(()=>dialog.close(),1600);
+     submit.textContent="站内已保存";dialog.querySelector("[data-cancel]").textContent="关闭";
+     if(accepted)setTimeout(()=>dialog.close(),1900);
    }catch(err){feedback.textContent="发送失败："+(err?.message||String(err));submit.disabled=false}
  };
  dialog.showModal();
@@ -4116,6 +4124,7 @@ function spaceRenderFeed(){
   (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
   (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">近21天暂无符合条件的空间动态。历史进度仍可在进度页面查看。</div>';
+ box.querySelectorAll(".spacePost").forEach(card=>{if(spaceState.expanded.has(spaceKey(card.dataset.postType,card.dataset.postId)))card.querySelector(".spaceComments")?.removeAttribute("hidden")});
  // Media is loaded as each visible card approaches the viewport, not on every feed render.
  const mediaTargets=new Map(visible.filter(x=>x.attachment_path).map(x=>[spaceKey(x.type,x.id),x]));
  const loadMedia=async target=>{
