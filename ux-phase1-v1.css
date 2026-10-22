@@ -653,3 +653,33 @@ html[data-theme="light"] .siteHeader .acct .accountMenuAvatar{background:#d9eafb
     justify-content: flex-start !important;
   }
 }
+
+/* UX33/34: compact homepage and unified search. */
+body[data-page="home"] .heroGrid{padding-top:clamp(24px,3vw,42px);padding-bottom:18px}
+body[data-page="home"] .heroGrid h1{font-size:clamp(36px,4.4vw,60px);line-height:1.07}
+body[data-page="home"] .heroGrid .actions{gap:8px;flex-wrap:wrap}
+body[data-page="home"] .announcementSection{padding-top:12px}
+body[data-page="home"] .announcementCoverFallback,
+body[data-page="admin"] .announcementCoverFallback{display:flex;align-items:center;gap:9px;margin-top:10px;padding:9px 12px;min-height:42px;border:1px solid #b8cde055;border-radius:11px;background:#7196b011;color:#8099b4;font-size:12px;line-height:1.5}
+body[data-page="home"] .announcementCoverFrame>.securedMediaMessage,
+body[data-page="admin"] .announcementCoverFrame>.securedMediaMessage{min-height:44px;padding:10px}
+.globalSearchDialog{width:min(680px,calc(100vw - 26px));max-height:min(85dvh,700px);overflow:visible;padding:22px;border:1px solid #37516d;border-radius:18px;background:#0c1c2e;color:#e9f3fe;box-shadow:0 22px 80px #0008}
+.globalSearchDialog::backdrop{background:#05101bc2;backdrop-filter:blur(4px)}
+.globalSearchDialogHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.globalSearchDialogHead strong{font-size:19px}
+.globalSearchDialog .globalSearch{position:relative;z-index:4;width:100%}
+.globalSearchDialog .globalSearchInputWrap{height:49px}
+.globalSearchDialog .globalSearchResults{top:calc(100% + 7px);max-height:min(53dvh,440px);z-index:5}
+.globalSearchDialog .globalSearchHelp{color:#819cb5;font-size:12px;margin:14px 0 0}
+.siteHeader .acct .globalSearchLaunch{white-space:nowrap;min-height:42px;padding:9px 12px}
+html[data-theme="light"] .globalSearchDialog{background:#fff;color:#1e3951;border-color:#d1dfed}
+html[data-theme="light"] body[data-page="home"] .announcementCoverFallback{color:#667f94;background:#f5f9fd}
+@media(max-width:900px){body[data-page="home"] .heroGrid h1{font-size:clamp(32px,7vw,52px)}}
+@media(max-width:720px){
+ .siteHeader .acct .globalSearchLaunch{height:38px!important;min-width:38px!important;width:38px;padding:0!important;font-size:22px}
+ .siteHeader .acct .globalSearchLaunch span{display:none}
+ .globalSearchDialog{padding:16px;max-height:80dvh}
+ .globalSearchDialog .globalSearchResults{max-height:52dvh}
+ body[data-page="home"] .heroGrid{padding-top:24px;padding-bottom:14px}
+ body[data-page="home"] .heroGrid h1{font-size:clamp(31px,8vw,45px)}
+}
