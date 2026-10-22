@@ -698,11 +698,15 @@ function notificationIcon(t){
 async function loadSiteNotifications(openDialog=false){
   const btn=q("#notifyOpen"),dot=q("#notifyDot"),list=q("#notifyList"),summary=q("#notifySummary");
   if(!state.user){
+    globalThis.__notifyCache=null;
     if(dot){dot.classList.add("hidden");dot.textContent=""}
+    q("#uxBottomNotify")?.classList.remove("uxHasUnread");
+    if(list)list.innerHTML='<div class="notifyEmpty">请登录后查看通知。</div>';
     return [];
   }
+  const requestUserId=state.user.id;
   const now=Date.now();
-  if(!openDialog&&globalThis.__notifyCache?.rows&&now-globalThis.__notifyCache.at<15000){
+  if(!openDialog&&globalThis.__notifyCache?.rows&&globalThis.__notifyCache.userId===requestUserId&&now-globalThis.__notifyCache.at<15000){
     return globalThis.__notifyCache.rows;
   }
   const r=await fetchSiteNotificationsOnce();
@@ -711,9 +715,10 @@ async function loadSiteNotifications(openDialog=false){
     return [];
   }
   const privateNotes=await fetchTeacherNotices();
+  if(state.user?.id!==requestUserId)return [];
   const converted=privateNotes.map(x=>({notification_key:"teacher:"+x.id,notification_type:"progress",title:x.message_type==="teacher_comment"?"老师给你转发了评语":"老师提醒你更新进度",body:(x.sender_name||"实验室老师")+"："+x.message,created_at:x.created_at,link_url:teacherNoticeUrl(x),is_read:!!x.read_at}));
   const rows=[...(r.data||[]),...converted].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)), unread=rows.filter(x=>!x.is_read).length;
-  globalThis.__notifyCache={rows,at:Date.now()};
+  globalThis.__notifyCache={rows,at:Date.now(),userId:requestUserId};
   if(dot){
     dot.textContent=unread>99?"99+":String(unread);
     dot.classList.toggle("hidden",unread===0);
@@ -4371,6 +4376,7 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   }
 
   state.user=nextUser;
+  globalThis.__notifyCache=null;
   if(!state.user){
     state.profile=null;
     state.authz=null;
