@@ -341,3 +341,14 @@ body[data-page="progress"] #progressBulkActions[hidden]{display:none!important}
 }
 html[data-theme="light"] body[data-page="space"] .spaceTeacherRemind,
 html[data-theme="light"] body[data-page="space"] .spaceTeacherForward{background:#f0f7fd;border-color:#c5daeb;color:#27618b}
+
+/* UX21: separate private teacher guidance from public discussion. */
+body[data-page="space"] .spaceTeacherPrivate{display:inline-flex;align-items:center;justify-content:center;min-height:40px;max-width:100%;padding:7px 11px;border-radius:10px;border:1px solid #6d7892;background:#283a56;color:#e1eaff;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+body[data-page="space"] .spaceTeacherPrivate:hover{background:#324866;border-color:#889fbd}
+body[data-page="space"] .spaceTeacherRecipient{padding:11px 14px;border-radius:11px;background:#172d45;border:1px solid #35536e;overflow-wrap:anywhere}
+body[data-page="space"] .spaceTeacherFeedback{line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+body[data-page="space"] .spacePostActions .spaceTeacherPrivate{margin-left:auto}
+body[data-page="space"] .spacePostActions .spaceTeacherPrivate+.spaceTeacherRemind{margin-left:0}
+html[data-theme="light"] body[data-page="space"] .spaceTeacherPrivate{background:#e7edf9;color:#34537b;border-color:#ccd8e8}
+html[data-theme="light"] body[data-page="space"] .spaceTeacherRecipient{background:#f2f6fb;border-color:#d5e1ed}
+@media(max-width:720px){body[data-page="space"] .spacePostActions .spaceTeacherPrivate{margin-left:0}body[data-page="space"] .spaceTeacherPrivate{min-height:44px}}
