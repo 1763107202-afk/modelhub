@@ -687,7 +687,7 @@ async function fetchTeacherNotices(){
 }
 function teacherNoticeUrl(x){
   if(x.progress_type&&x.progress_id)return "./space.html?type="+encodeURIComponent(x.progress_type)+"&id="+encodeURIComponent(x.progress_id);
-  return "./progress.html";
+  return "./progress.html#progressComposer";
 }
 function notificationTypeName(t){
   return t==="announcement"?"公告":t==="task"?"新任务":t==="deadline"?"截止提醒":t==="progress"?"进度提醒":t==="membership"?"成员状态":"通知";
@@ -716,7 +716,7 @@ async function loadSiteNotifications(openDialog=false){
   }
   const privateNotes=await fetchTeacherNotices();
   if(state.user?.id!==requestUserId)return [];
-  const converted=privateNotes.map(x=>({notification_key:"teacher:"+x.id,notification_type:"progress",title:x.message_type==="teacher_comment"?"老师给你转发了评语":"老师提醒你更新进度",body:(x.sender_name||"实验室老师")+"："+x.message,created_at:x.created_at,link_url:teacherNoticeUrl(x),is_read:!!x.read_at}));
+  const converted=privateNotes.map(x=>({notification_key:"teacher:"+x.id,notification_type:"progress",title:x.message_type==="teacher_comment"?"老师发来了私密评语":"老师提醒你更新进度",body:(x.sender_name||"实验室老师")+"："+x.message,created_at:x.created_at,link_url:teacherNoticeUrl(x),is_read:!!x.read_at}));
   const rows=[...(r.data||[]),...converted].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)), unread=rows.filter(x=>!x.is_read).length;
   globalThis.__notifyCache={rows,at:Date.now(),userId:requestUserId};
   if(dot){
@@ -4001,7 +4001,7 @@ function spaceAlert(message){const e=q("#spaceMessage");if(e){e.textContent=mess
 function spaceAllowed(){return !!state.user&&(membershipStatus()==="formal"||isAdmin())}
 async function initSpace(){
  const gate=q("#spaceGate"),content=q("#spaceContent");
- if(!spaceAllowed()){gate.innerHTML=state.user?'<div class="notice">进度空间仅正式成员开放。</div>':'<div class="notice">登录后查看实验室进度空间。 <button id="spaceLogin" class="btn sec">登录</button></div>';content.hidden=true;q("#spaceLogin")?.addEventListener("click",()=>q("#authOpen")?.click());return}
+ if(!spaceAllowed()){if(spaceState.pruneTimer){clearInterval(spaceState.pruneTimer);spaceState.pruneTimer=null}gate.innerHTML=state.user?'<div class="notice">进度空间仅正式成员开放。</div>':'<div class="notice">登录后查看实验室进度空间。 <button id="spaceLogin" class="btn sec">登录</button></div>';content.hidden=true;q("#spaceLogin")?.addEventListener("click",()=>q("#authOpen")?.click());return}
  gate.innerHTML="";content.hidden=false;
  q("#spaceSearch").oninput=e=>{spaceState.keyword=e.target.value.trim().toLowerCase();spaceState.visibleCount=10;spaceRenderFeed()};
  q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceState.visibleCount=10;spaceRenderFeed()};
@@ -4021,7 +4021,7 @@ async function initSpace(){
    if(document.visibilityState==="visible"&&spaceAllowed()&&Date.now()-spaceState.lastRefreshAt>10*60*1000)void spaceRefresh();
   });
  }
- const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),false);
+ const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),params.get("open")==="comments");
 }
 async function spaceRefresh(){
  // 21 days is a visibility window for the community feed only.
@@ -4090,7 +4090,15 @@ function spaceJump(type,id,expand=true){
     target=[...q("#spaceFeed").querySelectorAll("[data-post-id]")].find(x=>x.dataset.postId===id&&x.dataset.postType===type);
   }
  }
- if(!target){spaceAlert("对应动态可能已超过21天展示期或暂不可见。原始进度记录仍会保留。");return}
+ if(!target){
+   const notice=q("#spaceMessage");
+   if(notice){
+     notice.textContent="该动态已超过21天展示期、已删除，或暂时不可见。原始进度仍可在进度管理页面查询。";
+     const link=document.createElement("a");link.href="./progress.html";link.className="btn sec spaceExpiredLink";link.textContent="查看历史进度 →";
+     notice.append(document.createTextNode(" "),link);notice.hidden=false;
+   }
+   return;
+ }
  if(expand){spaceState.expanded.add(spaceKey(type,id));target.querySelector(".spaceComments")?.removeAttribute("hidden");spaceReadPost(type,id)}
  target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("spaceFlash");setTimeout(()=>target.classList.remove("spaceFlash"),2300);
  history.replaceState(null,"","./space.html?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id));
