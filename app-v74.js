@@ -4033,7 +4033,7 @@ async function initSpace(){
    if(document.visibilityState!=="visible"||!spaceAllowed())return;
    const current=spaceVisibleItems();
    if(current.length!==spaceState.items.length&&!spaceHasPendingDraft()){
-    spaceState.items=current;spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
+    spaceState.items=current;spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();spaceRenderDesktop();
    }
    if(Date.now()-spaceState.lastSyncAttemptAt>=60000)void spaceRunRefresh(false);
   },30000);
@@ -4086,10 +4086,28 @@ async function spaceRefresh(){
  q("#spaceInboxOpen").hidden=!spaceState.interactionsReady||!q("#spaceInbox").hidden;
  spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
 }
+function spaceRenderDesktop(){
+ const own=spaceVisibleItems().filter(x=>x.owner===state.user?.id);
+ const unread=spaceState.comments.filter(c=>c.recipient_id===state.user?.id&&c.author_id!==state.user?.id&&!spaceState.reads.has(c.id)&&spaceFind(c.progress_type,c.progress_id));
+ const notes=spaceState.privateNotes.filter(n=>n.recipient_id===state.user?.id);
+ const put=(id,value)=>{const e=q(id);if(e)e.textContent=String(value)};
+ put("#spaceDeskMyCount",own.length);put("#spaceDeskUnreadCount",unread.length);put("#spaceDeskPrivateCount",notes.length);
+ const badge=q("#spaceDeskInboxBadge");if(badge){badge.hidden=!unread.length;badge.textContent=String(unread.length)}
+ const pbtn=q("#spaceDeskPrivateBtn");
+ if(pbtn){
+  const latest=notes.find(n=>spaceFind(n.progress_type,n.progress_id));
+  pbtn.hidden=!latest;
+  pbtn.onclick=()=>{if(!latest)return;q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;spaceJump(latest.progress_type,latest.progress_id,false,latest.id)};
+ }
+ const target=q("#spaceDeskLatest");if(!target)return;
+ target.innerHTML=spaceVisibleItems().slice(0,5).map(x=>'<button type="button" class="spaceSideLatestItem" data-latest-type="'+esc(x.type)+'" data-latest-id="'+esc(x.id)+'"><strong>'+esc(x.title||"阶段更新")+'</strong><small>'+esc(x.type==="team"?"团队":"个人")+' · '+esc(fmt(x.created_at))+'</small></button>').join("")||'<p class="spaceSideEmpty">最近 21 天暂无动态。</p>';
+ target.querySelectorAll("[data-latest-id]").forEach(b=>b.onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;spaceJump(b.dataset.latestType,b.dataset.latestId,false)});
+}
 function spaceRenderBanner(){
  const unread=spaceState.comments.filter(c=>c.recipient_id===state.user.id&&c.author_id!==state.user.id&&!spaceState.reads.has(c.id)&&spaceFind(c.progress_type,c.progress_id));
  const bar=q("#spaceUnreadBar");bar.hidden=!unread.length;
  q("#spaceUnreadCount").textContent=String(unread.length);
+ spaceRenderDesktop();
 }
 function spaceRenderInbox(){
  const inbox=q("#spaceInboxList");
