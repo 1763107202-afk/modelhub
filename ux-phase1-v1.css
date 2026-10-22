@@ -396,3 +396,77 @@ body[data-page="space"] #spaceRefresh:disabled{opacity:.58;cursor:wait}
 body[data-page="space"] .spaceSyncStatus{margin:-12px 0 13px;font-size:12px;color:#83a9c8;min-height:1.1em}
 body[data-page="space"] .spacePrivateUnread{padding:3px 7px;border-radius:8px;background:#9b3c4b;color:#fff;font-size:11px;font-weight:700}
 @media(max-width:600px){body[data-page="space"] .spaceToolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,125px);gap:9px}body[data-page="space"] #spaceRefresh{grid-column:1/-1;width:100%}}
+
+/* UX27 · Industrial editorial: quiet surfaces, clear actions, legible content. */
+body[data-page="home"],body[data-page="space"],body[data-page="progress"]{--ux-accent:#3e8ee8;--ux-border:#2b4059;--ux-text:#e9f2fb;--ux-muted:#a0b5cc}
+body[data-page="home"] .heroGrid,body[data-page="progress"] .pageHero,body[data-page="space"] .spaceTop{isolation:isolate}
+body[data-page="home"] .heroGrid{padding-top:48px;padding-bottom:34px;gap:clamp(18px,3vw,34px)}
+body[data-page="home"] .heroGrid .panel.glass{border:1px solid #2d4560;background:#0e1c2c;box-shadow:0 12px 38px #0002;border-radius:20px}
+body[data-page="home"] .labHero{gap:16px;align-items:center}
+body[data-page="home"] .labHero strong{font-size:17px;line-height:1.35;letter-spacing:-.01em}
+body[data-page="home"] .labHero p{font-size:12px;line-height:1.6}
+body[data-page="home"] .heroGrid .actions .btn.pri,body[data-page="space"] .uxSpaceTopActions .btn.pri{background:#307dd7!important;color:#fff;border:1px solid #599bdf;box-shadow:none}
+body[data-page="home"] .moduleCard{min-height:173px;border-radius:16px;box-shadow:none;transition:border-color .17s ease,transform .17s ease}
+body[data-page="home"] .moduleCard:hover{border-color:#527da4;transform:translateY(-2px)}
+body[data-page="home"] .moduleCard h3{line-height:1.4;letter-spacing:-.012em}
+body[data-page="home"] .heroGrid .stat{border-color:#243951;background:#0b1929;border-radius:12px}
+body[data-page="home"] .heroGrid .stat b{font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+body[data-page="space"] .spaceWrap{max-width:940px}
+body[data-page="space"] .spaceTop{padding-top:34px;padding-bottom:21px;gap:20px;border-bottom:1px solid #23394f}
+body[data-page="space"] .spaceTopCopy{min-width:0}
+body[data-page="space"] .spaceTop h1{letter-spacing:-.035em;line-height:1.16;font-size:clamp(27px,4vw,38px);margin:9px 0 11px}
+body[data-page="space"] .spaceTop .eyebrow{letter-spacing:.13em;color:#83b8ee;font-size:11px}
+body[data-page="space"] .spaceTopDot{display:inline-block;width:6px;height:6px;margin:0 5px 1px;background:#40b6b2;border-radius:100%}
+body[data-page="space"] .spaceTopCopy>p:not(.spaceRetentionHint){font-size:14px;line-height:1.65;color:#aac0d5}
+body[data-page="space"] .spaceRetentionHint{margin:13px 0 0!important;padding:8px 11px;border-radius:9px;border:1px solid #29465c;color:#9ebbd4!important;font-size:12px!important;line-height:1.55;background:#0c2533}
+body[data-page="space"] .spaceToolbar{margin:22px 0 14px;padding:11px;background:#0c1b2b;border:1px solid #2c4259;border-radius:16px;gap:10px}
+body[data-page="space"] .spaceToolbar input,body[data-page="space"] .spaceToolbar select{min-height:44px;border-radius:10px;border:1px solid #34516e;font-size:13px;background:#091724}
+body[data-page="space"] .spaceToolbar input:focus-visible,body[data-page="space"] .spaceToolbar select:focus-visible{outline:2px solid #61aaff;outline-offset:2px}
+body[data-page="space"] .spaceToolbar #spaceRefresh{background:#1a3046;border:1px solid #395570;border-radius:10px;box-shadow:none;min-height:44px;padding:9px 15px}
+body[data-page="space"] .spacePost{border-color:#2a4059;background:#0c1b2b;border-radius:16px;padding:21px;box-shadow:0 6px 23px #00000013}
+body[data-page="space"] .spacePostHead strong{font-size:15px;line-height:1.45}
+body[data-page="space"] .spacePostBody{font-size:14px;line-height:1.75}
+body[data-page="space"] .spacePostActions{gap:6px 9px}
+body[data-page="space"] .spacePostActions .spaceTeacherPrivate,body[data-page="space"] .spacePostActions .spaceTeacherRemind{border-radius:9px;font-weight:650;box-shadow:none}
+body[data-page="space"] .spaceInboxItem{border-radius:12px;transition:border-color .15s ease,background .15s ease}
+body[data-page="space"] .spaceInboxItem:hover{border-color:#558baf;background:#12334c}
+body[data-page="space"] .spaceInboxItem:focus-visible,body[data-page="space"] .spacePostActions button:focus-visible{outline:2px solid #7cbdff;outline-offset:3px}
+body[data-page="space"] #spaceInboxOpen{border-radius:12px!important;background:#19405e;border:1px solid #3f7398;box-shadow:0 8px 28px #0005!important}
+body[data-page="progress"] .pageHero{padding-bottom:19px}
+body[data-page="progress"] .progressMetric{background:#0d2031;border-color:#2b425a;border-radius:14px;box-shadow:none}
+body[data-page="progress"] .progressMetric strong{color:#f1f8ff;font-weight:800;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+body[data-page="progress"] .progressMetric>span{color:#afc5da}
+body[data-page="progress"] .progressFeedSearchBar{border-radius:14px;border-color:#2c435d}
+body[data-page="progress"] .progressSpaceEntry{border-radius:16px;border-color:#2f4c68}
+body[data-page="progress"] .progressDualEntry>.progressForm>.btn[type="submit"]{height:50px;min-height:50px;max-height:50px;flex-basis:50px}
+body[data-page="progress"] #progressBulkOpen{border:1px solid #35526e;background:#152c41;color:#a9d1f2}
+body[data-page="home"] .btn:focus-visible,body[data-page="progress"] .btn:focus-visible{outline:2px solid #7dbfff;outline-offset:3px}
+html[data-theme="light"] body[data-page="home"],html[data-theme="light"] body[data-page="space"],html[data-theme="light"] body[data-page="progress"]{--ux-border:#d5e0ec;--ux-text:#1b3147;--ux-muted:#65798e}
+html[data-theme="light"] body[data-page="home"] .heroGrid .panel.glass,html[data-theme="light"] body[data-page="home"] .heroGrid .stat{background:#fff;border-color:#d6e2ee}
+html[data-theme="light"] body[data-page="space"] .spaceRetentionHint{color:#34627f!important;background:#edf5fa;border-color:#c8deec}
+html[data-theme="light"] body[data-page="space"] .spaceTop{border-color:#d9e5ef}
+html[data-theme="light"] body[data-page="space"] .spaceTopCopy>p:not(.spaceRetentionHint){color:#607b92}
+html[data-theme="light"] body[data-page="space"] .spaceToolbar,html[data-theme="light"] body[data-page="space"] .spacePost{background:#fff;border-color:#d6e3ee}
+html[data-theme="light"] body[data-page="space"] .spaceToolbar input,html[data-theme="light"] body[data-page="space"] .spaceToolbar select{background:#f8fbfe;color:#233d57;border-color:#cbdceb}
+html[data-theme="light"] body[data-page="space"] .spaceToolbar #spaceRefresh{background:#eff5fb;color:#295b82;border-color:#cbdaea}
+html[data-theme="light"] body[data-page="space"] #spaceInboxOpen{background:#e4f1fc;color:#245679;border-color:#bad6ea}
+html[data-theme="light"] body[data-page="progress"] .progressMetric{background:#fff;border-color:#d6e3ef}
+html[data-theme="light"] body[data-page="progress"] .progressMetric strong{color:#162f48!important}
+html[data-theme="light"] body[data-page="progress"] .progressMetric>span{color:#47647c}
+html[data-theme="light"] body[data-page="progress"] #progressBulkOpen{background:#edf5fb;color:#315f85;border-color:#c8ddea}
+@media(max-width:900px){body[data-page="home"] .heroGrid{padding-top:34px}body[data-page="space"] .spaceWrap{max-width:100%}}
+@media(max-width:720px){
+ body[data-page="home"] .heroGrid{padding-top:26px;padding-bottom:26px}
+ body[data-page="home"] .labHero strong{font-size:15px}
+ body[data-page="space"] .spaceTop{padding-top:20px;padding-bottom:18px}
+ body[data-page="space"] .spaceTop h1{margin:8px 0 8px}
+ body[data-page="space"] .spaceToolbar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(106px,132px)!important;gap:9px!important;padding:9px}
+ body[data-page="space"] .spaceToolbar #spaceRefresh{grid-column:1/-1;width:100%}
+ body[data-page="space"] .spacePost{padding:15px;margin-bottom:13px}
+ body[data-page="space"] .spaceRetentionHint{font-size:11px!important}
+ body[data-page="space"] .spaceInboxHeader{margin:18px 0 12px}
+ body[data-page="progress"] .progressMetric strong{font-size:clamp(25px,8vw,32px)}
+ body[data-page="progress"] .progressDualEntry>.progressForm>.btn[type="submit"]{min-height:48px;height:48px;max-height:48px;flex-basis:48px}
+}
+@media(max-width:390px){body[data-page="space"] .spaceToolbar{grid-template-columns:minmax(0,1fr) 100px!important}body[data-page="space"] .spaceToolbar select{max-width:100px}body[data-page="home"] .labHero img{width:70px;height:70px}}
+@media(prefers-reduced-motion:reduce){body[data-page="home"] .moduleCard,body[data-page="space"] .spaceInboxItem{transition:none}}
