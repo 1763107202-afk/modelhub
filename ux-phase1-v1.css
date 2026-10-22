@@ -530,3 +530,48 @@ body[data-page="space"] #spaceMobileInboxOpen{display:none}
  body[data-page="space"] #spaceMobileInboxOpen{display:inline-flex;position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:35;min-height:43px;border-radius:12px;box-shadow:0 8px 24px #0004}
  body[data-page="space"] #spaceMobileInboxOpen[hidden]{display:none!important}
 }
+
+/* UX29 · coordinated desktop navigation and width breakpoints */
+.siteHeader .uxNavMore.uxMoreHasActive>summary{color:#f0f8ff;background:#173a59;border-color:#427ba9}
+.uxMorePanel{width:min(500px,calc(100vw - 34px));grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start;padding:16px}
+.uxMoreGroup{display:flex;flex-direction:column;gap:4px;min-width:0}
+.uxMoreGroupTitle{font-size:11px;line-height:1.4;letter-spacing:.05em;color:#83b4da;font-weight:750;margin:0 0 7px;padding:0 7px}
+.siteHeader .uxMoreGroup>a{min-height:40px;display:flex;align-items:center;padding:9px 9px!important;border:0;border-radius:9px;white-space:normal;font-size:12px;overflow-wrap:anywhere}
+.siteHeader .uxMoreGroup>a.active{background:#1a4667;color:#f2faff;border:1px solid #4d83ad}
+.siteHeader .uxMoreGroup>a:focus-visible{outline:2px solid #82c4ff;outline-offset:2px}
+.siteHeader .uxMoreGroup #adminNav:not(.hidden){display:flex!important;border-top:1px solid #36516d;margin-top:5px}
+@media(min-width:1341px){
+ .siteHeader:not(.homeSearchHeader) .headerInner{display:grid;grid-template-columns:minmax(210px,245px) minmax(0,1fr) max-content;align-items:center;gap:12px}
+ .siteHeader:not(.homeSearchHeader) .headerInner>.nav{order:initial;width:100%;justify-content:center;margin:0;min-width:0}
+ .siteHeader:not(.homeSearchHeader) .headerInner>.acct{justify-self:end}
+}
+@media(min-width:721px) and (max-width:1340px){
+ .siteHeader .headerInner,.siteHeader.homeSearchHeader .headerInner{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;grid-template-areas:"brand acct" "nav nav";gap:6px 12px!important;width:min(1280px,calc(100% - 28px));padding:9px 0!important}
+ .siteHeader .brand{grid-area:brand;min-width:0;max-width:100%}
+ .siteHeader .acct{grid-area:acct;justify-self:end;margin-left:0}
+ .siteHeader .headerInner>.nav{grid-area:nav!important;order:initial!important;width:100%!important;min-width:0;margin:0!important;justify-content:center!important;border-top:1px solid #ffffff14;padding:8px 0 1px}
+ .siteHeader.homeSearchHeader .headerInner{grid-template-areas:"brand acct" "search search" "nav nav"}
+ .siteHeader.homeSearchHeader .globalSearch{grid-area:search!important;max-width:720px;width:100%;justify-self:center}
+ .siteHeader .brandText b{font-size:13px}
+ .siteHeader .acct #badge{max-width:110px}
+}
+@media(min-width:721px) and (max-width:1024px){
+ .siteHeader .headerInner>.nav{justify-content:flex-start!important;overflow-x:auto;scrollbar-width:none}
+ .siteHeader .headerInner>.nav::-webkit-scrollbar{display:none}
+ .siteHeader .nav>a{padding:8px 9px;font-size:12px}
+ .siteHeader .brand img{width:49px;height:49px}
+ .siteHeader .acct{gap:5px}
+ .siteHeader .acct #badge{display:none!important}
+}
+@media(max-width:720px){
+ .uxMorePanel{width:100%;display:grid;grid-template-columns:1fr;gap:11px;padding:11px}
+ .uxMoreGroup{padding:0 0 9px;border-bottom:1px solid #2e4660}
+ .uxMoreGroup:last-child{border-bottom:0}
+ .uxMoreGroupTitle{font-size:12px;padding:4px 5px;margin-bottom:3px}
+ .siteHeader .uxMoreGroup>a{min-height:44px!important;padding:10px!important;font-size:13px}
+}
+html[data-theme="light"] .uxMoreGroupTitle{color:#4a7296}
+html[data-theme="light"] .siteHeader .uxMoreGroup>a.active{background:#e6f1fb;border-color:#b7d5e9;color:#245e85}
+html[data-theme="light"] .siteHeader .uxNavMore.uxMoreHasActive>summary{color:#205984;background:#e6f1fb;border-color:#b4d4ed}
+html[data-theme="light"] .siteHeader .headerInner>.nav{border-top-color:#d8e5ee}
+@media(prefers-reduced-motion:reduce){.uxMoreGroup>a{transition:none}}
