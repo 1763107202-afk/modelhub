@@ -356,6 +356,41 @@ function renderChrome(){
       if(!primaryKeys.includes(filename))panel.appendChild(child);
       if(child.classList?.contains("active"))child.setAttribute("aria-current","page");
     }
+    // Group existing secondary destinations without recreating links or permissions.
+    const secondary=[...panel.querySelectorAll(":scope > a")];
+    const groups=[
+      {title:"实验室与成果",files:new Set(["lab.html","works.html"])},
+      {title:"学习与任务",files:new Set(["exams.html","submit.html","mine.html"])},
+      {title:"个人与工具",files:new Set(["profile.html","download.html","notify-settings.html"])}
+    ];
+    const placed=new Set();
+    groups.forEach((group,index)=>{
+      const links=secondary.filter(link=>{
+        const filename=new URL(link.getAttribute("href")||"./index.html",location.href).pathname.split("/").pop();
+        return group.files.has(filename);
+      });
+      if(!links.length)return;
+      const section=document.createElement("section");section.className="uxMoreGroup";
+      const heading=document.createElement("h2");heading.className="uxMoreGroupTitle";
+      heading.id="uxMoreGroup"+index;heading.textContent=group.title;
+      section.setAttribute("aria-labelledby",heading.id);
+      section.append(heading,...links);panel.append(section);
+      links.forEach(link=>placed.add(link));
+    });
+    const other=secondary.filter(link=>!placed.has(link));
+    if(other.length){
+      const section=document.createElement("section");section.className="uxMoreGroup";
+      const heading=document.createElement("h2");heading.className="uxMoreGroupTitle";
+      heading.id="uxMoreGroupOther";heading.textContent="其他与管理";
+      section.setAttribute("aria-labelledby",heading.id);
+      section.append(heading,...other);panel.append(section);
+    }
+    if(secondary.some(link=>link.classList.contains("active"))){
+      more.classList.add("uxMoreHasActive");
+      summary.setAttribute("aria-label","当前页面位于更多模块，展开菜单");
+    }
+    more.addEventListener("toggle",()=>summary.setAttribute("aria-expanded",String(more.open)));
+    summary.setAttribute("aria-expanded","false");
     more.append(summary,panel);topNav.append(more);
     panel.addEventListener("click",event=>{if(event.target.closest("a"))more.open=false});
     document.addEventListener("click",event=>{
@@ -379,7 +414,12 @@ function renderChrome(){
     document.addEventListener("click",event=>{
       if(q(".siteHeader")?.classList.contains("uxNavOpen")&&!q(".siteHeader")?.contains(event.target))closeNavigation();
     });
-    document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeNavigation();more.open=false}});
+    document.addEventListener("keydown",event=>{
+      if(event.key!=="Escape")return;
+      const wasOpen=more.open;
+      closeNavigation();more.open=false;
+      if(wasOpen)summary.focus();
+    });
     topNav.addEventListener("click",event=>{if(event.target.closest("a"))closeNavigation()});
     const mobileNav=document.createElement("nav");
     mobileNav.className="uxBottomNav";mobileNav.setAttribute("aria-label","手机端常用导航");
