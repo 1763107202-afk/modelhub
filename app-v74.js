@@ -747,10 +747,37 @@ async function loadSiteNotifications(openDialog=false){
   if(openDialog&&q("#notifyDialog")&&!q("#notifyDialog").open)q("#notifyDialog").showModal();
   return rows;
 }
+let __noticePollingStarted=false,__noticePollingBusy=false,__noticeLastChecked=0;
+function setupNoticePolling(){
+  if(__noticePollingStarted)return;
+  __noticePollingStarted=true;
+  const refresh=()=>{
+    if(!state.user||document.visibilityState!=="visible"||__noticePollingBusy||Date.now()-__noticeLastChecked<40000)return;
+    __noticeLastChecked=Date.now();__noticePollingBusy=true;
+    globalThis.__notifyCache=null;
+    void loadSiteNotifications(false).catch(err=>console.warn("站内通知后台刷新失败",err)).finally(()=>{__noticePollingBusy=false});
+  };
+  window.setInterval(refresh,60000);
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh()});
+  window.addEventListener("focus",refresh);
+  window.addEventListener("online",refresh);
+}
 function bindNotifications(){
   const open=q("#notifyOpen"),close=q("#notifyClose"),all=q("#notifyReadAll");
   if(open)open.onclick=()=>loadSiteNotifications(true);
   if(close)close.onclick=()=>q("#notifyDialog")?.close();
+  const toolbar=q("#notifyDialog .notifyToolbar");
+  if(toolbar&&!q("#notifyRefresh")){
+    const refreshBtn=document.createElement("button");
+    refreshBtn.type="button";refreshBtn.id="notifyRefresh";refreshBtn.className="btn sec";
+    refreshBtn.textContent="↻ 刷新";
+    refreshBtn.onclick=async()=>{
+      if(refreshBtn.disabled)return;
+      refreshBtn.disabled=true;globalThis.__notifyCache=null;
+      try{await loadSiteNotifications(true)}finally{refreshBtn.disabled=false}
+    };
+    toolbar.insertBefore(refreshBtn,all||toolbar.firstChild);
+  }
   if(all)all.onclick=async()=>{
     if(!state.user)return;
     all.disabled=true;
@@ -758,10 +785,12 @@ function bindNotifications(){
     all.disabled=false;
     if(r.error)return toast("操作失败："+r.error.message);
     const notes=await fetchTeacherNotices();
-    await Promise.all(notes.filter(x=>!x.read_at).map(x=>supabase.rpc("mark_progress_notice_read",{p_notice_id:x.id})));
+    const pending=notes.filter(x=>!x.read_at);
+    const completed=await Promise.allSettled(pending.map(x=>supabase.rpc("mark_progress_notice_read",{p_notice_id:x.id})));
+    const failed=completed.filter(x=>x.status==="rejected"||x.value?.error||x.value?.data===false).length;
     globalThis.__notifyCache=null;
     await loadSiteNotifications(true);
-    toast("已全部标为已读");
+    toast(failed?"已处理系统通知，但有 "+failed+" 条私密通知未能标记已读，请重试。":"已全部标为已读");
   };
 }
 
@@ -4270,6 +4299,7 @@ if(state.user&&(!usedProfileCache||!state.authz)){
 finishStartupSplash(state.user?"账号状态已恢复":"正在进入平台…");
 await runPage();
 runWhenIdle(()=>loadSiteNotifications(false),1000);
+runWhenIdle(()=>setupNoticePolling(),1450);
 runWhenIdle(()=>setupSiteRealtime(),1800);
 
 // 每次启动都在后台刷新成员资料和权限；资料缓存用于首屏速度，权限以服务器为准。
