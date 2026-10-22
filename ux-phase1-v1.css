@@ -524,3 +524,9 @@ html[data-theme="light"] body[data-page="progress"] .progressMemberTab.is-active
  body[data-page="progress"] .progressOverview .progressStatusGrid{display:block}
 }
 @media(prefers-reduced-motion:reduce){body[data-page="space"] .spaceSideLatestItem{transition:none}}
+
+body[data-page="space"] #spaceMobileInboxOpen{display:none}
+@media(max-width:1120px){
+ body[data-page="space"] #spaceMobileInboxOpen{display:inline-flex;position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:35;min-height:43px;border-radius:12px;box-shadow:0 8px 24px #0004}
+ body[data-page="space"] #spaceMobileInboxOpen[hidden]{display:none!important}
+}
