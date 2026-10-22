@@ -3944,7 +3944,7 @@ async function enforceRememberLoginPolicy(){
   }catch(_e){}
 }
 
-const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0,lastRefreshAt:0,pruneTimer:null};
+const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0,lastRefreshAt:0,pruneTimer:null,expanded:new Set()};
 const SPACE_WINDOW_MS=21*24*60*60*1000;
 function spaceVisibleItems(){const cutoff=Date.now()-SPACE_WINDOW_MS;return spaceState.items.filter(item=>Number.isFinite(Date.parse(item.created_at))&&Date.parse(item.created_at)>=cutoff)}
 function spaceSafeLink(raw){try{const url=new URL(raw,location.href);return ["https:","http:"].includes(url.protocol)?url.href:""}catch(_e){return ""}}
@@ -3986,7 +3986,7 @@ async function spaceRefresh(){
   supabase.from("team_progress_members").select("team_progress_id,member_name_snapshot"),
   supabase.from("progress_space_comments").select("id,progress_type,progress_id,author_id,recipient_id,parent_id,content,created_at").gte("created_at",spaceCutoff).order("created_at",{ascending:true}),
   supabase.from("progress_space_likes").select("progress_type,progress_id,user_id").gte("created_at",spaceCutoff),
-  supabase.from("progress_space_comment_reads").select("comment_id").eq("user_id",state.user.id).gte("viewed_at",spaceCutoff),
+  supabase.from("progress_space_comment_reads").select("comment_id").eq("user_id",state.user.id),
   fetchFormalMemberDirectoryOnce()
  ]);
  if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return}
@@ -4044,7 +4044,7 @@ function spaceJump(type,id,expand=true){
   }
  }
  if(!target){spaceAlert("对应动态可能已超过21天展示期或暂不可见。原始进度记录仍会保留。");return}
- if(expand){target.querySelector(".spaceComments")?.removeAttribute("hidden");spaceReadPost(type,id)}
+ if(expand){spaceState.expanded.add(spaceKey(type,id));target.querySelector(".spaceComments")?.removeAttribute("hidden");spaceReadPost(type,id)}
  target.scrollIntoView({behavior:"smooth",block:"center"});target.classList.add("spaceFlash");setTimeout(()=>target.classList.remove("spaceFlash"),2300);
  history.replaceState(null,"","./space.html?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id));
 }
@@ -4145,7 +4145,7 @@ function spaceRenderFeed(){
  box.querySelectorAll(".spacePost").forEach(article=>{
   const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
   if(!spaceState.interactionsReady)return;
-  article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden)spaceReadPost(type,id)};
+  article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden){spaceState.expanded.add(spaceKey(type,id));spaceReadPost(type,id)}else spaceState.expanded.delete(spaceKey(type,id))};
   article.querySelector(".spaceLike").onclick=async e=>{
     const btn=e.currentTarget;if(btn.disabled)return;
     const liked=spaceState.likes.some(l=>l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id);
@@ -4169,7 +4169,7 @@ function spaceRenderFeed(){
    const btn=form.querySelector('[type="submit"]');btn.disabled=true;
    const result=await supabase.from("progress_space_comments").insert({progress_type:type,progress_id:id,author_id:state.user.id,recipient_id:parent?.author_id||item.owner,parent_id:parent?.id||null,content});
    btn.disabled=false;
-   if(result.error)spaceAlert("评论失败："+result.error.message);else {await spaceRefresh();const refreshed=[...q("#spaceFeed").querySelectorAll(".spacePost")].find(a=>a.dataset.postType===type&&a.dataset.postId===id);refreshed?.querySelector(".spaceComments")?.removeAttribute("hidden");refreshed?.scrollIntoView({block:"center"})}
+   if(result.error)spaceAlert("评论失败："+result.error.message);else {spaceState.expanded.add(spaceKey(type,id));await spaceRefresh();const refreshed=[...q("#spaceFeed").querySelectorAll(".spacePost")].find(a=>a.dataset.postType===type&&a.dataset.postId===id);refreshed?.querySelector(".spaceComments")?.removeAttribute("hidden");refreshed?.scrollIntoView({block:"center"})}
   };
  });
 }
