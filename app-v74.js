@@ -722,13 +722,26 @@ async function loadSiteNotifications(openDialog=false){
   if(summary)summary.textContent=unread?("未读 "+unread+" 条 · 共 "+rows.length+" 条"):("全部已读 · 共 "+rows.length+" 条");
   if(list){
     list.innerHTML=rows.length?rows.map(x=>{
-      const href=esc(x.link_url||"./index.html"),key=esc(x.notification_key),type=esc(x.notification_type||"");
+      const href=esc(spaceSafeLink(x.link_url||"./index.html")||"./index.html"),key=esc(x.notification_key),type=esc(x.notification_type||"");
       return '<a class="notifyItem '+(x.is_read?'':'unread')+'" data-key="'+key+'" data-type="'+type+'" href="'+href+'"><div class="notifyType">'+(x.is_read?'':'<span class="notifyUnreadMark"></span>')+notificationIcon(type)+' '+esc(notificationTypeName(type))+'</div><div class="notifyItemTop"><b>'+esc(x.title||"通知")+'</b><time>'+esc(fmt(x.created_at))+'</time></div><p>'+esc(x.body||"")+'</p></a>';
     }).join(""):'<div class="notifyEmpty">当前没有新的站内通知。</div>';
-    list.querySelectorAll(".notifyItem").forEach(el=>el.addEventListener("click",async()=>{
-      const key=el.dataset.key;
-      if(key?.startsWith("teacher:")){try{await supabase.rpc("mark_progress_notice_read",{p_notice_id:key.slice(8)})}catch(_e){}}
-      else if(key){try{await supabase.rpc("mark_site_notification_read",{p_notification_key:key})}catch(_e){}}
+    list.querySelectorAll(".notifyItem").forEach(el=>el.addEventListener("click",async event=>{
+      if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0)return;
+      const key=el.dataset.key||"", dest=spaceSafeLink(el.href);
+      if(!dest)return;
+      event.preventDefault();
+      if(el.dataset.opening==="true")return;
+      el.dataset.opening="true";
+      if(key){
+        const pending=key.startsWith("teacher:")?
+          supabase.rpc("mark_progress_notice_read",{p_notice_id:key.slice(8)}):
+          supabase.rpc("mark_site_notification_read",{p_notification_key:key});
+        try{
+          const result=await Promise.race([pending,new Promise(resolve=>setTimeout(()=>resolve(null),1800))]);
+          if(result?.error)console.warn("通知已读同步失败",result.error.message);
+        }catch(err){console.warn("通知已读同步异常",err)}
+      }
+      globalThis.__notifyCache=null;location.assign(dest);
     }));
   }
   if(openDialog&&q("#notifyDialog")&&!q("#notifyDialog").open)q("#notifyDialog").showModal();
@@ -4002,7 +4015,7 @@ async function spaceRefresh(){
  spaceState.directory=new Map((dir.data||[]).map(x=>[x.id,x.full_name||"成员"]));
  spaceState.interactionsReady=!(c.error||r.error||l.error);
  if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，评论和点赞服务正在配置中。");else spaceAlert("");
- q("#spaceInboxOpen").hidden=!spaceState.interactionsReady;
+ q("#spaceInboxOpen").hidden=!spaceState.interactionsReady||!q("#spaceInbox").hidden;
  spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
 }
 function spaceRenderBanner(){
@@ -4058,44 +4071,59 @@ function spaceTeacherTargets(){
  if(!rows.some(x=>x.id===state.user.id))rows.push({id:state.user.id,name:state.profile?.full_name||"我自己"});
  return rows.sort((a,b)=>a.name.localeCompare(b.name,"zh"));
 }
+
 function spaceTeacherDialog({mode,commentId=null,item=null}){
  if(!spaceTeacherEligible())return;
- const c=commentId?spaceState.comments.find(c=>c.id===commentId):null;
- if(mode==="teacher_comment"&&(!c||c.author_id!==state.user.id)){spaceAlert("仅能转发自己发表的评语");return}
- const target=spaceTeacherTargets();
- const dialog=document.createElement("dialog");
- dialog.className="spaceTeacherDialog";
- const title=mode==="teacher_comment"?"转发我的评语":"提醒成员更新";
- const suggested=item?.owner||state.user.id;
- dialog.innerHTML='<form class="spaceTeacherForm"><h3>'+title+'</h3><p class="spaceTeacherDescription">'+(c?esc(c.content):"发送私密站内提醒，成员登录后可在通知铃铛中查看。")+'</p><label>选择接收成员<select name="recipient" required>'+target.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===suggested?" selected":"")+'>'+esc(t.name)+(t.id===state.user.id?"（我自己 · 测试）":"")+'</option>').join("")+'</select></label>'+(mode==="reminder"?'<label>提醒内容<textarea name="message" maxlength="500" rows="3" required>请及时更新近期项目进度，并补充阶段成果和下一步计划。</textarea></label>':'')+'<p class="spaceTeacherFeedback" role="status">站内通知优先保存，然后尝试微信推送；发送结果会在下方显示。</p><div class="spaceTeacherActions"><button type="button" class="btn sec" data-cancel>取消</button><button type="submit" class="btn pri">确认发送</button></div></form>';
+ const c=commentId?spaceState.comments.find(x=>x.id===commentId):null;
+ const privateComment=mode==="private_comment";
+ if(mode==="teacher_comment"&&(!c||c.author_id!==state.user.id)){spaceAlert("仅能转发自己发表的评论");return}
+ if(privateComment&&(!item?.owner||!["personal","team"].includes(item.type))){spaceAlert("无法确定此动态的发布人");return}
+ const targets=spaceTeacherTargets(), suggested=item?.owner||state.user.id;
+ const dialog=document.createElement("dialog");dialog.className="spaceTeacherDialog";
+ const title=privateComment?"发送私密教师评语":mode==="teacher_comment"?"转发我的公开评论":"提醒成员更新";
+ const intro=privateComment?"只有发送教师和接收成员可以查看此评语，不会进入公开评论区。":mode==="teacher_comment"?"评论原文仍对实验室正式成员公开。":"成员会在站内通知铃铛中看到私密提醒。";
+ const recipients=privateComment?
+   '<div class="spaceTeacherRecipient">接收人：<strong>'+esc(targets.find(t=>t.id===suggested)?.name||"进度发布人")+'</strong></div>':
+   '<label>选择接收成员<select name="recipient" required>'+targets.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===suggested?" selected":"")+'>'+esc(t.name)+(t.id===state.user.id?"（我自己 · 测试）":"")+'</option>').join("")+'</select></label>';
+ const messageField=privateComment?
+   '<label>私密评语<textarea name="message" maxlength="1200" rows="5" placeholder="输入具体问题和下一步建议…" required></textarea></label>':
+   mode==="reminder"?'<label>提醒内容<textarea name="message" maxlength="500" rows="3" required>请及时更新近期项目进度，并补充阶段成果和下一步计划。</textarea></label>':
+   '<div class="spaceTeacherDescription">评论内容：'+esc(c?.content||"")+'</div>';
+ dialog.innerHTML='<form class="spaceTeacherForm"><h3>'+title+'</h3><p class="spaceTeacherDescription">'+intro+'</p>'+recipients+messageField+
+   '<p class="spaceTeacherFeedback" role="status" aria-live="polite">先保存站内通知，再尝试发送微信摘要，不在微信中泄露评语原文。</p>'+
+   '<div class="spaceTeacherActions"><button type="button" class="btn sec" data-cancel>取消</button><button type="submit" class="btn pri">确认发送</button></div></form>';
  document.body.append(dialog);
- dialog.querySelector("[data-cancel]").onclick=()=>dialog.close();
- dialog.onclose=()=>dialog.remove();
+ dialog.querySelector("[data-cancel]").onclick=()=>dialog.close();dialog.onclose=()=>dialog.remove();
  dialog.querySelector("form").onsubmit=async e=>{
    e.preventDefault();
    const form=e.currentTarget,submit=form.querySelector('[type="submit"]'),feedback=form.querySelector(".spaceTeacherFeedback");
-   const recipient=form.elements.recipient.value;
-   if(!target.some(x=>x.id===recipient)){feedback.textContent="收件人无效";return}
+   const recipient=privateComment?item.owner:form.elements.recipient?.value;
+   if(!recipient||(!privateComment&&!targets.some(t=>t.id===recipient))){feedback.textContent="收件人无效";return}
+   const message=privateComment||mode==="reminder"?String(form.elements.message?.value||"").trim():String(c?.content||"").trim();
+   if(!message||message.length>1200){feedback.textContent="内容不能为空，且不能超过1200字";return}
    submit.disabled=true;feedback.textContent="正在保存站内通知…";
    try{
-     const row={sender_id:state.user.id,recipient_id:recipient,message_type:mode,message:mode==="reminder"?form.elements.message.value.trim():"转发评语",comment_id:mode==="teacher_comment"?c.id:null};
+     const row={sender_id:state.user.id,recipient_id:recipient,message_type:privateComment?"teacher_comment":mode,message,
+       comment_id:mode==="teacher_comment"?c.id:null,
+       progress_type:item?.type==="personal"||item?.type==="team"?item.type:null,
+       progress_id:item?.id||null};
      const result=await supabase.from("progress_member_notices").insert(row).select("id").single();
      if(result.error)throw result.error;
      feedback.textContent="站内通知已保存，正在尝试微信推送…";
-     let accepted=false,details="";
+     let accepted=false,detail="";
      try{
-      const push=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});
-      let payload=push.data;
-      if(push.error?.context?.json){try{payload=await push.error.context.json()}catch(_e){}}
-      accepted=!push.error&&payload?.ok===true;
-      const code=payload?.code?"（代码："+String(payload.code).slice(0,40)+"）":"";
-      details=accepted?"微信接口已接受，请接收人确认收到。":"微信推送未确认成功："+String(payload?.message||payload?.error||push.error?.message||"接口未返回成功状态")+code;
-     }catch(pushErr){details="微信推送调用异常："+String(pushErr?.message||pushErr)}
-     feedback.textContent="站内通知已保存。"+details;
-     if(recipient===state.user.id){globalThis.__notifyCache=null;void loadSiteNotifications(false)}
+       const push=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});
+       let payload=push.data;
+       if(push.error?.context?.json){try{payload=await push.error.context.json()}catch(_e){}}
+       accepted=!push.error&&payload?.ok===true;
+       detail=accepted?"微信接口已接受，请收件人确认收到。":"微信未确认成功："+String(payload?.message||payload?.error||push.error?.message||"接口未返回成功状态")+
+         (payload?.code?"（代码："+String(payload.code).slice(0,40)+"）":"");
+     }catch(pushErr){detail="微信调用异常："+String(pushErr?.message||pushErr)}
+     feedback.textContent="站内通知已保存。"+detail;
+     globalThis.__notifyCache=null;void loadSiteNotifications(false);
      submit.textContent="站内已保存";dialog.querySelector("[data-cancel]").textContent="关闭";
-     if(accepted)setTimeout(()=>dialog.close(),1900);
-   }catch(err){feedback.textContent="发送失败："+(err?.message||String(err));submit.disabled=false}
+     if(accepted)setTimeout(()=>{if(dialog.open)dialog.close()},1900);
+   }catch(err){feedback.textContent="站内通知保存失败："+(err?.message||String(err));submit.disabled=false}
  };
  dialog.showModal();
 }
@@ -4122,7 +4150,7 @@ function spaceRenderFeed(){
   return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+esc(avatar)+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
   (safeLink?'<a class="spaceLink" href="'+esc(safeLink)+'" rel="noopener noreferrer" target="_blank">查看相关链接 ↗</a>':'')+
   (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
-  (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
+  (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherPrivate" type="button">✎ 私密评语</button><button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">近21天暂无符合条件的空间动态。历史进度仍可在进度页面查看。</div>';
  box.querySelectorAll(".spacePost").forEach(card=>{if(spaceState.expanded.has(spaceKey(card.dataset.postType,card.dataset.postId)))card.querySelector(".spaceComments")?.removeAttribute("hidden")});
  // Media is loaded as each visible card approaches the viewport, not on every feed render.
@@ -4170,7 +4198,8 @@ function spaceRenderFeed(){
     }finally{btn.disabled=false}
   };
   article.querySelectorAll(".spaceTeacherForward").forEach(b=>b.onclick=()=>spaceTeacherDialog({mode:"teacher_comment",commentId:b.dataset.commentId,item}));
-  article.querySelector(".spaceTeacherRemind")?.addEventListener("click",()=>spaceTeacherDialog({mode:"reminder",item}));
+  article.querySelector(".spaceTeacherPrivate")?.addEventListener("click",()=>spaceTeacherDialog({mode:"private_comment",item}));
+   article.querySelector(".spaceTeacherRemind")?.addEventListener("click",()=>spaceTeacherDialog({mode:"reminder",item}));
   article.querySelectorAll(".spaceReply").forEach(b=>b.onclick=()=>{const parent=spaceState.comments.find(c=>c.id===b.dataset.replyId);article.querySelector('[name="reply"]').value=parent.id;const hint=article.querySelector(".spaceReplyHint");hint.hidden=false;hint.textContent="正在回复 "+(spaceState.directory.get(parent.author_id)||"成员")+"（点击可取消）";hint.onclick=()=>{article.querySelector('[name="reply"]').value="";hint.hidden=true};article.querySelector("textarea").focus()});
   article.querySelectorAll(".spaceDelete").forEach(b=>b.onclick=async()=>{if(!confirm("确定删除此评论？"))return;const r=await supabase.from("progress_space_comments").delete().eq("id",b.dataset.deleteId);if(r.error)spaceAlert("删除评论失败："+r.error.message);else await spaceRefresh()});
   article.querySelector(".spaceCommentForm").onsubmit=async e=>{
