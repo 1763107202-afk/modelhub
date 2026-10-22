@@ -4024,6 +4024,7 @@ async function initSpace(){
  q("#spaceSearch").oninput=e=>{spaceState.keyword=e.target.value.trim().toLowerCase();spaceState.visibleCount=10;spaceRenderFeed()};
  q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceState.visibleCount=10;spaceRenderFeed()};
  q("#spaceInboxOpen").onclick=()=>{q("#spaceInbox").hidden=false;q("#spaceFeedSection").hidden=true;q("#spaceInboxOpen").hidden=true;spaceRenderInbox()};
+ q("#spaceMobileInboxOpen").onclick=()=>q("#spaceInboxOpen").click();
  q("#spaceInboxClose").onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;q("#spaceInboxOpen").hidden=!spaceState.interactionsReady};
  q("#spaceRefresh").onclick=()=>void spaceRunRefresh(true);
  await spaceRunRefresh(true);
