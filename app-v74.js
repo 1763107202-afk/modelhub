@@ -4023,9 +4023,9 @@ async function initSpace(){
  gate.innerHTML="";content.hidden=false;
  q("#spaceSearch").oninput=e=>{spaceState.keyword=e.target.value.trim().toLowerCase();spaceState.visibleCount=10;spaceRenderFeed()};
  q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceState.visibleCount=10;spaceRenderFeed()};
- q("#spaceInboxOpen").onclick=()=>{q("#spaceInbox").hidden=false;q("#spaceFeedSection").hidden=true;q("#spaceInboxOpen").hidden=true;spaceRenderInbox()};
+ q("#spaceInboxOpen").onclick=()=>{q("#spaceInbox").hidden=false;q("#spaceFeedSection").hidden=true;q("#spaceInboxOpen").hidden=true;q("#spaceMobileInboxOpen").hidden=true;spaceRenderInbox()};
  q("#spaceMobileInboxOpen").onclick=()=>q("#spaceInboxOpen").click();
- q("#spaceInboxClose").onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;q("#spaceInboxOpen").hidden=!spaceState.interactionsReady};
+ q("#spaceInboxClose").onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;q("#spaceInboxOpen").hidden=!spaceState.interactionsReady;q("#spaceMobileInboxOpen").hidden=!spaceState.interactionsReady};
  q("#spaceRefresh").onclick=()=>void spaceRunRefresh(true);
  await spaceRunRefresh(true);
  if(!spaceState.pruneTimer){
@@ -4085,6 +4085,7 @@ async function spaceRefresh(){
  spaceState.interactionsReady=!(c.error||r.error||l.error);
  if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，评论和点赞服务正在配置中。");else spaceAlert("");
  q("#spaceInboxOpen").hidden=!spaceState.interactionsReady||!q("#spaceInbox").hidden;
+ q("#spaceMobileInboxOpen").hidden=!spaceState.interactionsReady||!q("#spaceInbox").hidden;
  spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
 }
 function spaceRenderDesktop(){
