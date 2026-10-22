@@ -3991,9 +3991,27 @@ async function enforceRememberLoginPolicy(){
   }catch(_e){}
 }
 
-const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0,lastRefreshAt:0,pruneTimer:null,expanded:new Set(),privateNotes:[],userId:null};
+const spaceState={items:[],comments:[],reads:new Set(),likes:[],filter:"all",keyword:"",directory:new Map(),interactionsReady:false,teacherAuthorized:false,visibleCount:10,renderEpoch:0,lastRefreshAt:0,pruneTimer:null,expanded:new Set(),privateNotes:[],userId:null,syncBusy:false,lastSyncAttemptAt:0};
 const SPACE_WINDOW_MS=21*24*60*60*1000;
 function spaceVisibleItems(){const cutoff=Date.now()-SPACE_WINDOW_MS;return spaceState.items.filter(item=>Number.isFinite(Date.parse(item.created_at))&&Date.parse(item.created_at)>=cutoff)}
+function spaceHasPendingDraft(){return [...(q("#spaceFeed")?.querySelectorAll(".spaceCommentForm textarea")||[])].some(el=>document.activeElement===el||el.value.trim().length>0)}
+async function spaceRunRefresh(manual=false){
+ if(!spaceAllowed()||spaceState.syncBusy)return;
+ if(!manual&&spaceHasPendingDraft())return;
+ spaceState.syncBusy=true;spaceState.lastSyncAttemptAt=Date.now();
+ const button=q("#spaceRefresh"),status=q("#spaceSyncStatus");
+ if(button){button.disabled=true;button.textContent="同步中…"}
+ try{
+   await spaceRefresh();
+   if(manual&&status)status.textContent="已检查最新动态 · "+new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"});
+ }catch(err){
+   if(status)status.textContent="同步失败，请点击刷新重试";
+   console.warn("空间同步失败",err);
+ }finally{
+   spaceState.syncBusy=false;
+   if(button){button.disabled=false;button.textContent="↻ 刷新动态"}
+ }
+}
 function spaceSafeLink(raw){try{const url=new URL(raw,location.href);return ["https:","http:"].includes(url.protocol)?url.href:""}catch(_e){return ""}}
 function spaceKey(type,id){return type+":"+id}
 function spaceFind(type,id){return spaceVisibleItems().find(x=>x.type===type&&x.id===id)}
@@ -4007,19 +4025,23 @@ async function initSpace(){
  q("#spaceFilter").onchange=e=>{spaceState.filter=e.target.value;spaceState.visibleCount=10;spaceRenderFeed()};
  q("#spaceInboxOpen").onclick=()=>{q("#spaceInbox").hidden=false;q("#spaceFeedSection").hidden=true;q("#spaceInboxOpen").hidden=true;spaceRenderInbox()};
  q("#spaceInboxClose").onclick=()=>{q("#spaceInbox").hidden=true;q("#spaceFeedSection").hidden=false;q("#spaceInboxOpen").hidden=!spaceState.interactionsReady};
- await spaceRefresh();
+ q("#spaceRefresh").onclick=()=>void spaceRunRefresh(true);
+ await spaceRunRefresh(true);
  if(!spaceState.pruneTimer){
-  // Remove only aged items from this feed view, not underlying progress records.
+  // Preserve in-progress comments: never replace the feed while a draft is being edited.
   spaceState.pruneTimer=setInterval(()=>{
    if(document.visibilityState!=="visible"||!spaceAllowed())return;
    const current=spaceVisibleItems();
-   if(current.length!==spaceState.items.length){
+   if(current.length!==spaceState.items.length&&!spaceHasPendingDraft()){
     spaceState.items=current;spaceRenderFeed();spaceRenderInbox();spaceRenderBanner();
    }
-  },60000);
+   if(Date.now()-spaceState.lastSyncAttemptAt>=60000)void spaceRunRefresh(false);
+  },30000);
   document.addEventListener("visibilitychange",()=>{
-   if(document.visibilityState==="visible"&&spaceAllowed()&&Date.now()-spaceState.lastRefreshAt>10*60*1000)void spaceRefresh();
+   if(document.visibilityState==="visible"&&Date.now()-spaceState.lastSyncAttemptAt>60000)void spaceRunRefresh(false);
   });
+  window.addEventListener("online",()=>void spaceRunRefresh(false));
+  window.addEventListener("focus",()=>{if(Date.now()-spaceState.lastSyncAttemptAt>=60000)void spaceRunRefresh(false)});
  }
  const params=new URLSearchParams(location.search);if(params.has("type")&&params.has("id"))spaceJump(params.get("type"),params.get("id"),params.get("open")==="comments",params.get("note"));
 }
@@ -4191,7 +4213,8 @@ function spaceTeacherDialog({mode,commentId=null,item=null}){
 function spacePrivateFeedback(item){
  const notes=spaceState.privateNotes.filter(n=>n.progress_type===item.type&&n.progress_id===item.id);
  if(!notes.length)return "";
- return '<details class="spacePrivateFeedback"><summary>🔒 私密教师评语 <strong>'+notes.length+'</strong><small>仅相关发送人与接收人可见</small></summary><div class="spacePrivateFeedbackList">'+notes.map(n=>{
+ const unread=notes.filter(n=>n.recipient_id===state.user.id&&!n.read_at).length;
+ return '<details class="spacePrivateFeedback"><summary>🔒 私密教师评语 <strong>'+notes.length+'</strong>'+(unread?'<span class="spacePrivateUnread">'+unread+' 条未读</span>':'')+'<small>仅相关发送人与接收人可见</small></summary><div class="spacePrivateFeedbackList">'+notes.map(n=>{
    const fromMe=n.sender_id===state.user.id,person=fromMe?"我发送的评语":n.sender_name||"指导老师";
    return '<article class="spacePrivateNote" data-private-note="'+esc(n.id)+'"><div class="spacePrivateNoteMeta"><b>'+esc(person)+'</b><time>'+esc(fmt(n.created_at))+'</time></div><p>'+esc(n.message)+'</p></article>';
  }).join("")+'</div></details>';
@@ -4207,6 +4230,12 @@ function spaceRenderFeed(){
  const k=spaceState.keyword,items=spaceVisibleItems().filter(x=>(spaceState.filter==="all"||spaceState.filter===x.type)&&(!k||[x.title,x.body,x.goal,x.created_by_name,(x.members||[]).join(" ")].join(" ").toLowerCase().includes(k)));
  q("#spaceTotal").textContent=items.length;
  const box=q("#spaceFeed"),epoch=++spaceState.renderEpoch;
+ const drafts=new Map();
+ box.querySelectorAll(".spacePost").forEach(post=>{
+  const form=post.querySelector(".spaceCommentForm");
+  const input=form?.querySelector("textarea"),reply=form?.querySelector('[name="reply"]');
+  if(input&&(input.value||reply?.value))drafts.set(spaceKey(post.dataset.postType,post.dataset.postId),{content:input.value,reply:reply?.value||""});
+ });
  const visible=items.slice(0,spaceState.visibleCount);
  const more=q("#spaceMore");
  if(more){more.hidden=items.length<=visible.length;more.textContent="加载更多动态（"+visible.length+" / "+items.length+"）";more.onclick=()=>{spaceState.visibleCount+=10;spaceRenderFeed()}}
@@ -4222,7 +4251,16 @@ function spaceRenderFeed(){
    (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
   (spaceState.interactionsReady?'<div class="spacePostActions"><button class="spaceLike '+(liked?'isLiked':'')+'" type="button">♡ 赞 '+cnt+'</button><button class="spaceCommentToggle" type="button">▤ 评论 '+comments+'</button>'+(spaceTeacherEligible()?'<button class="spaceTeacherPrivate" type="button">✎ 私密评语</button><button class="spaceTeacherRemind" type="button">🔔 提醒更新</button>':'')+'</div><div class="spaceComments" hidden>':'<div class="spacePostActions"><small>互动功能配置中</small></div><div class="spaceComments" hidden>')+'<div class="spaceCommentList">'+spaceCommentTree(x)+'</div><form class="spaceCommentForm"><textarea maxlength="1000" rows="2" placeholder="写下你的想法…" required></textarea><input type="hidden" name="reply" value=""><div class="spaceReplyHint" hidden></div><button class="btn pri" type="submit">发送评论</button></form></div></article>'
  }).join(""):'<div class="empty">近21天暂无符合条件的空间动态。历史进度仍可在进度页面查看。</div>';
- box.querySelectorAll(".spacePost").forEach(card=>{if(spaceState.expanded.has(spaceKey(card.dataset.postType,card.dataset.postId)))card.querySelector(".spaceComments")?.removeAttribute("hidden")});
+ box.querySelectorAll(".spacePost").forEach(card=>{
+  const key=spaceKey(card.dataset.postType,card.dataset.postId);
+  if(spaceState.expanded.has(key))card.querySelector(".spaceComments")?.removeAttribute("hidden");
+  const draft=drafts.get(key);
+  if(draft){
+   const form=card.querySelector(".spaceCommentForm");
+   if(form){form.querySelector("textarea").value=draft.content;form.querySelector('[name="reply"]').value=draft.reply}
+   card.querySelector(".spaceComments")?.removeAttribute("hidden");
+  }
+});
  // Media is loaded as each visible card approaches the viewport, not on every feed render.
  const mediaTargets=new Map(visible.filter(x=>x.attachment_path).map(x=>[spaceKey(x.type,x.id),x]));
  const loadMedia=async target=>{
@@ -4251,6 +4289,25 @@ function spaceRenderFeed(){
 
  box.querySelectorAll(".spacePost").forEach(article=>{
   const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
+  const privateBox=article.querySelector(".spacePrivateFeedback");
+  if(privateBox)privateBox.addEventListener("toggle",async()=>{
+   if(!privateBox.open||!state.user)return;
+   const currentUser=state.user.id;
+   const unread=spaceState.privateNotes.filter(n=>n.progress_type===type&&n.progress_id===id&&n.recipient_id===currentUser&&!n.read_at);
+   if(!unread.length)return;
+   const outcomes=await Promise.allSettled(unread.map(n=>supabase.rpc("mark_progress_notice_read",{p_notice_id:n.id})));
+   if(state.user?.id!==currentUser)return;
+   let didChange=false;
+   outcomes.forEach((outcome,index)=>{
+    if(outcome.status==="fulfilled"&&!outcome.value.error&&outcome.value.data===true){unread[index].read_at=new Date().toISOString();didChange=true}
+   });
+   if(didChange){
+    const badge=privateBox.querySelector(".spacePrivateUnread");
+    const remaining=unread.filter(n=>!n.read_at).length;
+    if(badge){if(remaining)badge.textContent=remaining+" 条未读";else badge.remove()}
+    globalThis.__notifyCache=null;void loadSiteNotifications(false);
+   }
+  });
   if(!spaceState.interactionsReady)return;
   article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden){spaceState.expanded.add(spaceKey(type,id));spaceReadPost(type,id)}else spaceState.expanded.delete(spaceKey(type,id))};
   article.querySelector(".spaceLike").onclick=async e=>{
