@@ -575,3 +575,44 @@ html[data-theme="light"] .siteHeader .uxMoreGroup>a.active{background:#e6f1fb;bo
 html[data-theme="light"] .siteHeader .uxNavMore.uxMoreHasActive>summary{color:#205984;background:#e6f1fb;border-color:#b4d4ed}
 html[data-theme="light"] .siteHeader .headerInner>.nav{border-top-color:#d8e5ee}
 @media(prefers-reduced-motion:reduce){.uxMoreGroup>a{transition:none}}
+
+/* UX31 — Home navigation polish: clear hierarchy and compact account actions. */
+@media(min-width:1121px){
+ .siteHeader.homeSearchHeader .headerInner{
+  display:grid!important;grid-template-columns:minmax(215px,252px) minmax(290px,1fr) auto!important;
+  grid-template-areas:"brand search acct" "nav nav nav"!important;
+  column-gap:clamp(12px,1.4vw,24px)!important;row-gap:10px!important;
+  width:min(1440px,calc(100% - 44px));max-width:1440px;
+  min-height:0!important;padding:12px 0 7px!important;align-items:center;
+ }
+ .siteHeader.homeSearchHeader .brand{grid-area:brand;min-width:0;gap:10px}
+ .siteHeader.homeSearchHeader .brand img{width:52px;height:52px}
+ .siteHeader.homeSearchHeader .globalSearch{grid-area:search;width:100%;max-width:720px;min-width:0;justify-self:stretch}
+ .siteHeader.homeSearchHeader .globalSearchInputWrap{height:46px;border-radius:13px}
+ .siteHeader.homeSearchHeader .acct{grid-area:acct;display:flex;align-items:center;justify-self:end;min-width:0;gap:9px}
+ .siteHeader.homeSearchHeader .headerInner>.nav{grid-area:nav!important;order:initial!important;display:flex;justify-content:flex-start!important;
+  width:100%;min-width:0;margin:0!important;padding:9px 0 3px;border-top:1px solid #ffffff16;gap:5px}
+ .siteHeader.homeSearchHeader .nav>a,.siteHeader.homeSearchHeader .uxNavMore>summary{padding:10px 13px;font-size:13px;min-height:40px;box-sizing:border-box}
+}
+@media(min-width:721px){
+ .siteHeader .acct #accountMenuToggle:not(.hidden){display:inline-flex!important;align-items:center;gap:9px;height:43px;max-width:184px;padding:5px 11px!important;border-radius:12px;font-size:12px}
+ .siteHeader .acct #badge,.siteHeader .acct #adminQuick,.siteHeader .acct #changePasswordOpen,.siteHeader .acct #logout{display:none!important}
+ .siteHeader .acct{position:relative}
+ .siteHeader .acct #accountMenuPanel{right:0;top:calc(100% + 10px)}
+ .siteHeader .acct .accountMenuName{min-width:0;max-width:95px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+ .siteHeader .acct .accountMenuAvatar{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:9px;color:#eaf5ff;background:#245c96;font-weight:800}
+ .siteHeader .acct .accountMenuChevron{font-size:15px;opacity:.8}
+}
+@media(min-width:721px) and (max-width:1120px){
+ .siteHeader.homeSearchHeader .headerInner{grid-template-areas:"brand acct" "search search" "nav nav"!important;gap:8px 12px!important}
+ .siteHeader.homeSearchHeader .globalSearch{width:100%;max-width:none;justify-self:stretch}
+ .siteHeader.homeSearchHeader .headerInner>.nav{justify-content:flex-start!important}
+}
+@media(max-width:720px){
+ .siteHeader .acct .accountMenuName,.siteHeader .acct .accountMenuChevron{display:none!important}
+ .siteHeader .acct .accountMenuAvatar{font-size:15px;font-weight:800}
+ .siteHeader .acct #accountMenuToggle:not(.hidden){display:inline-flex!important}
+}
+.siteHeader .nav a:focus-visible,.siteHeader #accountMenuToggle:focus-visible{outline:2px solid #67aaf0;outline-offset:2px}
+html[data-theme="light"] .siteHeader.homeSearchHeader .headerInner>.nav{border-top-color:#d9e5ef}
+html[data-theme="light"] .siteHeader .acct .accountMenuAvatar{background:#d9eafb;color:#23547f}
