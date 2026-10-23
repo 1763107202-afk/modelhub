@@ -5,7 +5,7 @@ main.wrap > .compactPageHero,
 #adminView > .compactPageHero,
 #app > .compactPageHero{
   padding:22px 0 12px!important;
-  margin:0!important;
+  margin-block:0!important;
   min-width:0;
 }
 .compactPageHero > .eyebrow{display:none!important}
@@ -109,4 +109,10 @@ main > .compactProfileContent{padding-top:18px!important}
   .spaceTop.compactSpaceTop .uxSpaceTopActions .btn{min-height:42px}
   .messageCenterHeading.compactMessageHeading{padding-top:12px!important}
   main > .compactProfileContent{padding-top:10px!important}
+}
+
+/* UX46.1: The page heading and the following section must share the
+   same centered .wrap container.  Do not override .wrap's margin-inline:auto. */
+main > .compactPageHero.wrap{
+  margin-inline:auto!important;
 }
