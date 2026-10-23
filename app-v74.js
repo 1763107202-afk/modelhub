@@ -2763,55 +2763,132 @@ async function fetchProjectDirectory(force=false){
     return __projectDirectoryCache;
   });
 }
-async function populateProgressProjectOptions(){
-  if(!state.user)return;
-  const rows=await fetchProjectDirectory(true);
-  const mine=rows.filter(x=>(x.member_ids||[]).includes(state.user.id));
-  const personal=q("#progressProject");
-  const personalList=q("#progressProjectList");
+
+let __teamOptionsLoadEpoch=0;
+async function populateProgressProjectOptions(selectAfterLoad=null){
+ if(!state.user)return;
+ const userId=state.user.id,request=++__teamOptionsLoadEpoch;
+ const team=q("#teamProject"),hint=q("#teamProjectHint"),refresh=q("#teamProjectRefresh");
+ const before=selectAfterLoad||team?.value||"";
+ if(team)team.disabled=true;
+ if(hint)hint.textContent="正在读取已有团队项目…";
+ try{
+  const result=await fetchProjectDirectory(true);
+  if(state.user?.id!==userId||request!==__teamOptionsLoadEpoch)return;
+  const rows=Array.isArray(result)?result:[];
+  const mine=rows.filter(x=>Array.isArray(x.member_ids)&&x.member_ids.includes(userId));
+  const personal=q("#progressProject"),personalList=q("#progressProjectList");
   if(personal&&personalList){
-    personalList.innerHTML=mine.map(x=>'<option value="'+esc(x.name)+'">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="team"?"团队项目":"个人项目")+'</option>').join("");
-    const preselectId=new URLSearchParams(location.search).get("project");
-    const hit=mine.find(x=>x.id===preselectId);
-    if(hit&&!personal.value)personal.value=hit.name;
+   personalList.innerHTML=mine.map(x=>'<option value="'+esc(x.name)+'">'+esc(projectTypeName(x.project_type))+' · '+(x.project_mode==="team"?"团队项目":"个人项目")+'</option>').join("");
+   const preselectId=new URLSearchParams(location.search).get("project");
+   const hit=mine.find(x=>x.id===preselectId);
+   if(hit&&!personal.value)personal.value=hit.name;
   }
-  const team=q("#teamProject");
+  if(!team)return;
+  const allTeams=rows.filter(x=>x.project_mode==="team");
+  const joined=allTeams.filter(x=>(x.member_ids||[]).includes(userId));
+  const open=allTeams.filter(x=>!(x.member_ids||[]).includes(userId)&&!["completed","archived"].includes(x.status));
+  const closed=allTeams.filter(x=>!(x.member_ids||[]).includes(userId)&&["completed","archived"].includes(x.status));
+  team.replaceChildren(new Option("不关联已有项目，按比赛 / 队伍填写",""));
+  const addGroup=(title,values,disabled=false)=>{
+   if(!values.length)return;
+   const group=document.createElement("optgroup");group.label=title;
+   values.forEach(x=>{
+    const opt=new Option(x.name+(disabled?"（已结束）":""),x.id);
+    opt.disabled=disabled;group.append(opt);
+   });
+   team.append(group);
+  };
+  addGroup("我已加入的团队项目（"+joined.length+"）",joined);
+  addGroup("其他可加入的团队项目（"+open.length+"）",open);
+  addGroup("已结束的团队项目（仅查看）",closed,true);
+  const selectable=[...joined,...open].some(x=>x.id===before);
+  const chosen=selectable?before:"";
+  team.value=chosen;
+  if(!selectable&&before&&hint)hint.textContent="之前选择的项目不可用，请重新选择。";
+  else if(hint)hint.textContent=allTeams.length
+   ?"找到 "+allTeams.length+" 个团队项目；其他项目选中后先确认加入，再关联进度。"
+   :"当前没有团队项目；可手动填写并提交，也可前往项目管理新建项目。";
+  let lastSelected=chosen;
+  const applySelection=hit=>{
+   const name=q("#teamCompetitionName");
+   if(hit){
+    if(name){name.value=hit.name;name.readOnly=true}
+    if(hint)hint.textContent="已关联项目："+hit.name+"；将使用项目成员名单。";
+    teamMemberSelection.clear();
+    (hit.member_ids||[]).forEach(id=>teamMemberSelection.add(id));
+    document.querySelectorAll(".teamMemberCheck").forEach(cb=>cb.checked=teamMemberSelection.has(cb.value));
+    const selected=q("#teamMemberSelectedCount");
+    if(selected)selected.textContent="已选 "+teamMemberSelection.size+" 人";
+    const preview=q("#teamSelectedPreview");
+    if(preview){
+     const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
+     preview.innerHTML=members.length?members.map(m=>'<span class="teamSelectedChip">'+esc(m.full_name||"成员")+'</span>').join(""):'<span class="profileHint">项目成员由项目管理页维护</span>';
+    }
+    const leader=q("#teamLeader");
+    if(leader){
+     const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
+     leader.innerHTML='<option value="">请选择负责人</option>'+members.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name||"成员")+(m.major?' · '+esc(m.major):'')+'</option>').join("");
+     if(hit.leader_id&&teamMemberSelection.has(hit.leader_id))leader.value=hit.leader_id;
+    }
+    const leaderHint=q("#teamLeaderHint");
+    if(leaderHint)leaderHint.textContent="当前项目负责人："+(hit.leader_name||"未设置")+"；如需调整可在本次提交时重新选择。";
+   }else{
+    if(name)name.readOnly=false;
+    if(hint)hint.textContent=allTeams.length
+      ?"可关联已有团队项目；不在项目内时选择对应项目并确认加入。"
+      :"暂无团队项目；也可以直接填写新的比赛 / 队伍进度。";
+    const leaderHint=q("#teamLeaderHint");
+    if(leaderHint)leaderHint.textContent="负责人必须从已选队伍成员中选择；提交后会同步到项目负责人。";
+   }
+  };
+  team.onchange=async()=>{
+   if(team.disabled||state.user?.id!==userId)return;
+   const hit=allTeams.find(x=>x.id===team.value);
+   if(hit&&!(hit.member_ids||[]).includes(userId)){
+    const target=hit.id;
+    team.value=lastSelected;
+    if(["completed","archived"].includes(hit.status))return;
+    if(!confirm("项目“"+hit.name+"”尚未包含当前账号。\n确认加入该团队项目并将这条进度关联到它吗？"))return;
+    team.disabled=true;if(refresh)refresh.disabled=true;
+    if(hint)hint.textContent="正在加入项目："+hit.name+"…";
+    try{
+     const response=await supabase.rpc("join_project",{p_project_id:target});
+     if(response.error)throw response.error;
+     if(state.user?.id!==userId)return;
+     __projectDirectoryCache=[];
+     toast("已加入项目："+hit.name);
+     await populateProgressProjectOptions(target);
+    }catch(err){
+     if(hint)hint.textContent="加入失败："+(err?.message||String(err))+"；可在项目管理页面查看项目成员。";
+     toast("加入项目失败："+(err?.message||String(err)));
+    }finally{
+     if(state.user?.id===userId){team.disabled=false;if(refresh)refresh.disabled=false}
+    }
+    return;
+   }
+   lastSelected=team.value;
+   applySelection(hit||null);
+  };
+  if(chosen&&joined.some(x=>x.id===chosen))applySelection(joined.find(x=>x.id===chosen));
+  else if(chosen&&open.some(x=>x.id===chosen)){team.value="";lastSelected="";applySelection(null);team.value=chosen;await team.onchange()}
+  if(refresh){
+   refresh.onclick=async()=>{
+    if(refresh.disabled)return;
+    refresh.disabled=true;
+    const remembered=team.value;
+    try{await populateProgressProjectOptions(remembered)}
+    finally{refresh.disabled=false}
+   };
+  }
+ }catch(err){
+  console.warn("读取关联团队项目失败",err);
   if(team){
-    const teamRows=mine.filter(x=>x.project_mode==="team");
-    team.innerHTML='<option value="">不关联已有项目，按比赛 / 队伍填写</option>'+teamRows.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("");
-    team.onchange=()=>{
-      const hit=teamRows.find(x=>x.id===team.value);
-      const name=q("#teamCompetitionName");
-      const wrap=q("#teamProjectHint");
-      if(hit){
-        if(name){name.value=hit.name;name.readOnly=true}
-        if(wrap)wrap.textContent="已关联项目："+hit.name+"；队伍成员将自动采用项目成员名单。";
-        const ids=new Set(hit.member_ids||[]);
-        teamMemberSelection.clear();
-        ids.forEach(id=>teamMemberSelection.add(id));
-        document.querySelectorAll(".teamMemberCheck").forEach(cb=>cb.checked=teamMemberSelection.has(cb.value));
-        const selected=q("#teamMemberSelectedCount");if(selected)selected.textContent="已选 "+teamMemberSelection.size+" 人";
-        const preview=q("#teamSelectedPreview");
-        if(preview){
-          const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
-          preview.innerHTML=members.length?members.map(m=>'<span class="teamSelectedChip">'+esc(m.full_name||"成员")+'</span>').join(""):'<span class="profileHint">项目成员由项目管理页维护</span>';
-        }
-        const leader=q("#teamLeader");
-        if(leader){
-          const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
-          leader.innerHTML='<option value="">请选择负责人</option>'+members.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name||"成员")+(m.major?' · '+esc(m.major):'')+'</option>').join("");
-          if(hit.leader_id&&teamMemberSelection.has(hit.leader_id))leader.value=hit.leader_id;
-        }
-        const hint=q("#teamLeaderHint");
-        if(hint)hint.textContent="当前项目负责人："+(hit.leader_name||"未设置")+"；如需调整可在本次提交时重新选择。";
-      }else{
-        if(name){name.readOnly=false}
-        if(wrap)wrap.textContent="可关联已有团队项目；也可以直接填写新的比赛 / 队伍进度。";
-        const hint=q("#teamLeaderHint");
-        if(hint)hint.textContent="负责人必须从已选队伍成员中选择；提交后会同步到项目负责人。";
-      }
-    };
+   team.replaceChildren(new Option("项目列表加载失败，可手动填写队伍名称",""));
+   team.value="";
   }
+  if(hint)hint.textContent="项目列表加载失败："+(err?.message||String(err))+"。可刷新项目或改为手动填写。";
+ }finally{if(team&&state.user?.id===userId&&request===__teamOptionsLoadEpoch)team.disabled=false}
 }
 async function refreshProjectProgressCounts(){
   if(page!=="projects"||!state.user)return;
