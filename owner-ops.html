@@ -19,7 +19,7 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
 .login{width:min(480px,calc(100% - 28px));margin:80px auto;padding:22px;border:1px solid #1c3049;border-radius:18px;background:#0b192a}.field{display:grid;gap:6px;margin-top:12px;color:#cbd9ea;font-size:13px}.field input{width:100%;padding:11px 12px;border-radius:11px;border:1px solid #223a57;background:#081524;color:#edf6ff}.msg{margin-top:12px;color:#8fa4bd;font-size:13px}.panel{background:#0b192a;border:1px solid #1c3049;border-radius:18px;padding:16px;overflow:auto}.panel h2{margin:0 0 12px;font-size:18px}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:10px 9px;border-bottom:1px solid #1a2d43;text-align:left;font-size:13px;vertical-align:top}th{color:#7890aa;font-size:11px}.device{max-width:360px;word-break:break-word;color:#7890aa}.footer{padding:28px 0 42px;color:#6f88a5;font-size:12px}
 @media(max-width:1080px){.grid{grid-template-columns:repeat(3,1fr)}.links{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.grid,.links{grid-template-columns:1fr}.topin{flex-wrap:wrap;padding:10px 0}.nav{width:100%;margin-left:0}.hero{padding-top:24px}}
 </style>
-</head>
+<style>.compactPageHero{padding:18px 0 12px!important}.compactPageHero h1{font-size:clamp(23px,2.5vw,29px)!important;line-height:1.25!important;margin:0 0 5px!important}.compactPageHero>p{font-size:13px!important;line-height:1.55!important;margin:0!important;max-width:980px}.compactPageHero .statusbar,.compactPageHero .meta{margin-top:9px!important}@media(max-width:720px){.compactPageHero{padding:12px 0 9px!important}.compactPageHero h1{font-size:22px!important}.compactPageHero>p{font-size:12px!important}}</style></head>
 <body>
 <header class="top"><div class="wrap topin"><div class="brand">JUST Lab · Owner Ops<small>私人运维与关联服务状态页</small></div><div class="nav"><button id="refreshBtn" class="btn pri">立即刷新</button><button id="logoutBtn" class="btn ghost hidden">退出</button></div></div></header>
 
@@ -34,8 +34,8 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
 </section>
 
 <main id="app" class="wrap hidden">
-  <section class="hero">
-    <span class="eyebrow">SYSTEM OVERVIEW</span>
+  <section class="hero compactPageHero">
+    
     <h1>网站全链路状态中心</h1>
     <p>集中查看主站、Supabase、七牛云、GitHub Pages 与常用管理入口。</p>
     <div class="meta"><span id="ownerBadge" class="pill">主管理员</span><span id="checkedAt" class="pill">尚未刷新</span><span class="pill">自动刷新：30 秒</span></div>
