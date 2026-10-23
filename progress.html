@@ -150,7 +150,25 @@ html[data-theme="light"] .progressReviewRow{background:#f5f9fd;border-color:#d7e
 html[data-theme="light"] .progressReviewRow strong{color:#376f9c}
 html[data-theme="light"] .progressUx43ReviewCard>p{color:#647f97}
 @media(max-width:600px){.progressUx43ReviewCard{padding:15px}.progressReviewActions button{min-height:45px;flex:1}.progressDraftRow{align-items:flex-start}.progressComposerHeader{scroll-margin-top:90px}}
-</style><style>.teamProjectHintRow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.teamProjectHintRow #teamProjectHint{flex:1 1 220px;line-height:1.55}.teamProjectHintRow .btn{font-size:12px;min-height:37px;padding:7px 10px}.teamProjectHintRow button:disabled{opacity:.55}@media(max-width:600px){.teamProjectHintRow{display:grid;grid-template-columns:1fr 1fr}.teamProjectHintRow #teamProjectHint{grid-column:1/-1}.teamProjectHintRow .btn{min-height:43px}}</style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
+</style><style>.teamProjectHintRow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.teamProjectHintRow #teamProjectHint{flex:1 1 220px;line-height:1.55}.teamProjectHintRow .btn{font-size:12px;min-height:37px;padding:7px 10px}.teamProjectHintRow button:disabled{opacity:.55}@media(max-width:600px){.teamProjectHintRow{display:grid;grid-template-columns:1fr 1fr}.teamProjectHintRow #teamProjectHint{grid-column:1/-1}.teamProjectHintRow .btn{min-height:43px}}</style><style>
+.teamPickerOpen{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;min-height:51px;padding:11px 14px;text-align:left;border:1px solid #4b82b8;border-radius:13px;background:#102941;color:#edf7ff;font:inherit;font-size:14px;cursor:pointer}
+.teamPickerOpen[hidden]{display:none!important}.teamPickerOpen:disabled{opacity:.7;cursor:wait}
+.teamPickerDialog{width:min(580px,calc(100vw - 22px));max-height:min(85dvh,800px);padding:0;background:#102034;color:#edf7ff;border:1px solid #436583;border-radius:20px}
+.teamPickerDialog::backdrop{background:#050e1dcc}.teamPickerPanel{padding:20px;max-height:85dvh;display:flex;flex-direction:column;gap:13px}
+.teamPickerHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.teamPickerHead h2{margin:2px 0;font-size:22px}
+.teamPickerTabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.teamPickerTabs button{min-height:43px;border:1px solid #35526e;border-radius:10px;background:#182c42;color:#b5cbe0;font-weight:700}
+.teamPickerTabs button.is-active{background:#2c6db4;color:white}
+#teamProjectPickerStatus{margin:0;font-size:12px;color:#a6bfd5}
+.teamPickerList{min-height:70px;overflow-y:auto;display:grid;align-content:start;gap:8px}
+.teamPickerItem{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:68px;padding:12px 14px;border:1px solid #304b65;border-radius:12px;background:#112840;color:#eaf5ff;text-align:left;cursor:pointer}
+.teamPickerItem:disabled{opacity:.55;cursor:not-allowed}.teamPickerItem:focus-visible,.teamPickerOpen:focus-visible{outline:2px solid #84bffe;outline-offset:2px}
+.teamPickerText{display:grid;gap:5px;min-width:0}.teamPickerText strong{font-size:14px;overflow-wrap:anywhere}.teamPickerText small{font-size:11px;color:#92acc4}
+.teamPickerIndicator{flex:0 0 auto;font-size:12px;color:#92cdf6}.teamPickerEmpty{padding:22px;text-align:center;color:#a5bbd0}
+.teamPickerFoot{margin:0;font-size:11px;color:#a2b8cb;line-height:1.65}
+html[data-theme="light"] .teamPickerDialog{background:#fff;color:#19344f}html[data-theme="light"] .teamPickerItem,html[data-theme="light"] .teamPickerOpen{background:#f3f8ff;color:#224365;border-color:#c6dae9}html[data-theme="light"] .teamPickerTabs button{background:#f0f6fb;color:#3c6384}html[data-theme="light"] .teamPickerTabs button.is-active{background:#2c6db4;color:white}
+@media(max-width:720px){.teamPickerDialog{margin:auto 0 0;width:100%;max-width:100%;max-height:84dvh;border-radius:22px 22px 0 0}.teamPickerPanel{max-height:84dvh;padding:19px 15px calc(18px + env(safe-area-inset-bottom))}.teamPickerItem{min-height:74px}}
+</style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
 <div class="progressDashboardIntro">
   <div><span class="eyebrow">PROGRESS WORKSPACE</span><h2>实验室进度总览</h2><p>更新项目进展，查看本周期成员状态与团队动态。</p></div>
   <a class="btn sec progressJump" href="#progressComposer">填写进度 <span aria-hidden="true">↗</span></a>
@@ -185,7 +203,7 @@ html[data-theme="light"] .progressUx43ReviewCard>p{color:#647f97}
 
   <form id="teamProgressForm" class="form glass progressForm" role="tabpanel" aria-labelledby="progressTabTeam" hidden>
     <div><span class="eyebrow">TEAM PROGRESS</span><h3>队伍进度</h3><p class="profileHint">可直接关联“项目 / 队伍管理”里的团队项目；也可以像以前一样临时填写比赛名称和成员。</p></div>
-    <label>关联已有团队项目（可选）<select id="teamProject"><option value="">不关联已有项目，按比赛 / 队伍填写</option></select></label>
+    <label>关联已有团队项目（可选）<select id="teamProject"><option value="">不关联已有项目，按比赛 / 队伍填写</option></select></label><button id="teamProjectPickerOpen" class="teamPickerOpen" type="button" hidden><span id="teamProjectPickerCurrent">正在读取项目…</span><span aria-hidden="true">⌄</span></button>
     <div class="teamProjectHintRow"><small id="teamProjectHint" class="profileHint" role="status">正在检查已有团队项目…</small><button id="teamProjectRefresh" class="btn sec" type="button">刷新项目</button><a class="btn ghost" href="./projects.html">项目管理 ↗</a></div>
     <label>比赛 / 项目名称<input id="teamCompetitionName" maxlength="160" placeholder="例如：全国大学生机械创新设计大赛"></label>
     <label>队伍进度<textarea id="teamCurrentProgress" rows="6" maxlength="5000" required placeholder="本阶段队伍完成了什么、目前整体进展到哪一步"></textarea></label>
@@ -258,7 +276,7 @@ html[data-theme="light"] .progressUx43ReviewCard>p{color:#647f97}
   </div>
 </dialog>
 
-<dialog id="progressUx43Review" class="progressUx43Review" aria-labelledby="progressUx43ReviewTitle"><div class="progressUx43ReviewCard"><div class="eyebrow">SUBMISSION REVIEW</div><h2 id="progressUx43ReviewTitle">提交前核对</h2><p>确认项目、内容、附件和成员信息正确。确认后才会真正上传与保存。</p><div id="progressUx43ReviewFields" class="progressUx43ReviewFields"></div><div class="progressReviewActions"><button id="progressUx43Cancel" type="button" class="btn sec">返回修改</button><button id="progressUx43Approve" type="button" class="btn pri">确认提交</button></div></div></dialog><script src="./progress-ux43.js?v=2026.10.23.progress-space-ux43" defer></script><script>
+<dialog id="teamProjectPickerDialog" class="teamPickerDialog" aria-labelledby="teamProjectPickerTitle"><div class="teamPickerPanel"><div class="teamPickerHead"><div><span class="eyebrow">PROJECT DIRECTORY</span><h2 id="teamProjectPickerTitle">关联团队项目</h2></div><button id="teamProjectPickerClose" type="button" class="btn ghost" aria-label="关闭项目选择">✕</button></div><input id="teamProjectPickerSearch" type="search" placeholder="搜索项目名称、负责人…" autocomplete="off"><div id="teamProjectPickerTabs" class="teamPickerTabs" role="tablist" aria-label="项目分类"><button type="button" data-filter="joined" role="tab" aria-selected="true" class="is-active">我已加入</button><button type="button" data-filter="available" role="tab" aria-selected="false">可加入</button><button type="button" data-filter="finished" role="tab" aria-selected="false">已结束</button></div><p id="teamProjectPickerStatus" role="status"></p><div id="teamProjectPickerList" class="teamPickerList"></div><p class="teamPickerFoot">选择其他团队项目时，会先请求你的确认，并使用现有项目加入权限校验。</p></div></dialog><dialog id="progressUx43Review" class="progressUx43Review" aria-labelledby="progressUx43ReviewTitle"><div class="progressUx43ReviewCard"><div class="eyebrow">SUBMISSION REVIEW</div><h2 id="progressUx43ReviewTitle">提交前核对</h2><p>确认项目、内容、附件和成员信息正确。确认后才会真正上传与保存。</p><div id="progressUx43ReviewFields" class="progressUx43ReviewFields"></div><div class="progressReviewActions"><button id="progressUx43Cancel" type="button" class="btn sec">返回修改</button><button id="progressUx43Approve" type="button" class="btn pri">确认提交</button></div></div></dialog><script src="./progress-project-picker.js?v=2026.10.23.project-picker-ux45" defer></script><script src="./progress-ux43.js?v=2026.10.23.progress-space-ux43" defer></script><script>
 /* Progress form tabs + read-only mirrored metric; no business requests. */
 (function(){
   const personal=document.getElementById("progressForm");
