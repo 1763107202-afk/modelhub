@@ -15,7 +15,46 @@
 .spaceTeacherFeedback{font-size:13px;color:#98b8d5;margin:0}
 html[data-theme="light"] .spaceTeacherDialog{background:white;color:#18324b}
 html[data-theme="light"] .spaceTeacherForm select,html[data-theme="light"] .spaceTeacherForm textarea{background:#f7faff;color:#18324b}
-</style><link rel="stylesheet" data-cache-managed data-lab-ux="true" href="./ux-phase1-v1.css"></head><body data-page="space"><div id="siteHeader"></div><main class="spaceWrap"><div class="spaceTop"><div class="spaceTopCopy"><span class="eyebrow">LAB MOMENTS <span class="spaceTopDot" aria-hidden="true"></span> 近期动态</span><h1>实验室进度空间</h1><p>分享阶段成果 · 交流技术问题 · 见证团队成长</p><p class="spaceRetentionHint"><span aria-hidden="true">◷</span> 仅展示最近 21 天动态，历史进度、项目和附件仍保留。</p></div><div class="uxSpaceTopActions"><a id="spaceTeacherBulkLink" class="btn sec" href="./progress.html#progressBulkActions" hidden>🔔 批量提醒</a><a class="btn pri" href="./progress.html#progressComposer">＋ 提交进度</a></div></div><div id="spaceGate"></div><div id="spaceContent" hidden><button class="spaceUnreadBar" id="spaceUnreadBar" hidden type="button" onclick="document.getElementById('spaceInboxOpen').click()">🔔 你收到了 <strong id="spaceUnreadCount">0</strong> 条新评论　查看消息 →</button><div id="spaceMessage" class="spaceMessage" hidden></div><div class="spaceDeskGrid"><div class="spaceDeskMain"><section id="spaceFeedSection"><div class="spaceToolbar" role="search" aria-label="筛选进度动态"><input id="spaceSearch" type="search" placeholder="搜索成员、项目、进度内容…" autocomplete="off"><select id="spaceFilter" aria-label="动态筛选"><option value="all">全部动态</option><option value="personal">个人进度</option><option value="team">团队进度</option></select><button id="spaceRefresh" class="btn sec" type="button" aria-label="刷新进度空间动态">↻ 刷新</button></div><p id="spaceSyncStatus" class="spaceSyncStatus" role="status" aria-live="polite"></p><p class="profileHint">全部动态：<b id="spaceTotal">0</b> 条　<a href="./progress.html">返回提交页面</a></p><div id="spaceFeed"><div class="empty">正在加载动态…</div></div><button id="spaceMore" class="btn sec" type="button" hidden>加载更多动态</button></section><section id="spaceInbox" hidden><div class="spaceInboxHeader"><h2>收到的评论</h2><button class="btn sec" id="spaceInboxClose">← 返回进度空间</button></div><div id="spaceInboxList"></div></section></div><aside class="spaceDeskAside" aria-label="我的空间工作台">
+</style><link rel="stylesheet" data-cache-managed data-lab-ux="true" href="./ux-phase1-v1.css"><style>
+/* UX43: clear, touch-friendly progress social feed */
+body[data-page="space"] .spacePost{padding:20px 21px;border-radius:17px;scroll-margin-top:110px}
+body[data-page="space"] .spacePostHead{align-items:center;min-width:0}
+body[data-page="space"] .spacePostHead>div:last-child{min-width:0}
+body[data-page="space"] .spacePostHead strong{overflow-wrap:anywhere}
+body[data-page="space"] .spacePostBody{font-size:14px;line-height:1.8}
+body[data-page="space"] .spacePostBody p{overflow-wrap:anywhere}
+body[data-page="space"] .spacePostActions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+body[data-page="space"] .spacePostActions button{min-height:40px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:700}
+body[data-page="space"] .spacePostActions button:hover{background:#173752}
+body[data-page="space"] .spacePostActions .spaceLike.isLiked{background:#622e4133}
+body[data-page="space"] .spaceComments{min-width:0;padding:16px}
+body[data-page="space"] .spaceComment{padding:12px 0;overflow-wrap:anywhere}
+body[data-page="space"] .spaceReply,body[data-page="space"] .spaceDelete,body[data-page="space"] .spaceTeacherForward{min-height:38px;margin-left:4px}
+body[data-page="space"] .spaceCommentForm textarea{min-height:88px;resize:vertical;font-size:14px}
+body[data-page="space"] .spaceCommentForm button{min-width:120px;min-height:43px}
+body[data-page="space"] .spaceToolbar button,body[data-page="space"] .spaceToolbar select{min-height:44px}
+body[data-page="space"] .spaceToolbar input{min-height:44px}
+body[data-page="space"] .spaceCommentToggle[aria-expanded="true"]{background:#204665;color:#e9f8ff}
+body[data-page="space"] .spaceLike:focus-visible,body[data-page="space"] .spaceCommentToggle:focus-visible,body[data-page="space"] .spaceReply:focus-visible{outline:2px solid #85bfee;outline-offset:2px}
+html[data-theme="light"] body[data-page="space"] .spacePostActions button:hover{background:#e9f2fa}
+html[data-theme="light"] body[data-page="space"] .spaceCommentToggle[aria-expanded="true"]{background:#dceefa;color:#22527f}
+@media(max-width:720px){
+ body[data-page="space"] .spaceTop{padding-top:23px}
+ body[data-page="space"] .spaceToolbar{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+ body[data-page="space"] .spaceToolbar input{grid-column:1/-1;width:100%;min-height:46px}
+ body[data-page="space"] .spaceToolbar select{grid-column:1;max-width:none!important;width:100%;min-width:0}
+ body[data-page="space"] .spaceToolbar button{grid-column:2;padding:9px 12px}
+ body[data-page="space"] .spacePost{padding:14px!important;margin-bottom:12px}
+ body[data-page="space"] .spacePostBody{padding:12px 0 4px!important}
+ body[data-page="space"] .spacePostActions{margin:10px 0 0!important;gap:6px;padding-top:10px}
+ body[data-page="space"] .spacePostActions button{flex:1 1 auto;min-height:44px;padding:9px 8px}
+ body[data-page="space"] .spaceComments{margin:9px 0 0!important;padding:11px!important}
+ body[data-page="space"] .spaceCommentForm textarea{min-height:100px}
+ body[data-page="space"] .spaceCommentForm button{width:100%}
+ body[data-page="space"] .spaceAttachment,body[data-page="space"] .spaceLink{margin-left:0!important}
+}
+@media(prefers-reduced-motion:reduce){body[data-page="space"] .spacePostActions button{transition:none}}
+</style></head><body data-page="space"><div id="siteHeader"></div><main class="spaceWrap"><div class="spaceTop"><div class="spaceTopCopy"><span class="eyebrow">LAB MOMENTS <span class="spaceTopDot" aria-hidden="true"></span> 近期动态</span><h1>实验室进度空间</h1><p>分享阶段成果 · 交流技术问题 · 见证团队成长</p><p class="spaceRetentionHint"><span aria-hidden="true">◷</span> 仅展示最近 21 天动态，历史进度、项目和附件仍保留。</p></div><div class="uxSpaceTopActions"><a id="spaceTeacherBulkLink" class="btn sec" href="./progress.html#progressBulkActions" hidden>🔔 批量提醒</a><a class="btn pri" href="./progress.html#progressComposer">＋ 提交进度</a></div></div><div id="spaceGate"></div><div id="spaceContent" hidden><button class="spaceUnreadBar" id="spaceUnreadBar" hidden type="button" onclick="document.getElementById('spaceInboxOpen').click()">🔔 你收到了 <strong id="spaceUnreadCount">0</strong> 条新评论　查看消息 →</button><div id="spaceMessage" class="spaceMessage" hidden></div><div class="spaceDeskGrid"><div class="spaceDeskMain"><section id="spaceFeedSection"><div class="spaceToolbar" role="search" aria-label="筛选进度动态"><input id="spaceSearch" type="search" placeholder="搜索成员、项目、进度内容…" autocomplete="off"><select id="spaceFilter" aria-label="动态筛选"><option value="all">全部动态</option><option value="personal">个人进度</option><option value="team">团队进度</option><option value="mine">与我有关</option></select><button id="spaceRefresh" class="btn sec" type="button" aria-label="刷新进度空间动态">↻ 刷新</button></div><p id="spaceSyncStatus" class="spaceSyncStatus" role="status" aria-live="polite"></p><p class="profileHint">全部动态：<b id="spaceTotal">0</b> 条　<a href="./progress.html">返回提交页面</a></p><div id="spaceFeed"><div class="empty">正在加载动态…</div></div><button id="spaceMore" class="btn sec" type="button" hidden>加载更多动态</button></section><section id="spaceInbox" hidden><div class="spaceInboxHeader"><h2>收到的评论</h2><button class="btn sec" id="spaceInboxClose">← 返回进度空间</button></div><div id="spaceInboxList"></div></section></div><aside class="spaceDeskAside" aria-label="我的空间工作台">
 <section class="spaceSideCard spaceSideWelcome">
 <div class="spaceSideEyebrow">WORKSPACE</div>
 <h2>我的空间</h2>
