@@ -782,6 +782,11 @@ function renderMessageCenter(){
    btn.classList.toggle("isActive",selected);
    btn.setAttribute("aria-selected",String(selected));
  });
+ if(!state.user){
+   const sentList=q("#messageSentList");
+   if(sentList)sentList.innerHTML='<p class="messageLoading">登录后即可查询已发送消息及成员确认情况。</p>';
+   return;
+ }
  document.querySelectorAll("[data-message-filter]").forEach(btn=>{
    const selected=btn.dataset.messageFilter===stateView.filter;
    btn.classList.toggle("isActive",selected);
@@ -831,12 +836,6 @@ function renderMessageCenter(){
 async function initMessages(){
  const shell=q("#messageCenterShell");
  if(!shell)return;
- if(!state.user){
-   const list=q("#notifyList");
-   if(list)list.innerHTML='<p class="messageLoading">请先登录，再查看个人消息及确认回执。 <button type="button" id="messageLogin" class="btn pri">立即登录</button></p>';
-   q("#messageLogin")?.addEventListener("click",()=>q("#authOpen")?.click());
-   return;
- }
  const params=new URLSearchParams(location.search);
  messageCenterState.tab=params.get("tab")==="sent"?"sent":"inbox";
  document.querySelectorAll("[data-message-tab]").forEach(btn=>btn.onclick=()=>{
@@ -848,6 +847,13 @@ async function initMessages(){
    messageCenterState.filter=btn.dataset.messageFilter;
    renderMessageCenter();
  });
+ if(!state.user){
+   const list=q("#notifyList");
+   if(list)list.innerHTML='<p class="messageLoading">请先登录，再查看个人消息及确认回执。 <button type="button" id="messageLogin" class="btn pri">立即登录</button></p>';
+   q("#messageLogin")?.addEventListener("click",()=>q("#authOpen")?.click());
+   renderMessageCenter();
+   return;
+ }
  await loadSiteNotifications(true);
 }
 function notificationTypeName(t){
