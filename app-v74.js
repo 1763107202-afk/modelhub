@@ -764,7 +764,7 @@ function teacherNoticeUrl(x){
   if(x.progress_type&&x.progress_id)return "./space.html?type="+encodeURIComponent(x.progress_type)+"&id="+encodeURIComponent(x.progress_id)+(x.message_type==="teacher_comment"?"&note="+encodeURIComponent(x.id):"");
   return "./progress.html#progressComposer";
 }
-const messageCenterState={filter:"all",tab:"inbox",rows:[],sent:[]};
+const messageCenterState={filter:"all",sentFilter:"all",tab:"inbox",rows:[],sent:[]};
 async function getSentProgressNotices(){
  if(!state.user)return [];
  const r=await supabase.rpc("get_sent_progress_notices");
@@ -799,6 +799,14 @@ function renderMessageCenter(){
  const pending=stateView.sent.filter(x=>!x.acknowledged_at).length;
  const pendingCount=q("#messagePendingCount");
  if(pendingCount)pendingCount.textContent=stateView.sent.length?"("+pending+" 待确认)":"";
+ document.querySelectorAll("[data-sent-filter]").forEach(btn=>{
+   const selected=btn.dataset.sentFilter===stateView.sentFilter;
+   btn.classList.toggle("isActive",selected);
+   btn.setAttribute("aria-pressed",String(selected));
+ });
+ const sentRows=stateView.sent.filter(n=>stateView.sentFilter==="all"||(stateView.sentFilter==="pending"?!n.acknowledged_at:!!n.acknowledged_at));
+ const sentSummary=q("#messageSentSummary");
+ if(sentSummary)sentSummary.textContent=stateView.sent.length?("共 "+stateView.sent.length+" 条 · 已确认 "+(stateView.sent.length-pending)+" 条 · 待确认 "+pending+" 条"):"最近 15 天内暂无已发送通知";
  const list=q("#notifyList");
  if(list){
    let visible=0;
@@ -821,11 +829,11 @@ function renderMessageCenter(){
  }
  const sentList=q("#messageSentList");
  if(sentList){
-   sentList.innerHTML=stateView.sent.length?stateView.sent.map(n=>{
+   sentList.innerHTML=sentRows.length?sentRows.map(n=>{
      const ack=!!n.acknowledged_at;
      const label=ack?"已确认收到":n.read_at?"已读 · 待确认":"未确认";
      return '<article class="messageSentCard" data-sent-id="'+esc(n.id)+'"><div class="messageSentCardHeader"><strong>'+esc(n.recipient_name||"成员")+'</strong><span class="messageStatus '+(ack?'isAck':'')+'">'+label+'</span></div><small>'+esc(n.message_type==="teacher_comment"?"教师私密评语":"进度更新提醒")+' · '+fmt(n.created_at)+'</small><p>'+esc(n.message||"")+'</p>'+(ack?'<div class="messageAckTime">✓ 于 '+fmt(n.acknowledged_at)+' 确认收到</div>':'<div class="messageAckPending">等待成员主动确认</div>')+'</article>';
-   }).join(""):'<p class="messageLoading">尚无最近 15 天内发出的教师通知。</p>';
+   }).join(""):'<p class="messageLoading">'+(stateView.sent.length?"这一分类暂无记录。":"尚无最近 15 天内发出的教师通知。")+"</p>";
    const focusId=new URLSearchParams(location.search).get("notice");
    if(focusId){
      const selected=[...sentList.querySelectorAll("[data-sent-id]")].find(el=>el.dataset.sentId===focusId);
@@ -845,6 +853,10 @@ async function initMessages(){
  });
  document.querySelectorAll("[data-message-filter]").forEach(btn=>btn.onclick=()=>{
    messageCenterState.filter=btn.dataset.messageFilter;
+   renderMessageCenter();
+ });
+ document.querySelectorAll("[data-sent-filter]").forEach(btn=>btn.onclick=()=>{
+   messageCenterState.sentFilter=btn.dataset.sentFilter;
    renderMessageCenter();
  });
  if(!state.user){
