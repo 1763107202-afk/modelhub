@@ -1,0 +1,112 @@
+/* UX46: compact functional page headings, preserve one semantic h1. */
+/* Visual language: restrained enterprise workspace, not marketing hero banners. */
+main > .compactPageHero,
+main.wrap > .compactPageHero,
+#adminView > .compactPageHero,
+#app > .compactPageHero{
+  padding:22px 0 12px!important;
+  margin:0!important;
+  min-width:0;
+}
+.compactPageHero > .eyebrow{display:none!important}
+.compactPageHero h1{
+  font-size:clamp(23px,2.15vw,29px)!important;
+  line-height:1.25!important;
+  letter-spacing:-.025em;
+  font-weight:800;
+  margin:0!important;
+}
+.compactPageHero > p{
+  max-width:880px!important;
+  font-size:13px!important;
+  line-height:1.65!important;
+  margin:5px 0 0!important;
+  color:var(--muted,#8ba3bd);
+  overflow-wrap:anywhere;
+}
+main > .compactPageHero + .section,
+main > .compactPageHero + .wrap.section,
+main.wrap > .compactPageHero + .section{
+  padding-top:9px!important;
+}
+.compactPageHero .statusbar,
+.compactPageHero .meta{margin-top:9px!important}
+.compactPageHero .pill{padding:5px 9px}
+.compactToolbarTitle{
+  font-size:16px!important;
+  font-weight:750;
+  line-height:1.4;
+  margin:0!important;
+}
+.compactToolbarDesc{margin:2px 0 0!important;font-size:12px;color:#8ba3bd}
+.compactResultCount{margin:0;font-size:13px;font-weight:650;color:#829ab5}
+.compactResultCount strong{color:inherit;font-variant-numeric:tabular-nums}
+.projectToolbar.compactProjectToolbar{
+  justify-content:flex-end;
+  margin:0 0 12px;
+}
+.fileToolbar.compactFileToolbar{gap:10px;margin-bottom:13px}
+.fileToolbar.compactFileToolbar .compactResultCount{white-space:nowrap}
+.progressDashboardIntro.compactDashboardIntro{margin-bottom:13px!important}
+.progressDashboardIntro.compactDashboardIntro .compactDashboardHint{
+  font-size:13px!important;
+  font-weight:700;
+  margin:0!important;
+  color:#9db4ca;
+}
+main.spaceWrap > .spaceTop.compactSpaceTop{
+  padding:18px 0 12px!important;
+  gap:12px!important;
+}
+.spaceTop.compactSpaceTop .spaceTopCopy > .eyebrow{display:none!important}
+.spaceTop.compactSpaceTop h1{
+  margin:0 0 3px!important;
+  font-size:clamp(23px,2.4vw,29px)!important;
+  line-height:1.3;
+}
+.spaceTop.compactSpaceTop .spaceTopCopy>p:not(.spaceRetentionHint){display:none!important}
+.spaceTop.compactSpaceTop .spaceRetentionHint{
+  margin:6px 0 0!important;
+  font-size:11px!important;
+  padding:6px 10px;
+}
+.spaceTop.compactSpaceTop .uxSpaceTopActions{margin:0}
+.messageCenterHeading.compactMessageHeading{padding-top:18px!important;margin-bottom:12px!important}
+.messageCenterHeading.compactMessageHeading .eyebrow{display:none!important}
+.messageCenterHeading.compactMessageHeading h1{
+  font-size:clamp(23px,2.4vw,29px)!important;
+  line-height:1.3!important;
+  margin:0!important;
+}
+.messageCenterHeading.compactMessageHeading p{
+  margin:5px 0 0!important;
+  font-size:12px!important;
+  line-height:1.5;
+}
+.sr-only{
+  position:absolute!important;
+  width:1px!important;height:1px!important;
+  padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;border:0!important;
+}
+main > .compactProfileContent{padding-top:18px!important}
+@media(max-width:720px){
+  main > .compactPageHero,
+  main.wrap > .compactPageHero,
+  #adminView > .compactPageHero,
+  #app > .compactPageHero{padding:12px 0 9px!important}
+  .compactPageHero h1{font-size:22px!important}
+  .compactPageHero>p{font-size:12px!important;line-height:1.55!important;margin-top:3px!important}
+  main > .compactPageHero + .section,
+  main > .compactPageHero + .wrap.section,
+  main.wrap > .compactPageHero + .section{padding-top:6px!important}
+  .projectToolbar.compactProjectToolbar{margin-bottom:10px}
+  .projectToolbar.compactProjectToolbar .btn{min-height:44px}
+  .fileToolbar.compactFileToolbar{align-items:stretch}
+  .spaceTop.compactSpaceTop{padding-top:12px!important}
+  .spaceTop.compactSpaceTop .uxSpaceTopActions{width:100%;gap:7px}
+  .spaceTop.compactSpaceTop .uxSpaceTopActions .btn{min-height:42px}
+  .messageCenterHeading.compactMessageHeading{padding-top:12px!important}
+  main > .compactProfileContent{padding-top:10px!important}
+}
