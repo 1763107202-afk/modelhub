@@ -868,9 +868,16 @@ async function loadSiteNotifications(openDialog=false){
     globalThis.__notifyCache=null;
     if(dot){dot.classList.add("hidden");dot.textContent=""}
     q("#uxBottomNotify")?.classList.remove("uxHasUnread");
+    if(summary)summary.textContent="登录后查看个人消息";
+    if(page==="messages"){
+      const refresh=q("#notifyRefresh"),readAll=q("#notifyReadAll");
+      if(refresh)refresh.hidden=true;
+      if(readAll)readAll.hidden=true;
+    }
     if(list)list.innerHTML='<div class="notifyEmpty">请登录后查看通知。</div>';
     return [];
   }
+  if(page==="messages"){const refresh=q("#notifyRefresh");if(refresh)refresh.hidden=false;}
   const requestUserId=state.user.id;
   const now=Date.now();
   if(!openDialog&&globalThis.__notifyCache?.rows&&globalThis.__notifyCache.userId===requestUserId&&now-globalThis.__notifyCache.at<15000){
