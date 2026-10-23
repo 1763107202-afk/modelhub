@@ -756,7 +756,7 @@ async function applyRegisteredSession(session){
 
 async function fetchTeacherNotices(){
   if(!state.user)return [];
-  const r=await supabase.from("progress_member_notices").select("id,sender_name,message_type,message,progress_type,progress_id,created_at,read_at,acknowledged_at").eq("recipient_id",state.user.id).order("created_at",{ascending:false}).limit(40);
+  const r=await supabase.from("progress_member_notices").select("id,sender_name,message_type,message,progress_type,progress_id,created_at,read_at,acknowledged_at").eq("recipient_id",state.user.id).gte("created_at",new Date(Date.now()-15*86400000).toISOString()).order("created_at",{ascending:false}).limit(80);
   if(r.error){console.warn("定向通知暂不可用",r.error.message);return []}
   return r.data||[];
 }
