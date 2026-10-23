@@ -334,8 +334,8 @@ function renderChrome(){
     const noticeDialog=q("#notifyDialog"),mount=q("#messageInboxMount");
     if(noticeDialog&&mount){
       const bar=noticeDialog.querySelector(".notifyToolbar"),list=noticeDialog.querySelector("#notifyList");
-      if(bar)mount.append(bar);
-      if(list)mount.append(list);
+      // Replace the static loading placeholder; don't leave it above live messages.
+      mount.replaceChildren(...[bar,list].filter(Boolean));
       noticeDialog.remove();
     }
   }
@@ -894,6 +894,7 @@ async function loadSiteNotifications(openDialog=false){
   }
   q("#uxBottomNotify")?.classList.toggle("uxHasUnread",unread>0);
   if(summary)summary.textContent=unread?("未读 "+unread+" 条 · 共 "+rows.length+" 条"):("全部已读 · 共 "+rows.length+" 条");
+  if(page==="messages"){const readAll=q("#notifyReadAll");if(readAll)readAll.hidden=unread===0;}
   if(list){
     list.innerHTML=rows.length?rows.map(x=>{
       const href=esc(spaceSafeLink(x.link_url||"./index.html")||"./index.html"),key=esc(x.notification_key),type=esc(x.notification_type||"");
@@ -959,7 +960,7 @@ function bindNotifications(){
   if(toolbar&&!q("#notifyRefresh")){
     const refreshBtn=document.createElement("button");
     refreshBtn.type="button";refreshBtn.id="notifyRefresh";refreshBtn.className="btn sec";
-    refreshBtn.textContent="↻ 刷新";
+    refreshBtn.textContent=page==="messages"?"刷新":"↻ 刷新";
     refreshBtn.onclick=async()=>{
       if(refreshBtn.disabled)return;
       refreshBtn.disabled=true;globalThis.__notifyCache=null;
@@ -967,6 +968,7 @@ function bindNotifications(){
     };
     toolbar.insertBefore(refreshBtn,all||toolbar.firstChild);
   }
+  if(page==="messages"&&all)all.textContent="全部已读";
   if(all)all.onclick=async()=>{
     if(!state.user)return;
     all.disabled=true;
