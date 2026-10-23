@@ -448,18 +448,15 @@ function renderChrome(){
     ];
     for(const [key,href,symbol,label] of tabs){
       const node=document.createElement("a");
-      if(true){
-        node.href=href;
-        node.dataset.uxBottomTab=key;
-        node.setAttribute("aria-label",label+"页面");
-        if(page===key)node.setAttribute("aria-current","page");
-        node.addEventListener("click",event=>{
-          if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
-          // Immediate tactile response while normal anchor navigation proceeds.
-          node.classList.add("uxBottomNavigating");
-          mobileNav.setAttribute("aria-busy","true");
-        });
-      }
+      node.href=href;
+      node.dataset.uxBottomTab=key;
+      node.setAttribute("aria-label",label+"页面");
+      if(page===key)node.setAttribute("aria-current","page");
+      node.addEventListener("click",event=>{
+        if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
+        node.classList.add("uxBottomNavigating");
+        mobileNav.setAttribute("aria-busy","true");
+      });
       if(key==="messages")node.id="uxBottomNotify";
       const pict=document.createElement("span");pict.className="uxBottomIcon";pict.setAttribute("aria-hidden","true");pict.textContent=symbol;
       const caption=document.createElement("span");caption.className="uxBottomLabel";caption.textContent=label;
