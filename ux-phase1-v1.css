@@ -862,3 +862,176 @@ html[data-theme="light"] .siteHeader .acct #accountMenuToggle[aria-expanded="tru
 @media(prefers-reduced-motion:reduce){
  .uxBottomNav>a,.uxBottomNav>button{transform:none!important}
 }
+
+/* UX38: standalone notifications center, accessible touch-first layout. */
+body[data-page="messages"] .messageCenterShell{
+  width:min(1000px,calc(100% - 28px));
+  max-width:1000px;
+  margin:0 auto;
+  min-height:calc(100dvh - 240px);
+  padding:38px 0 60px;
+  box-sizing:border-box;
+}
+body[data-page="messages"] .messageCenterHeading{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  margin-bottom:26px;
+}
+body[data-page="messages"] .messageCenterHeading h1{
+  font-size:clamp(30px,4vw,44px);letter-spacing:-.025em;line-height:1.2;
+  margin:7px 0 10px;
+}
+body[data-page="messages"] .messageCenterHeading p{
+  color:#90a8c1;margin:0;font-size:14px;line-height:1.65;max-width:740px;
+}
+body[data-page="messages"] .messageCenterPanel{
+  background:#102034;border:1px solid #2c4864;border-radius:22px;
+  box-shadow:0 14px 36px rgba(0,0,0,.09);
+  padding:20px;min-width:0;
+}
+body[data-page="messages"] .messageMainTabs{
+  display:flex;gap:8px;margin:0 0 20px;border-bottom:1px solid #2b4560;
+  padding-bottom:12px;
+}
+body[data-page="messages"] .messageMainTabs button,
+body[data-page="messages"] .messageFilterBar button{
+  border:1px solid #35516c;background:#152942;color:#a9c2dc;
+  padding:11px 17px;border-radius:12px;cursor:pointer;font-size:14px;font-weight:750;
+}
+body[data-page="messages"] .messageMainTabs button.isActive,
+body[data-page="messages"] .messageFilterBar button.isActive{
+  color:#fff;background:#326bb4;border-color:#558fd1;
+}
+body[data-page="messages"] .messageMainTabs button span{font-size:11px;font-weight:600;opacity:.83}
+body[data-page="messages"] .messageFilterBar{
+  display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;
+}
+body[data-page="messages"] .messageFilterBar button{padding:8px 12px;font-size:12px;min-height:38px}
+body[data-page="messages"] .notifyToolbar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+  margin:8px 0 16px;padding:0;font-size:13px;
+}
+body[data-page="messages"] #notifySummary{flex:1 1 160px;color:#a8bfd7}
+body[data-page="messages"] .notifyToolbar .btn{min-height:40px;padding:9px 12px}
+body[data-page="messages"] .notifyList,
+body[data-page="messages"] .messageSentList{
+  display:grid;gap:12px;max-height:none;overflow:visible;padding:0;margin:0;
+}
+body[data-page="messages"] .messageRow[hidden],
+body[data-page="messages"] #messageInboxPanel[hidden],
+body[data-page="messages"] #messageSentPanel[hidden],
+body[data-page="messages"] #messageFilterEmpty[hidden]{display:none!important}
+body[data-page="messages"] .messageRow{
+  min-width:0;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;
+  border:1px solid #304963;border-radius:16px;background:#101c2c;
+  padding:7px 12px 11px;
+}
+body[data-page="messages"] .messageRow:has(.notifyItem.unread){
+  border-color:#3e78b3;background:#122942;
+}
+body[data-page="messages"] .messageRow .notifyItem{
+  border:0!important;background:transparent!important;
+  display:block;flex:1 1 100%;min-width:0;box-sizing:border-box;
+  box-shadow:none!important;margin:0!important;padding:9px 3px!important;
+}
+body[data-page="messages"] .messageRow .notifyItem p{
+  line-height:1.65;overflow-wrap:anywhere;white-space:pre-wrap;margin:7px 0 0;
+}
+body[data-page="messages"] .messageRow .notifyItemTop{
+  display:flex;flex-wrap:wrap;align-items:start;gap:8px;
+}
+body[data-page="messages"] .messageRow .notifyItemTop b{
+  font-size:15px;line-height:1.5;overflow-wrap:anywhere;
+}
+body[data-page="messages"] .messageConfirm{
+  align-self:flex-end;margin:0 0 0 auto;padding:9px 13px;min-height:41px;
+  color:#e4f4ff;background:#1d6599;border:1px solid #3985b6;
+  border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;
+}
+body[data-page="messages"] .messageConfirm:disabled{opacity:.6;cursor:wait}
+body[data-page="messages"] .messageConfirmed{
+  margin:0 0 0 auto;color:#83c8a6;font-size:12px;padding:8px 4px;
+}
+body[data-page="messages"] .messageSentLegend,
+body[data-page="messages"] .messageRetentionHint{
+  color:#91aac3;font-size:12px;line-height:1.7;
+}
+body[data-page="messages"] .messageSentLegend{margin:2px 0 18px}
+body[data-page="messages"] .messageRetentionHint{margin:16px 0}
+body[data-page="messages"] .messageSentCard{
+  padding:16px 18px;min-width:0;background:#101c2c;
+  border:1px solid #304963;border-radius:16px;
+}
+body[data-page="messages"] .messageSentCardHeader{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;
+}
+body[data-page="messages"] .messageSentCardHeader strong{font-size:16px}
+body[data-page="messages"] .messageSentCard small{color:#88a2bd;font-size:12px}
+body[data-page="messages"] .messageSentCard p{
+  white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;margin:12px 0;
+}
+body[data-page="messages"] .messageStatus{
+  padding:5px 11px;border-radius:999px;color:#e6b46a;
+  font-size:12px;background:#b27c231a;border:1px solid #b27c2350;
+}
+body[data-page="messages"] .messageStatus.isAck{
+  color:#83d3a9;background:#2c92601c;border-color:#50a77866;
+}
+body[data-page="messages"] .messageAckTime{font-size:12px;color:#7dd0a3}
+body[data-page="messages"] .messageAckPending{font-size:12px;color:#a6b8c9}
+body[data-page="messages"] .messageSentCard.messageFocus{outline:2px solid #5ea8dc;outline-offset:2px}
+body[data-page="messages"] .messageLoading{padding:28px 14px;color:#8caac7;text-align:center}
+body[data-page="messages"] button:focus-visible,
+body[data-page="messages"] .notifyItem:focus-visible{
+  outline:2px solid #77b9fa;outline-offset:2px;
+}
+html[data-theme="light"] body[data-page="messages"] .messageCenterPanel{
+  background:#fff;border-color:#d9e4ef;box-shadow:0 13px 34px #3162950c;
+}
+html[data-theme="light"] body[data-page="messages"] .messageCenterHeading p{color:#647f99}
+html[data-theme="light"] body[data-page="messages"] .messageMainTabs{border-color:#e1eaf2}
+html[data-theme="light"] body[data-page="messages"] .messageMainTabs button,
+html[data-theme="light"] body[data-page="messages"] .messageFilterBar button{
+  background:#f3f7fc;border-color:#d8e4ee;color:#496987;
+}
+html[data-theme="light"] body[data-page="messages"] .messageMainTabs button.isActive,
+html[data-theme="light"] body[data-page="messages"] .messageFilterBar button.isActive{
+  color:white;background:#3478c6;border-color:#3478c6;
+}
+html[data-theme="light"] body[data-page="messages"] .messageRow,
+html[data-theme="light"] body[data-page="messages"] .messageSentCard{
+  background:#fcfdff;border-color:#d7e3ed;
+}
+html[data-theme="light"] body[data-page="messages"] .messageRow:has(.notifyItem.unread){
+  background:#f0f7ff;border-color:#a5c8e8;
+}
+html[data-theme="light"] body[data-page="messages"] .messageConfirm{
+  background:#e6f3ff;border-color:#a9cae7;color:#245d91;
+}
+html[data-theme="light"] body[data-page="messages"] .messageConfirmed,
+html[data-theme="light"] body[data-page="messages"] .messageAckTime{color:#257c55}
+html[data-theme="light"] body[data-page="messages"] .messageCenterHeading h1{color:#18314c}
+html[data-theme="light"] body[data-page="messages"] .messageSentLegend,
+html[data-theme="light"] body[data-page="messages"] .messageRetentionHint{color:#64829d}
+@media(max-width:720px){
+ body[data-page="messages"] .messageCenterShell{
+   width:calc(100% - 24px);padding:24px 0 calc(90px + env(safe-area-inset-bottom));
+ }
+ body[data-page="messages"] .messageCenterHeading{align-items:flex-start;gap:12px;margin-bottom:18px}
+ body[data-page="messages"] .messageCenterHeading h1{font-size:30px}
+ body[data-page="messages"] .messageCenterHeading p{font-size:12px}
+ body[data-page="messages"] .messageCenterHeading>a{font-size:12px;padding:9px 10px;white-space:nowrap}
+ body[data-page="messages"] .messageCenterPanel{padding:13px;border-radius:17px}
+ body[data-page="messages"] .messageMainTabs button{flex:1 1 0;min-width:0;min-height:44px;padding:10px 7px;font-size:13px}
+ body[data-page="messages"] .messageFilterBar{gap:6px}
+ body[data-page="messages"] .messageFilterBar button{min-height:42px}
+ body[data-page="messages"] .messageRow{padding:8px 11px 12px}
+ body[data-page="messages"] .messageRow .notifyItem{padding:6px 0!important}
+ body[data-page="messages"] .messageConfirm{width:100%;min-height:45px}
+ body[data-page="messages"] .messageSentCard{padding:13px}
+ body[data-page="messages"] .notifyToolbar{gap:7px}
+ body[data-page="messages"] #notifySummary{flex-basis:100%}
+ body[data-page="messages"] .notifyToolbar .btn{flex:1;min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-page="messages"] *{scroll-behavior:auto}
+}
