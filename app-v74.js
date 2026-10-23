@@ -2771,6 +2771,7 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
  const team=q("#teamProject"),hint=q("#teamProjectHint"),refresh=q("#teamProjectRefresh");
  const before=selectAfterLoad||team?.value||"";
  if(team)team.disabled=true;
+ window.JUSTTeamProjectPicker?.setLoading("正在读取项目…");
  if(hint)hint.textContent="正在读取已有团队项目…";
  try{
   const result=await fetchProjectDirectory(true);
@@ -2786,6 +2787,7 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
   }
   if(!team)return;
   const allTeams=rows.filter(x=>x.project_mode==="team");
+  window.JUSTTeamProjectPicker?.setProjects(rows,userId);
   const joined=allTeams.filter(x=>(x.member_ids||[]).includes(userId));
   const open=allTeams.filter(x=>!(x.member_ids||[]).includes(userId)&&!["completed","archived"].includes(x.status));
   const closed=allTeams.filter(x=>!(x.member_ids||[]).includes(userId)&&["completed","archived"].includes(x.status));
@@ -2813,7 +2815,7 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
   const applySelection=hit=>{
    const name=q("#teamCompetitionName");
    if(hit){
-    if(name){name.value=hit.name;name.readOnly=true}
+    if(name){if(!name.dataset.linkedProjectName)name.dataset.preLinkValue=name.value;name.value=hit.name;name.dataset.linkedProjectName=hit.name;name.readOnly=true}
     if(hint)hint.textContent="已关联项目："+hit.name+"；将使用项目成员名单。";
     teamMemberSelection.clear();
     (hit.member_ids||[]).forEach(id=>teamMemberSelection.add(id));
@@ -2834,7 +2836,7 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
     const leaderHint=q("#teamLeaderHint");
     if(leaderHint)leaderHint.textContent="当前项目负责人："+(hit.leader_name||"未设置")+"；如需调整可在本次提交时重新选择。";
    }else{
-    if(name)name.readOnly=false;
+    if(name){name.readOnly=false;if(name.dataset.linkedProjectName&&name.value===name.dataset.linkedProjectName)name.value=name.dataset.preLinkValue||"";delete name.dataset.linkedProjectName;delete name.dataset.preLinkValue}
     if(hint)hint.textContent=allTeams.length
       ?"可关联已有团队项目；不在项目内时选择对应项目并确认加入。"
       :"暂无团队项目；也可以直接填写新的比赛 / 队伍进度。";
@@ -2869,6 +2871,7 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
    }
    lastSelected=team.value;
    applySelection(hit||null);
+   window.JUSTTeamProjectPicker?.sync();
   };
   if(chosen&&joined.some(x=>x.id===chosen))applySelection(joined.find(x=>x.id===chosen));
   else if(chosen&&open.some(x=>x.id===chosen)){team.value="";lastSelected="";applySelection(null);team.value=chosen;await team.onchange()}
@@ -2888,7 +2891,8 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
    team.value="";
   }
   if(hint)hint.textContent="项目列表加载失败："+(err?.message||String(err))+"。可刷新项目或改为手动填写。";
- }finally{if(team&&state.user?.id===userId&&request===__teamOptionsLoadEpoch)team.disabled=false}
+  window.JUSTTeamProjectPicker?.setError(err?.message||String(err));
+ }finally{if(team&&state.user?.id===userId&&request===__teamOptionsLoadEpoch){team.disabled=false;window.JUSTTeamProjectPicker?.sync()}}
 }
 async function refreshProjectProgressCounts(){
   if(page!=="projects"||!state.user)return;
