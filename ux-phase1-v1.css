@@ -1035,3 +1035,127 @@ html[data-theme="light"] body[data-page="messages"] .messageRetentionHint{color:
 @media(prefers-reduced-motion:reduce){
  body[data-page="messages"] *{scroll-behavior:auto}
 }
+
+/* UX40: compact, action-first message inbox layout for mobile. */
+body[data-page="messages"] #messageInboxMount{display:flex;flex-direction:column;min-width:0;gap:8px}
+body[data-page="messages"] .notifyToolbar{justify-content:flex-end;min-width:0}
+body[data-page="messages"] #notifyReadAll[hidden],
+body[data-page="messages"] #messageFilterEmpty[hidden]{display:none!important}
+body[data-page="messages"] .messageRow{margin:0}
+body[data-page="messages"] #notifyList{min-height:0!important;max-height:none!important;overflow:visible!important}
+body[data-page="messages"] .notifyList .messageRow:first-child{margin-top:0}
+@media(max-width:720px){
+ body[data-page="messages"] .messageCenterShell{
+   width:calc(100% - 24px);
+   padding:16px 0 calc(92px + env(safe-area-inset-bottom))!important;
+ }
+ body[data-page="messages"] .messageCenterHeading{
+   display:grid;grid-template-columns:minmax(0,1fr) auto;
+   gap:6px 9px;align-items:start;margin:0 0 14px;
+ }
+ body[data-page="messages"] .messageCenterHeading .eyebrow{
+   font-size:10px;letter-spacing:.12em;line-height:1.25;
+ }
+ body[data-page="messages"] .messageCenterHeading h1{
+   font-size:clamp(26px,7vw,30px);line-height:1.16;margin:5px 0 7px;
+ }
+ body[data-page="messages"] .messageCenterHeading p{
+   font-size:12px;line-height:1.55;margin:0;max-width:33em;
+ }
+ body[data-page="messages"] .messageCenterHeading>a{
+   justify-self:end;font-size:12px;line-height:1.25;
+   min-height:36px;height:auto;padding:8px 10px;border-radius:11px;
+ }
+ body[data-page="messages"] .messageCenterPanel{
+   padding:12px 11px 15px!important;border-radius:16px;min-width:0;
+ }
+ body[data-page="messages"] .messageMainTabs{
+   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+   gap:8px;margin:0 0 12px;padding:0 0 11px;
+ }
+ body[data-page="messages"] .messageMainTabs button{
+   width:100%;padding:10px 5px!important;
+   min-height:44px;border-radius:11px;
+   font-size:13px;line-height:1.4;white-space:nowrap;
+   overflow:hidden;text-overflow:ellipsis;
+ }
+ body[data-page="messages"] .messageMainTabs button span{
+   display:inline;font-size:10px;white-space:nowrap;
+ }
+ body[data-page="messages"] .messageFilterBar{
+   flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden;
+   margin:0 -2px 7px;padding:0 2px 8px;
+   gap:7px;max-width:100%;scrollbar-width:none;
+   scroll-snap-type:x proximity;overscroll-behavior-x:contain;
+   -webkit-overflow-scrolling:touch;
+ }
+ body[data-page="messages"] .messageFilterBar::-webkit-scrollbar{display:none}
+ body[data-page="messages"] .messageFilterBar button{
+   flex:0 0 auto!important;min-width:max-content;
+   padding:7px 12px!important;height:36px!important;min-height:36px!important;
+   border-radius:10px;font-size:12px;white-space:nowrap;
+   scroll-snap-align:start;
+ }
+ body[data-page="messages"] .notifyToolbar{
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr));
+   align-items:center;gap:7px;margin:0 0 9px!important;
+   padding:0;min-width:0;
+ }
+ body[data-page="messages"] #notifySummary{
+   grid-column:1/-1;flex:none!important;
+   display:block;min-width:0;font-size:12px;line-height:1.4;
+   color:#8caac3;text-align:left;
+ }
+ body[data-page="messages"] .notifyToolbar #notifyRefresh,
+ body[data-page="messages"] .notifyToolbar #notifyReadAll{
+   display:inline-flex;justify-content:center;align-items:center;
+   box-sizing:border-box;width:100%;min-width:0;
+   margin:0!important;min-height:38px!important;height:38px;
+   padding:7px 9px!important;border-radius:10px;font-size:12px;
+   font-weight:700;white-space:nowrap;
+ }
+ body[data-page="messages"] .notifyToolbar #notifyReadAll[hidden]{display:none!important}
+ body[data-page="messages"] .notifyToolbar:has(#notifyReadAll[hidden]) #notifyRefresh{
+   grid-column:2;
+ }
+ body[data-page="messages"] #notifyList,
+ body[data-page="messages"] .messageSentList{
+   gap:9px!important;padding:0!important;margin:0!important;
+   min-height:0!important;max-height:none!important;
+   overflow:visible!important;
+ }
+ body[data-page="messages"] #messageInboxMount{
+   display:flex;flex-direction:column;gap:0;min-width:0;
+ }
+ body[data-page="messages"] .messageRow{
+   padding:8px 11px 11px;border-radius:13px;
+ }
+ body[data-page="messages"] .messageRow .notifyItem{
+   padding:4px 0!important;min-width:0;
+ }
+ body[data-page="messages"] .messageRow .notifyItemTop b{
+   font-size:14px!important;line-height:1.45;
+ }
+ body[data-page="messages"] .messageRow .notifyItemTop time{font-size:11px}
+ body[data-page="messages"] .messageRow .notifyItem p{
+   font-size:12px!important;line-height:1.6;margin:6px 0 0;
+ }
+ body[data-page="messages"] .messageConfirm{
+   width:100%;min-height:42px;padding:9px;font-size:12px;
+ }
+ body[data-page="messages"] .messageSentLegend{
+   font-size:12px;line-height:1.55;margin:0 0 11px;
+ }
+ body[data-page="messages"] .messageSentCard{padding:12px;border-radius:13px}
+ body[data-page="messages"] .messageLoading,
+ body[data-page="messages"] .notifyEmpty{
+   padding:18px 9px!important;margin:0;text-align:center;
+   min-height:0!important;font-size:13px;
+ }
+ body[data-page="messages"] .messageRetentionHint{font-size:11px;margin:12px 3px}
+}
+@media(max-width:360px){
+ body[data-page="messages"] .messageCenterHeading>a{font-size:11px;padding:7px}
+ body[data-page="messages"] .messageMainTabs button{font-size:12px}
+}
