@@ -4538,7 +4538,7 @@ function spaceCommentTree(item){
  }).join(""):'<div class="spaceEmptyComments">还没有评论，来说两句吧。</div>';
 }
 function spaceRenderFeed(){
- const k=spaceState.keyword,items=spaceVisibleItems().filter(x=>(spaceState.filter==="all"||spaceState.filter===x.type)&&(!k||[x.title,x.body,x.goal,x.created_by_name,(x.members||[]).join(" ")].join(" ").toLowerCase().includes(k)));
+ const k=spaceState.keyword,items=spaceVisibleItems().filter(x=>(spaceState.filter==="all"||spaceState.filter===x.type||(spaceState.filter==="mine"&&(x.owner===state.user?.id||(x.members||[]).includes(state.profile?.full_name||""))))&&(!k||[x.title,x.body,x.goal,x.created_by_name,(x.members||[]).join(" ")].join(" ").toLowerCase().includes(k)));
  q("#spaceTotal").textContent=items.length;
  const box=q("#spaceFeed"),epoch=++spaceState.renderEpoch;
  const drafts=new Map();
@@ -4621,7 +4621,9 @@ function spaceRenderFeed(){
    }
   });
   if(!spaceState.interactionsReady)return;
-  article.querySelector(".spaceCommentToggle").onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;if(!panel.hidden){spaceState.expanded.add(spaceKey(type,id));spaceReadPost(type,id)}else spaceState.expanded.delete(spaceKey(type,id))};
+  const commentToggle=article.querySelector(".spaceCommentToggle");
+  if(commentToggle){commentToggle.setAttribute("aria-expanded",String(!article.querySelector(".spaceComments")?.hidden));commentToggle.setAttribute("aria-label","展开或收起评论");commentToggle.onclick=()=>{const panel=article.querySelector(".spaceComments");panel.hidden=!panel.hidden;commentToggle.setAttribute("aria-expanded",String(!panel.hidden));if(!panel.hidden){spaceState.expanded.add(spaceKey(type,id));spaceReadPost(type,id);panel.querySelector("textarea")?.focus({preventScroll:true})}else spaceState.expanded.delete(spaceKey(type,id))}}
+
   article.querySelector(".spaceLike").onclick=async e=>{
     const btn=e.currentTarget;if(btn.disabled)return;
     const liked=spaceState.likes.some(l=>l.progress_type===type&&l.progress_id===id&&l.user_id===state.user.id);
