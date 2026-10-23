@@ -1237,3 +1237,34 @@ html[data-theme="light"] body[data-page="home"] .homeWorkItem.progressOverdue{ba
  body[data-page="home"] .homeWorkItem{transition:none}
  body[data-page="home"] .homeWorkItem:hover{transform:none}
 }
+
+
+/* UX42: teacher receipt filters are separate from inbox unread filters. */
+body[data-page="messages"] .messageSentFilters{
+  display:flex;flex-wrap:wrap;gap:8px;margin:0 0 9px;
+}
+body[data-page="messages"] .messageSentFilters button{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:8px 15px;border-radius:11px;
+  background:#142a43;border:1px solid #35516c;color:#b4cde5;
+  font:inherit;font-size:13px;font-weight:750;cursor:pointer;
+}
+body[data-page="messages"] .messageSentFilters button.isActive{
+  background:#326bb4;border-color:#558fd1;color:#fff;
+}
+body[data-page="messages"] .messageSentFilters button:focus-visible{outline:2px solid #88caff;outline-offset:2px}
+body[data-page="messages"] .messageSentSummary{
+  margin:0 0 14px;color:#91acc7;font-size:12px;line-height:1.6;
+}
+html[data-theme="light"] body[data-page="messages"] .messageSentFilters button{
+  background:#f3f7fc;border-color:#d8e4ee;color:#496987;
+}
+html[data-theme="light"] body[data-page="messages"] .messageSentFilters button.isActive{
+  background:#3478c6;border-color:#3478c6;color:white;
+}
+html[data-theme="light"] body[data-page="messages"] .messageSentSummary{color:#64829d}
+@media(max-width:720px){
+ body[data-page="messages"] .messageSentFilters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ body[data-page="messages"] .messageSentFilters button{width:100%;min-width:0;min-height:44px;padding:8px 5px;font-size:12px}
+ body[data-page="messages"] .messageSentSummary{margin:0 0 11px;font-size:11px}
+}
