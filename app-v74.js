@@ -439,8 +439,19 @@ function renderChrome(){
     ];
     for(const [key,href,symbol,label] of tabs){
       const node=key==="notification"?document.createElement("button"):document.createElement("a");
-      if(key!=="notification"){node.href=href;if(page===key){node.setAttribute("aria-current","page")}}
-      else{node.type="button";node.id="uxBottomNotify";node.setAttribute("aria-label","打开站内通知")}
+      if(key!=="notification"){
+        node.href=href;
+        node.dataset.uxBottomTab=key;
+        node.setAttribute("aria-label",label+"页面");
+        if(page===key)node.setAttribute("aria-current","page");
+        node.addEventListener("click",event=>{
+          if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
+          // Immediate tactile response while normal anchor navigation proceeds.
+          node.classList.add("uxBottomNavigating");
+          mobileNav.setAttribute("aria-busy","true");
+        });
+      }
+      else{node.type="button";node.id="uxBottomNotify";node.dataset.uxBottomTab="notification";node.setAttribute("aria-label","打开站内通知")}
       const pict=document.createElement("span");pict.className="uxBottomIcon";pict.setAttribute("aria-hidden","true");pict.textContent=symbol;
       const caption=document.createElement("span");caption.className="uxBottomLabel";caption.textContent=label;
       node.append(pict,caption);mobileNav.append(node);
@@ -580,7 +591,7 @@ function enableNavPrefetch(){
     link.as="document";
     document.head.appendChild(link);
   };
-  document.querySelectorAll('.nav a[href],.adminLink[href],.moduleCard[href]').forEach(a=>{
+  document.querySelectorAll('.nav a[href],.adminLink[href],.moduleCard[href],.uxBottomNav a[href]').forEach(a=>{
     a.addEventListener("mouseenter",()=>warm(a),{once:true,passive:true});
     a.addEventListener("pointerdown",()=>warm(a),{once:true,passive:true});
     a.addEventListener("touchstart",()=>warm(a),{once:true,passive:true});
