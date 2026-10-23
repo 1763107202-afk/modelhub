@@ -808,3 +808,57 @@ html[data-theme="light"] .siteHeader .acct #accountMenuToggle[aria-expanded="tru
 @media(prefers-reduced-motion:reduce){
   .siteHeader .acct #accountMenuToggle{transition:none!important}
 }
+
+/* UX37: mobile bottom navigation: uninterrupted full-cell touch targets. */
+@media(max-width:720px){
+ .uxBottomNav{
+   z-index:1000!important;
+   display:grid!important;
+   grid-template-columns:repeat(5,minmax(0,1fr))!important;
+   width:100%!important;
+   max-width:100vw!important;
+   box-sizing:border-box!important;
+   padding:5px max(7px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left))!important;
+   isolation:isolate;
+   pointer-events:auto!important;
+   overscroll-behavior:contain;
+ }
+ .uxBottomNav>a,.uxBottomNav>button{
+   box-sizing:border-box!important;
+   width:100%!important;
+   height:100%!important;
+   min-width:0!important;
+   min-height:54px!important;
+   margin:0!important;
+   padding:7px 2px!important;
+   position:relative;
+   z-index:1;
+   display:flex!important;
+   align-items:center!important;
+   justify-content:center!important;
+   flex-direction:column!important;
+   touch-action:manipulation;
+   -webkit-tap-highlight-color:transparent;
+   user-select:none;
+   cursor:pointer!important;
+ }
+ .uxBottomNav .uxBottomIcon,.uxBottomNav .uxBottomLabel{pointer-events:none!important;user-select:none}
+ .uxBottomNav>a:active,.uxBottomNav>button:active,.uxBottomNav>a.uxBottomNavigating{
+   background:rgba(77,133,194,.18)!important;
+   color:#e4f2ff!important;
+   transform:scale(.975);
+ }
+ .uxBottomNav>a:focus-visible,.uxBottomNav>button:focus-visible{
+   outline:2px solid #78b8ec!important;
+   outline-offset:-3px;
+ }
+ html[data-theme="light"] .uxBottomNav>a:active,
+ html[data-theme="light"] .uxBottomNav>button:active,
+ html[data-theme="light"] .uxBottomNav>a.uxBottomNavigating{
+   background:#d6e7f9!important;
+   color:#1a527f!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .uxBottomNav>a,.uxBottomNav>button{transform:none!important}
+}
