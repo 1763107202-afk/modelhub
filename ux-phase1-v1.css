@@ -1159,3 +1159,81 @@ body[data-page="messages"] .notifyList .messageRow:first-child{margin-top:0}
  body[data-page="messages"] .messageCenterHeading>a{font-size:11px;padding:7px}
  body[data-page="messages"] .messageMainTabs button{font-size:12px}
 }
+
+
+/* UX42: action-first home workbench and reduced homepage scanning cost. */
+body[data-page="home"] .homeHeroActions{display:flex!important;align-items:center;gap:10px;flex-wrap:wrap}
+body[data-page="home"] .homeHeroActions .btn{min-height:46px;padding:11px 17px}
+body[data-page="home"] .homeHeroTextLink{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-height:44px;padding:8px 10px;color:#91bbe0;font-size:13px;font-weight:740;
+  text-decoration:none;border-radius:10px;
+}
+body[data-page="home"] .homeHeroTextLink:hover{color:#e5f3ff;background:#16334e}
+body[data-page="home"] .homeWorkbench{padding-top:12px;padding-bottom:10px}
+body[data-page="home"] .homeWorkbenchHead{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:14px}
+body[data-page="home"] .homeWorkbenchHead h2{font-size:clamp(22px,2.4vw,28px);line-height:1.2;margin:4px 0 0}
+body[data-page="home"] .homeWorkbenchHead p{margin:0;color:#90abc4;font-size:12px;line-height:1.6}
+body[data-page="home"] .homeWorkbenchGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+body[data-page="home"] .homeWorkItem{
+  display:flex;align-items:center;gap:13px;min-width:0;min-height:105px;
+  padding:18px;border-radius:16px;border:1px solid #2a4663;background:#102137;
+  color:#e8f4ff;text-decoration:none;transition:border-color .16s,background .16s,transform .16s;
+}
+body[data-page="home"] .homeWorkItem:hover{border-color:#6094c9;background:#152c48;transform:translateY(-2px)}
+body[data-page="home"] .homeWorkItem:focus-visible,
+body[data-page="home"] .homeHeroTextLink:focus-visible{outline:2px solid #80bfff;outline-offset:3px}
+body[data-page="home"] .homeWorkIcon{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;font-size:22px;line-height:1;background:#1d3d60;border:1px solid #355c83;border-radius:13px;color:#c5e4ff}
+body[data-page="home"] .homeWorkCopy{display:grid;gap:4px;flex:1;min-width:0}
+body[data-page="home"] .homeWorkCopy strong{font-size:16px;line-height:1.3}
+body[data-page="home"] .homeWorkCopy small{display:block;font-size:12px;line-height:1.55;color:#92acc6}
+body[data-page="home"] .homeWorkArrow{flex:0 0 auto;font-size:17px;color:#80afd9}
+body[data-page="home"] .homeWorkItem.progressOverdue{border-color:#d99e54;background:#312616}
+body[data-page="home"] .homeWorkItem.progressOverdue .homeWorkIcon{background:#49331e;border-color:#a87942;color:#ffe0b3}
+body[data-page="home"] .announcementSection{padding-top:28px}
+body[data-page="home"] .moduleGrid{gap:12px}
+body[data-page="home"] .moduleCard{min-height:160px;padding:17px}
+body[data-page="home"] .moduleCard .icon{font-size:25px}
+body[data-page="home"] .moduleCard h3{margin:9px 0 4px;font-size:17px}
+body[data-page="home"] .moduleCard p{font-size:13px;line-height:1.6}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem{background:#fff;color:#1e3b56;border-color:#d5e2ee}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem:hover{background:#f1f7fd;border-color:#7fb1dd}
+html[data-theme="light"] body[data-page="home"] .homeWorkIcon{background:#eaf3fc;border-color:#d0e3f4;color:#326b9d}
+html[data-theme="light"] body[data-page="home"] .homeWorkCopy small,
+html[data-theme="light"] body[data-page="home"] .homeWorkbenchHead p{color:#6886a3}
+html[data-theme="light"] body[data-page="home"] .homeHeroTextLink{color:#326c9c}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem.progressOverdue{background:#fff6e8;border-color:#dcac6e}
+@media(max-width:900px){
+ body[data-page="home"] .homeWorkbenchGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body[data-page="home"] .homeWorkbenchGrid .homeWorkItem:last-child{grid-column:1/-1}
+}
+@media(max-width:720px){
+ body[data-page="home"] .homeHeroActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ body[data-page="home"] .homeHeroActions>a{width:100%!important;min-height:45px!important}
+ body[data-page="home"] .homeHeroTextLink{grid-column:1/-1;padding:4px 10px!important;min-height:37px!important}
+ body[data-page="home"] .homeWorkbench{padding-top:8px;padding-bottom:6px}
+ body[data-page="home"] .homeWorkbenchHead{display:block;margin-bottom:12px}
+ body[data-page="home"] .homeWorkbenchHead h2{font-size:23px}
+ body[data-page="home"] .homeWorkbenchHead p{font-size:12px;margin-top:5px}
+ body[data-page="home"] .homeWorkbenchGrid{grid-template-columns:minmax(0,1fr);gap:9px}
+ body[data-page="home"] .homeWorkbenchGrid .homeWorkItem:last-child{grid-column:auto}
+ body[data-page="home"] .homeWorkItem{min-height:78px;padding:12px 14px;gap:12px;border-radius:13px}
+ body[data-page="home"] .homeWorkIcon{width:41px;height:41px;flex-basis:41px}
+ body[data-page="home"] .homeWorkCopy strong{font-size:15px}
+ body[data-page="home"] .homeWorkCopy small{font-size:12px}
+ body[data-page="home"] .announcementSection{padding-top:22px}
+ body[data-page="home"] .moduleGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ body[data-page="home"] .moduleCard{padding:13px;min-height:158px}
+ body[data-page="home"] .moduleCard .icon{font-size:23px}
+ body[data-page="home"] .moduleCard h3{font-size:15px}
+ body[data-page="home"] .moduleCard p{font-size:12px;line-height:1.5}
+}
+@media(max-width:370px){
+ body[data-page="home"] .homeHeroActions{grid-template-columns:minmax(0,1fr)}
+ body[data-page="home"] .moduleGrid{grid-template-columns:1fr}
+ body[data-page="home"] .moduleCard{min-height:125px}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-page="home"] .homeWorkItem{transition:none}
+ body[data-page="home"] .homeWorkItem:hover{transform:none}
+}
