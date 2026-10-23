@@ -330,6 +330,15 @@ function renderChrome(){
     '<span class="navSep adminSep hidden"></span><a id="adminNav" class="'+(page==="admin"?"active ":"")+'hidden" href="./admin.html">管理后台</a></nav><div class="acct">'+(page==="home"?"":'<button id="globalSearchLaunch" class="btn ghost globalSearchLaunch" type="button" aria-label="打开全站搜索" title="全站搜索（Ctrl+K）">⌕ <span>搜索</span></button>')+'<button id="themeToggle" class="btn ghost themeToggle" type="button"></button><button id="notifyOpen" class="btn ghost hidden" type="button" aria-label="站内通知" title="站内通知">🔔<span id="notifyDot" class="notifyDot hidden"></span></button><a id="adminQuick" class="btn sec hidden" href="./admin.html">管理后台</a><span id="badge" class="pill hidden"></span><button id="changePasswordOpen" class="btn ghost hidden" type="button" title="修改当前账号的登录密码">修改密码</button><button id="authOpen" class="btn ghost">登录</button><button id="logout" class="btn ghost hidden">退出</button><button id="accountMenuToggle" class="btn ghost hidden" type="button" aria-label="打开账户菜单" aria-controls="accountMenuPanel" aria-expanded="false"><span id="accountMenuAvatar" class="accountMenuAvatar" aria-hidden="true">我</span><span id="accountMenuName" class="accountMenuName">我的账户</span><span class="accountMenuChevron" aria-hidden="true">⌄</span></button><div id="accountMenuPanel" class="hidden" aria-label="账户管理"><div class="accountMenuHeading">账户管理</div><a href="./profile.html" class="accountMenuItem">👤　个人主页</a><a href="./notify-settings.html" class="accountMenuItem">🔔　微信 / 系统通知设置</a><a id="accountMenuAdmin" href="./admin.html" class="accountMenuItem hidden">⚙️　管理后台</a><button id="accountMenuPassword" class="accountMenuItem" type="button">🔒　修改密码</button><button id="accountMenuLogout" class="accountMenuItem accountMenuExit" type="button">↪　退出登录</button></div></div></div></header>';
   q("#siteFooter").innerHTML='<footer class="foot"><div class="wrap footInner"><img src="./assets/lab-logo-transparent.svg?v=3" alt="实验室标志"><div><b>江苏科技大学机械创新实验室</b><small>交流平台 · 学习资料 · 项目协作</small></div></div></footer>';
   document.body.insertAdjacentHTML("beforeend",'<dialog id="auth" class="dialog"><div class="dialogbox"><h2 id="authModeTitle" style="margin:0">成员登录</h2><p id="authModeHint" style="margin:0;color:#8fa4bd">已注册成员只需要邮箱和密码即可登录。</p><div id="registerFields" class="two hidden"><label>姓名（首次注册必填）<input id="regName" maxlength="40" autocomplete="name" placeholder="请输入真实姓名"></label><label>年级 / 校区 / 专业（首次注册必填）<input id="regMajor" maxlength="60" placeholder="例如：24级东校区机械工程；苏理工机械工程"></label><label>是否为大一新生<select id="regFreshman"><option value="">请选择</option><option value="yes">是，我是大一新生</option><option value="no">否，我是正式成员</option></select></label></div><label>邮箱<input id="email" type="email" autocomplete="email"></label><label>密码<input id="password" type="password" minlength="6" autocomplete="current-password"></label><label id="rememberLoginWrap" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#9db0c5;cursor:pointer"><input id="rememberLogin" type="checkbox" checked style="width:16px;height:16px;margin:0">记住登录状态 <span style="opacity:.72">（下次打开无需重新登录）</span></label><div class="actions"><button id="login" class="btn pri" type="button">登录</button><button id="retryLogin" class="btn sec hidden" type="button">重新连接</button><button id="showRegister" class="btn sec" type="button">首次注册</button><button id="continueRegister" class="btn pri hidden" type="button">继续注册</button><button id="backLogin" class="btn ghost hidden" type="button">返回登录</button><button id="closeAuth" class="btn ghost" type="button">关闭</button></div><small id="authMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="passwordChangeDialog" class="dialog"><form id="passwordChangeForm" class="dialogbox" style="width:min(470px,92vw)" autocomplete="off"><div><span class="eyebrow">ACCOUNT SECURITY</span><h2 style="margin:5px 0 0">修改登录密码</h2><p style="color:#8fa4bd;font-size:13px;line-height:1.65;margin:8px 0 2px">请先验证当前密码。修改成功后，下次登录请使用新密码。</p></div><label>当前密码<input id="passwordCurrent" type="password" autocomplete="current-password" required placeholder="请输入当前登录密码"></label><label>新密码<input id="passwordNext" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="8–72 位，须同时包含字母和数字"></label><label>确认新密码<input id="passwordNextConfirm" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="再次输入新密码"></label><small id="passwordChangeMessage" role="status" aria-live="polite" style="color:#9db0c5;min-height:1.3em"></small><div class="actions"><button id="passwordChangeCancel" class="btn ghost" type="button">取消</button><button id="passwordChangeSubmit" class="btn pri" type="submit">保存新密码</button></div></form></dialog><dialog id="passAuth" class="dialog"><div class="dialogbox"><span class="eyebrow">LAB ACCESS</span><h2 style="margin:0">实验室通行证验证</h2><p style="margin:0;color:#8fa4bd">通行证只在首次注册时验证，之后登录无需再次填写。</p><label>实验室通行证<input id="passcodeConfirm" type="password" autocomplete="off"></label><div class="actions"><button id="confirmPasscode" class="btn pri" type="button">验证并注册</button><button id="cancelPasscode" class="btn ghost" type="button">返回</button></div><small id="passMsg" style="color:#8fa4bd"></small></div></dialog><dialog id="notifyDialog" class="dialog"><div class="dialogbox notifyDialogBox"><div class="notifyHead"><div><span class="eyebrow">NOTIFICATIONS</span><h2 style="margin:0">站内通知</h2></div><button id="notifyClose" class="btn ghost" type="button">关闭</button></div><div class="notifyToolbar"><span id="notifySummary">正在加载…</span><button id="notifyReadAll" class="btn sec" type="button">全部标为已读</button></div><div id="notifyList" class="notifyList"><div class="empty">正在加载通知…</div></div></div></dialog><style id="notifyStyles">#notifyOpen{position:relative;min-width:44px}.notifyDot{position:absolute;right:6px;top:5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e45b66;color:white;font-size:10px;line-height:17px;text-align:center;border:2px solid rgba(15,22,32,.9)}.notifyDialogBox{width:min(720px,92vw);max-height:82vh}.notifyHead,.notifyToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}.notifyToolbar{margin-top:10px;color:#8fa4bd;font-size:13px}.notifyList{display:flex;flex-direction:column;gap:10px;margin-top:14px;max-height:58vh;overflow:auto;padding-right:3px}.notifyItem{display:block;text-decoration:none;border:1px solid #26384d;border-radius:14px;padding:13px 14px;background:#101a27;color:inherit}.notifyItem.unread{border-color:#426b9e;background:#122238;box-shadow:0 0 0 1px #426b9e24}.notifyItem:hover{transform:translateY(-1px)}.notifyItemTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.notifyItem b{font-size:14px}.notifyItem p{margin:5px 0 0;color:#a9b8ca;font-size:13px;line-height:1.55}.notifyItem time{white-space:nowrap;color:#708399;font-size:11px}.notifyType{display:inline-flex;align-items:center;gap:5px;margin-bottom:5px;font-size:11px;color:#7ea8d8}.notifyUnreadMark{width:7px;height:7px;border-radius:50%;background:#5ba6ff;display:inline-block}.notifyEmpty{padding:28px 10px;text-align:center;color:#8092a7}.notifyItem[data-type="deadline"].unread,.notifyItem[data-type="progress"].unread{border-color:#8b4950;background:#2b171b}html[data-theme="light"] .notifyItem{background:#fff;border-color:#dbe4ee}html[data-theme="light"] .notifyItem.unread{background:#f2f7ff;border-color:#8db5e6}html[data-theme="light"] .notifyItem p{color:#5f6f81}html[data-theme="light"] .notifyDot{border-color:#fff}@media(max-width:620px){.notifyItemTop{flex-direction:column}.notifyToolbar{align-items:flex-start;flex-direction:column}}.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(210px,255px) minmax(360px,760px) max-content;grid-template-areas:"brand search acct" "nav nav nav";row-gap:7px}.siteHeader.homeSearchHeader .brand{grid-area:brand}.siteHeader.homeSearchHeader .globalSearch{grid-area:search;position:relative;width:100%;justify-self:center;z-index:70}.siteHeader.homeSearchHeader .acct{grid-area:acct;justify-self:end}.siteHeader.homeSearchHeader .nav{grid-area:nav;justify-content:flex-start;border-top:1px solid #ffffff0d;padding:6px 0 2px}.globalSearchInputWrap{height:44px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid #2a4665;border-radius:14px;background:#0a192acc;box-shadow:0 7px 24px #0002}.globalSearchInputWrap:focus-within{border-color:#5b8bc2;box-shadow:0 0 0 3px #4c83bd20,0 8px 26px #0003}.globalSearchIcon{font-size:21px;color:#77a7d8;line-height:1}.globalSearchInputWrap input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#edf5ff;padding:0;font-size:14px}.globalSearchInputWrap input::placeholder{color:#7189a5}.globalSearchClear{width:28px;height:28px;border:0;border-radius:9px;background:#162b43;color:#9fb8d2;cursor:pointer;font-size:18px;line-height:1}.globalSearchResults{position:absolute;top:calc(100% + 8px);left:0;right:0;max-height:min(64vh,560px);overflow:auto;padding:7px;border:1px solid #284563;border-radius:16px;background:#081522f7;box-shadow:0 20px 60px #0008;backdrop-filter:blur(18px)}.globalSearchItem{display:grid;grid-template-columns:36px minmax(0,1fr) 18px;gap:10px;align-items:center;padding:10px 11px;border-radius:11px}.globalSearchItem:hover{background:#102941}.globalSearchItemIcon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#102a44;font-size:16px}.globalSearchItemBody{display:flex;flex-direction:column;min-width:0}.globalSearchItemBody b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.globalSearchItemBody small{font-size:11px;color:#8299b3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.globalSearchArrow{color:#6385a9;font-size:20px}.globalSearchMessage{padding:18px 14px;text-align:center;color:#8198b2;font-size:13px}html[data-theme="light"] .globalSearchInputWrap{background:#fff;border-color:#c8d9e8;box-shadow:0 7px 24px #31557910}html[data-theme="light"] .globalSearchInputWrap input{color:#18314c}html[data-theme="light"] .globalSearchResults{background:#fff;border-color:#ccdae7;box-shadow:0 20px 50px #28435b24}html[data-theme="light"] .globalSearchItem:hover{background:#f0f6fb}html[data-theme="light"] .globalSearchItemIcon{background:#edf5fb}@media(max-width:1200px){.siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"brand acct" "search search" "nav nav"}.siteHeader.homeSearchHeader .globalSearch{max-width:none}}@media(max-width:720px){.globalSearchInputWrap{height:42px}.globalSearchInputWrap input{font-size:13px}.siteHeader.homeSearchHeader .headerInner{grid-template-areas:"brand acct" "search search" "nav nav"}}/* Mobile header v20261013: prevent branding compression and route account controls to an overflow menu */ #accountMenuToggle{display:none!important} #accountMenuPanel{position:absolute;right:0;top:calc(100% + 9px);z-index:100;width:226px;max-width:calc(100vw - 24px);padding:8px;border-radius:16px;border:1px solid #35516f;background:#0d1c2e;box-shadow:0 18px 45px rgba(0,0,0,.3);color:#eaf3ff} #accountMenuPanel .accountMenuHeading{padding:8px 12px 10px;color:#91abc7;font-size:12px;letter-spacing:.04em;font-weight:750} #accountMenuPanel .accountMenuItem{display:block;width:100%;padding:12px 13px;border:0;border-radius:10px;background:transparent;text-align:left;color:inherit;font:inherit;font-size:14px;cursor:pointer;text-decoration:none;white-space:nowrap} #accountMenuPanel .accountMenuItem:hover,#accountMenuPanel .accountMenuItem:focus-visible{background:rgba(108,156,230,.16);outline:none} #accountMenuPanel .accountMenuExit{color:#f2aeb8;border-top:1px solid rgba(144,163,190,.13);border-radius:0 0 9px 9px;margin-top:5px} html[data-theme="light"] #accountMenuPanel{background:#fff;color:#273f58;border-color:#d7e3ef;box-shadow:0 18px 45px rgba(37,72,112,.17)} html[data-theme="light"] #accountMenuPanel .accountMenuHeading{color:#6a8098} html[data-theme="light"] #accountMenuPanel .accountMenuItem:hover,html[data-theme="light"] #accountMenuPanel .accountMenuItem:focus-visible{background:#edf4fe} html[data-theme="light"] #accountMenuPanel .accountMenuExit{color:#bd3f57} @media(max-width:720px){ .siteHeader .headerInner{width:calc(100% - 24px);min-height:0;display:grid;grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"brand acct" "nav nav";align-items:center;gap:8px 8px;padding:9px 0 7px} .siteHeader.homeSearchHeader .headerInner{grid-template-columns:minmax(0,1fr) max-content;grid-template-areas:"brand acct" "search search" "nav nav";gap:8px 8px} .siteHeader .brand{grid-area:brand;display:flex;align-items:center;min-width:0;max-width:100%;gap:9px;overflow:hidden} .siteHeader .brand img{height:44px!important;width:44px!important;min-width:44px;flex:0 0 44px;border-radius:50%!important} .siteHeader .brandText{display:block;min-width:0;flex:1} .siteHeader .brandText b{font-size:13px!important;line-height:1.35;letter-spacing:0;white-space:normal!important;font-weight:850} .siteHeader .brandText b>span{display:block;white-space:nowrap} .siteHeader .brandText small{display:none!important} .siteHeader .acct{grid-area:acct;min-width:0;display:flex;align-items:center;gap:5px;justify-self:end;margin:0;position:relative} .siteHeader .acct #adminQuick,.siteHeader .acct #logout,.siteHeader .acct #changePasswordOpen{display:none!important} .siteHeader .acct #accountMenuToggle:not(.hidden){display:inline-flex!important} .siteHeader .acct #themeToggle,.siteHeader .acct #notifyOpen,.siteHeader .acct #accountMenuToggle{width:38px;height:38px;min-width:38px!important;padding:0!important;display:inline-flex;justify-content:center;align-items:center;border-radius:12px;font-size:18px;line-height:1} .siteHeader .acct #notifyOpen.hidden,.siteHeader .acct #accountMenuToggle.hidden{display:none!important} .siteHeader .acct #authOpen{height:38px;padding:0 12px!important;font-size:12px!important} .siteHeader .nav{grid-area:nav;width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;justify-content:flex-start;gap:3px;margin:0;padding:5px 0 2px;border-top:1px solid rgba(126,151,180,.13)} .siteHeader .nav a{flex:0 0 auto;scroll-snap-align:start;padding:7px 10px!important;font-size:12px!important;line-height:1.45;border-radius:11px;white-space:nowrap} .siteHeader.homeSearchHeader .globalSearch{grid-area:search;width:100%;min-width:0;max-width:100%;margin:0} .siteHeader.homeSearchHeader .globalSearchInputWrap{height:40px;padding:0 12px;border-radius:13px;box-shadow:none} .siteHeader.homeSearchHeader .globalSearchInputWrap input{font-size:12px;min-width:0;text-overflow:ellipsis} .siteHeader{overflow:visible} } @media(max-width:360px){ .siteHeader .brand img{width:40px!important;height:40px!important;min-width:40px;flex-basis:40px} .siteHeader .brandText b{font-size:11.5px!important} .siteHeader .acct{gap:4px} .siteHeader .acct #themeToggle,.siteHeader .acct #notifyOpen,.siteHeader .acct #accountMenuToggle{width:35px;height:35px;min-width:35px!important} } </style><div id="toast" class="toast"></div>');
+  if(page==="messages"){
+    const noticeDialog=q("#notifyDialog"),mount=q("#messageInboxMount");
+    if(noticeDialog&&mount){
+      const bar=noticeDialog.querySelector(".notifyToolbar"),list=noticeDialog.querySelector("#notifyList");
+      if(bar)mount.append(bar);
+      if(list)mount.append(list);
+      noticeDialog.remove();
+    }
+  }
   if(page!=="home"){
     const dialog=document.createElement("dialog");
     dialog.id="globalSearchDialog";
@@ -758,11 +767,97 @@ function teacherNoticeUrl(x){
   if(x.progress_type&&x.progress_id)return "./space.html?type="+encodeURIComponent(x.progress_type)+"&id="+encodeURIComponent(x.progress_id)+(x.message_type==="teacher_comment"?"&note="+encodeURIComponent(x.id):"");
   return "./progress.html#progressComposer";
 }
+const messageCenterState={filter:"all",tab:"inbox",rows:[],sent:[]};
+async function getSentProgressNotices(){
+ if(!state.user)return [];
+ const r=await supabase.rpc("get_sent_progress_notices");
+ if(r.error){console.warn("发送记录加载失败",r.error.message);return []}
+ return r.data||[];
+}
+function renderMessageCenter(){
+ if(page!=="messages")return;
+ const stateView=messageCenterState;
+ const inbox=q("#messageInboxPanel"),sent=q("#messageSentPanel");
+ if(inbox)inbox.hidden=stateView.tab!=="inbox";
+ if(sent)sent.hidden=stateView.tab!=="sent";
+ document.querySelectorAll("[data-message-tab]").forEach(btn=>{
+   const selected=btn.dataset.messageTab===stateView.tab;
+   btn.classList.toggle("isActive",selected);
+   btn.setAttribute("aria-selected",String(selected));
+ });
+ document.querySelectorAll("[data-message-filter]").forEach(btn=>{
+   const selected=btn.dataset.messageFilter===stateView.filter;
+   btn.classList.toggle("isActive",selected);
+   btn.setAttribute("aria-pressed",String(selected));
+ });
+ const rows=stateView.rows;
+ const unread=rows.filter(x=>!x.is_read).length;
+ const count=q("#messageInboxCount");
+ if(count)count.textContent=unread?"("+unread+" 未读)":"";
+ const pending=stateView.sent.filter(x=>!x.acknowledged_at).length;
+ const pendingCount=q("#messagePendingCount");
+ if(pendingCount)pendingCount.textContent=stateView.sent.length?"("+pending+" 待确认)":"";
+ const list=q("#notifyList");
+ if(list){
+   let visible=0;
+   list.querySelectorAll(".messageRow").forEach(card=>{
+     const item=rows.find(x=>x.notification_key===card.dataset.key);
+     if(!item)return;
+     const isTeacher=String(item.notification_key||"").startsWith("teacher:");
+     const isAck=String(item.notification_key||"").startsWith("ack:");
+     const allow=stateView.filter==="all"
+       ||(stateView.filter==="unread"&&!item.is_read)
+       ||(stateView.filter==="teacher"&&isTeacher)
+       ||(stateView.filter==="ack"&&isAck)
+       ||(stateView.filter==="system"&&!isTeacher&&!isAck);
+     card.hidden=!allow;if(allow)visible++;
+   });
+   let empty=q("#messageFilterEmpty");
+   if(!empty){empty=document.createElement("p");empty.id="messageFilterEmpty";empty.className="notifyEmpty";list.after(empty)}
+   empty.hidden=visible>0||rows.length===0;
+   if(!empty.hidden)empty.textContent="这一分类暂无消息";
+ }
+ const sentList=q("#messageSentList");
+ if(sentList){
+   sentList.innerHTML=stateView.sent.length?stateView.sent.map(n=>{
+     const ack=!!n.acknowledged_at;
+     const label=ack?"已确认收到":n.read_at?"已读 · 待确认":"未确认";
+     return '<article class="messageSentCard" data-sent-id="'+esc(n.id)+'"><div class="messageSentCardHeader"><strong>'+esc(n.recipient_name||"成员")+'</strong><span class="messageStatus '+(ack?'isAck':'')+'">'+label+'</span></div><small>'+esc(n.message_type==="teacher_comment"?"教师私密评语":"进度更新提醒")+' · '+fmt(n.created_at)+'</small><p>'+esc(n.message||"")+'</p>'+(ack?'<div class="messageAckTime">✓ 于 '+fmt(n.acknowledged_at)+' 确认收到</div>':'<div class="messageAckPending">等待成员主动确认</div>')+'</article>';
+   }).join(""):'<p class="messageLoading">尚无最近 15 天内发出的教师通知。</p>';
+   const focusId=new URLSearchParams(location.search).get("notice");
+   if(focusId){
+     const selected=[...sentList.querySelectorAll("[data-sent-id]")].find(el=>el.dataset.sentId===focusId);
+     if(selected){selected.classList.add("messageFocus");requestAnimationFrame(()=>selected.scrollIntoView({block:"center"}))}
+   }
+ }
+}
+async function initMessages(){
+ const shell=q("#messageCenterShell");
+ if(!shell)return;
+ if(!state.user){
+   const list=q("#notifyList");
+   if(list)list.innerHTML='<p class="messageLoading">请先登录，再查看个人消息及确认回执。 <button type="button" id="messageLogin" class="btn pri">立即登录</button></p>';
+   q("#messageLogin")?.addEventListener("click",()=>q("#authOpen")?.click());
+   return;
+ }
+ const params=new URLSearchParams(location.search);
+ messageCenterState.tab=params.get("tab")==="sent"?"sent":"inbox";
+ document.querySelectorAll("[data-message-tab]").forEach(btn=>btn.onclick=()=>{
+   messageCenterState.tab=btn.dataset.messageTab;
+   history.replaceState(null,"","./messages.html"+(messageCenterState.tab==="sent"?"?tab=sent":""));
+   renderMessageCenter();
+ });
+ document.querySelectorAll("[data-message-filter]").forEach(btn=>btn.onclick=()=>{
+   messageCenterState.filter=btn.dataset.messageFilter;
+   renderMessageCenter();
+ });
+ await loadSiteNotifications(true);
+}
 function notificationTypeName(t){
-  return t==="announcement"?"公告":t==="task"?"新任务":t==="deadline"?"截止提醒":t==="progress"?"进度提醒":t==="membership"?"成员状态":"通知";
+  return t==="ack"?"确认反馈":t==="announcement"?"公告":t==="task"?"新任务":t==="deadline"?"截止提醒":t==="progress"?"进度提醒":t==="membership"?"成员状态":"通知";
 }
 function notificationIcon(t){
-  return t==="announcement"?"📢":t==="task"?"📄":t==="deadline"?"⏰":t==="progress"?"📈":t==="membership"?"✅":"🔔";
+  return t==="ack"?"✅":t==="announcement"?"📢":t==="task"?"📄":t==="deadline"?"⏰":t==="progress"?"📈":t==="membership"?"✅":"🔔";
 }
 async function loadSiteNotifications(openDialog=false){
   const btn=q("#notifyOpen"),dot=q("#notifyDot"),list=q("#notifyList"),summary=q("#notifySummary");
@@ -783,10 +878,12 @@ async function loadSiteNotifications(openDialog=false){
     if(openDialog&&list)list.innerHTML='<div class="notifyEmpty">通知加载失败：'+esc(r.error.message)+'</div>';
     return [];
   }
-  const privateNotes=await fetchTeacherNotices();
+  const [privateNotes,sentNotices]=await Promise.all([fetchTeacherNotices(),getSentProgressNotices()]);
   if(state.user?.id!==requestUserId)return [];
-  const converted=privateNotes.map(x=>({notification_key:"teacher:"+x.id,notification_type:"progress",title:x.message_type==="teacher_comment"?"老师发来了私密评语":"老师提醒你更新进度",body:(x.sender_name||"实验室老师")+"："+x.message,created_at:x.created_at,link_url:teacherNoticeUrl(x),is_read:!!x.read_at}));
-  const rows=[...(r.data||[]),...converted].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)), unread=rows.filter(x=>!x.is_read).length;
+  const converted=privateNotes.map(x=>({notification_key:"teacher:"+x.id,notice_id:x.id,notification_type:"progress",title:x.message_type==="teacher_comment"?"老师发来了私密评语":"老师提醒你更新进度",body:(x.sender_name||"实验室老师")+"："+x.message,created_at:x.created_at,link_url:teacherNoticeUrl(x),is_read:!!x.read_at,acknowledged_at:x.acknowledged_at}));
+  const feedback=sentNotices.filter(x=>!!x.acknowledged_at).map(x=>({notification_key:"ack:"+x.id,notification_type:"ack",title:(x.recipient_name||"成员")+"已确认收到",body:"已确认："+(x.message_type==="teacher_comment"?"教师私密评语":"进度更新提醒"),created_at:x.acknowledged_at,link_url:"./messages.html?tab=sent&notice="+encodeURIComponent(x.id),is_read:!!x.ack_is_read}));
+  const rows=[...(r.data||[]),...converted,...feedback].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)), unread=rows.filter(x=>!x.is_read).length;
+  messageCenterState.rows=rows;messageCenterState.sent=sentNotices;
   globalThis.__notifyCache={rows,at:Date.now(),userId:requestUserId};
   if(dot){
     dot.textContent=unread>99?"99+":String(unread);
@@ -797,8 +894,22 @@ async function loadSiteNotifications(openDialog=false){
   if(list){
     list.innerHTML=rows.length?rows.map(x=>{
       const href=esc(spaceSafeLink(x.link_url||"./index.html")||"./index.html"),key=esc(x.notification_key),type=esc(x.notification_type||"");
-      return '<a class="notifyItem '+(x.is_read?'':'unread')+'" data-key="'+key+'" data-type="'+type+'" href="'+href+'"><div class="notifyType">'+(x.is_read?'':'<span class="notifyUnreadMark"></span>')+notificationIcon(type)+' '+esc(notificationTypeName(type))+'</div><div class="notifyItemTop"><b>'+esc(x.title||"通知")+'</b><time>'+esc(fmt(x.created_at))+'</time></div><p>'+esc(x.body||"")+'</p></a>';
+      const teacher=String(x.notification_key||"").startsWith("teacher:");
+      const confirmation=teacher?(x.acknowledged_at?'<span class="messageConfirmed">✓ 已于 '+fmt(x.acknowledged_at)+' 确认收到</span>':'<button type="button" class="messageConfirm" data-ack-id="'+esc(x.notice_id)+'">✓ 确认收到</button>'):"";
+      return '<div class="messageRow" data-key="'+key+'"><a class="notifyItem '+(x.is_read?'':'unread')+'" data-key="'+key+'" data-type="'+type+'" href="'+href+'"><div class="notifyType">'+(x.is_read?'':'<span class="notifyUnreadMark"></span>')+notificationIcon(type)+' '+esc(notificationTypeName(type))+'</div><div class="notifyItemTop"><b>'+esc(x.title||"通知")+'</b><time>'+esc(fmt(x.created_at))+'</time></div><p>'+esc(x.body||"")+'</p></a>'+confirmation+'</div>';
     }).join(""):'<div class="notifyEmpty">当前没有新的站内通知。</div>';
+    list.querySelectorAll("[data-ack-id]").forEach(btn=>btn.onclick=async()=>{
+      if(btn.disabled)return;
+      btn.disabled=true;btn.textContent="正在确认…";
+      try{
+        const response=await supabase.rpc("acknowledge_progress_notice",{p_notice_id:btn.dataset.ackId});
+        if(response.error)throw response.error;
+        if(response.data!==true)throw new Error("通知已过期，或当前账号无确认权限");
+        globalThis.__notifyCache=null;
+        await loadSiteNotifications(true);
+        toast("已确认收到，发送老师会看到你的确认时间");
+      }catch(err){btn.disabled=false;btn.textContent="✓ 确认收到";toast("确认失败："+(err?.message||String(err)))}
+    });
     list.querySelectorAll(".notifyItem").forEach(el=>el.addEventListener("click",async event=>{
       if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0)return;
       const key=el.dataset.key||"", dest=spaceSafeLink(el.href);
@@ -817,6 +928,7 @@ async function loadSiteNotifications(openDialog=false){
       }
       globalThis.__notifyCache=null;location.assign(dest);
     }));
+    renderMessageCenter();
   }
   if(openDialog&&page!=="messages"&&q("#notifyDialog")&&!q("#notifyDialog").open)q("#notifyDialog").showModal();
   return rows;
@@ -855,9 +967,9 @@ function bindNotifications(){
   if(all)all.onclick=async()=>{
     if(!state.user)return;
     all.disabled=true;
-    const r=await supabase.rpc("mark_all_site_notifications_read");
+    const [r,ackReads]=await Promise.all([supabase.rpc("mark_all_site_notifications_read"),supabase.rpc("mark_all_notice_ack_feedback_read")]);
     all.disabled=false;
-    if(r.error)return toast("操作失败："+r.error.message);
+    if(r.error||ackReads.error)return toast("操作失败："+(r.error?.message||ackReads.error?.message));
     const notes=await fetchTeacherNotices();
     const pending=notes.filter(x=>!x.read_at);
     const completed=await Promise.allSettled(pending.map(x=>supabase.rpc("mark_progress_notice_read",{p_notice_id:x.id})));
