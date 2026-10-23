@@ -305,6 +305,7 @@ function profileDisplayOnly(row){
     major:row.major||null,
     phone:row.phone||null,
     qq:row.qq||null,
+    avatar_path:row.avatar_path||null,
     created_at:row.created_at||null
   };
 }
@@ -594,7 +595,7 @@ function updateAuthUI(){
   const accountDisplay=state.profile?.full_name||state.user?.email?.split("@")[0]||"我的账户";
   const accountName=q("#accountMenuName"),accountAvatar=q("#accountMenuAvatar"),accountToggle=q("#accountMenuToggle");
   if(accountName)accountName.textContent=accountDisplay;
-  if(accountAvatar)accountAvatar.textContent=String(accountDisplay||"我").trim().slice(0,1)||"我";
+  if(accountAvatar)avatarRender(accountAvatar,state.profile?.avatar_path,String(accountDisplay||"我").trim().slice(0,1)||"我");
   if(accountToggle)accountToggle.title=on?"账户管理 · "+accountDisplay:"账户管理";
   q("#adminNav").classList.toggle("hidden",!isAdmin());q("#accountMenuAdmin")?.classList.toggle("hidden",!isAdmin());const aq=q("#adminQuick");if(aq)aq.classList.toggle("hidden",!isAdmin());document.querySelectorAll(".adminSep").forEach(x=>x.classList.toggle("hidden",!isAdmin()));
   const freshmanRestricted=on&&memberStatus==="freshman"&&!isAdmin();
@@ -1235,7 +1236,7 @@ async function loadProfile(preferCache=false){
 
   const profileKey=authScopedKey("profile:current");
   const r=await singleFlight(profileKey,()=>supabase.from("profiles")
-    .select("id,email,role,full_name,major,phone,qq,membership_status,created_at")
+    .select("id,email,role,full_name,major,phone,qq,avatar_path,membership_status,created_at")
     .eq("id",state.user.id)
     .maybeSingle());
   if(r.error){
@@ -3397,6 +3398,76 @@ async function initMine(){
     }
   });
 }
+
+const MEMBER_AVATAR_BUCKET="member-avatars";
+const memberAvatarCache=new Map();
+function avatarPublicUrl(path){
+ if(!path||!/^([0-9a-f-]{36})\/avatar\.webp$/i.test(path))return "";
+ return supabase.storage.from(MEMBER_AVATAR_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+function avatarRender(element,path,letter){
+ if(!element)return;
+ element.replaceChildren();
+ const imgUrl=avatarPublicUrl(path);
+ if(!imgUrl){element.textContent=letter||"我";return}
+ const img=document.createElement("img");
+ img.alt="成员头像";img.loading="lazy";img.decoding="async";
+ img.src=imgUrl+"?v="+encodeURIComponent(path===state.profile?.avatar_path?(state.profile?.avatar_updated_at||"current"):"1");
+ img.onerror=()=>{if(img.isConnected)element.textContent=letter||"我"};
+ element.append(img);
+}
+async function avatarProcess(file){
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("仅支持 JPG、PNG、WebP 格式");
+ if(file.size>8*1024*1024)throw new Error("原图不能超过 8MB");
+ const bitmap=await createImageBitmap(file);
+ try{
+  if(bitmap.width<48||bitmap.height<48||bitmap.width>8000||bitmap.height>8000)throw new Error("请选择清晰、尺寸正常的图片");
+  const cv=document.createElement("canvas");cv.width=cv.height=320;
+  const ctx=cv.getContext("2d");if(!ctx)throw new Error("浏览器不支持头像处理");
+  const side=Math.min(bitmap.width,bitmap.height);
+  ctx.drawImage(bitmap,(bitmap.width-side)/2,(bitmap.height-side)/2,side,side,0,0,320,320);
+  const blob=await new Promise(resolve=>cv.toBlob(resolve,"image/webp",.82));
+  if(!blob||blob.size>2*1024*1024)throw new Error("头像压缩失败，请更换图片");
+  return blob;
+ }finally{bitmap.close()}
+}
+function bindAvatarEditor(){
+ const fileInput=q("#avatarUpload"),remove=q("#avatarRemove"),status=q("#avatarStatus");
+ if(!fileInput||!state.user)return;
+ const render=()=>{
+  const path=state.profile?.avatar_path||"";
+  avatarRender(q("#profileAvatar"),path,(state.profile?.full_name||"我").slice(0,1));
+  if(remove)remove.hidden=!path;
+ };
+ render();
+ const save=async (blobOrNull)=>{
+  const uid=state.user?.id;
+  if(!uid)return;
+  fileInput.disabled=true;if(remove)remove.disabled=true;
+  const path=uid+"/avatar.webp",oldPath=state.profile?.avatar_path||null;
+  try{
+   if(status)status.textContent=blobOrNull?"正在上传头像…":"正在恢复默认头像…";
+   if(blobOrNull){
+    const res=await supabase.storage.from(MEMBER_AVATAR_BUCKET).upload(path,blobOrNull,{contentType:"image/webp",upsert:true,cacheControl:"60"});
+    if(res.error)throw res.error;
+   }
+   const updated=await supabase.from("profiles").update({avatar_path:blobOrNull?path:null}).eq("id",uid).select("avatar_path").single();
+   if(updated.error)throw updated.error;
+   state.profile={...state.profile,avatar_path:updated.data.avatar_path,avatar_updated_at:Date.now()};
+   for(const store of [localStorage,sessionStorage]){
+    try{store.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid,profile:state.profile,savedAt:Date.now()}))}catch(_e){}
+   }
+   render();
+   const account=q("#accountMenuAvatar");avatarRender(account,state.profile.avatar_path,(state.profile?.full_name||"我").slice(0,1));
+   if(!blobOrNull&&oldPath){const del=await supabase.storage.from(MEMBER_AVATAR_BUCKET).remove([oldPath]);if(del.error)console.warn("旧头像清理失败",del.error)}
+   if(status)status.textContent=blobOrNull?"头像已保存":"已恢复默认头像";
+  }catch(err){if(status)status.textContent="操作失败："+(err?.message||String(err))}
+  finally{fileInput.disabled=false;if(remove)remove.disabled=false}
+ };
+ fileInput.onchange=async()=>{const file=fileInput.files?.[0];if(!file)return;try{await save(await avatarProcess(file))}catch(e){if(status)status.textContent=e.message}finally{fileInput.value=""}};
+ if(remove)remove.onclick=()=>{if(confirm("恢复姓名首字头像？"))void save(null)};
+}
+
 function renderOwnProfileIdentity(){
   const p=state.profile||{};
   const name=p.full_name||"未填写姓名";
@@ -3405,7 +3476,7 @@ function renderOwnProfileIdentity(){
   const membership=membershipStatus()==="freshman"?"大一新生":"正式成员";
   const avatar=(name||"?").trim().slice(0,1).toUpperCase();
 
-  q("#profileAvatar")&&(q("#profileAvatar").textContent=avatar);
+  avatarRender(q("#profileAvatar"),p.avatar_path,avatar);
   q("#profileDisplayName")&&(q("#profileDisplayName").textContent=name);
   q("#profileDisplayMajor")&&(q("#profileDisplayMajor").textContent=major);
   q("#profileRole")&&(q("#profileRole").textContent=roleName(authzRole()));
@@ -3429,6 +3500,7 @@ async function initProfile(){
   const home=q("#profileHome");
   if(home)home.classList.remove("hidden");
   renderOwnProfileIdentity();
+  bindAvatarEditor();
 
   let projects=[],personal=[],teamRows=[],submissions=[];
   try{
