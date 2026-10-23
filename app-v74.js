@@ -4199,7 +4199,7 @@ async function spaceRefresh(){
  }
  const spaceCutoff=new Date(Date.now()-SPACE_WINDOW_MS).toISOString();
  const teacherCutoff=new Date(Date.now()-15*24*60*60*1000).toISOString();
- const [a,b,m,c,l,r,dir,privateReply]=await Promise.all([
+ const [a,b,m,c,l,r,dir,privateReply,avatars]=await Promise.all([
   supabase.from("progress_updates").select("id,user_id,member_name,member_major,current_progress,next_goal,link_url,attachment_path,attachment_name,attachment_mime,attachment_size,created_at,project_id").gte("created_at",spaceCutoff).order("created_at",{ascending:false}),
   supabase.from("team_progress_updates").select("id,created_by,created_by_name,competition_name,team_progress,next_goal,link_url,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,project_id").gte("created_at",spaceCutoff).order("created_at",{ascending:false}),
   supabase.from("team_progress_members").select("team_progress_id,member_name_snapshot"),
@@ -4207,7 +4207,8 @@ async function spaceRefresh(){
   supabase.from("progress_space_likes").select("progress_type,progress_id,user_id").gte("created_at",spaceCutoff),
   supabase.from("progress_space_comment_reads").select("comment_id").eq("user_id",state.user.id),
   fetchFormalMemberDirectoryOnce(),
-  supabase.from("progress_member_notices").select("id,progress_type,progress_id,sender_id,recipient_id,sender_name,message,created_at,read_at").eq("message_type","teacher_comment").not("progress_id","is",null).gte("created_at",teacherCutoff).order("created_at",{ascending:false}).limit(100)
+  supabase.from("progress_member_notices").select("id,progress_type,progress_id,sender_id,recipient_id,sender_name,message,created_at,read_at").eq("message_type","teacher_comment").not("progress_id","is",null).gte("created_at",teacherCutoff).order("created_at",{ascending:false}).limit(100),
+  supabase.rpc("get_member_avatar_directory")
  ]);
  if(state.user?.id!==requestUserId)return;
  if(a.error||b.error){spaceAlert("动态加载失败，请刷新后重试。");return false}
@@ -4222,6 +4223,7 @@ async function spaceRefresh(){
  spaceState.likes=l.error?[]:l.data||[];
  spaceState.reads=new Set((r.data||[]).map(x=>x.comment_id));
  spaceState.directory=new Map((dir.data||[]).map(x=>[x.id,x.full_name||"成员"]));
+ memberAvatarCache.clear();if(!avatars.error)(avatars.data||[]).forEach(x=>memberAvatarCache.set(x.id,x.avatar_path||null));
  spaceState.interactionsReady=!(c.error||r.error||l.error);
  if(!spaceState.interactionsReady)spaceAlert("进度空间已开放，但评论或点赞功能加载失败，请刷新重试。");
  else if(privateReply.error)spaceAlert("动态已加载，但私密教师评语暂时无法读取，请重试或检查权限。");
@@ -4407,8 +4409,9 @@ function spaceRenderFeed(){
   const cnt=spaceState.likes.filter(l=>l.progress_type===x.type&&l.progress_id===x.id).length;
   const comments=spaceState.comments.filter(c=>c.progress_type===x.type&&c.progress_id===x.id).length;
   const avatar=(x.type==="team"?"团":String(x.title||"成").slice(0,1));
+  const avatarHref=avatarPublicUrl(memberAvatarCache.get(x.owner));
    const safeLink=spaceSafeLink(x.link_url);
-  return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+esc(avatar)+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
+  return '<article class="spacePost" data-post-type="'+esc(x.type)+'" data-post-id="'+esc(x.id)+'"><div class="spacePostHead"><div class="spaceAvatar">'+(avatarHref?'<img src="'+esc(avatarHref)+'" alt="发布人头像" loading="lazy">'+esc(avatar):esc(avatar))+'</div><div><strong>'+esc(x.type==="team"?(x.created_by_name||"队伍成员"):x.title)+'</strong><small>'+(x.type==="team"?"团队动态 · "+esc(x.title):"个人动态")+' · '+fmt(x.created_at)+'</small></div></div><div class="spacePostBody"><p>'+esc(x.body||"")+'</p>'+(x.goal?'<div class="spaceGoal"><b>下一阶段目标</b><p>'+esc(x.goal)+'</p></div>':'')+(x.members?.length?'<small>队伍成员：'+esc(x.members.join("、"))+'</small>':'')+'</div>'+
   (safeLink?'<a class="spaceLink" href="'+esc(safeLink)+'" rel="noopener noreferrer" target="_blank">查看相关链接 ↗</a>':'')+
   spacePrivateFeedback(x)+
    (x.attachment_name?'<div class="spaceAttachment"><span class="spaceAttachmentLabel">附件：</span><span class="spaceAttachmentFilename" title="'+esc(x.attachment_name)+'">'+esc(x.attachment_name)+'</span></div><div class="spaceMedia" data-space-media="'+esc(x.type+':'+x.id)+'"></div>':'')+
