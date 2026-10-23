@@ -3126,6 +3126,7 @@ async function initProgress(){
     const link_url=rawLink?normalizeShareLink(rawLink):null;
     if(rawLink&&!link_url)return toast("链接格式不正确");
 
+    if(window.JUSTProgressUX43?.review&&!(await window.JUSTProgressUX43.review("personal")))return;
     const mergeChoice=await chooseExistingProjectForPersonalProgress(projectName);
     if(mergeChoice.mode==="cancel")return;
 
@@ -3183,7 +3184,7 @@ async function initProgress(){
         if(rm.error)console.warn("旧个人进度附件清理失败",rm.error);
       }
       const resultRow=Array.isArray(ins.data)?ins.data[0]:ins.data;
-      form.reset();q("#progressFilePreview").textContent="";
+      form.reset();q("#progressFilePreview").textContent="";window.JUSTProgressUX43?.clear("personal");
       __projectDirectoryCache=[];
       if(mergeChoice.mode==="existing"&&mergeChoice.project){
         toast("个人进度已更新，并合并到"+(mergeChoice.project.project_mode==="team"?"团队项目：":"个人项目：")+mergeChoice.project.name);
@@ -3219,6 +3220,7 @@ async function initProgress(){
     if(!teamMemberSelection.has(leaderId))return toast("负责人必须是已选队伍成员");
     const link_url=rawLink?normalizeShareLink(rawLink):null;
     if(rawLink&&!link_url)return toast("链接格式不正确");
+    if(window.JUSTProgressUX43?.review&&!(await window.JUSTProgressUX43.review("team")))return;
     const btn=e.submitter||teamForm.querySelector("button[type=submit]");
     const old=btn?.textContent||"提交队伍进度";
     let attachment_path=null,attachment_name=null,attachment_size=0,attachment_mime=null;
@@ -3281,7 +3283,7 @@ async function initProgress(){
           :await removeStorageObjectSafe("progress-files",oldTeamAttachment);
         if(rm.error)console.warn("旧队伍进度附件清理失败",rm.error);
       }
-      teamForm.reset();
+      teamForm.reset();window.JUSTProgressUX43?.clear("team");
       const teamPreview=q("#teamProgressFilePreview");if(teamPreview)teamPreview.textContent="";
       await loadTeamMemberOptions(true);
       const verifyMembers=await supabase.from("team_progress_members").select("member_id",{count:"exact",head:true});
@@ -3313,6 +3315,7 @@ async function initProgress(){
     const f=fileInput.files[0],box=q("#progressFilePreview");
     box.textContent=f?f.name+" · "+bytesText(f.size):"";
   };
+  window.JUSTProgressUX43?.init(state.user.id);
   await loadProgressPage();
 }
 async function initSubmit(){
