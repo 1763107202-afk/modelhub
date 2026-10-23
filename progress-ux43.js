@@ -44,6 +44,7 @@ function schedule(){clearTimeout(timeout);timeout=setTimeout(save,450)}
 function clear(kind){
  if(!userId||!FIELD_IDS[kind])return;
  const drafts=storeGet();delete drafts[kind];storePut(drafts);
+ clearTimeout(timeout);
  status(kind,"已提交，暂存草稿已清除");
 }
 function escapeReview(){const modal=el("progressUx43Review");if(modal?.open)modal.close("cancel")}
@@ -96,6 +97,7 @@ function init(id){
  if(!id)return;
  const nextId=String(id);
  if(initialized&&userId===nextId)return;
+ if(userId&&userId!==nextId){clearTimeout(timeout);for(const kind of ["personal","team"]){for(const field of fields(kind)){if(field.tagName==="SELECT")field.selectedIndex=0;else field.value=""}}}
  userId=nextId;
  const drafts=storeGet();
  for(const kind of ["personal","team"]){
