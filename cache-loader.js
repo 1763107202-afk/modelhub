@@ -6,7 +6,7 @@
   const loadMainApp=script?.dataset.app!=="false";
   const VERSION_KEY="justLabSiteVersionV1";
   const VERSION_CHECK_KEY="justLabSiteVersionCheckedAtV1";
-  const BOOTSTRAP_VERSION="2026.10.23.compact-pages-ux46";
+  const BOOTSTRAP_VERSION="2026.10.23.compact-align-ux46-1";
   const VERSION_CHECK_INTERVAL=2*60*1000;
   let routeVersion=BOOTSTRAP_VERSION;
 
