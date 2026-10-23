@@ -150,7 +150,7 @@ html[data-theme="light"] .progressReviewRow{background:#f5f9fd;border-color:#d7e
 html[data-theme="light"] .progressReviewRow strong{color:#376f9c}
 html[data-theme="light"] .progressUx43ReviewCard>p{color:#647f97}
 @media(max-width:600px){.progressUx43ReviewCard{padding:15px}.progressReviewActions button{min-height:45px;flex:1}.progressDraftRow{align-items:flex-start}.progressComposerHeader{scroll-margin-top:90px}}
-</style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
+</style><style>.teamProjectHintRow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.teamProjectHintRow #teamProjectHint{flex:1 1 220px;line-height:1.55}.teamProjectHintRow .btn{font-size:12px;min-height:37px;padding:7px 10px}.teamProjectHintRow button:disabled{opacity:.55}@media(max-width:600px){.teamProjectHintRow{display:grid;grid-template-columns:1fr 1fr}.teamProjectHintRow #teamProjectHint{grid-column:1/-1}.teamProjectHintRow .btn{min-height:43px}}</style></head><body data-page="progress"><div id="siteHeader"></div><main><section class="pageHero wrap"><span class="eyebrow">RECENT PROGRESS</span><h1>近期进度</h1><p>记录阶段性进展与下一时期目标，成员之间可以互相查看最新更新。</p></section><section class="section wrap"><div id="progressGate"></div><div id="progressContent" class="progressLayout hidden">
 <div class="progressDashboardIntro">
   <div><span class="eyebrow">PROGRESS WORKSPACE</span><h2>实验室进度总览</h2><p>更新项目进展，查看本周期成员状态与团队动态。</p></div>
   <a class="btn sec progressJump" href="#progressComposer">填写进度 <span aria-hidden="true">↗</span></a>
@@ -186,7 +186,7 @@ html[data-theme="light"] .progressUx43ReviewCard>p{color:#647f97}
   <form id="teamProgressForm" class="form glass progressForm" role="tabpanel" aria-labelledby="progressTabTeam" hidden>
     <div><span class="eyebrow">TEAM PROGRESS</span><h3>队伍进度</h3><p class="profileHint">可直接关联“项目 / 队伍管理”里的团队项目；也可以像以前一样临时填写比赛名称和成员。</p></div>
     <label>关联已有团队项目（可选）<select id="teamProject"><option value="">不关联已有项目，按比赛 / 队伍填写</option></select></label>
-    <small id="teamProjectHint" class="profileHint">可关联已有团队项目；也可以直接填写新的比赛 / 队伍进度。</small>
+    <div class="teamProjectHintRow"><small id="teamProjectHint" class="profileHint" role="status">正在检查已有团队项目…</small><button id="teamProjectRefresh" class="btn sec" type="button">刷新项目</button><a class="btn ghost" href="./projects.html">项目管理 ↗</a></div>
     <label>比赛 / 项目名称<input id="teamCompetitionName" maxlength="160" placeholder="例如：全国大学生机械创新设计大赛"></label>
     <label>队伍进度<textarea id="teamCurrentProgress" rows="6" maxlength="5000" required placeholder="本阶段队伍完成了什么、目前整体进展到哪一步"></textarea></label>
     <label>下一阶段队伍目标（可选）<textarea id="teamNextGoal" rows="5" maxlength="5000" placeholder="下一阶段队伍计划完成的工作"></textarea></label>
