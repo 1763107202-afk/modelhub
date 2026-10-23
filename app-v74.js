@@ -2770,7 +2770,14 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
  const userId=state.user.id,request=++__teamOptionsLoadEpoch;
  const team=q("#teamProject"),hint=q("#teamProjectHint"),refresh=q("#teamProjectRefresh");
  const before=selectAfterLoad||team?.value||"";
- if(team)team.disabled=true;
+ if(team){
+   if(team.dataset.selectionOwner!==userId){
+     delete team.dataset.activeProjectId;delete team.dataset.manualMemberIds;
+     delete team.dataset.manualLeaderId;delete team.dataset.manualName;
+     team.dataset.selectionOwner=userId;
+   }
+   team.disabled=true;
+ }
  window.JUSTTeamProjectPicker?.setLoading("正在读取项目…");
  if(hint)hint.textContent="正在读取已有团队项目…";
  try{
@@ -2815,6 +2822,12 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
   const applySelection=hit=>{
    const name=q("#teamCompetitionName");
    if(hit){
+    if(!team.dataset.activeProjectId){
+      team.dataset.manualMemberIds=JSON.stringify([...teamMemberSelection]);
+      team.dataset.manualLeaderId=q("#teamLeader")?.value||"";
+      team.dataset.manualName=name?.value||"";
+    }
+    team.dataset.activeProjectId=hit.id;
     if(name){if(!name.dataset.linkedProjectName)name.dataset.preLinkValue=name.value;name.value=hit.name;name.dataset.linkedProjectName=hit.name;name.readOnly=true}
     if(hint)hint.textContent="已关联项目："+hit.name+"；将使用项目成员名单。";
     teamMemberSelection.clear();
@@ -2836,7 +2849,32 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
     const leaderHint=q("#teamLeaderHint");
     if(leaderHint)leaderHint.textContent="当前项目负责人："+(hit.leader_name||"未设置")+"；如需调整可在本次提交时重新选择。";
    }else{
-    if(name){name.readOnly=false;if(name.dataset.linkedProjectName&&name.value===name.dataset.linkedProjectName)name.value=name.dataset.preLinkValue||"";delete name.dataset.linkedProjectName;delete name.dataset.preLinkValue}
+    const hadLink=!!team.dataset.activeProjectId;
+    if(name){
+      name.readOnly=false;
+      if(hadLink)name.value=team.dataset.manualName||"";
+      else if(name.dataset.linkedProjectName&&name.value===name.dataset.linkedProjectName)name.value=name.dataset.preLinkValue||"";
+      delete name.dataset.linkedProjectName;delete name.dataset.preLinkValue;
+    }
+    if(hadLink){
+      let savedIds=[];
+      try{const parsed=JSON.parse(team.dataset.manualMemberIds||"[]");if(Array.isArray(parsed))savedIds=parsed}catch(_e){}
+      teamMemberSelection.clear();
+      savedIds.filter(id=>teamMemberDirectory.has(id)).forEach(id=>teamMemberSelection.add(id));
+      document.querySelectorAll(".teamMemberCheck").forEach(cb=>cb.checked=teamMemberSelection.has(cb.value));
+      const selected=q("#teamMemberSelectedCount");
+      if(selected)selected.textContent="已选 "+teamMemberSelection.size+" 人";
+      const preview=q("#teamSelectedPreview");
+      const members=[...teamMemberSelection].map(id=>teamMemberDirectory.get(id)).filter(Boolean);
+      if(preview)preview.innerHTML=members.length?members.map(m=>'<span class="teamSelectedChip">'+esc(m.full_name||"成员")+'</span>').join(""):'<span class="profileHint">本次将计入：尚未选择成员</span>';
+      const leader=q("#teamLeader");
+      if(leader){
+        leader.innerHTML='<option value="">请选择负责人</option>'+members.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.full_name||"成员")+'</option>').join("");
+        if(team.dataset.manualLeaderId&&teamMemberSelection.has(team.dataset.manualLeaderId))leader.value=team.dataset.manualLeaderId;
+      }
+      delete team.dataset.activeProjectId;delete team.dataset.manualMemberIds;
+      delete team.dataset.manualLeaderId;delete team.dataset.manualName;
+    }
     if(hint)hint.textContent=allTeams.length
       ?"可关联已有团队项目；不在项目内时选择对应项目并确认加入。"
       :"暂无团队项目；也可以直接填写新的比赛 / 队伍进度。";
@@ -2850,6 +2888,7 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
    if(hit&&!(hit.member_ids||[]).includes(userId)){
     const target=hit.id;
     team.value=lastSelected;
+    window.JUSTTeamProjectPicker?.sync();
     if(["completed","archived"].includes(hit.status))return;
     if(!confirm("项目“"+hit.name+"”尚未包含当前账号。\n确认加入该团队项目并将这条进度关联到它吗？"))return;
     team.disabled=true;if(refresh)refresh.disabled=true;
@@ -2864,6 +2903,8 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
     }catch(err){
      if(hint)hint.textContent="加入失败："+(err?.message||String(err))+"；可在项目管理页面查看项目成员。";
      toast("加入项目失败："+(err?.message||String(err)));
+     team.value=lastSelected;
+     window.JUSTTeamProjectPicker?.sync();
     }finally{
      if(state.user?.id===userId){team.disabled=false;if(refresh)refresh.disabled=false}
     }
@@ -2874,7 +2915,8 @@ async function populateProgressProjectOptions(selectAfterLoad=null){
    window.JUSTTeamProjectPicker?.sync();
   };
   if(chosen&&joined.some(x=>x.id===chosen))applySelection(joined.find(x=>x.id===chosen));
-  else if(chosen&&open.some(x=>x.id===chosen)){team.value="";lastSelected="";applySelection(null);team.value=chosen;await team.onchange()}
+  else if(team.dataset.activeProjectId){team.value="";lastSelected="";applySelection(null)}
+  else if(!chosen)window.JUSTTeamProjectPicker?.sync();
   if(refresh){
    refresh.onclick=async()=>{
     if(refresh.disabled)return;
@@ -3365,6 +3407,16 @@ async function initProgress(){
         if(rm.error)console.warn("旧队伍进度附件清理失败",rm.error);
       }
       teamForm.reset();window.JUSTProgressUX43?.clear("team");
+      const teamProjectSelect=q("#teamProject");
+      if(teamProjectSelect){
+        delete teamProjectSelect.dataset.activeProjectId;
+        delete teamProjectSelect.dataset.manualMemberIds;
+        delete teamProjectSelect.dataset.manualLeaderId;
+        delete teamProjectSelect.dataset.manualName;
+        window.JUSTTeamProjectPicker?.sync();
+      }
+      const teamNameInput=q("#teamCompetitionName");
+      if(teamNameInput){teamNameInput.readOnly=false;delete teamNameInput.dataset.linkedProjectName;delete teamNameInput.dataset.preLinkValue}
       const teamPreview=q("#teamProgressFilePreview");if(teamPreview)teamPreview.textContent="";
       await loadTeamMemberOptions(true);
       const verifyMembers=await supabase.from("team_progress_members").select("member_id",{count:"exact",head:true});
