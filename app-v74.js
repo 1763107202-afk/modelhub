@@ -3241,6 +3241,12 @@ async function initProgress(){
   const form=q("#progressForm");
   if(form)form.onsubmit=async e=>{
     e.preventDefault();
+    if(form.dataset.progressBusy==="1")return;
+    form.dataset.progressBusy="1";
+    const guardBtn=e.submitter||form.querySelector('button[type="submit"]');
+    const guardLabel=guardBtn?.textContent||"";
+    if(guardBtn)guardBtn.disabled=true;
+    try{
     const current=q("#progressCurrent").value.trim(),goal=q("#progressGoal").value.trim(),rawLink=q("#progressLink").value.trim(),file=q("#progressFile").files[0];
     if(!current)return toast("请填写近期进度");
     if(!goal)return toast("请填写下一时期目标");
@@ -3317,10 +3323,20 @@ async function initProgress(){
       await loadProgressPage();
     }catch(err){toast("提交失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=old}}
+    }finally{
+      form.dataset.progressBusy="0";
+      if(guardBtn){guardBtn.disabled=false;guardBtn.textContent=guardLabel}
+    }
   };
   const teamForm=q("#teamProgressForm");
   if(teamForm)teamForm.onsubmit=async e=>{
     e.preventDefault();
+    if(teamForm.dataset.progressBusy==="1")return;
+    teamForm.dataset.progressBusy="1";
+    const guardBtn=e.submitter||teamForm.querySelector('button[type="submit"]');
+    const guardLabel=guardBtn?.textContent||"";
+    if(guardBtn)guardBtn.disabled=true;
+    try{
     const competition=q("#teamCompetitionName").value.trim();
     const teamProgress=q("#teamCurrentProgress").value.trim();
     const nextGoal=q("#teamNextGoal").value.trim();
@@ -3430,6 +3446,10 @@ async function initProgress(){
       }
     }catch(err){toast("队伍进度提交失败："+(err?.message||String(err)))}
     finally{if(btn){btn.disabled=false;btn.textContent=old}}
+    }finally{
+      teamForm.dataset.progressBusy="0";
+      if(guardBtn){guardBtn.disabled=false;guardBtn.textContent=guardLabel}
+    }
   };
   await loadTeamMemberOptions(true);
   await populateProgressProjectOptions();
