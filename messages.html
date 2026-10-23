@@ -35,6 +35,8 @@
     </div>
     <div id="messageSentPanel" role="tabpanel" aria-label="已发送的提醒和评语" hidden>
       <div class="messageSentLegend">确认收到由接收人主动点击记录，不能用已读或微信接口接受代替。</div>
+      <div class="messageSentFilters" role="group" aria-label="筛选已发送消息"><button type="button" class="isActive" data-sent-filter="all" aria-pressed="true">全部</button><button type="button" data-sent-filter="pending" aria-pressed="false">待确认</button><button type="button" data-sent-filter="acknowledged" aria-pressed="false">已确认</button></div>
+      <p id="messageSentSummary" class="messageSentSummary" role="status" aria-live="polite"></p>
       <div id="messageSentList" class="messageSentList"><p class="messageLoading">正在查询已发送消息…</p></div>
     </div>
   </section>
