@@ -4293,52 +4293,89 @@ async function initAdmin(){
   loadAllSubmissions();
 }
 async function loadAllSubmissions(){
-  const [r,er]=await Promise.all([
-    supabase.from("submissions").select("*,exams(title),profiles(email,full_name,major)").order("created_at",{ascending:false}),
-    supabase.from("exams").select("id,title").order("created_at",{ascending:false})
+  const [sr,er,pr]=await Promise.all([
+    supabase.from("submissions").select("*,exams(title),profiles(email,full_name,major,membership_status)").order("created_at",{ascending:false}),
+    supabase.from("exams").select("id,title,deadline").order("created_at",{ascending:false}),
+    supabase.from("profiles").select("id,full_name,membership_status").eq("membership_status","freshman")
   ]);
-  const status=q("#adminSubmissionFilterStatus"),filter=q("#adminSubmissionTaskFilter"),body=q("#allBody");
-  if(r.error||er.error){
-    if(status)status.textContent="读取失败："+(r.error||er.error).message;
+  const status=q("#adminSubmissionFilterStatus"),filter=q("#adminSubmissionTaskFilter"),body=q("#allBody"),summary=q("#adminFreshmanTaskSummary");
+  if(sr.error||er.error){
+    if(status)status.textContent="读取失败："+(sr.error||er.error).message;
     if(body)body.innerHTML='<tr><td colspan="7">加载失败，请重新打开提交记录。</td></tr>';
+    if(summary)summary.hidden=true;
     return;
   }
-  const data=r.data||[], exams=er.data||[];
+  const data=sr.data||[], exams=er.data||[],freshmen=pr.error?null:(pr.data||[]);
   const count=q("#adminSubmissionCount");if(count)count.textContent=String(data.length);
   const previous=filter?.value||"";
   if(filter){
     filter.replaceChildren(new Option("全部任务",""));
-    for(const exam of exams){
-      const n=data.filter(x=>x.exam_id===exam.id).length;
-      filter.add(new Option(exam.title+"（"+n+" 条）",exam.id));
-    }
-    if(previous&&![...filter.options].some(x=>x.value===previous)){
-      const orphan=data.find(x=>x.exam_id===previous);
-      if(orphan)filter.add(new Option(orphan.exams?.title||"已删除的任务",previous));
-    }
-    filter.value=previous&&[...filter.options].some(x=>x.value===previous)?previous:"";
+    for(const exam of exams)filter.add(new Option(exam.title+"（"+data.filter(x=>x.exam_id===exam.id).length+" 条）",exam.id));
+    filter.value=exams.some(x=>x.id===previous)?previous:"";
   }
+  const download=async b=>{
+    const path=b.dataset.p||"";
+    if(!path)return toast("当前记录没有附件");
+    if(isQiniuStorageKey(path))return openQiniuKey(path,b);
+    const result=await supabase.storage.from("submissions").createSignedUrl(path,120);
+    if(result.error)return toast(result.error.message);
+    window.open(result.data.signedUrl,"_blank");
+  };
+  const remove=async b=>{
+    if(!confirm("确定删除这一条提交记录吗？删除后无法通过任务统计恢复。"))return;
+    b.disabled=true;
+    try{
+      const result=await supabase.from("submissions").delete().eq("id",b.dataset.id);
+      if(result.error)throw result.error;
+      let cleanupError=null;
+      if(b.dataset.p){
+        const rm=isQiniuStorageKey(b.dataset.p)?await removeQiniuObjectSafe(b.dataset.p):await removeStorageObjectSafe("submissions",b.dataset.p,{queueOnFail:true});
+        cleanupError=rm.error||null;
+      }
+      toast(cleanupError?"提交记录已删除，文件进入待清理队列":"提交记录已删除");
+      await loadAllSubmissions();
+    }catch(e){toast("删除失败："+(e?.message||String(e)));b.disabled=false}
+  };
   function renderRows(){
     const selected=filter?.value||"";
     const visible=selected?data.filter(x=>x.exam_id===selected):data;
     if(status)status.textContent=selected?"当前任务共 "+visible.length+" 条提交":"全部任务共 "+data.length+" 条提交";
     body.innerHTML=visible.length?visible.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join(""):'<tr><td colspan="7">'+(selected?"该任务暂无提交。":"暂无提交。")+'</td></tr>';
+    if(summary){
+      summary.hidden=!selected;
+      if(selected){
+        const exam=exams.find(x=>x.id===selected);
+        const set=(id,value)=>{const e=q(id);if(e)e.textContent=String(value)};
+        set("#adminFreshmanTaskTitle",exam?.title||"当前任务");
+        set("#adminFreshmanDeadline",exam?.deadline?(new Date(exam.deadline).getTime()<Date.now()?"已截止 · ":"截止 · ")+fmt(exam.deadline):"未设置截止时间");
+        if(freshmen){
+          const ids=new Set(freshmen.map(x=>x.id));
+          const submitted=new Set(visible.filter(x=>ids.has(x.user_id)).map(x=>x.user_id));
+          const missing=freshmen.filter(x=>!submitted.has(x.id));
+          set("#adminFreshmanExpected",freshmen.length);set("#adminFreshmanSubmitted",submitted.size);
+          set("#adminFreshmanMissing",missing.length);set("#adminFreshmanAttempts",visible.filter(x=>ids.has(x.user_id)).length);
+          const pct=freshmen.length?Math.round(submitted.size/freshmen.length*100):0;
+          q("#adminFreshmanProgressFill").style.width=pct+"%";
+          set("#adminFreshmanRate","大一新生完成率 "+pct+"% · 同一新生重复提交仅计 1 人");
+          const list=q("#adminFreshmanMissingNames");list.replaceChildren();
+          for(const p of missing){const chip=document.createElement("span");chip.textContent=p.full_name||"未设置姓名的新生";list.append(chip)}
+        }else{
+          for(const id of ["#adminFreshmanExpected","#adminFreshmanSubmitted","#adminFreshmanMissing","#adminFreshmanAttempts"])set(id,"—");
+          set("#adminFreshmanRate","新生名单读取失败，无法准确计算完成率："+pr.error.message);
+          q("#adminFreshmanMissingNames").replaceChildren();
+          q("#adminFreshmanProgressFill").style.width="0%";
+        }
+      }
+    }
   }
   if(filter)filter.onchange=renderRows;
+  body.onclick=e=>{
+    const button=e.target.closest("button.dl,button.delSub");
+    if(!button||!body.contains(button))return;
+    if(button.classList.contains("dl"))void download(button);
+    else void remove(button);
+  };
   renderRows();
-  document.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{const p=b.dataset.p||"";if(isQiniuStorageKey(p))return openQiniuKey(p,b);const s=await supabase.storage.from("submissions").createSignedUrl(p,120);if(s.error)return toast(s.error.message);window.open(s.data.signedUrl,"_blank")});
-  document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{
-    if(!confirm("确定删除这条提交吗？"))return;
-    const d=await supabase.from("submissions").delete().eq("id",b.dataset.id);
-    if(d.error)return toast(d.error.message);
-    let cleanupError=null;
-    if(b.dataset.p){
-      const rm=isQiniuStorageKey(b.dataset.p)?await removeQiniuObjectSafe(b.dataset.p):await removeStorageObjectSafe("submissions",b.dataset.p,{queueOnFail:true});
-      cleanupError=rm.error||null;
-    }
-    toast(cleanupError?"提交记录已删除，文件已加入待清理队列":"提交已删除");
-    await loadAllSubmissions();
-  });
 }
 let __siteRealtimeTimer=null;
 const __siteRealtimePendingTables=new Set();
