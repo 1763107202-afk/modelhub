@@ -4293,9 +4293,39 @@ async function initAdmin(){
   loadAllSubmissions();
 }
 async function loadAllSubmissions(){
-  const r=await supabase.from("submissions").select("*,exams(title),profiles(email,full_name,major)").order("created_at",{ascending:false});const data=r.data||[];
+  const [r,er]=await Promise.all([
+    supabase.from("submissions").select("*,exams(title),profiles(email,full_name,major)").order("created_at",{ascending:false}),
+    supabase.from("exams").select("id,title").order("created_at",{ascending:false})
+  ]);
+  const status=q("#adminSubmissionFilterStatus"),filter=q("#adminSubmissionTaskFilter"),body=q("#allBody");
+  if(r.error||er.error){
+    if(status)status.textContent="读取失败："+(r.error||er.error).message;
+    if(body)body.innerHTML='<tr><td colspan="7">加载失败，请重新打开提交记录。</td></tr>';
+    return;
+  }
+  const data=r.data||[], exams=er.data||[];
   const count=q("#adminSubmissionCount");if(count)count.textContent=String(data.length);
-  q("#allBody").innerHTML=data.length?data.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join(""):'<tr><td colspan="7">暂无提交。</td></tr>';
+  const previous=filter?.value||"";
+  if(filter){
+    filter.replaceChildren(new Option("全部任务",""));
+    for(const exam of exams){
+      const n=data.filter(x=>x.exam_id===exam.id).length;
+      filter.add(new Option(exam.title+"（"+n+" 条）",exam.id));
+    }
+    if(previous&&![...filter.options].some(x=>x.value===previous)){
+      const orphan=data.find(x=>x.exam_id===previous);
+      if(orphan)filter.add(new Option(orphan.exams?.title||"已删除的任务",previous));
+    }
+    filter.value=previous&&[...filter.options].some(x=>x.value===previous)?previous:"";
+  }
+  function renderRows(){
+    const selected=filter?.value||"";
+    const visible=selected?data.filter(x=>x.exam_id===selected):data;
+    if(status)status.textContent=selected?"当前任务共 "+visible.length+" 条提交":"全部任务共 "+data.length+" 条提交";
+    body.innerHTML=visible.length?visible.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join(""):'<tr><td colspan="7">'+(selected?"该任务暂无提交。":"暂无提交。")+'</td></tr>';
+  }
+  if(filter)filter.onchange=renderRows;
+  renderRows();
   document.querySelectorAll(".dl").forEach(b=>b.onclick=async()=>{const p=b.dataset.p||"";if(isQiniuStorageKey(p))return openQiniuKey(p,b);const s=await supabase.storage.from("submissions").createSignedUrl(p,120);if(s.error)return toast(s.error.message);window.open(s.data.signedUrl,"_blank")});
   document.querySelectorAll(".delSub").forEach(b=>b.onclick=async()=>{
     if(!confirm("确定删除这条提交吗？"))return;
