@@ -6,7 +6,7 @@
   const loadMainApp=script?.dataset.app!=="false";
   const VERSION_KEY="justLabSiteVersionV1";
   const VERSION_CHECK_KEY="justLabSiteVersionCheckedAtV1";
-  const BOOTSTRAP_VERSION="2026.10.24.space-task-filter-ux47";
+  const BOOTSTRAP_VERSION="2026.10.24.admin-tools-ux48";
   const VERSION_CHECK_INTERVAL=2*60*1000;
   let routeVersion=BOOTSTRAP_VERSION;
 
