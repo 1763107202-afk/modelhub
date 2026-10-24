@@ -1,0 +1,52 @@
+/* Workspace V2: feed-first and responsive sidebar; no inner scrolling. */
+body[data-page="space"] .spaceDeskGrid{min-width:0}
+body[data-page="space"] .spaceDeskMain,body[data-page="space"] .spaceDeskAside{min-width:0}
+@media(min-width:1121px){
+ body[data-page="space"] .spaceWrap{width:min(1260px,calc(100% - 44px));max-width:none}
+ body[data-page="space"] .spaceDeskGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(245px,280px);gap:20px}
+ body[data-page="space"] .spaceDeskAside{position:static;max-height:none;overflow:visible;scrollbar-width:auto;align-self:start}
+}
+body[data-page="space"] .spaceSideWelcome{padding:17px}
+body[data-page="space"] .spaceSideWelcome h2{font-size:17px;margin:0 0 3px}
+body[data-page="space"] .spaceSideWelcome>p{font-size:11px;margin:0;color:#91a9bf}
+body[data-page="space"] .spaceSideStats{margin:13px 0 12px;gap:6px}
+body[data-page="space"] .spaceSideStats>div{padding:9px 2px}
+body[data-page="space"] .spaceSideStats strong{font-size:21px}
+body[data-page="space"] .spaceSideActions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+body[data-page="space"] .spaceSideActions .spaceSidePrimary,
+body[data-page="space"] .spaceSideActions .spaceSideInbox,
+body[data-page="space"] .spaceSideActions .spaceSidePrivate{
+ position:static!important;max-width:100%;width:100%;min-height:41px!important;
+ display:flex!important;justify-content:center;gap:5px;text-align:center;
+ margin:0!important;padding:9px 7px!important;box-shadow:none!important;
+ border-radius:10px!important;font-size:12px!important;white-space:normal;
+}
+body[data-page="space"] .spaceSideActions .spaceSidePrivate{grid-column:1/-1}
+body[data-page="space"] .spaceSideActions .spaceSidePrivate[hidden],
+body[data-page="space"] .spaceSideActions .spaceSideInbox[hidden]{display:none!important}
+body[data-page="space"] .spaceSideRecent{padding:0 14px}
+body[data-page="space"] .spaceSideRecent summary{cursor:pointer;min-height:49px;padding:12px 0;margin:0}
+body[data-page="space"] .spaceSideRecent summary strong{font-size:14px}
+body[data-page="space"] .spaceSideRecent[open] .spaceDeskLatest{padding-bottom:12px}
+body[data-page="space"] .spaceSideRecent .spaceSideLatestItem{min-height:44px}
+@media(max-width:1120px){
+ body[data-page="space"] .spaceDeskGrid{display:flex;flex-direction:column;gap:14px}
+ body[data-page="space"] .spaceDeskMain{order:1;width:100%}
+ body[data-page="space"] .spaceDeskAside{display:grid!important;order:0;position:static;max-height:none;overflow:visible;width:100%;grid-template-columns:minmax(0,1fr);gap:0}
+ body[data-page="space"] .spaceSideWelcome{padding:12px 14px}
+ body[data-page="space"] .spaceSideWelcome>p{display:none}
+ body[data-page="space"] .spaceSideWelcome h2{font-size:15px}
+ body[data-page="space"] .spaceSideStats{margin:10px 0;gap:7px}
+ body[data-page="space"] .spaceSideStats>div{padding:7px 4px}
+ body[data-page="space"] .spaceSideStats strong{font-size:20px}
+ body[data-page="space"] .spaceSideRecent{display:none}
+ body[data-page="space"] #spaceMobileInboxOpen{display:none!important}
+}
+@media(max-width:600px){
+ body[data-page="space"] .spaceDeskAside{order:0}
+ body[data-page="space"] .spaceSideWelcome{border-radius:12px;padding:11px}
+ body[data-page="space"] .spaceSideStats small{font-size:10px}
+ body[data-page="space"] .spaceSideActions .spaceSidePrimary,
+ body[data-page="space"] .spaceSideActions .spaceSideInbox{min-height:43px!important}
+}
+html[data-theme="light"] body[data-page="space"] .spaceSideRecent{background:#fff;border-color:#d1dfeb}
