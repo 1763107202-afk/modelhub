@@ -4307,6 +4307,7 @@ async function loadAllSubmissions(){
   }
   const data=sr.data||[], exams=er.data||[],freshmen=pr.error?null:(pr.data||[]);
   const count=q("#adminSubmissionCount");if(count)count.textContent=String(data.length);
+  const selectedIds=new Set();let visibleRows=[];const selectAll=q("#adminBulkSelectAll"),selectedDownload=q("#adminBulkSelectedDownload"),allDownload=q("#adminBulkAllDownload"),selectedCount=q("#adminBulkSelectedCount"),bulkNotice=q("#adminBulkNotice");
   const previous=filter?.value||"";
   if(filter){
     filter.replaceChildren(new Option("全部任务",""));
@@ -4336,11 +4337,63 @@ async function loadAllSubmissions(){
       await loadAllSubmissions();
     }catch(e){toast("删除失败："+(e?.message||String(e)));b.disabled=false}
   };
+  const validName=x=>String(x||"").replace(/[\\/:*?"<>|]/g,"_").slice(0,65)||"全部任务";
+  const downloadZip=async ids=>{
+    if(!ids.length)return toast("请先选择提交记录");
+    if(ids.length>100)return toast("每次最多下载 100 条，请分批勾选");
+    const chosen=data.filter(x=>ids.includes(x.id));
+    const limitBytes=512*1024*1024;
+    if(chosen.some(x=>Number(x.file_size||0)>150*1024*1024)||chosen.reduce((n,x)=>n+Number(x.file_size||0),0)>limitBytes)return toast("本次文件超出打包限制，请分批下载或单文件下载");
+    const btns=[selectedDownload,allDownload].filter(Boolean);
+    btns.forEach(b=>b.disabled=true);
+    if(bulkNotice)bulkNotice.textContent="正在请求服务器打包 "+ids.length+" 条提交，请勿关闭页面…";
+    try{
+      const session=(await supabase.auth.getSession()).data.session;
+      if(!session?.access_token)throw Error("登录已失效，请重新登录");
+      const res=await fetch(SUPABASE_URL+"/functions/v1/admin-submissions-zip",{
+        method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_KEY},
+        body:JSON.stringify({ids})
+      });
+      if(!res.ok){let detail=await res.json().catch(()=>({}));throw Error(detail.error||"服务器错误 HTTP "+res.status)}
+      if(!res.body)throw Error("浏览器不支持流式文件下载");
+      const reader=res.body.getReader(),chunks=[];let received=0;
+      const expected=chosen.reduce((n,x)=>n+Math.max(0,Number(x.file_size||0)),0);
+      try{
+        while(true){
+          const {done,value}=await reader.read();if(done)break;if(!value)continue;
+          chunks.push(value);received+=value.length;
+          if(received>540*1024*1024){await reader.cancel();throw Error("ZIP 超过浏览器单包安全限制，请分批下载")}
+          if(bulkNotice)bulkNotice.textContent="正在打包并下载："+(received/1048576).toFixed(1)+" MB"+(expected?" / 预计 "+(expected/1048576).toFixed(1)+" MB":"");
+        }
+      }finally{reader.releaseLock()}
+      if(received<22)throw Error("下载结果不完整");
+      const blob=new Blob(chunks,{type:"application/zip"});
+      const url=URL.createObjectURL(blob),a=document.createElement("a");
+      const exam=exams.find(x=>x.id===filter?.value);
+      a.href=url;a.download=validName(exam?.title||"新生任务提交")+"_"+ids.length+"份.zip";
+      document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+      if(bulkNotice)bulkNotice.textContent="ZIP 已生成（"+(received/1048576).toFixed(1)+" MB）。如有源文件异常，请检查 ZIP 内的《下载结果说明》。";
+    }catch(error){if(bulkNotice)bulkNotice.textContent="批量下载失败："+(error?.message||String(error));toast("下载失败："+(error?.message||String(error)))}
+    finally{btns.forEach(b=>b.disabled=false);updateBulk()}
+  };
+  const updateBulk=()=>{
+    const rowIds=visibleRows.map(x=>x.id);
+    const count=rowIds.filter(id=>selectedIds.has(id)).length;
+    if(selectedCount)selectedCount.textContent="已选择 "+count+" / "+rowIds.length+" 条";
+    if(selectAll){selectAll.checked=!!rowIds.length&&count===rowIds.length;selectAll.indeterminate=count>0&&count<rowIds.length}
+    if(selectedDownload)selectedDownload.disabled=!count;
+    if(allDownload)allDownload.disabled=!rowIds.length;
+  };
+  if(selectAll)selectAll.onchange=()=>{visibleRows.forEach(x=>{if(selectAll.checked)selectedIds.add(x.id);else selectedIds.delete(x.id)});body.querySelectorAll(".adminBulkRowSelect").forEach(e=>e.checked=selectAll.checked);updateBulk()};
+  if(selectedDownload)selectedDownload.onclick=()=>void downloadZip(visibleRows.filter(x=>selectedIds.has(x.id)).map(x=>x.id));
+  if(allDownload)allDownload.onclick=()=>void downloadZip(visibleRows.map(x=>x.id));
   function renderRows(){
     const selected=filter?.value||"";
     const visible=selected?data.filter(x=>x.exam_id===selected):data;
+    visibleRows=visible;selectedIds.clear();
     if(status)status.textContent=selected?"当前任务共 "+visible.length+" 条提交":"全部任务共 "+data.length+" 条提交";
-    body.innerHTML=visible.length?visible.map(x=>'<tr><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join(""):'<tr><td colspan="7">'+(selected?"该任务暂无提交。":"暂无提交。")+'</td></tr>';
+    body.innerHTML=visible.length?visible.map(x=>'<tr><td class="adminBulkCell"><input class="adminBulkRowSelect" type="checkbox" aria-label="选择此提交" data-id="'+esc(x.id)+'"></td><td>'+esc(x.exams?.title||"—")+'</td><td>'+esc(x.profiles?.full_name||"—")+'</td><td>'+esc(x.profiles?.major||"—")+'</td><td>'+esc(x.submitter_name||x.profiles?.email||"—")+'</td><td>'+esc(x.file_name)+'</td><td>'+fmt(x.created_at)+'</td><td><button class="btn ghost dl" data-p="'+esc(x.storage_path)+'">下载</button> <button class="btn danger delSub" data-id="'+esc(x.id)+'" data-p="'+esc(x.storage_path)+'">删除</button></td></tr>').join("") :'<tr><td colspan="8">'+(selected?"该任务暂无提交。":"暂无提交。")+'</td></tr>';
+    updateBulk();
     if(summary){
       summary.hidden=!selected;
       if(selected){
@@ -4369,6 +4422,11 @@ async function loadAllSubmissions(){
     }
   }
   if(filter)filter.onchange=renderRows;
+  body.onchange=e=>{
+    if(!e.target?.classList.contains("adminBulkRowSelect"))return;
+    if(e.target.checked)selectedIds.add(e.target.dataset.id);else selectedIds.delete(e.target.dataset.id);
+    updateBulk();
+  };
   body.onclick=e=>{
     const button=e.target.closest("button.dl,button.delSub");
     if(!button||!body.contains(button))return;
