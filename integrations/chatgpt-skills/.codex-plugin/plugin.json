@@ -1,6 +1,6 @@
 {
   "name": "engineering-five-skills",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "22 independent engineering, research and writing instruction adapters; external runtimes are not connected.",
   "skills": "./skills/",
   "repository": "https://github.com/1763107202-afk/modelhub",

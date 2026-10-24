@@ -13,7 +13,8 @@
       "status": "adapter_spec_only",
       "instruction_status": "available",
       "runtime_status": "not_connected",
-      "skill_path": "skills/design-taste-frontend/SKILL.md"
+      "skill_path": "skills/design-taste-frontend/SKILL.md",
+      "note": "Galaxy/Uiverse is an optional, source-verified component reference within this existing frontend design adapter (see skills/design-taste-frontend/references/galaxy.md); not an additional skill, dependency, or connected runtime."
     },
     {
       "key": "agent_reach",
@@ -264,7 +265,7 @@
       "note": "Chinese MIT-licensed skill adapted with mandatory evidence and engineering accuracy guardrails."
     }
   ],
-  "package_version": "0.3.1",
+  "package_version": "0.3.2",
   "capabilities": {
     "instruction_adapters": true,
     "bundled_upstream_binaries": false,
