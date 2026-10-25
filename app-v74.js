@@ -1651,10 +1651,18 @@ function bindQiniuOpenButtons(scope=document){
   });
 }
 async function uploadQiniuFile(file,category,onProgress){
+  if(category==="submission"){
+    const {uploadQiniuMultipart}=await import("./qiniu-upload-v1.js?v=20261024a");
+    return uploadQiniuMultipart(file,category,onProgress,supabase,setUploadActive,qiniuPublicUrlFromKey);
+  }
   const sess=await supabase.auth.getSession();
   if(!sess.data.session?.access_token)throw new Error("登录状态已失效，请重新登录后再上传");
   const tokenReq=await supabase.functions.invoke("qiniu-upload-token",{body:{fileName:file.name,fileSize:file.size,category}});
-  if(tokenReq.error)throw new Error(tokenReq.error.message||"七牛上传凭证获取失败");
+  if(tokenReq.error){
+    let msg=tokenReq.error.message||"七牛上传凭证获取失败";
+    try{const data=await tokenReq.error.context?.clone?.().json();msg=data?.error||msg;}catch(_){}
+    throw new Error(msg);
+  }
   const cfg=tokenReq.data||{};
   if(!cfg.token||!cfg.key||!cfg.uploadUrl)throw new Error(cfg.error||"七牛上传凭证无效");
   if(!/^https:\/\/upload\.(?:qiniup|qiniu)\.com(?:\/|$)/.test(cfg.uploadUrl))throw new Error("未授权的文件上传域名");
@@ -3560,6 +3568,7 @@ async function initSubmit(){
       if(!submitter){setStatus("请填写姓名 / 队伍名称。","error");toast("请填写姓名 / 队伍名称");return}
       if(!f){setStatus("请先选择 ZIP / RAR / 7Z 建模压缩包。","error");toast("请选择建模压缩包");return}
       if(!/\.(zip|rar|7z)$/i.test(f.name)){setStatus("文件格式不正确，仅支持 ZIP / RAR / 7Z。","error");toast("仅支持 ZIP / RAR / 7Z");return}
+      if(f.size<1||f.size>1024*1024*1024){setStatus("文件大小必须在 1B 至 1GB 之间。","error");return}
       let p=null,fileUrl=null;
       const oldText=btn.textContent||"提交文件";
       try{
