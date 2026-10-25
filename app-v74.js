@@ -3575,9 +3575,13 @@ async function initSubmit(){
         btn.disabled=true;
         btn.textContent="七牛云上传中 0% · "+bytesText(f.size);
         setStatus("正在直传七牛云，请不要关闭页面…","info");
-        const uploaded=await uploadQiniuFile(f,"submission",x=>{
+        const uploaded=await uploadQiniuFile(f,"submission",(x,detail)=>{
+          const speed=Number(detail?.speed)||0;
+          const eta=Number(detail?.eta)||0;
+          const speedText=speed>0?" · "+bytesText(speed)+"/s":"";
+          const remaining=eta>0?" · 约剩 "+(eta>60?Math.ceil(eta/60)+" 分钟":Math.ceil(eta)+" 秒"):"";
           btn.textContent="七牛云上传中 "+x+"% · "+bytesText(f.size);
-          setStatus("正在上传："+x+"%","info");
+          setStatus("正在上传："+x+"%"+speedText+remaining+(detail?.resumed?" · 续传中":""),"info");
         });
         p=uploaded.key;fileUrl=uploaded.url;
         btn.textContent="正在保存提交记录…";
