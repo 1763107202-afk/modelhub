@@ -1,0 +1,59 @@
+name: Build XiaoSheng Enhanced Android APK
+on:
+  push:
+    branches: [xiaosheng-phone-android]
+    paths: ['xiaosheng-android/**','.github/workflows/xiaosheng-enhanced-apk.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Fetch original authorized phone resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 30 --max-time 420 \
+            'https://codeload.github.com/kai-da-wang/xiaosheng-phone/zip/4f6ce806f61f0d515c8467345feb3c28945aad62' -o /tmp/xiaosheng-upstream.zip
+          mkdir -p /tmp/xiaosheng-upstream
+          unzip -q /tmp/xiaosheng-upstream.zip -d /tmp/xiaosheng-upstream
+          SRC="$(find /tmp/xiaosheng-upstream -maxdepth 1 -mindepth 1 -type d | head -n 1)"
+          test -f "$SRC/dist/index.html"
+          mkdir -p xiaosheng-android/mobile/src/main/assets
+          cp -a "$SRC/dist/." xiaosheng-android/mobile/src/main/assets/
+          cp xiaosheng-android/overlay/ai-overlay.js xiaosheng-android/mobile/src/main/assets/ai-overlay.js
+          python3 - <<'PY'
+          from pathlib import Path
+          h=Path('xiaosheng-android/mobile/src/main/assets/index.html')
+          content=h.read_text('utf8')
+          anchor='<script defer src="phone-experience.js'
+          assert content.count(anchor)==1, 'original HTML integration point changed'
+          content=content.replace(anchor,'<script defer src="ai-overlay.js"></script>'+anchor)
+          h.write_text(content,encoding='utf8')
+          PY
+      - name: Validate scripts and package assets
+        run: |
+          node --check xiaosheng-android/overlay/ai-overlay.js
+          test -s xiaosheng-android/mobile/src/main/assets/core.js
+          test -s xiaosheng-android/mobile/src/main/assets/app.js
+      - name: Build signed debug APK
+        run: gradle --no-daemon -p xiaosheng-android :mobile:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: XiaoSheng-Enhanced-Android-APK
+          path: xiaosheng-android/mobile/build/outputs/apk/debug/mobile-debug.apk
+          if-no-files-found: error
+          retention-days: 30

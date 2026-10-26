@@ -14,6 +14,7 @@ import android.widget.*;
 import androidx.webkit.WebViewAssetLoader;
 import java.io.*;
 import java.net.*;
+import javax.net.ssl.HttpsURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.*;
@@ -28,7 +29,7 @@ public final class MainActivity extends Activity {
  private ValueCallback<Uri[]> filePicker;
  private final String[] names={"小王","木马","魔女","薇薇","港姐"};
  private final String[] ids={"lead_wang_xiaomiao","lead_muma","lead_monv","lead_vivi","lead_gangjie"};
- private final String[] voiceDefaults={"longhua_v3","longyingling_v3","longyingjing_v3","longanwen_v3","longanqin_v3"};
+ private final String[] voiceDefaults={"longhua_v3","longanhuan_v3","longantai_v3","longjiayi_v3","longanhuan"};
  private final String[] souls={
  "甜美俏皮、略微傲娇，嘴硬心软，喜欢亲切打趣但不会无条件顺从",
  "慢热细腻、温柔治愈，认真记得小约定，拥有自己的主见",
@@ -212,6 +213,8 @@ public final class MainActivity extends Activity {
   @JavascriptInterface public void openSettings(){settingsDialog();}
   @JavascriptInterface public void chat(String json,String requestId){if(json.length()<22000&&requestId.length()<100)invoke("chat",json,requestId);}
   @JavascriptInterface public void tts(String json,String requestId){if(json.length()<1000&&requestId.length()<100)invoke("tts",json,requestId);}
+  @JavascriptInterface public boolean canChat(){return !loadKey("deep").isEmpty();}
+  @JavascriptInterface public boolean canTts(){return !loadKey("ali").isEmpty() && !pref().getString("space","").isEmpty();}
   @JavascriptInterface public String mode(){return String.valueOf(pref().getInt("mode",1));}
  }
 }
