@@ -4,7 +4,7 @@
 <ol><li>在 Server酱官网确认微信消息通道已经配置好。</li><li>打开微信 → 服务号，找到实际接收通知的服务号。</li><li>点亮通知条目右上角的 🔔 小铃铛，并检查微信系统通知权限。</li><li>返回这里，点击「📨 发送微信测试消息」，以手机实际收到的提醒为准。</li></ol>
 <p class="muted">如果没有看到小铃铛，可能与微信版本或消息入口有关；请进入对应服务号的通知设置检查。铃铛开启也不能保证手机系统在所有情况下立即弹出消息。</p>
 </div><p class="muted">SendKey 只在网站安全保存，不要发给老师或其他成员。接口接收成功与微信实际弹出通知是两种不同状态。</p></section><section class="panel"><h2>② 手机系统通知（Web Push）</h2><p>正在部署浏览器订阅和推送服务。正式启用后，可在这里自主授权设备通知，不需要提供 QQ 账号。</p><button disabled>系统通知待启用</button></section></main><script type="module">
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "./vendor/supabase-js-2.119.0.esm.js";
 const sb=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef");
 const q=id=>document.getElementById(id);
 async function refresh(){

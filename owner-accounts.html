@@ -46,7 +46,7 @@
 </dialog>
 
 <script type="module">
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "./vendor/supabase-js-2.119.0.esm.js";
 const supabase=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef");
 const q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),fmt=v=>v?new Date(v).toLocaleString("zh-CN",{hour12:false}):"—";
 let members=[],me=null,pwdSelf=false;

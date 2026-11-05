@@ -109,7 +109,7 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}.wrap{width:
 </main>
 
 <script type="module">
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "./vendor/supabase-js-2.119.0.esm.js";
 const supabase=createClient("https://qqkudaaxudxbfyeepyqw.supabase.co","sb_publishable_Fc_a5wM_PDh_FsaCW2UjzQ_oI98Dhef");
 const q=s=>document.querySelector(s);
 const bytes=n=>{const v=Number(n||0);if(v<1024)return v+" B";if(v<1024**2)return (v/1024).toFixed(1)+" KiB";if(v<1024**3)return (v/1024**2).toFixed(1)+" MiB";return (v/1024**3).toFixed(2)+" GiB"};

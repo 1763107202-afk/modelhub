@@ -6,9 +6,31 @@
   const loadMainApp=script?.dataset.app!=="false";
   const VERSION_KEY="justLabSiteVersionV1";
   const VERSION_CHECK_KEY="justLabSiteVersionCheckedAtV1";
-  const BOOTSTRAP_VERSION="2026.11.05.labqq-bulk-group1";
+  const BOOTSTRAP_VERSION="2026.11.05.progress-auth-fix1";
   const VERSION_CHECK_INTERVAL=2*60*1000;
   let routeVersion=BOOTSTRAP_VERSION;
+
+  function showStartupShell(){
+    const header=document.querySelector("#siteHeader");
+    if(!header||header.children.length)return;
+    header.innerHTML='<header class="siteHeader"><div class="wrap headerInner"><a class="brand" href="./index.html">江苏科技大学 · 机械创新实验室</a><nav class="nav" aria-label="实验室网站导航"><a href="./index.html">首页</a><a href="./tutorials.html">教程</a><a href="./files.html">资料库</a><a href="./projects.html">项目管理</a><a href="./progress.html">近期进度</a><a href="./space.html">进度空间</a></nav><span role="status">正在连接平台…</span></div></header>';
+  }
+
+  function showStartupFailure(){
+    let notice=document.querySelector("#labStartupFailure");
+    if(!notice){
+      notice=document.createElement("div");notice.id="labStartupFailure";
+      notice.setAttribute("role","alert");
+      notice.style.cssText="max-width:1000px;margin:16px auto;padding:16px 20px;border:1px solid #b8c9dd;border-radius:12px;background:#edf4fc;color:#173149;font:14px/1.7 system-ui,sans-serif";
+      const message=document.createElement("span");
+      message.textContent="平台组件连接失败，导航仍可使用。请重新加载页面；若仍失败，请将当前页面和提示发给管理员。 ";
+      const retry=document.createElement("button");retry.type="button";retry.textContent="重新加载";
+      retry.onclick=()=>location.reload();notice.append(message,retry);
+      document.querySelector("#siteHeader")?.after(notice);
+    }
+    const splash=document.querySelector("#startupSplash");if(splash)splash.remove();
+    document.documentElement.classList.remove("startupPending");
+  }
 
   function validVersion(value){
     return /^[A-Za-z0-9._-]{1,64}$/.test(String(value||""));
@@ -127,12 +149,16 @@
   }
 
   async function loadApp(version){
+    showStartupShell();
+    const timer=setTimeout(()=>{if(!globalThis.JUST_CHROME_READY)showStartupFailure()},12000);
+    window.addEventListener("just:chrome-ready",()=>{clearTimeout(timer);document.querySelector("#labStartupFailure")?.remove()},{once:true});
     const appUrl=new URL("app-v74.js",base);
     appUrl.searchParams.set("v",version);
     try{
       await import(appUrl.href);
     }catch(err){
       console.error("主程序加载失败",err);
+      if(globalThis.JUST_CHROME_READY){showStartupFailure();return}
       const splash=document.querySelector("#startupSplashStatus");
       if(splash)splash.textContent="正在重新连接平台…";
       try{
@@ -140,7 +166,10 @@
       }catch(secondError){
         console.error("主程序备用加载失败",secondError);
         if(splash)splash.textContent="平台加载失败，请检查网络后重试";
+        showStartupFailure();
       }
+    }finally{
+      clearTimeout(timer);
     }
   }
 
@@ -169,3 +198,4 @@
 
   start();
 })();
+

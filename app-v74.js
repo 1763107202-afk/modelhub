@@ -1,4 +1,4 @@
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import {createClient} from "./vendor/supabase-js-2.119.0.esm.js";
 let __tusModulePromise=null;
 async function getTusModule(){
   if(__tusModulePromise)return __tusModulePromise;
@@ -30,6 +30,15 @@ function __androidNetworkBridge(){
 async function __platformFetch(input,init={}){
   const bridge=__androidNetworkBridge();
   const url=typeof input==="string"?input:input?.url;
+  if(!bridge&&url&&String(url).startsWith(SUPABASE_URL+"/auth/v1/")){
+    const controller=new AbortController();
+    const signal=init?.signal||(input instanceof Request?input.signal:null);
+    const abort=()=>controller.abort(signal?.reason);
+    if(signal?.aborted)abort();else signal?.addEventListener("abort",abort,{once:true});
+    const timeout=setTimeout(()=>controller.abort(new DOMException("AUTH_NETWORK_TIMEOUT","TimeoutError")),15000);
+    try{return await __platformNativeFetch(input,{...init,signal:controller.signal})}
+    finally{clearTimeout(timeout);signal?.removeEventListener("abort",abort)}
+  }
   if(!bridge||!url||!String(url).startsWith(SUPABASE_URL)){
     return __platformNativeFetch(input,init);
   }
@@ -1343,7 +1352,9 @@ async function loadProfile(preferCache=false){
   if(preferCache){
     let usedDisplayCache=false;
     const keys=[PROFILE_CACHE_KEY,...PROFILE_CACHE_LEGACY_KEYS];
-    for(const store of [localStorage,sessionStorage]){
+    const profileStores=[];
+    for(const name of ["localStorage","sessionStorage"]){try{profileStores.push(globalThis[name])}catch(_e){}}
+    for(const store of profileStores){
       for(const key of keys){
         try{
           const cached=JSON.parse(store.getItem(key)||"null");
@@ -2632,7 +2643,8 @@ async function loadPersonalProgressFeed(){
   const personalStatusLabel=q("#personalStatusLabel");
   const personalStatusTime=q("#personalStatusTime");
   const latestOwn=own[0]||null;
-  if(personalStatusLabel)personalStatusLabel.textContent=latestOwn?"已更新":"尚未更新";
+  const current=latestOwn&&new Date(latestOwn.created_at).getTime()>=Date.now()-14*86400000;
+  if(personalStatusLabel)personalStatusLabel.textContent=current?"本周期已更新":latestOwn?"超过14天未更新":"尚未更新";
   if(personalStatusTime)personalStatusTime.textContent=latestOwn?fmt(latestOwn.created_at):"—";
   await Promise.all([
     renderProgressList(all,q("#progressFeed"),false),
@@ -2694,33 +2706,14 @@ function setupProgressBulkReminder(reminders){
 }
 async function loadProgressOverview(){
   if(!state.user)return;
-  const [statusReq,teamMemberReq,teamProgressReq,reminderReq]=await Promise.all([
+  const [statusReq,reminderReq]=await Promise.all([
     fetchProgressMemberStatusOnce(),
-    supabase.from("team_progress_members").select("team_progress_id,member_id,member_name_snapshot"),
-    supabase.from("team_progress_updates").select("id,competition_name,created_at"),
     fetchProgressRemindersOnce()
   ]);
 
   const statuses=statusReq.error?[]:(statusReq.data||[]);
   const personal=statuses.filter(x=>x.personal_updated);
-  const progressByTeam=new Map((teamProgressReq.data||[]).map(x=>[x.id,x]));
-  const teamMap=new Map();
-  if(!teamMemberReq.error&&!teamProgressReq.error){
-    (teamMemberReq.data||[]).forEach(x=>{
-      const info=progressByTeam.get(x.team_progress_id);
-      if(!info)return;
-      const prev=teamMap.get(x.member_id);
-      if(!prev||new Date(info.created_at||0)>new Date(prev.created_at||0)){
-        teamMap.set(x.member_id,{
-          member_id:x.member_id,
-          member_name:x.member_name_snapshot||"成员",
-          competition_name:info.competition_name||null,
-          created_at:info.created_at||null
-        });
-      }
-    });
-  }
-  const team=[...teamMap.values()];
+  const team=statuses.filter(x=>x.team_updated);
 
   const pc=q("#personalUpdatedCount");if(pc)pc.textContent=String(personal.length);
   const tc=q("#teamUpdatedCount");if(tc)tc.textContent=String(team.length);
@@ -3782,7 +3775,9 @@ function bindAvatarEditor(){
    const updated=await supabase.from("profiles").update({avatar_path:blobOrNull?path:null}).eq("id",uid).select("avatar_path").single();
    if(updated.error)throw updated.error;
    state.profile={...state.profile,avatar_path:updated.data.avatar_path,avatar_updated_at:Date.now()};
-   for(const store of [localStorage,sessionStorage]){
+    const profileStores=[];
+    for(const name of ["localStorage","sessionStorage"]){try{profileStores.push(globalThis[name])}catch(_e){}}
+    for(const store of profileStores){
     try{store.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid,profile:state.profile,savedAt:Date.now()}))}catch(_e){}
    }
    render();
@@ -4962,6 +4957,8 @@ function spaceRenderFeed(){
 
 async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="space")return initSpace();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="messages")return initMessages();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
 renderChrome();
+globalThis.JUST_CHROME_READY=true;
+window.dispatchEvent(new CustomEvent("just:chrome-ready"));
 // Older cached theme-init scripts may rerender labels on DOMContentLoaded; keep the compact icon in control.
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>applyTheme(document.documentElement.dataset.theme||preferredTheme()),{once:true});
 void flushStorageCleanupQueue();
@@ -5026,7 +5023,7 @@ if(state.user){
   runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},usedProfileCache?450:1200);
 }
 
-supabase.auth.onAuthStateChange(async(event,session)=>{
+async function handleAuthStateChange(event,session){
   const nextUser=session?.user||null;
 
   // 自助改密中的旧密码再验证会更新 session；此时不要重新初始化整页。
@@ -5122,4 +5119,11 @@ supabase.auth.onAuthStateChange(async(event,session)=>{
   runWhenIdle(()=>loadSiteNotifications(false),900);
   runWhenIdle(()=>setupSiteRealtime(),1500);
   if(state.user&&usedCache)runWhenIdle(async()=>{await loadProfile(false);updateAuthUI()},450);
+}
+
+// Supabase holds the auth lock while notifying subscribers. Run network work
+// after returning so refresh/login cannot deadlock on another session lookup.
+supabase.auth.onAuthStateChange((event,session)=>{
+  setTimeout(()=>{void handleAuthStateChange(event,session).catch(err=>console.warn("账号状态同步失败",err))},0);
 });
+
