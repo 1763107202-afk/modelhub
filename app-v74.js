@@ -2647,9 +2647,16 @@ async function sendBulkReminders(){
  const eligible=new Map(progressBulkEligible.map(x=>[x.user_id,x]));
  const ids=selected.filter(id=>eligible.has(id));
  if(!ids.length){q("#progressBulkStatus").textContent="请至少选择一名成员";return}
- if(!confirm("确定对选中的 "+ids.length+" 名逾期成员逐一发送提醒？"))return;
+ if(!confirm("确定对选中的 "+ids.length+" 名逾期成员逐一发送提醒，并发送一条 QQ 群提醒？"))return;
  const btn=q("#progressBulkSend"),cancel=q("#progressBulkCancel");btn.disabled=true;cancel.disabled=true;
- let site=0,push=0,failed=0,skipped=0;
+ let site=0,push=0,failed=0,skipped=0,groupQueued=false,groupError="";
+ try{
+  const batchId=crypto.randomUUID();
+  const groupResult=await supabase.rpc("qq_enqueue_bulk_reminder_group",{p_batch_id:batchId,p_count:ids.length});
+  groupQueued=!groupResult.error&&groupResult.data===true;
+  if(groupResult.error)groupError=String(groupResult.error.message||"RPC 调用失败");
+ }catch(groupErr){groupError=String(groupErr?.message||groupErr)}
+
  for(let i=0;i<ids.length;i++){
    const id=ids[i];q("#progressBulkStatus").textContent="正在处理 "+(i+1)+"/"+ids.length+"；站内成功 "+site+"，微信已接受 "+push+"，跳过 "+skipped+"，失败 "+failed;
    try{
@@ -2660,7 +2667,8 @@ async function sendBulkReminders(){
      try{const remote=await supabase.functions.invoke("serverchan-dispatch",{body:{kind:"notice",notice_id:result.data.id}});if(!remote.error&&remote.data?.ok)push++;else failed++}catch(_e){failed++}
    }catch(_e){failed++}
  }
- q("#progressBulkStatus").textContent="已完成：站内 "+site+" 条；微信接口接受 "+push+" 条；微信未成功 "+failed+" 条；重复提醒或限制跳过 "+skipped+" 条。微信是否实际收到需成员确认。";
+ const groupStatus=groupQueued?"；群提醒已加入发送队列":("；群提醒未入队"+(groupError?"："+groupError:""));
+ q("#progressBulkStatus").textContent="已完成：站内 "+site+" 条；微信接口接受 "+push+" 条；微信未成功 "+failed+" 条；重复提醒或限制跳过 "+skipped+" 条"+groupStatus+"。微信是否实际收到需成员确认。";
  btn.textContent="已执行";cancel.disabled=false;
 }
 function setupProgressBulkReminder(reminders){
@@ -2673,7 +2681,7 @@ function setupProgressBulkReminder(reminders){
   progressBulkReady=true;
   q("#progressBulkOpen").onclick=()=>{
    q("#progressBulkChoices").innerHTML=progressBulkEligible.map(x=>'<label><input type="checkbox" value="'+esc(x.user_id)+'" checked><span>'+esc(x.member_name||"成员")+' · 已 '+esc(x.days_since)+' 天未更新</span></label>').join("");
-   q("#progressBulkStatus").textContent="将向勾选成员发送站内提醒并尝试微信推送。";
+   q("#progressBulkStatus").textContent="将向勾选成员发送站内提醒并尝试微信推送，同时发送一条 QQ 群提醒。";
    q("#progressBulkSend").disabled=false;q("#progressBulkSend").textContent="确认发送";
    dialog.showModal();
   };
