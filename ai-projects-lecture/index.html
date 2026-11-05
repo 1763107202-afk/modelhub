@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f3ed">
+  <meta name="description" content="吴群彪的竞赛经验分享：约20分钟，通过真实工程项目、三维核算、软件开发和PCB分步学习，展示AI怎样参与工程实践。案例公开访问，可在同一网页查看。">
+  <title>竞赛经验分享 · 吴群彪</title>
+  <link rel="icon" href="assets/lecture-mark.svg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="refinement.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="field-notes">
+  <a class="skip" href="#main">跳到内容</a>
+  <header class="topbar">
+    <a class="brand" href="#opening" aria-label="回到开场"><img class="site-mark" src="assets/lecture-mark.svg" alt="工字结构的工程实践标记"><span class="wordmark">竞赛经验分享<small>吴群彪 · 项目实践手记</small></span></a>
+    <nav aria-label="讲座章节" id="mainNav"><a href="#opening" class="current">开场</a><a href="#shipyard">数字船厂</a><a href="#more">精选项目</a><a href="#tools">效率工具</a><a href="#lab">实验室网站</a><a href="#spider">小蜘蛛</a><a href="#multiai">多 AI 配合</a><a href="#method">带走方法</a></nav>
+    <button class="button small outline" id="presentTop">讲座模式 <span>↗</span></button>
+  </header>
+  <main id="main">
+    <section id="opening" class="scene cover active" data-label="开场" data-duration="1:00"><div class="wrap cover-wrap">
+ <div class="cover-overline"><span>竞赛经验分享 / AI 与工程实践</span><span>约 20 分钟</span></div>
+ <div class="cover-heading">
+  <h1>从一个问题，<br>到一件作品。</h1>
+  <div class="cover-intro"><p>建模、仿真、写程序、做汇报。<br>借几个实际项目，聊聊 AI 在这些工作里<br>能帮上什么，以及怎样把结果检查清楚。</p><button class="button primary" id="startTalk">开始分享 <span>→</span></button><span class="cover-byline">分享人　吴群彪</span></div>
+ </div>
+ <a href="#shipyard" class="cover-panorama" aria-label="进入数字船厂案例"><img src="assets/ship-latest-line.webp" alt="最新船厂工程几何的分段生产线局部渲染"></a>
+ <div class="cover-caption"><div><span>图 01</span><strong>船舶平面分段生产线</strong><small>完整工程几何 / 网页与 VR 场景</small></div><a href="#shipyard">进入第一个项目 <span>↗</span></a></div>
+ <div class="cover-route"><span>今天的线索</span><a href="#more">工程案例</a><i>—</i><a href="#tools">效率工具</a><i>—</i><a href="#multiai">工具搭配与学习方法</a></div>
+</div><aside class="speaker-note" hidden><b>开场 · 约 1 分钟</b><p>有了一个竞赛想法，下一步怎么做？往往还要面对建模、程序、仿真、调试和汇报。今天用几个实际项目，分享 AI 怎样参与这个过程：把需求拆清楚，遇到不会的操作一步步学，把结果做出来，再检查是否正确。</p><p>接下来先看一个完整的数字船厂，再看机械、电路和核算工具。最后把这些案例串成一套自己可以复用的方法。现场不用逐项念目录，直接点击“数字船厂”进入演示。</p></aside>
+    </section>
+
+    <section id="shipyard" class="scene chapter ship-feature" data-label="数字船厂" data-duration="3:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">01</span><div class="section-heading"><p>数字场景 / 工艺与交互</p><h2>数字船厂</h2></div><p class="section-pace">3 分钟<span>先看一个完整项目</span></p></header>
+ <div class="ship-spread"><div class="visual-column">
+            <div class="tabs dark-tabs" role="tablist" aria-label="船厂素材">
+              <button role="tab" aria-selected="true" data-ship="latest" aria-controls="shipLatestPanel">最新模型</button>
+              <button role="tab" id="shipTabVideo" aria-selected="false" aria-controls="shipVideoPanel" data-ship="video">演示视频</button>
+              <button role="tab" aria-selected="false" aria-controls="shipGallery" data-ship="models">最新结构</button>
+              <button role="tab" aria-selected="false" aria-controls="shipGallery" data-ship="analysis">分析界面</button>
+              <button role="tab" aria-selected="false" aria-controls="shipGallery" data-ship="details">设备细节</button>
+            </div>
+            <div class="media-stage">
+              <div id="shipLatestPanel" role="tabpanel"><div class="model-launch" id="shipPoster"><img src="assets/ship-latest-overview.webp" alt="船厂完整工程模型全景渲染"><div><span>完整厂区与分段生产线</span><button class="button gold-fill small" id="loadShipModel">进入三维浏览 ↗</button></div></div><iframe data-src="demos/shipyard/index.html" title="最新版船厂与生产线工程模型" class="latest-ship-frame" id="shipModelFrame" allow="fullscreen" hidden></iframe></div>
+              <div id="shipVideoPanel" role="tabpanel" aria-labelledby="shipTabVideo" hidden><video id="shipVideo" controls playsinline preload="metadata" poster="assets/ship-poster.webp" src="assets/ship-highlights.mp4" aria-label="船厂项目44秒精选演示"></video><button class="big-play" id="shipPlay" aria-label="播放船厂演示视频"><span>▶</span><b>播放项目片段</b><small>44 秒 / 无声精选</small></button></div>
+              <div id="shipGallery" role="tabpanel" hidden><div class="analysis-formats" id="analysisFormats" aria-label="分析界面形式" hidden><button type="button" data-analysis="desktop" aria-pressed="true">电脑界面</button><button type="button" data-analysis="vr" aria-pressed="false">VR 面板</button><span>11 月 4 日 · 代码布局预览</span></div><button class="image-zoom" data-zoom="assets/ship-models.webp" aria-label="放大当前船厂图片"><img id="shipImage" src="assets/ship-models.webp" alt="2026年11月3日船厂模型更新：建筑、厂区、龙门吊与轨道梁"><span>点击放大 ↗</span></button></div>
+            </div>
+            <div class="media-caption"><span id="shipCaption">最新完整工程几何 · 可旋转查看厂区与生产线</span><button class="text-button" id="shipFull">全屏画面 ⛶</button></div>
+          </div>
+          <aside class="case-commentary"><p class="editorial-lead">让生产过程<br>可以被看见、被理解。</p><dl class="project-notes"><div><dt>起点</dt><dd>把船舶分段制造的工艺、设备与路径，整理为可以参观的三维场景。</dd></div><div><dt>推进</dt><dd>AI 协助编写场景、导览和设备动作；依据参考图与具体问题反复修改。</dd></div><div><dt>检查</dt><dd>肋骨方向、设备支撑、船尾朝向、吊运路径，以及工序之间的衔接。</dd></div></dl><p class="evidence-note">这里展示数字场景与项目迭代。生产效果仍需现场数据验证。</p><details class="prompt"><summary>展开一个可复用的提问方式 <span>＋</span></summary><p>保留现有厂区大致布局。依据参考图细化龙门吊和船体，检查支撑、干涉与运动路径。把每处修改的依据列出来，再提供可运行版本让我检查。</p><button class="copy-prompt">复制这段要求</button></details>
+          </aside></div>
+ </div><aside class="speaker-note" hidden><b>数字船厂 · 约 3 分钟</b><p>先看最新版厂区与生产线模型，再切到“最新结构”放大。项目输入是工艺信息、参考图和具体问题。AI 协助代码、导览和模型表达，但真实的设备支承和动作次序还要逐项检查。比如我发现肋骨方向、船尾朝向或吊机结构不对，就把问题明确指出，再检查下一版。这个循环比一次生成更重要。</p><p>现场动作：浏览最新模型 → 切换结构细节 → 讲一次修改过程。</p></aside>
+    </section>
+
+    <section id="more" class="scene chapter project-index" data-label="精选项目" data-duration="3:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">02</span><div class="section-heading"><p>项目选读 / 机械、仿真与表达</p><h2>几段具体的项目经历</h2></div><p class="section-pace">3 分钟<span>选两项展开，其余留给交流</span></p></header><div class="featured-pair"><button class="feature-project mechanical-feature" data-project="scallion"><div class="feature-image"><img src="assets/scallion-final-card.webp" alt="最终优化版R26大葱处理设备模型局部"></div><div class="feature-caption"><span class="work-number">01</span><div><small>机械设计 / 最终优化版 R26</small><h3>大葱处理设备</h3><p>从上料、加工到收集，运行原模型查看机构之间怎样配合。</p></div><span class="work-arrow" aria-hidden="true">↗</span></div></button><button class="feature-project analysis-feature" data-project="fea"><div class="feature-image"><img src="assets/fea-stress.webp" alt="已有ANSYS钢桁架桥等效应力结果"></div><div class="feature-caption"><span class="work-number">02</span><div><small>有限元 / 原始求解结果</small><h3>钢桁架桥静力分析</h3><p>对照模型、网格与云图，讲清边界条件和结果检查。</p></div><span class="work-arrow" aria-hidden="true">↗</span></div></button></div><div class="project-register"><button class="index-project" data-project="trio"><span class="work-number">03</span><img src="demos/trio/assets/frequency.png" alt="原混音实验台频率响应仿真图"><div><small>电路与声音交互</small><h3>三路混音实验台</h3><p>按琴键、调音量，看波形变化。</p></div><span class="work-arrow" aria-hidden="true">↗</span></button><button class="index-project" data-project="circuit"><span class="work-number">04</span><img src="assets/gpt-schematic.webp" alt="GPT协助制作的原混音电路原理图"><div><small>原理图 / PCB / 分步学习</small><h3>电路设计与学习</h3><p>从理解原理，到布局布线与排错。</p></div><span class="work-arrow" aria-hidden="true">↗</span></button><button class="index-project" data-project="campus"><span class="work-number">05</span><img src="assets/campus-overview.webp" alt="已有兴化中学校园模型全景"><div><small>参考照片与三维场景</small><h3>兴化中学校园模型</h3><p>根据照片组织建筑、道路与空间。</p></div><span class="work-arrow" aria-hidden="true">↗</span></button><button class="index-project" data-project="ppt"><span class="work-number">06</span><img src="assets/ppt/photography-2.webp" alt="已有摄影图文PPT页面"><div><small>内容组织与图文表达</small><h3>PPT 与汇报制作</h3><p>查看科技、摄影与工程答辩的实际页面。</p></div><span class="work-arrow" aria-hidden="true">↗</span></button></div><div class="register-footer"><p>点击图片或项目名称，在本页打开。</p><div><button class="text-button" data-project="sites">其他三维案例 ↗</button><button class="text-button" data-project="documents">报告原页 ↗</button><button class="text-button" id="openSources">素材与版本 →</button></div></div></div><aside class="speaker-note" hidden><b>精选案例 · 约 3 分钟</b><p>优先打开大葱设备运行原模型，或打开钢桁架桥查看原始 ANSYS 云图。AI 可以帮我组织建模和求解流程、编写脚本、整理报告，材料、接触、载荷、网格和结论仍要检查。若需要轻松互动，可打开 TRIO，打开电源再按琴键。其他原站点留作问答时按兴趣打开。</p></aside>
+    </section>
+
+    <section id="tools" class="scene chapter tool-ledger-section" data-label="效率工具" data-duration="3:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">03</span><div class="section-heading"><p>软件开发 / 高频工作的整理</p><h2>做几件顺手的工程工具</h2></div><p class="section-pace">3 分钟<span>从每天重复的操作开始</span></p></header>
+ <div class="tool-ledger">
+  <div class="tool-index" role="group" aria-label="选择工程工具界面">
+   <button data-tool-view="nexus" aria-pressed="true"><span>01</span><div><h3>工程工作台</h3><p>项目、文件和常用软件的入口</p><small>PROJECT NEXUS</small></div></button>
+   <button data-tool-view="cadpdf" aria-pressed="false"><span>02</span><div><h3>PDF 与 CAD 批处理</h3><p>文件队列、图框识别与转换日志</p><small>CAD ⇄ PDF</small></div></button>
+   <button data-tool-view="masscalc" aria-pressed="false"><span>03</span><div><h3>图纸算重与三维核算</h3><p>原图、名义几何和质量相互对照</p><small>CAD MASSCALC</small></div></button>
+  </div>
+  <figure class="tool-plate"><button class="tool-image-button" id="toolPreviewOpen" data-project="nexus" aria-label="打开当前工程工具项目"><img id="toolPlateImage" src="assets/nexus-prototype.webp" alt="NEXUS V0.2现有网页原型的实际运行截图"></button><figcaption><div><strong id="toolPlateTitle">PROJECT NEXUS · 工程工作台</strong><p id="toolPlateNote">V0.2 网页交互原型；本机文件与软件启动需要桌面端接入。</p></div><button class="button primary small" id="toolOpenProject" data-project="nexus">进入这个项目 ↗</button></figcaption></figure>
+ </div>
+ <p class="tool-editor-note"><span>怎么做</span>从真实文件和操作习惯提出需求，AI 协助写界面与处理逻辑，再逐项检查单位、比例、格式和失败日志。</p>
+ </div><aside class="speaker-note" hidden><b>工程效率软件 · 约 3 分钟</b><p>先看 NEXUS 工作中心与应用启动台，说明开发软件可以从自己每天遇到的麻烦开始。接着看 CAD / PDF 工具的原始界面：一批文件进入队列，再自动转换与输出日志。核算工具则展示二维闭合轮廓、材料和长度怎样生成结果。</p><p>现场只重点打开一款，其他保留给问答。浏览器里的工作台是原型演示；桌面系统与 CAD 引擎要在本机运行验证。</p></aside>
+    </section>
+
+    <section id="lab" class="scene chapter lab-spread-section" data-label="实验室网站" data-duration="2:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">04</span><div class="section-heading"><p>团队协作 / 真实网站</p><h2>机械创新实验室交流平台</h2></div><p class="section-pace">2 分钟<span>资料、项目进度与日常协作</span></p></header>
+ <div class="lab-intro-line"><p>资料分散、进度难汇总，于是把实验室的实际规则整理成一个网站。<br>AI 参与页面、权限和数据关系的实现，再按成员的实际操作检查。</p><span>下面直接载入真实网站</span></div>
+ <div class="lab-window"><div class="browser-chrome"><div class="window-dots"><i></i><i></i><i></i></div><span>机械创新实验室交流平台</span><span class="demo-label">真实网站</span></div>
+            <div class="tabs live-lab-tabs" role="tablist" aria-label="真实实验室网站页面"><button role="tab" aria-selected="true" data-live-lab="home">网站首页</button><button role="tab" aria-selected="false" data-live-lab="space">进度空间</button><button role="tab" aria-selected="false" data-live-lab="files">资料库</button><button role="tab" aria-selected="false" data-live-lab="tutorials">教程</button></div>
+            <iframe class="live-lab-frame" id="liveLabFrame" src="https://1763107202-afk.github.io/modelhub/" loading="lazy" title="真实机械创新实验室交流平台"></iframe>
+            </div>
+ <div class="lab-folio-footer"><p>页面内容由原网站提供；需要登录的功能沿用原网站权限。</p><div><button class="text-button" id="labSpaceExpand">查看进度空间 ↗</button><button class="button small secondary" id="labExpand">放大浏览真实网站 ↗</button><button id="labDirectLink" hidden>完整浏览</button></div></div>
+ </div><aside class="speaker-note" hidden><b>实验室网站 · 约 2 分钟</b><p>这里直接显示实验室真实网站。先看首页，再切到进度空间和资料库，必要时放大浏览。这个案例最关键的输入是实验室的真实规则：谁能上传、谁能看、进度属于哪个项目。AI 协助写页面和排错，我仍需要按成员实际操作检查权限与使用体验。</p><p>现场动作：首页 → 进度空间 → 资料库。页面由真实网站提供，需要登录的内容按原网站权限访问。</p></aside>
+    </section>
+
+    <section id="spider" class="scene chapter film-section" data-label="小蜘蛛" data-duration="1:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">05</span><div class="section-heading"><p>程序与实物 / ESP32</p><h2>小蜘蛛，实际跑起来</h2></div><p class="section-pace">1 分钟<span>先看十几秒实物视频</span></p></header>
+ <div class="film-spread"><div class="visual-column">
+            <div class="tabs dark-tabs" role="tablist" aria-label="小蜘蛛演示"><button role="tab" aria-selected="true" data-car="line" aria-controls="carVideoPanel">实物循迹</button><button role="tab" aria-selected="false" data-car="arm" aria-controls="carVideoPanel">机械臂动作</button><button role="tab" aria-selected="false" data-car="logic" aria-controls="carLogicPanel">控制原理互动</button></div>
+            <div class="car-stage"><div id="carVideoPanel"><video id="carVideo" controls playsinline preload="metadata" poster="assets/car-photo.webp" src="assets/car-line.mp4" aria-label="小蜘蛛真实循迹演示视频"></video></div><div id="carLogicPanel" hidden><div class="sim-label"><span class="status-dot"></span>循迹控制原理演示<span>示意模型</span></div><canvas id="lineCanvas" width="1000" height="540" aria-label="小车循迹控制动画"></canvas><div class="sim-readings"><div><span>位置偏差</span><b id="simError">0.00</b></div><div><span>左轮示意速度</span><b id="simLeft">0.70</b></div><div><span>右轮示意速度</span><b id="simRight">0.70</b></div></div><div class="sim-controls"><button class="button gold-fill small" id="simToggle">开始循迹</button><button class="button outline small" id="simDisturb">给一个偏差</button><button class="text-button" id="simReset">复位</button><label>演示速度 <input id="simSpeed" type="range" min="30" max="100" value="60" aria-label="循迹演示速度"></label></div></div></div>
+            <div class="media-caption"><span id="carCaption">原有课堂素材中的实物循迹视频</span><button class="text-button" data-project="linearm">仿真实验台 ↗</button></div>
+          </div>
+          <aside class="field-observation"><p class="observation-label">夹爪角度，来自实机校准。</p><p class="observation-body">循迹、Wi-Fi 遥控和机械臂控制可以合并到同一套程序，舵机方向和角度却要在实物上逐一确认。</p><div class="calibration"><div><strong>29<span>°</span></strong><small>夹爪关闭</small></div><div><strong>50<span>°</span></strong><small>夹爪打开</small></div></div><p>右臂角度减小会抬起，左臂角度增大会抬起。这些反馈，才是下一轮修改的依据。</p><p class="evidence-note">AI 协助整理引脚、合并程序与制作手机界面。电源、接线、舵机和弯道效果仍需实机测试；互动页解释控制原理。</p><details class="prompt"><summary>展开一个可复用的提问方式 <span>＋</span></summary><p>在现有 ESP32 程序上合并循迹与手机遥控，保留我提供的引脚。四个舵机独立控制，夹爪限制在 29° 到 50°。根据我的实测方向做抬起和放下按钮，并明确列出需要上车测试的项目。</p><button class="copy-prompt">复制这段要求</button></details>
+          </aside></div>
+ </div><aside class="speaker-note" hidden><b>小蜘蛛 · 约 1 分钟</b><p>先播放十几秒实物视频，必要时切机械臂，再切到原理互动。AI 可以协助合并程序和做手机界面，真实机械的方向和角度要通过实测确认。比如左右臂的抬起方向相反，不能凭外观猜。点击“给一个偏差”，解释传感器发现偏差后，程序通过左右轮差速修正。</p><p>现场动作：播放实物 → 切原理 → 开始循迹 → 给一个偏差。强调原理动画与实机调参的区别。</p></aside>
+    </section>
+
+    <section id="multiai" class="scene chapter materials-section" data-label="多 AI 配合" data-duration="4:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">06</span><div class="section-heading"><p>使用记录 / 材料与方法</p><h2>不同任务，怎样选用 AI</h2></div><p class="section-pace">4 分钟<span>实际案例与搭配建议分开讲</span></p></header>
+ <p class="materials-intro">这些材料来自不同项目，分别看对应工具实际参与了什么。</p>
+ <div class="evidence-spread">
+  <button class="material-item" data-project="circuit"><div class="material-picture"><img src="assets/gpt-schematic.webp" alt="GPT协助制作的原混音电路原理图"></div><div class="material-caption"><span>A / 电子设计</span><h3>GPT · 原理图与学习</h3><p>设计辅助、解释原理、分步操作与排错。</p><small>查看原理图与 PCB ↗</small></div></button>
+  <button class="material-item" data-evidence-zoom="assets/deepseek-production.webp"><div class="material-picture record-picture"><img src="assets/deepseek-production.webp" alt="DeepSeek原科普视频脚本与渲染制作记录"></div><div class="material-caption"><span>B / 科普制作</span><h3>DeepSeek · 脚本与渲染</h3><p>从分镜、渲染步骤到成片清单。</p><small>放大原始制作记录 ↗</small></div></button>
+  <div class="material-item muse-material"><div class="material-picture"><video controls playsinline preload="metadata" src="assets/muse-workflow.mp4" poster="assets/muse-poster.webp" aria-label="Muse实际操作录屏26秒"></video></div><div class="material-caption"><span>C / 工具操作 · 26 秒</span><h3>Muse · 操作与影像</h3><button class="album-link" data-evidence-zoom="assets/muse-gallery.webp"><img src="assets/muse-gallery.webp" alt="独立素材D：Muse视频作品相册"><span>D / 视频作品相册<small>查看另一份原始素材 ↗</small></span></button></div></div>
+ </div>
+ <div class="assignment-note"><div><h3>如果开始一个新项目</h3><p>以下是可参考的分工，并非上面几份素材的共同制作流程。</p></div><table class="assignment-table"><tbody><tr><th scope="row">GPT</th><td>整理目标与约束，做出第一版，遇到不会的操作逐步学习。</td></tr><tr><th scope="row">DeepSeek</th><td>带上同一份材料，补充推导或另一种实现，再对照结果。</td></tr><tr><th scope="row">Muse</th><td>按确认的脚本、画面参考和时长制作视觉素材。</td></tr><tr><th scope="row">Claude <small>可选</small></th><td>安排独立审阅，检查长文、代码或方案中的遗漏。</td></tr></tbody></table></div>
+ <div class="handoff-line"><p>交接时带上：<b>目标、当前文件、已确认约束、待解决问题。</b></p><button class="text-button" id="copyHandoff">复制通用交接单 ↗</button></div>
+ </div><aside class="speaker-note" hidden><b>不同案例与 AI 搭配 · 约 4 分钟</b><p>先明确这些截图来自不同项目。GPT 的电路、DeepSeek 的科普制作，以及 Muse 的操作录屏和作品相册，分别展示。这里没有把它们串成一项已完成的多人协作工程。</p><p>接着讲新任务可参考的做法：明确一个总目标，带着当前文件交接给下一工具；按结果选择工具，并安排独立复核。Claude 可作为复核选项。现场选一张记录放大，播放约十秒 Muse 录屏，最后展示通用交接单。</p></aside>
+    </section>
+
+    <section id="method" class="scene chapter colophon-section" data-label="带走方法" data-duration="1:00"><div class="wrap"><header class="section-head"><span class="section-number" aria-hidden="true">07</span><div class="section-heading"><p>结束 / 留下自己的做法</p><h2>回到你自己的项目</h2></div><p class="section-pace">1 分钟<span>先从一个具体问题开始</span></p></header>
+ <div class="closing-statement"><p>一个不会的操作，一张反复处理的图纸，<br>一段始终调不顺的程序——</p><h2>就从这件小事，<br>开始下一次尝试。</h2></div>
+ <div class="colophon-lower"><div class="takeaway-register"><article><span>01</span><div><h3>先把问题说清楚</h3><p>给真实材料，说明目标、限制和当前做到哪一步。</p></div></article><article><span>02</span><div><h3>让一次操作变成一次学习</h3><p>每次只推进一步，问清为什么，以及怎样确认做对。</p></div></article><article><span>03</span><div><h3>自己运行、对照和实测</h3><p>根据结果继续修改，逐渐留下自己的判断方法。</p></div></article><div class="colophon-links"><button class="text-button" data-project="learning">回看 PCB 分步学习 ↗</button><button class="text-button" data-project="guide">以前的 AI 教程 ↗</button></div></div><aside class="resource-slip"><a href="https://1763107202-afk.github.io/modelhub/ai-projects-lecture/" aria-label="打开公开讲座案例网址"><img src="assets/lecture-qr.svg" alt="公开讲座案例网址二维码"></a><div><h3>今天的案例，都在这里</h3><p>扫码查看模型、视频与学习方法<br>公开访问 · 无需 GPT 账号</p></div></aside></div>
+ <div class="colophon-signature"><strong>谢谢，欢迎交流。</strong><span>吴群彪 · 竞赛经验分享</span><button class="text-button" id="restartTalk">回到开场 ↑</button></div><details class="closing-practice"><summary>把你的任务写成一条具体提问 <span>＋</span></summary><div class="prompt-builder"><div class="builder-heading"><span class="status-dot"></span>把自己的任务代进去</div><label for="taskInput">我想完成</label><input id="taskInput" value="学习混音电路并一步步完成 PCB" maxlength="100"><label for="materialInput">我已经有</label><input id="materialInput" value="原理图、当前 EDA 界面和 DRC 提示" maxlength="140"><label for="constraintInput">必须满足</label><input id="constraintInput" value="每次只教一步，解释原因，给出检查方法" maxlength="140"><div class="generated-prompt" id="generatedPrompt"></div><button class="button gold-fill" id="copyGenerated">复制我的任务说明 <span>↗</span></button></div></details>
+      </div><aside class="speaker-note" hidden><b>带走方法 · 约 1 分钟</b><p>今天希望大家带走三件事：把问题讲清楚，让 AI 陪着推进和学习，最后用结果与证据做判断。项目里遇到一个不会的操作，就带着当前界面去问；遇到反复要做的工作，就尝试把它做成工具。</p><p>下一次，可以先挑一个小任务试起来。右边二维码能打开今天的案例，课后也能看。谢谢大家，欢迎交流具体项目和使用经验。</p></aside>
+    </section>
+  </main>
+  <footer class="site-footer"><span>吴群彪 · 竞赛经验分享</span><span>真实项目材料 / 互动与原网站</span><button class="text-button" id="footerSources">素材出处</button></footer>
+  <div class="lecture-controls" id="lectureControls" hidden><button id="exitTalk" aria-label="退出讲座模式">退出</button><div class="lecture-progress"><span id="currentChapter">01 / 08 开场</span><small id="segmentTime">建议 1 分钟</small><div><i id="lectureBar"></i></div></div><button id="timerToggle" aria-label="暂停或继续计时">20:00</button><button id="notesToggle" aria-pressed="false">讲解提示 <kbd>N</kbd></button><button id="fullscreenToggle" aria-label="全屏讲座">⛶</button><button id="prevScene" aria-label="上一章">←</button><button id="nextScene" aria-label="下一章">下一章 →</button></div>
+  <dialog id="projectDialog" aria-labelledby="modalTitle" aria-describedby="modalCategory"><div class="modal-head"><div><small id="modalCategory"></small><h2 id="modalTitle"></h2></div><div class="modal-window-actions"><button id="modalBack" hidden aria-label="返回当前案例">← 返回</button><button id="modalFullscreen" aria-label="全屏查看当前案例">⛶</button><button id="closeDialog" aria-label="关闭弹窗"><span class="close-word">关闭</span><span aria-hidden="true">×</span></button></div></div><div class="modal-body" id="modalBody"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

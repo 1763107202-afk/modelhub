@@ -1,0 +1,83 @@
+name: Import AI lecture assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/import-ai-lecture.yml
+      - ai-projects-lecture/.import-manifest.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-ai-lecture
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Download and verify published lecture assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          import concurrent.futures
+          import hashlib
+          import json
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          root = Path('ai-projects-lecture')
+          manifest = json.loads((root / '.import-manifest.json').read_text())
+          origin = manifest['source']
+          if origin != 'https://ai-projects-lecture.shenxin1978318.chatgpt.site/':
+              raise RuntimeError('Unexpected source origin')
+          def download(item):
+              rel = item['path']
+              if rel.startswith('/') or '..' in Path(rel).parts:
+                  raise ValueError('Unsafe relative path')
+              target = root / rel
+              if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest() == item['sha256']:
+                  return rel
+              url = origin + urllib.parse.quote(rel, safe='/')
+              for attempt in range(4):
+                  try:
+                      request = urllib.request.Request(url, headers={'User-Agent': 'AI-Lecture-Asset-Migration/1.0'})
+                      with urllib.request.urlopen(request, timeout=120) as response:
+                          data = response.read()
+                      if len(data) != item['size'] or hashlib.sha256(data).hexdigest() != item['sha256']:
+                          raise ValueError('Asset integrity mismatch: ' + rel)
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      target.write_bytes(data)
+                      return rel
+                  except (OSError, urllib.error.URLError, ValueError):
+                      if attempt == 3:
+                          raise
+                      time.sleep(2 ** attempt)
+          with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+              for count, rel in enumerate(pool.map(download, manifest['files']), 1):
+                  if count % 25 == 0 or count == len(manifest['files']):
+                      print(f'Verified {count}/{len(manifest["files"])} assets', flush=True)
+          print('All lecture assets match the published source.', flush=True)
+          PY
+      - name: Commit lecture assets
+        shell: bash
+        run: |
+          git add -- ai-projects-lecture
+          if git diff --cached --quiet; then
+            echo 'Lecture assets are already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Publish verified AI lecture media and interactive cases'
+          git push origin HEAD:main
