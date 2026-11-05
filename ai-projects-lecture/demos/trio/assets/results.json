@@ -1,0 +1,292 @@
+{
+  "date": "2026-09-20",
+  "revision": "V2.0",
+  "engine": "ngspice 39.3",
+  "model_class": "Own behavioral device models; not manufacturer models",
+  "dc_cases": 81,
+  "dc_nominal": {
+    "v5a": 4.9791229647,
+    "vref": 2.4895614824,
+    "mic_plus": 3.8791229647,
+    "mic_pre": 2.489536587,
+    "mix_out": 2.489536587,
+    "amp_in": 0.0,
+    "amp_out": 2.4999999995,
+    "spk": 0.0
+  },
+  "dc_pot_variation_max_v": 0.0,
+  "offset_cases": [
+    [
+      2.4895614824,
+      2.485036632,
+      2.485036632
+    ],
+    [
+      2.4895614824,
+      2.494036542,
+      2.494036542
+    ]
+  ],
+  "gain_1khz": {
+    "DAC": {
+      "mix_gain": 0.19879943037,
+      "pre_gain": 3.9748293078e-08,
+      "speaker_gain": 0.1709726678
+    },
+    "KEY": {
+      "mix_gain": 0.093563258173,
+      "pre_gain": 1.870719549e-08,
+      "speaker_gain": 0.080466829448
+    },
+    "MIC": {
+      "mix_gain": 87.726359288,
+      "pre_gain": 100.52724453,
+      "speaker_gain": 75.446944973
+    }
+  },
+  "tones": [
+    {
+      "note": "C4",
+      "target_hz": 261.63,
+      "frequency_hz": 257.7319587628866,
+      "error_percent": -1.4899060647148188,
+      "duty": 0.5494845360824743,
+      "rb_ohm": 26700
+    },
+    {
+      "note": "D4",
+      "target_hz": 293.66,
+      "frequency_hz": 290.4443799012489,
+      "error_percent": -1.0950146764118762,
+      "duty": 0.5454545454545451,
+      "rb_ohm": 23700
+    },
+    {
+      "note": "E4",
+      "target_hz": 329.63,
+      "frequency_hz": 326.101551859738,
+      "error_percent": -1.0704268847683829,
+      "duty": 0.5423068807427438,
+      "rb_ohm": 21100
+    },
+    {
+      "note": "F4",
+      "target_hz": 349.23,
+      "frequency_hz": 343.7607425232038,
+      "error_percent": -1.5660903922332547,
+      "duty": 0.5410794087315228,
+      "rb_ohm": 20000
+    },
+    {
+      "note": "G4",
+      "target_hz": 392.0,
+      "frequency_hz": 385.65368299267254,
+      "error_percent": -1.6189584202365936,
+      "duty": 0.5387581951407635,
+      "rb_ohm": 17800
+    },
+    {
+      "note": "A4",
+      "target_hz": 440.0,
+      "frequency_hz": 435.1610095735422,
+      "error_percent": -1.0997705514676825,
+      "duty": 0.5369886858137509,
+      "rb_ohm": 15750
+    },
+    {
+      "note": "B4",
+      "target_hz": 493.88,
+      "frequency_hz": 488.0429477794046,
+      "error_percent": -1.1818766138728898,
+      "duty": 0.5358711566617866,
+      "rb_ohm": 14000
+    },
+    {
+      "note": "C5",
+      "target_hz": 523.25,
+      "frequency_hz": 516.6146976881492,
+      "error_percent": -1.268094087310223,
+      "duty": 0.5355633867783548,
+      "rb_ohm": 13200
+    }
+  ],
+  "transient": {
+    "mix_nominal": {
+      "dac_raw": {
+        "min_v": 3.22974536e-08,
+        "max_v": 3.2999999707,
+        "rms_v": 2.020834771153384
+      },
+      "key_raw": {
+        "min_v": 0.0,
+        "max_v": 5.0,
+        "rms_v": 3.6872670953033544
+      },
+      "mic_plus": {
+        "min_v": 3.8712229648,
+        "max_v": 3.8870229647,
+        "rms_v": 3.8791269861671074
+      },
+      "mic_pre": {
+        "min_v": 1.6933940693,
+        "max_v": 3.2856836383,
+        "rms_v": 2.552396147631905
+      },
+      "vref": {
+        "min_v": 2.4895576993,
+        "max_v": 2.4895652661,
+        "rms_v": 2.489561483031841
+      },
+      "mix_out": {
+        "min_v": 1.2571764941,
+        "max_v": 3.7692456105,
+        "rms_v": 2.5578407506251484
+      },
+      "amp_in": {
+        "min_v": -0.05453993881,
+        "max_v": 0.056619577148,
+        "rms_v": 0.026106003398704756
+      },
+      "amp_out": {
+        "min_v": 1.4366550703,
+        "max_v": 3.6038455405,
+        "rms_v": 2.5506932009314465
+      },
+      "spk": {
+        "min_v": -1.1129172688,
+        "max_v": 1.1492700661,
+        "rms_v": 0.5052091085237552
+      },
+      "speaker_power_w": 0.031904530416920936
+    },
+    "mix_half_step": {
+      "dac_raw": {
+        "min_v": 8.796734452e-10,
+        "max_v": 3.2999999991,
+        "rms_v": 2.0208311234099137
+      },
+      "key_raw": {
+        "min_v": 0.0,
+        "max_v": 5.0,
+        "rms_v": 3.687284609871492
+      },
+      "mic_plus": {
+        "min_v": 3.8712229648,
+        "max_v": 3.8870229647,
+        "rms_v": 3.879126986830704
+      },
+      "mic_pre": {
+        "min_v": 1.6933934869,
+        "max_v": 3.2856844341,
+        "rms_v": 2.552395169819616
+      },
+      "vref": {
+        "min_v": 2.489557699,
+        "max_v": 2.4895652664,
+        "rms_v": 2.489561482992529
+      },
+      "mix_out": {
+        "min_v": 1.2571631519,
+        "max_v": 3.7692525736,
+        "rms_v": 2.557837965520566
+      },
+      "amp_in": {
+        "min_v": -0.05454049828,
+        "max_v": 0.056619872681,
+        "rms_v": 0.02610582711207476
+      },
+      "amp_out": {
+        "min_v": 1.4366202167,
+        "max_v": 3.6038892897,
+        "rms_v": 2.5506908898659697
+      },
+      "spk": {
+        "min_v": -1.1125849794,
+        "max_v": 1.1492802456,
+        "rms_v": 0.5052053244690169
+      },
+      "speaker_power_w": 0.03190405248398058
+    },
+    "mic_overload": {
+      "dac_raw": {
+        "min_v": 1.9357422332e-09,
+        "max_v": 3.2999999981,
+        "rms_v": 2.020833893734748
+      },
+      "key_raw": {
+        "min_v": 0.0,
+        "max_v": 5.0,
+        "rms_v": 3.677459467932723
+      },
+      "mic_plus": {
+        "min_v": 3.8441229648,
+        "max_v": 3.9141229647,
+        "rms_v": 3.8792019114028027
+      },
+      "mic_pre": {
+        "min_v": 0.06542697626,
+        "max_v": 4.9137102912,
+        "rms_v": 3.202116964105061
+      },
+      "vref": {
+        "min_v": 2.4895474001,
+        "max_v": 2.4895754092,
+        "rms_v": 2.4895614058926983
+      },
+      "mix_out": {
+        "min_v": 0.055345467108,
+        "max_v": 4.9237517754,
+        "rms_v": 3.049765052048056
+      },
+      "amp_in": {
+        "min_v": -0.10771262968,
+        "max_v": 0.10771197093,
+        "rms_v": 0.07796833070089627
+      },
+      "amp_out": {
+        "min_v": 0.66645719892,
+        "max_v": 4.332257206,
+        "rms_v": 2.842880863419292
+      },
+      "spk": {
+        "min_v": -1.6003270385,
+        "max_v": 1.6023037093,
+        "rms_v": 1.3402773403091974
+      },
+      "speaker_power_w": 0.22454291861828704
+    }
+  },
+  "step_extrema_difference_v": 1.3342200000154847e-05,
+  "assumptions": {
+    "opamp_a0_db": 100,
+    "opamp_gbw_hz": 1000000.0,
+    "opamp_slew_v_per_us": 0.6,
+    "opamp_rout_ohm": 50,
+    "opamp_rail_margin_v": 0.05,
+    "lm386_gain": 20,
+    "lm386_bandwidth_hz": 300000,
+    "lm386_rail_margin_v": 0.5,
+    "lm386_current_limit_a": 0.2,
+    "speaker_ohm": 8,
+    "timer_ron_ohm": 10
+  },
+  "excluded": [
+    "ESP32 firmware, SD streaming and timing",
+    "manufacturer transistor behavior, THD, noise and PSRR",
+    "PCB parasitics, actual power supply and speaker acoustics",
+    "microphone feedback, component tolerance guarantees and listening tests"
+  ],
+  "notes": [
+    "DC and overload use a continuous internal clamp variant to avoid discontinuous anti-windup convergence failure. All 81 DC cases were rerun after two original cases yielded spurious transient operating points.",
+    "Nominal transient A4 pulse: 435.161 Hz, duty 54.1891 percent from an earlier finite window estimate; inspect exact netlist. Overload injection uses 439.26 Hz and 54 percent.",
+    "The browser implements a separate reduced behavioral model, not an in-browser SPICE solver.",
+    "Current source represents 0.5mA electret DC bias; transient microphone is a stiff voltage source.",
+    "81 potentiometer combinations cover 0, 50, 100 percent each."
+  ],
+  "source_urls": [
+    "https://www.ti.com/lit/ds/symlink/ne555.pdf",
+    "https://www.ti.com/lit/ds/symlink/lm386.pdf",
+    "https://ww1.microchip.com/downloads/en/DeviceDoc/MCP6001-1R-1U-2-4-1-MHz-Low-Power-Op-Amp-DS20001733L.pdf",
+    "https://ngspice.sourceforge.io/"
+  ]
+}

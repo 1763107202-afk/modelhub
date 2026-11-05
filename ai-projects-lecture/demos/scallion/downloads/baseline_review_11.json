@@ -1,0 +1,360 @@
+{
+  "revision": "MECHANICAL11 / PROCESS11",
+  "status": "刚体1986姿态检出0组候选；管间196组、管对机械件136组候选尚未关闭。",
+  "scope": "Completed full baseline, plus all-pose regression of four replaced tool meshes. Per-part position/index hashes, exact unchanged group/part metadata and identical joint/material poses prove all other pairs unchanged. Same rigid body and declared mates excluded. Surface contacts, containment-only, flexible materials/film and continuous motion are not production-certified.",
+  "poses": 1986,
+  "production_release": false,
+  "source_original_reconstructed_exactly": false,
+  "solidworks_runtime_tested": false,
+  "raw_glb_sha256": "8d0496a6a044427d219637737a53e0747d3b5e35bfc746c6be7f9157d87938f8",
+  "pose_source_sha256": "851a36a0337ad99432516b01af4a6034bc2c6a29c95cd3aa55895c6efa299208",
+  "rigid_candidate_count": 0,
+  "material_candidate_count": 36,
+  "unexpected_material_candidate_count": 0,
+  "mount_gaps_over_0p3mm": 0,
+  "hose_pair_candidate_count": 196,
+  "hose_rigid_candidate_count": 136,
+  "footprint_guard_outer_diameter_m": 7.34,
+  "resolved_ids": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12"
+  ],
+  "unresolved_ids": [
+    "P01",
+    "P02",
+    "P03",
+    "P04"
+  ],
+  "cautions": [
+    "刚体筛查排除同刚体、声明配合，网格表面相交不等于精确穿透体积；不能证明所有安装连接内部无干涉。",
+    "带料筛查包含茎、颈、叶、外皮；膜、碎屑与流体粒子不在刚体筛查内；柔性变形和真实切削未认证。",
+    "管间及管对机械件使用外径包络筛查；候选仍待精确复核和重排，不作为零干涉通过。",
+    "3757个实体有效、装配树往返读取与连接距离通过，也不能代替强度、刚度、疲劳、采购件和工艺验收。",
+    "本版为参数化重建设计，布局已扩展，不能作为用户原始3.24装配无修改的细化。",
+    "未在原生SolidWorks中重建配合和执行运动研究；网页尚未进行真实浏览器GPU验收。"
+  ],
+  "cases": [
+    {
+      "id": "R01",
+      "title": "反刃先侧退，再随刀架进出",
+      "t": 87.91053088452993,
+      "phase": "trim",
+      "parts": [
+        {
+          "name": "trim_counter_0"
+        },
+        {
+          "name": "counter_TR12x3_screw11"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "增加250 mm独立退让、双导向、螺母、两端支承、联轴器和电机；反刃退出后才允许径向退刀。",
+      "resolved": true
+    },
+    {
+      "id": "R02",
+      "title": "取料与主夹的交接开口",
+      "t": 26.706932108931632,
+      "phase": "load",
+      "parts": [
+        {
+          "name": "loader_grip_0_frame"
+        },
+        {
+          "name": "grip_0_0_frame"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "开口夹架与两侧短导向保留中央物料通道，交接始终先夹稳再松开。",
+      "resolved": true
+    },
+    {
+      "id": "R03",
+      "title": "喷环低位进入，避开保膜夹片",
+      "t": 145,
+      "phase": "peel",
+      "parts": [
+        {
+          "name": "peel_half_guide_0_1"
+        },
+        {
+          "name": "film_clip_post11_0_1_1"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "径向进出前先下降30 mm，进入后升到扫描起点；扫描完成后低位退出。",
+      "resolved": true
+    },
+    {
+      "id": "R04",
+      "title": "清洗歧管下移并接到支承",
+      "t": 176.64618355803427,
+      "phase": "wash",
+      "parts": [
+        {
+          "name": "wash_manifold_-0.51_-0.065"
+        },
+        {
+          "name": "wash_pipe_cross_-0.51"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "喷淋歧管、风刀和管夹分别接到实体支架；污水独立下排。",
+      "resolved": true
+    },
+    {
+      "id": "R05",
+      "title": "成袋左右旋丝杠与成形器",
+      "t": 227.9006765614531,
+      "phase": "wrap",
+      "parts": [
+        {
+          "name": "wrap_TR12x3_LH_RH11"
+        },
+        {
+          "name": "wrap_former_hanger11_0_1"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "自制TR12×3左右旋丝杠同时驱动两侧，导杆承受横向反力；每侧240 mm开程。",
+      "resolved": true
+    },
+    {
+      "id": "R06",
+      "title": "膜套夹片与主夹连接",
+      "t": 227.9006765614531,
+      "phase": "wrap",
+      "parts": [
+        {
+          "name": "film_clip_arm11_0_0_1"
+        },
+        {
+          "name": "film_clip_post11_0_0_1"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "膜套保持夹片固定到随主夹运动的支承；膜张力和夹持力尚需试料。",
+      "resolved": true
+    },
+    {
+      "id": "R07",
+      "title": "称重与包装分站",
+      "t": 265.3985028982052,
+      "phase": "weigh",
+      "parts": [
+        {
+          "name": "weigh_axis_carriage"
+        },
+        {
+          "name": "weigh_cup_-0.51"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "成袋、称重、横封占三个独立工位，称重前杯托升起承接；示例读数不冒充实测。",
+      "resolved": true
+    },
+    {
+      "id": "R08",
+      "title": "横封动力与封条",
+      "t": 347.95118494218644,
+      "phase": "seal",
+      "parts": [
+        {
+          "name": "seal_TR12x3_LH_RH11"
+        },
+        {
+          "name": "seal_heat_face11_0_1"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "两侧同步开合，头部沿独立1600 mm径向轴退让；温度、压力和膜材窗口尚未冻结。",
+      "resolved": true
+    },
+    {
+      "id": "R09",
+      "title": "封切头与卸料架错序进入",
+      "t": 347.95118494218644,
+      "phase": "seal",
+      "parts": [
+        {
+          "name": "seal_side_cantilever11"
+        },
+        {
+          "name": "unload_carrier_inner_rise11"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "先把卸料架送入待料位置腾出通道，再进横封头；横封头退出后卸料夹才接管。",
+      "resolved": true
+    },
+    {
+      "id": "R10",
+      "title": "滑环定子接到静止约束架",
+      "t": 0.6,
+      "phase": "feed",
+      "parts": [
+        {
+          "name": "valve_control_slipring"
+        },
+        {
+          "name": "slipring_fixed_restraint"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "滑环定子属于静止组件，转子属于回转组件；定子约束到固定供气支架。",
+      "resolved": true
+    },
+    {
+      "id": "R11",
+      "title": "成品杯托与承接座",
+      "t": 429.99502391489784,
+      "phase": "outfeed",
+      "parts": [
+        {
+          "name": "out_cup_6_1"
+        },
+        {
+          "name": "out_insert_top_6_1"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "卸料夹松开后允许23 mm重力落座，成品杯托随盘分度输出。",
+      "resolved": true
+    },
+    {
+      "id": "R12",
+      "title": "清水只供清洗站",
+      "t": 176.64618355803427,
+      "phase": "wash",
+      "parts": [
+        {
+          "name": "water_tank"
+        },
+        {
+          "name": "wash_manifold_-0.51_-0.065"
+        }
+      ],
+      "evidence": "整套作业1986个离散姿态；同刚体和声明配合排除，柔性管另列。",
+      "status": "已实改；限定离散检查点",
+      "problem": "本项用于检查实体连接、进入顺序或退让空间；不代表整机工业验收。",
+      "action": "取消绕其他三站的清水主管；清水从外侧水箱直接进入清洗支路，污水不回箱。",
+      "resolved": true
+    },
+    {
+      "id": "P01",
+      "title": "待排管：filter_to_control_ring",
+      "t": 0,
+      "phase": "feed",
+      "parts": [
+        {
+          "name": "filter_to_control_ring",
+          "route": "filter_to_control_ring"
+        },
+        {
+          "name": "filtered_process_to_underframe",
+          "route": "filtered_process_to_underframe"
+        }
+      ],
+      "resolved": false,
+      "evidence": "外径包络筛查：中心线间距5.00 mm，所需外径间距16.00 mm。",
+      "status": "未关闭：管间距离候选",
+      "problem": "filter_to_control_ring 与 filtered_process_to_underframe 的名义管外径包络相交。",
+      "action": "须分层重新排管、落实弯曲半径与管夹，并重新做完整作业检查；本版不标为无干涉。"
+    },
+    {
+      "id": "P02",
+      "title": "待排管：cylinder_grip_0_0_cyl_-1_0",
+      "t": 0,
+      "phase": "feed",
+      "parts": [
+        {
+          "name": "cylinder_grip_0_0_cyl_-1_0",
+          "route": "cylinder_grip_0_0_cyl_-1_0"
+        },
+        {
+          "name": "cylinder_grip_0_0_cyl_-1_1",
+          "route": "cylinder_grip_0_0_cyl_-1_1"
+        }
+      ],
+      "resolved": false,
+      "evidence": "外径包络筛查：中心线间距0.00 mm，所需外径间距6.00 mm。",
+      "status": "未关闭：管间距离候选",
+      "problem": "cylinder_grip_0_0_cyl_-1_0 与 cylinder_grip_0_0_cyl_-1_1 的名义管外径包络相交。",
+      "action": "须分层重新排管、落实弯曲半径与管夹，并重新做完整作业检查；本版不标为无干涉。"
+    },
+    {
+      "id": "P03",
+      "title": "待排管：cylinder_grip_0_0_cyl_-1_0",
+      "t": 0,
+      "phase": "feed",
+      "parts": [
+        {
+          "name": "cylinder_grip_0_0_cyl_-1_0",
+          "route": "cylinder_grip_0_0_cyl_-1_0"
+        },
+        {
+          "name": "cylinder_grip_0_0_cyl_1_0",
+          "route": "cylinder_grip_0_0_cyl_1_0"
+        }
+      ],
+      "resolved": false,
+      "evidence": "外径包络筛查：中心线间距0.00 mm，所需外径间距6.00 mm。",
+      "status": "未关闭：管间距离候选",
+      "problem": "cylinder_grip_0_0_cyl_-1_0 与 cylinder_grip_0_0_cyl_1_0 的名义管外径包络相交。",
+      "action": "须分层重新排管、落实弯曲半径与管夹，并重新做完整作业检查；本版不标为无干涉。"
+    },
+    {
+      "id": "P04",
+      "title": "待排管：cylinder_grip_0_0_cyl_-1_0",
+      "t": 0,
+      "phase": "feed",
+      "parts": [
+        {
+          "name": "cylinder_grip_0_0_cyl_-1_0",
+          "route": "cylinder_grip_0_0_cyl_-1_0"
+        },
+        {
+          "name": "cylinder_grip_0_0_cyl_1_1",
+          "route": "cylinder_grip_0_0_cyl_1_1"
+        }
+      ],
+      "resolved": false,
+      "evidence": "外径包络筛查：中心线间距0.00 mm，所需外径间距6.00 mm。",
+      "status": "未关闭：管间距离候选",
+      "problem": "cylinder_grip_0_0_cyl_-1_0 与 cylinder_grip_0_0_cyl_1_1 的名义管外径包络相交。",
+      "action": "须分层重新排管、落实弯曲半径与管夹，并重新做完整作业检查；本版不标为无干涉。"
+    }
+  ]
+}

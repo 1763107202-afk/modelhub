@@ -1,0 +1,51 @@
+{
+  "revision": "R20-mechanical-support",
+  "generated_at": "2026-10-21T00:29:49.743Z",
+  "source_sha256": "50036cfe402a476960a8153265980a1c41e88aebefc11b22745d506bfab206cb",
+  "status": "logic_checks_passed",
+  "motion_samples": 21601,
+  "handoff_checks": 264,
+  "max_handoff_jump_m": 3.972054645195637e-15,
+  "max_handoff_angle_rad": 0,
+  "inventory_samples": 2161,
+  "stem_capsule_min_gap_m": 0.09089664899867232,
+  "stem_capsule_scope": {
+    "diameter_m": 0.028,
+    "length_m": 0.37,
+    "step_s": 0.1,
+    "excludes": [
+      "leaves",
+      "film",
+      "all_machine_geometry"
+    ]
+  },
+  "fault_cases": 8,
+  "world_matrix_checks": 100405,
+  "interface_datum_clearances": {
+    "trim_plane_0_belt_gap_m": 0.004531729459762769,
+    "trim_plane_1_belt_gap_m": 0.004531729459762769,
+    "bare_stem_to_receiving_belt_m": 2.220446049250313e-16,
+    "deployed_feet_to_output_roller_m": 2.220446049250313e-16,
+    "root_heel_to_output_roller_m": 0.01200000000000001,
+    "cassette_lift_m": 0.15999999999999992,
+    "lifted_pedestal_to_fixed_insert_m": 0.13600000000000012,
+    "insert_belt_side_gap_m": 0.0024999999999999988,
+    "finished_cassette_pitch_m": 0.5
+  },
+  "parts": 14058,
+  "draw_meshes": 322,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_CAD_collision_verified": false,
+  "material_trials_verified": false,
+  "sw_generated": false,
+  "summary": "R20 机构逻辑与局部范围；四列包装对接尚未通过。21,601 个产品位姿采样、264 次交接边界、2,161 次数量核对与 3,204 个喷头/停转退让状态采样通过。局部检查包含裸料落带、刀槽、抬框离带与出料脚标高。完整机械干涉、WebGL 浏览器及实料性能尚未验收。 26类选定刚体接口、7086个采样时刻、263,133次候选网格对检查，发现0组接触。新增主传动接口按0.02 s采样；螺纹/明确配合按记录排除，宽相跳过小于0.2 mm的AABB交叠。主传动内部另查CAD实体及二维齿形。结果不等于连续整机、柔性叶片/膜材、公差后间隙或包装对接验收。",
+  "process_samples": 3204,
+  "rigid_interface_screen": {
+    "scenario_samples": 7086,
+    "triangle_pair_tests": 263133,
+    "contact_groups": 0,
+    "scope": "Selected rigid interfaces, sampled at the times listed in counts. Includes prior motion/support scenarios and new hardware versus surrounding parts and header clamps versus process heads, rotor and guards. R20 main drive versus existing rigid geometry and rotor versus new fixed parts use 0.02 s; prior new hardware scenarios use 0.05 s. New CAD subassembly internal fits are screened separately by exact B-rep rest-pose checks and 2D tooth sweeps. Exact same-joint fastener meshes and designated plate/lug mates are excluded from collision screening; actual target bores and stack faces are checked separately in check-hardware20. Existing explicit bearing/nut/follower mates are excluded. Broad phase skips AABB overlap below 0.2 mm. Flexible leaves, film, hoses, continuous sweep, tolerances and remaining full-machine interfaces are not validated."
+  }
+}

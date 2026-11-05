@@ -1,0 +1,56 @@
+{
+  "revision": "R20",
+  "status": "nominal_gear_checks_passed",
+  "valid_2D_polygons": [
+    true,
+    true
+  ],
+  "mesh_samples": 1201,
+  "rotor_sweep_deg": 30,
+  "pinion_sweep_deg": -144,
+  "sample_step_deg": 0.025,
+  "maximum_overlap_mm2": 0,
+  "minimum_geometric_gap_mm": 0.18805308545132401,
+  "nominal_backlash_mm": 0.4,
+  "nominal_transverse_contact_ratio": 1.70238263726286,
+  "profile_flank_samples_per_tooth": 17,
+  "drive_assumptions": {
+    "module_mm": 8,
+    "gear_teeth": 96,
+    "pinion_teeth": 20,
+    "pressure_angle_deg": 20,
+    "backlash_mm": 0.4,
+    "face_width_mm": 26,
+    "centres_mm": 464,
+    "motor_power_W_assumed": 750,
+    "motor_rated_rpm_assumed": 3000,
+    "reducer_ratio_assumed": 40,
+    "reducer_efficiency_assumed": 0.9,
+    "mesh_efficiency_assumed": 0.97,
+    "rotor_inertia_kgm2_assumed_range": [
+      80,
+      250
+    ],
+    "rotor_resistance_Nm_assumed": 20
+  },
+  "quintic_index": {
+    "index_deg": 30,
+    "motion_s": 2,
+    "cycle_s": 8,
+    "peak_rotor_rpm": 4.687499999999999,
+    "peak_rotor_accel_rad_s2": 0.7557497350975908,
+    "peak_motor_rpm": 899.9999999999999,
+    "motor_rated_torque_Nm_assumed": 2.38732414637843,
+    "rotor_available_torque_Nm_assumed": 400.15372411936687,
+    "load_torque_Nm_assumed_range": [
+      80.45997880780726,
+      208.9374337743977
+    ]
+  },
+  "failures": [],
+  "references": [
+    "https://khkgears.net/gear-knowledge/gear-technical-reference/calculation-gear-dimensions/",
+    "https://www.nsk.com/ph-en/engineering/6204-apn.html"
+  ],
+  "scope": "2D faceted involute profiles sampled through one 30-degree index with opposite 4.8 ratio; no axial misalignment, elastic tooth deformation, manufacturing fillet, tooth stress or continuous sweep. Torque is only a candidate screen for assumed inertia/resistance; rotor mass properties, friction, motor/reducer inertia, servo tuning, braking and purchased component ratings are unverified."
+}

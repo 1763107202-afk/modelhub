@@ -1,0 +1,7 @@
+{
+  "position_error_m": 0,
+  "normal_component_max_error": 0.003937025708476427,
+  "before_bytes": 61185792,
+  "after_bytes": 36103920,
+  "method": "unchanged float32 positions; normalized int8 normals; uint16 indices; KHR_mesh_quantization"
+}

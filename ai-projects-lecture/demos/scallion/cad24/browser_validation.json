@@ -1,0 +1,11 @@
+{
+  "revision": "R24",
+  "controls_observed": [
+    "Ø34/弓高4mm：q=7.28mm、前挡间隙2.19mm、开笼间隙5mm",
+    "Ø42/弓高10mm：禁止进站和禁止本工况交接",
+    "Ø28直葱、根托未接重：禁止源释放"
+  ],
+  "svg_layout_observed": true,
+  "webgl_created": false,
+  "three_dimensional_visual_acceptance": false
+}

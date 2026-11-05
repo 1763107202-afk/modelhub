@@ -1,0 +1,146 @@
+{
+  "old_12mm": {
+    "valid": true,
+    "mass": 0.25,
+    "mu": 0.1,
+    "pressureMPa": 0.15,
+    "boreMM": 12,
+    "efficiency": 0.7,
+    "acceleration": 0.3,
+    "safety": 4,
+    "forceN": 11.875220230569417,
+    "requiredPerFingerN": 50.550000000000004,
+    "margin": 0.23492028151472633,
+    "maxMassKg": 0.05873007037868158,
+    "averageContactKPa": 13.19468914507713,
+    "passesAssumedSlip": false,
+    "bruiseTested": false,
+    "measured": false
+  },
+  "proposed_25mm": {
+    "valid": true,
+    "mass": 0.25,
+    "mu": 0.1,
+    "pressureMPa": 0.18,
+    "boreMM": 25,
+    "efficiency": 0.7,
+    "acceleration": 0.3,
+    "safety": 4,
+    "forceN": 61.85010536754907,
+    "requiredPerFingerN": 50.550000000000004,
+    "margin": 1.2235431328892001,
+    "maxMassKg": 0.30588578322230003,
+    "averageContactKPa": 68.72233929727675,
+    "passesAssumedSlip": true,
+    "bruiseTested": false,
+    "measured": false
+  },
+  "very_slippery": {
+    "valid": true,
+    "mass": 0.25,
+    "mu": 0.08,
+    "pressureMPa": 0.18,
+    "boreMM": 25,
+    "efficiency": 0.7,
+    "acceleration": 0.3,
+    "safety": 4,
+    "forceN": 61.85010536754907,
+    "requiredPerFingerN": 63.18750000000001,
+    "margin": 0.97883450631136,
+    "maxMassKg": 0.24470862657784,
+    "averageContactKPa": 68.72233929727675,
+    "passesAssumedSlip": false,
+    "bruiseTested": false,
+    "measured": false
+  },
+  "simulated_faults": [
+    {
+      "id": "empty",
+      "at": 2.1333333333333333,
+      "phase": "infeed",
+      "signals": [
+        "双通道有料",
+        "夹爪位置有料窗口",
+        "夹持压力许可",
+        "根端止挡到位"
+      ],
+      "holds": "托叉和两点托架承重；翻转未启动",
+      "action": "保持夹爪与托叉，停止输送，不翻转"
+    },
+    {
+      "id": "cup",
+      "at": 32.69065850398866,
+      "phase": "infeed",
+      "signals": [
+        "根端存在",
+        "杯托接触载荷",
+        "上部导向夹就绪"
+      ],
+      "holds": "翻转夹和根端托叉继续保持",
+      "action": "不退叉、不松夹，停在接料位"
+    },
+    {
+      "id": "pressure",
+      "at": 135.69465034131065,
+      "phase": "root",
+      "signals": [
+        "取料夹位置有料窗口",
+        "夹持压力许可",
+        "物料存在"
+      ],
+      "holds": "原料仍由杯托和导向夹支承",
+      "action": "禁止切根，原支承保持"
+    },
+    {
+      "id": "slip",
+      "at": 135.69465034131065,
+      "phase": "root",
+      "signals": [
+        "轴向位移稳定",
+        "夹持压力许可",
+        "有料位置窗口"
+      ],
+      "holds": "原托杯与导向夹仍在保护物料",
+      "action": "滑移报警，禁止切根和移载"
+    },
+    {
+      "id": "film",
+      "at": 375.4906293515738,
+      "phase": "wrap",
+      "signals": [
+        "夹膜有料",
+        "夹膜指位置",
+        "成袋断膜完成"
+      ],
+      "holds": "成形器继续保持；袋子尚未悬空转移",
+      "action": "成形器不打开、不退出"
+    },
+    {
+      "id": "band",
+      "at": 409.153962684907,
+      "phase": "band",
+      "signals": [
+        "袋口已收拢",
+        "带口存在",
+        "封接位置确认"
+      ],
+      "holds": "原夹膜指继续夹住袋口",
+      "action": "不撤夹膜、不转位；封接缺陷实物需复检"
+    },
+    {
+      "id": "receiver",
+      "at": 153.57798367464392,
+      "phase": "load",
+      "signals": [
+        "主夹有料位置窗口",
+        "主夹压力许可",
+        "轴向位移稳定"
+      ],
+      "holds": "取料夹仍保持，主夹不单独承重",
+      "action": "不松取料夹、不分度，停机待处理"
+    }
+  ],
+  "pressure_and_friction_measured": false,
+  "bruise_tested": false,
+  "scope": "F=P*A*效率；2*mu*F>=4*m*(g+a)。参数为设计假设，均非实测；压力估算依赖假定有效接触面积。"
+}

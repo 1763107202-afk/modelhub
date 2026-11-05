@@ -1,0 +1,53 @@
+{
+  "revision": "R26-local-candidate",
+  "source_sha256": "ee621c07fc1435d86619575a4d1c341c68fba91f55222dd8d9b09e89bb1c9441",
+  "local_cases": 8976,
+  "diameter_mm": [
+    18,
+    34
+  ],
+  "bow_amplitude_mm": [
+    0,
+    4
+  ],
+  "bow_model": "x/z sinusoidal displacement over530mm, two transfer levels60/250mm; local contact sections only, no whole-line bend dynamics",
+  "min_cage_gap_mm": 16.73373673615706,
+  "min_pad_contact_centre_margin_mm": 3.551681148914936,
+  "min_guide_stop_margin_mm": 3.0158006295391324,
+  "min_rod_cover_gap_mm": 9.015800629539129,
+  "min_spring_solid_margin_mm": 8.115800629539132,
+  "min_rear_retention_margin_mm": 2.198015832309345,
+  "min_open_pad_clearance_mm": 6.015800629539132,
+  "guide_wire_radial_gap_mm": 0.5249999999999999,
+  "nominal_load_budget": {
+    "valid": true,
+    "massKg": 0.252,
+    "mu": 0.15,
+    "safetyFactor": 2,
+    "normalSumN": 10.783010894064612,
+    "demandN": 3.4221184073961797,
+    "requiredN": 6.844236814792359,
+    "capacityN": 1.6174516341096916,
+    "requiredMu": 0.6347240934866989,
+    "necessaryCapacityPass": false,
+    "releaseApproved": false,
+    "peak": {
+      "time": 16.65,
+      "local_per_kg": [
+        -13.57983494998484,
+        3.552713678800501e-15,
+        -9.860761315262648e-32
+      ],
+      "toe_per_kg": 3.552713678800501e-15,
+      "friction_per_kg": 13.57983494998484,
+      "kind": "load"
+    },
+    "scope": "质点平移必要条件；未计力矩分配、接触压强、柔性叶片和摩擦实测，数值通过也不允许候选整线释放"
+  },
+  "all_candidates_source_release_blocked": true,
+  "positive_transverse_support_complete": false,
+  "candidate_integrated_into_main": false,
+  "material_trials_verified": false,
+  "manufacturing_released": false,
+  "summary": "8976组局部直径/弯曲方向/夹持高度组合通过列明的几何与行程检查；未验证全长接触或整线移载。翻平横向承重未闭合，全部候选源释放许可保持禁止。"
+}

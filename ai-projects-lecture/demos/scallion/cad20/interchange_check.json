@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "zip_crc_checked": true,
+  "step_zip_entry": "Scallion_R20_MainDrive.step",
+  "step_uncompressed_bytes": 26231610,
+  "step_sha256": "2cdb9740f75dca548b49e34b5b967a980633a709c38faaf70706c5b22b8bdd85",
+  "drive_data_sha256": "522879a1a8ec9da19826f7b1a2ec4935f57b1d1ffde00d9898bfe86abc766906",
+  "note": "Lossless ZIP contents equal the STEP used for the round-trip test; raw STEP is generated in ignored engineering/r20/_build/."
+}

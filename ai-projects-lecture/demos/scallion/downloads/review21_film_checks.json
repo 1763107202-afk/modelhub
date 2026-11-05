@@ -1,0 +1,45 @@
+{
+  "revision": "R16-single-lane-film-review",
+  "generated_at": "2026-10-21T06:32:03.018Z",
+  "source_sha256": "f168e56d64d308106d3cb7a14e41a9fcb6047a0777d0aa5d30a9c8b73d374d05",
+  "status": "limited_geometry_checks_passed",
+  "single_lane_only": true,
+  "parts": 598,
+  "sample_step_s": 0.02,
+  "state_samples": 801,
+  "max_material_balance_error_m": 2.220446049250313e-16,
+  "max_path_join_gap_m": 0,
+  "max_tangent_dot_error": 1.6153745008296028e-14,
+  "max_arc_chord_sag_m": 6.269291669123156e-7,
+  "max_transverse_width_error_m": 0.000007694680791203723,
+  "clearances": {
+    "knife_slot_width_mm": 1.9999999999997797,
+    "blade_side_clearance_mm": 0.4999999999997229,
+    "blade_to_lower_crosshead_mm": 14.000000000000012,
+    "front_root_to_jaw_mm": 13.000000000000345,
+    "rear_leaf_to_jaw_mm": 17.99999999999935,
+    "open_lower_jaw_to_crop_mm": 12.00000000000001
+  },
+  "failures": [],
+  "failure_count": 0,
+  "not_verified": [
+    "four_lane_integration",
+    "full_rigid_collision",
+    "film_stress_wrinkles_and_longitudinal_strain",
+    "tension_dynamics_and_slip",
+    "hot_wheel_stop_retraction",
+    "actual_seal_quality_and_puncture",
+    "browser_webgl",
+    "CAD_bores_fits_and_tolerance",
+    "production_capacity",
+    "safety"
+  ],
+  "summary": "单列 801 个状态采样：膜路端点与切线连续、每周期600 mm定长、横封期间停膜、卷径/退卷量平衡、轮面方向、固定袋长和名义刀槽间隙检查通过。横向展开宽度最大离散误差 7.7 μm。仅为几何与时序核对，不证明四列对接、无干涉、无皱膜、热封工艺或实料处理通过。 两类局部接口共 1355 次网格对检查，所采样网格未相交；膜材、形变叶片和其余接口不在范围内。",
+  "local_rigid_screen": {
+    "engine": "python-fcl / triangulated procedural meshes",
+    "scenario_samples": 1602,
+    "mesh_pair_tests": 1355,
+    "contact_groups": 0,
+    "scope": "Two single-lane interfaces only: moving transverse jaws versus fixed packaging structures, and nominal crop meshes versus rigid packaging. 0.02 s samples; AABB overlap threshold 0.1 mm. Membrane, deformed leaves, bearings/screw intentional mates, remaining pairings and four-lane integration excluded. Discrete triangle tests do not prove continuous collision freedom."
+  }
+}

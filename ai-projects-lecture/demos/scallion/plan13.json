@@ -1,0 +1,2215 @@
+{
+  "revision": "MECHANICAL-12.1",
+  "joints": [
+    {
+      "name": "main_index",
+      "type": "revolute",
+      "parent": "fixed",
+      "child": "carousel",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -6.283185307179586,
+        6.283185307179586
+      ],
+      "gear_ratio": 80,
+      "step_rad": 1.0471975511965976
+    },
+    {
+      "name": "grip_0_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_0_0",
+      "child": "grip_0_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_0_0_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_0_0",
+      "child": "grip_0_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_0_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_0_1",
+      "child": "grip_0_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_0_1_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_0_1",
+      "child": "grip_0_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_1_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_1_0",
+      "child": "grip_1_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_1_0_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_1_0",
+      "child": "grip_1_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_1_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_1_1",
+      "child": "grip_1_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_1_1_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_1_1",
+      "child": "grip_1_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_2_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_2_0",
+      "child": "grip_2_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_2_0_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_2_0",
+      "child": "grip_2_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_2_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_2_1",
+      "child": "grip_2_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_2_1_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_2_1",
+      "child": "grip_2_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_3_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_3_0",
+      "child": "grip_3_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_3_0_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_3_0",
+      "child": "grip_3_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_3_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_3_1",
+      "child": "grip_3_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_3_1_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_3_1",
+      "child": "grip_3_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_4_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_4_0",
+      "child": "grip_4_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_4_0_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_4_0",
+      "child": "grip_4_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_4_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_4_1",
+      "child": "grip_4_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_4_1_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_4_1",
+      "child": "grip_4_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_5_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_5_0",
+      "child": "grip_5_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_5_0_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_5_0",
+      "child": "grip_5_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_5_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "grip_5_1",
+      "child": "grip_5_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "grip_5_1_jaw_1",
+      "type": "prismatic",
+      "parent": "grip_5_1",
+      "child": "grip_5_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "load_axis",
+      "type": "prismatic",
+      "parent": "load_axis",
+      "child": "load_axis_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        1.1
+      ],
+      "home": 0,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "load_axis_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "load_axis_screw",
+      "type": "revolute",
+      "parent": "load_axis",
+      "child": "load_axis_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "loader_grip_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "loader_grip_0",
+      "child": "loader_grip_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "loader_grip_0_jaw_1",
+      "type": "prismatic",
+      "parent": "loader_grip_0",
+      "child": "loader_grip_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "loader_grip_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "loader_grip_1",
+      "child": "loader_grip_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "loader_grip_1_jaw_1",
+      "type": "prismatic",
+      "parent": "loader_grip_1",
+      "child": "loader_grip_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "root_cut",
+      "type": "prismatic",
+      "parent": "root_station",
+      "child": "root_knife",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.09
+      ],
+      "home": 0
+    },
+    {
+      "name": "trim_axis",
+      "type": "prismatic",
+      "parent": "trim_axis",
+      "child": "trim_axis_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        1.6
+      ],
+      "home": 0,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "trim_axis_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "trim_axis_screw",
+      "type": "revolute",
+      "parent": "trim_axis",
+      "child": "trim_axis_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "trim_cut",
+      "type": "prismatic",
+      "parent": "trim_axis_slide",
+      "child": "trim_knife",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.08
+      ],
+      "home": 0
+    },
+    {
+      "name": "peel_radial",
+      "type": "prismatic",
+      "parent": "peel_radial",
+      "child": "peel_radial_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.65
+      ],
+      "home": 0.65,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "peel_radial_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "peel_radial_screw",
+      "type": "revolute",
+      "parent": "peel_radial",
+      "child": "peel_radial_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "peel_scan",
+      "type": "prismatic",
+      "parent": "peel_scan",
+      "child": "peel_scan_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.3
+      ],
+      "home": 0,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "peel_scan_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "peel_scan_screw",
+      "type": "revolute",
+      "parent": "peel_scan",
+      "child": "peel_scan_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "nozzle_0_-1",
+      "type": "prismatic",
+      "parent": "peel_head",
+      "child": "nozzle_0_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.065
+      ],
+      "home": 0.065
+    },
+    {
+      "name": "nozzle_0_1",
+      "type": "prismatic",
+      "parent": "peel_head",
+      "child": "nozzle_0_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.065
+      ],
+      "home": 0.065
+    },
+    {
+      "name": "nozzle_1_-1",
+      "type": "prismatic",
+      "parent": "peel_head",
+      "child": "nozzle_1_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.065
+      ],
+      "home": 0.065
+    },
+    {
+      "name": "nozzle_1_1",
+      "type": "prismatic",
+      "parent": "peel_head",
+      "child": "nozzle_1_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.065
+      ],
+      "home": 0.065
+    },
+    {
+      "name": "wash_axis",
+      "type": "prismatic",
+      "parent": "wash_axis",
+      "child": "wash_axis_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.55
+      ],
+      "home": 0.55,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "wash_axis_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "wash_axis_screw",
+      "type": "revolute",
+      "parent": "wash_axis",
+      "child": "wash_axis_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "wash_flap_-1",
+      "type": "prismatic",
+      "parent": "wash_gate_fixed_-1",
+      "child": "wash_flap_-1",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        0,
+        1.0
+      ],
+      "home": 1.0,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "wash_flap_1",
+      "type": "prismatic",
+      "parent": "wash_gate_fixed_1",
+      "child": "wash_flap_1",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        0,
+        1.0
+      ],
+      "home": 1.0,
+      "offset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "weigh_axis",
+      "type": "prismatic",
+      "parent": "weigh_axis",
+      "child": "weigh_axis_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.42
+      ],
+      "home": 0.42,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "weigh_axis_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "weigh_axis_screw",
+      "type": "revolute",
+      "parent": "weigh_axis",
+      "child": "weigh_axis_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "weigh_lift",
+      "type": "prismatic",
+      "parent": "weigh_axis_slide",
+      "child": "weigh_lift",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        0,
+        0.04
+      ],
+      "home": 0
+    },
+    {
+      "name": "unload_axis",
+      "type": "prismatic",
+      "parent": "unload_axis",
+      "child": "unload_axis_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        1.15
+      ],
+      "home": 1.15,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "unload_axis_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "unload_axis_screw",
+      "type": "revolute",
+      "parent": "unload_axis",
+      "child": "unload_axis_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "unload_grip_0_jaw_-1",
+      "type": "prismatic",
+      "parent": "unload_grip_0",
+      "child": "unload_grip_0_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "unload_grip_0_jaw_1",
+      "type": "prismatic",
+      "parent": "unload_grip_0",
+      "child": "unload_grip_0_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "unload_grip_1_jaw_-1",
+      "type": "prismatic",
+      "parent": "unload_grip_1",
+      "child": "unload_grip_1_jaw_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        -0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "unload_grip_1_jaw_1",
+      "type": "prismatic",
+      "parent": "unload_grip_1",
+      "child": "unload_grip_1_jaw_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "offset": [
+        0,
+        0,
+        0.03
+      ],
+      "home": 0
+    },
+    {
+      "name": "outfeed_index",
+      "type": "revolute",
+      "parent": "outfeed",
+      "child": "outfeed_rotor",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        0,
+        6.283185307179586
+      ],
+      "step_rad": 0.5235987755982988
+    },
+    {
+      "name": "wash_gate_motor_-1",
+      "type": "revolute",
+      "parent": "wash_gate_fixed_-1",
+      "child": "wash_gate_drive_-1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=(gate_q-1.0)/0.022"
+    },
+    {
+      "name": "wash_gate_motor_1",
+      "type": "revolute",
+      "parent": "wash_gate_fixed_1",
+      "child": "wash_gate_drive_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=(gate_q-1.0)/0.022"
+    },
+    {
+      "name": "trim_counter_shift",
+      "type": "prismatic",
+      "parent": "trim_axis_slide",
+      "child": "trim_counter11",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.25
+      ],
+      "home": 0.25
+    },
+    {
+      "name": "trim_counter_rotation11",
+      "type": "revolute",
+      "parent": "trim_axis_slide",
+      "child": "trim_counter_screw11",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*(trim_counter_shift-0.250)/0.003"
+    },
+    {
+      "name": "wrap_axis",
+      "type": "prismatic",
+      "parent": "wrap_axis",
+      "child": "wrap_axis_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.75
+      ],
+      "home": 0.75,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "wrap_axis_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "wrap_axis_screw",
+      "type": "revolute",
+      "parent": "wrap_axis",
+      "child": "wrap_axis_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "wrap_jaw_rotation11",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "wrap_screw_rotor11",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*(wrap_jaw11_1-0.24)/0.003"
+    },
+    {
+      "name": "wrap_jaw11_-1",
+      "type": "prismatic",
+      "parent": "wrap_axis_slide",
+      "child": "wrap_jaw11_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.24
+      ],
+      "home": 0.24
+    },
+    {
+      "name": "wrap_jaw11_1",
+      "type": "prismatic",
+      "parent": "wrap_axis_slide",
+      "child": "wrap_jaw11_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.24
+      ],
+      "home": 0.24
+    },
+    {
+      "name": "film_feed11_0_-1",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_reel11_0_-1",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ]
+    },
+    {
+      "name": "film_nip_drive11_0_-0.3",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_0_-0.3",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_nip_drive11_0_-0.328",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_0_-0.328",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_feed11_0_1",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_reel11_0_1",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ]
+    },
+    {
+      "name": "film_nip_drive11_0_0.3",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_0_0.3",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_nip_drive11_0_0.328",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_0_0.328",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_feed11_1_-1",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_reel11_1_-1",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ]
+    },
+    {
+      "name": "film_nip_drive11_1_-0.3",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_1_-0.3",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_nip_drive11_1_-0.328",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_1_-0.328",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_feed11_1_1",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_reel11_1_1",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ]
+    },
+    {
+      "name": "film_nip_drive11_1_0.3",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_1_0.3",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "film_nip_drive11_1_0.328",
+      "type": "revolute",
+      "parent": "wrap_axis_slide",
+      "child": "film_nip11_1_0.328",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "film rolling contact; inner nip driven, outer nip idler"
+    },
+    {
+      "name": "infeed_X12",
+      "type": "prismatic",
+      "parent": "infeed_X12",
+      "child": "infeed_X12_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.95
+      ],
+      "home": 0.95,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "infeed_X12_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "infeed_X12_screw",
+      "type": "revolute",
+      "parent": "infeed_X12",
+      "child": "infeed_X12_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "infeed_settle12",
+      "type": "prismatic",
+      "parent": "infeed_X12_slide",
+      "child": "infeed_settle12",
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "limits": [
+        0,
+        0.53
+      ],
+      "home": 0.53
+    },
+    {
+      "name": "infeed_turn12",
+      "type": "revolute",
+      "parent": "infeed_settle12",
+      "child": "infeed_flip12",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1.5707963267948966,
+        0
+      ],
+      "home": 0
+    },
+    {
+      "name": "infeed_jaw12_0_-1",
+      "type": "prismatic",
+      "parent": "infeed_flip12",
+      "child": "infeed_jaw12_0_-1",
+      "axis": [
+        -1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.025
+      ],
+      "home": 0.025
+    },
+    {
+      "name": "infeed_jaw12_0_1",
+      "type": "prismatic",
+      "parent": "infeed_flip12",
+      "child": "infeed_jaw12_0_1",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.025
+      ],
+      "home": 0.025
+    },
+    {
+      "name": "infeed_jaw12_1_-1",
+      "type": "prismatic",
+      "parent": "infeed_flip12",
+      "child": "infeed_jaw12_1_-1",
+      "axis": [
+        -1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.025
+      ],
+      "home": 0.025
+    },
+    {
+      "name": "infeed_jaw12_1_1",
+      "type": "prismatic",
+      "parent": "infeed_flip12",
+      "child": "infeed_jaw12_1_1",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.025
+      ],
+      "home": 0.025
+    },
+    {
+      "name": "unload_Z12",
+      "type": "prismatic",
+      "parent": "unload_Z12",
+      "child": "unload_Z12_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.45
+      ],
+      "home": 0,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "unload_Z12_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "unload_Z12_screw",
+      "type": "revolute",
+      "parent": "unload_Z12",
+      "child": "unload_Z12_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "feed_shuttle13",
+      "type": "prismatic",
+      "parent": "feed_shuttle13",
+      "child": "feed_shuttle13_slide",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.5
+      ],
+      "home": 0.5,
+      "offset": [
+        0.12,
+        0,
+        0
+      ],
+      "drive": "feed_shuttle13_rotor",
+      "lead": 0.005
+    },
+    {
+      "name": "feed_shuttle13_screw",
+      "type": "revolute",
+      "parent": "feed_shuttle13",
+      "child": "feed_shuttle13_rotor",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        -1000000000.0,
+        1000000000.0
+      ],
+      "relation": "theta=2*pi*q/0.005"
+    },
+    {
+      "name": "seat_guide13_0_-1",
+      "type": "prismatic",
+      "parent": "seat_guide13_0",
+      "child": "seat_guide13_0_-1",
+      "axis": [
+        -1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.035
+      ],
+      "offset": [
+        -0.027,
+        0,
+        0
+      ],
+      "home": 0.035
+    },
+    {
+      "name": "seat_guide13_0_1",
+      "type": "prismatic",
+      "parent": "seat_guide13_0",
+      "child": "seat_guide13_0_1",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.035
+      ],
+      "offset": [
+        0.027,
+        0,
+        0
+      ],
+      "home": 0.035
+    },
+    {
+      "name": "seat_guide13_1_-1",
+      "type": "prismatic",
+      "parent": "seat_guide13_1",
+      "child": "seat_guide13_1_-1",
+      "axis": [
+        -1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.035
+      ],
+      "offset": [
+        -0.027,
+        0,
+        0
+      ],
+      "home": 0.035
+    },
+    {
+      "name": "seat_guide13_1_1",
+      "type": "prismatic",
+      "parent": "seat_guide13_1",
+      "child": "seat_guide13_1_1",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.035
+      ],
+      "offset": [
+        0.027,
+        0,
+        0
+      ],
+      "home": 0.035
+    },
+    {
+      "name": "infeed_fork13_0",
+      "type": "prismatic",
+      "parent": "infeed_flip12",
+      "child": "infeed_fork13_0",
+      "axis": [
+        0,
+        -1,
+        0
+      ],
+      "limits": [
+        0,
+        0.09
+      ],
+      "home": 0
+    },
+    {
+      "name": "infeed_fork13_1",
+      "type": "prismatic",
+      "parent": "infeed_flip12",
+      "child": "infeed_fork13_1",
+      "axis": [
+        0,
+        -1,
+        0
+      ],
+      "limits": [
+        0,
+        0.09
+      ],
+      "home": 0
+    },
+    {
+      "name": "band_head13",
+      "type": "prismatic",
+      "parent": "station4",
+      "child": "band_head13",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.3
+      ],
+      "home": 0.3
+    },
+    {
+      "name": "band_gather13",
+      "type": "prismatic",
+      "parent": "band_head13",
+      "child": "band_gather13",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.018
+      ],
+      "home": 0.018
+    },
+    {
+      "name": "band_feed13",
+      "type": "prismatic",
+      "parent": "band_head13",
+      "child": "band_feed13",
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limits": [
+        0,
+        0.16
+      ],
+      "home": 0
+    },
+    {
+      "name": "film_hold13_0_-1",
+      "type": "prismatic",
+      "parent": "carrier_0",
+      "child": "film_hold13_0_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "film_hold13_0_1",
+      "type": "prismatic",
+      "parent": "carrier_0",
+      "child": "film_hold13_0_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "film_hold13_1_-1",
+      "type": "prismatic",
+      "parent": "carrier_0",
+      "child": "film_hold13_1_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "film_hold13_1_1",
+      "type": "prismatic",
+      "parent": "carrier_0",
+      "child": "film_hold13_1_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "unload_film13_0_-1",
+      "type": "prismatic",
+      "parent": "unload_lift12",
+      "child": "unload_film13_0_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "unload_film13_0_1",
+      "type": "prismatic",
+      "parent": "unload_lift12",
+      "child": "unload_film13_0_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "unload_film13_1_-1",
+      "type": "prismatic",
+      "parent": "unload_lift12",
+      "child": "unload_film13_1_-1",
+      "axis": [
+        0,
+        0,
+        -1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    },
+    {
+      "name": "unload_film13_1_1",
+      "type": "prismatic",
+      "parent": "unload_lift12",
+      "child": "unload_film13_1_1",
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limits": [
+        0,
+        0.006
+      ],
+      "home": 0.006
+    }
+  ],
+  "linear_axes": [
+    {
+      "name": "load_axis",
+      "base": "load_axis",
+      "slide": "load_axis_slide",
+      "rotor": "load_axis_rotor",
+      "stroke": 1.1,
+      "home": 0,
+      "lead": 0.005,
+      "L": 1.36,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "load_axis_base"
+    },
+    {
+      "name": "trim_axis",
+      "base": "trim_axis",
+      "slide": "trim_axis_slide",
+      "rotor": "trim_axis_rotor",
+      "stroke": 1.6,
+      "home": 0,
+      "lead": 0.005,
+      "L": 1.86,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "trim_axis_base"
+    },
+    {
+      "name": "peel_radial",
+      "base": "peel_radial",
+      "slide": "peel_radial_slide",
+      "rotor": "peel_radial_rotor",
+      "stroke": 0.65,
+      "home": 0.65,
+      "lead": 0.005,
+      "L": 0.91,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "peel_radial_base"
+    },
+    {
+      "name": "peel_scan",
+      "base": "peel_scan",
+      "slide": "peel_scan_slide",
+      "rotor": "peel_scan_rotor",
+      "stroke": 0.3,
+      "home": 0,
+      "lead": 0.005,
+      "L": 0.56,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "peel_scan_base"
+    },
+    {
+      "name": "wash_axis",
+      "base": "wash_axis",
+      "slide": "wash_axis_slide",
+      "rotor": "wash_axis_rotor",
+      "stroke": 0.55,
+      "home": 0.55,
+      "lead": 0.005,
+      "L": 0.81,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "wash_axis_base"
+    },
+    {
+      "name": "weigh_axis",
+      "base": "weigh_axis",
+      "slide": "weigh_axis_slide",
+      "rotor": "weigh_axis_rotor",
+      "stroke": 0.42,
+      "home": 0.42,
+      "lead": 0.005,
+      "L": 0.6799999999999999,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "weigh_axis_base"
+    },
+    {
+      "name": "unload_axis",
+      "base": "unload_axis",
+      "slide": "unload_axis_slide",
+      "rotor": "unload_axis_rotor",
+      "stroke": 1.15,
+      "home": 1.15,
+      "lead": 0.005,
+      "L": 1.41,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "unload_axis_base"
+    },
+    {
+      "name": "wrap_axis",
+      "base": "wrap_axis",
+      "slide": "wrap_axis_slide",
+      "rotor": "wrap_axis_rotor",
+      "stroke": 0.75,
+      "home": 0.75,
+      "lead": 0.005,
+      "L": 1.01,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "wrap_axis_base"
+    },
+    {
+      "name": "infeed_X12",
+      "base": "infeed_X12",
+      "slide": "infeed_X12_slide",
+      "rotor": "infeed_X12_rotor",
+      "stroke": 0.95,
+      "home": 0.95,
+      "lead": 0.005,
+      "L": 1.21,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "infeed_X12_base"
+    },
+    {
+      "name": "unload_Z12",
+      "base": "unload_Z12",
+      "slide": "unload_Z12_slide",
+      "rotor": "unload_Z12_rotor",
+      "stroke": 0.45,
+      "home": 0,
+      "lead": 0.005,
+      "L": 0.71,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "unload_Z12_base"
+    },
+    {
+      "name": "feed_shuttle13",
+      "base": "feed_shuttle13",
+      "slide": "feed_shuttle13_slide",
+      "rotor": "feed_shuttle13_rotor",
+      "stroke": 0.5,
+      "home": 0.5,
+      "lead": 0.005,
+      "L": 0.76,
+      "shaft_axis": [
+        0,
+        0.037,
+        0
+      ],
+      "rail_separation": 0.19,
+      "carriage_centres": 0.12,
+      "guide": "HGR20/HGH20CA",
+      "nut": "R16-05T3-DEB",
+      "support": "BK12/BF12",
+      "mount": "feed_shuttle13_base"
+    }
+  ],
+  "purpose": "修订12.1机构方案时序；新增几何待方案确认后同步重建，不等于已完成CAD避碰"
+}

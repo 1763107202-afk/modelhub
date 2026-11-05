@@ -1,0 +1,67 @@
+{
+  "revision": "R22-selected-interfaces",
+  "source_sha256": "661964d8ae017d45c3aace8b731075ae532376a650ce08868e3e55db2ee2639b",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R22_axes_to_carriers": {
+      "samples": 161,
+      "target_parts": 2808,
+      "environment_parts": 584,
+      "broadphase_pairs": 34270
+    },
+    "R22_adapters_to_existing_carriers": {
+      "samples": 4,
+      "target_parts": 216,
+      "environment_parts": 368,
+      "broadphase_pairs": 266
+    },
+    "R21_seal_tucker_to_output": {
+      "samples": 321,
+      "target_parts": 151,
+      "environment_parts": 3146,
+      "broadphase_pairs": 7588
+    },
+    "R21_inlet_to_existing": {
+      "samples": 81,
+      "target_parts": 2230,
+      "environment_parts": 9719,
+      "broadphase_pairs": 1671
+    },
+    "R21_unloader_to_new_inlet": {
+      "samples": 161,
+      "target_parts": 139,
+      "environment_parts": 2230,
+      "broadphase_pairs": 0
+    },
+    "R21_wrappers_adjacent": {
+      "samples": 5,
+      "target_parts": 650,
+      "environment_parts": 650,
+      "broadphase_pairs": 1200
+    },
+    "R21_outlet_to_existing": {
+      "samples": 81,
+      "target_parts": 2150,
+      "environment_parts": 3146,
+      "broadphase_pairs": 13798
+    },
+    "R21_shuttle_adjacent": {
+      "samples": 81,
+      "target_parts": 292,
+      "environment_parts": 292,
+      "broadphase_pairs": 12399
+    },
+    "R21_shuttle_to_wrappers": {
+      "samples": 81,
+      "target_parts": 584,
+      "environment_parts": 1300,
+      "broadphase_pairs": 3553
+    }
+  },
+  "narrowphase_pairs": 74745,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 0.6047568321228027,
+  "scope": "Nine selected rigid interface scenarios. New axes versus carriers use 0.05s; adapter/carrier interfaces use four nominal poses. Earlier seven scopes retained with outlet sampled at112–120s. Broadphase excludes AABB overlaps below0.2mm. No full-machine continuous sweep, internal tolerances, flexible leaves/film/hoses, guards or physical load validation.",
+  "summary": "九组选定刚体接口，74745次网格对检测，未发现接触；不覆盖整机连续扫掠、公差或柔性材料。"
+}

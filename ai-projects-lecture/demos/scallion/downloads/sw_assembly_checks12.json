@@ -1,0 +1,13 @@
+{
+  "schema": "AP214 AUTOMOTIVE_DESIGN",
+  "unit": "mm",
+  "root_products": 1,
+  "subassemblies": 143,
+  "leaf_components": 4060,
+  "solid_occurrences": 4118,
+  "product_depth": 10,
+  "all_names_preserved": true,
+  "sha256": "09baa102764c261827626078ebbb583b662f772f2aac6e3b301617d24f4f5435",
+  "solidworks_tested": false,
+  "native_mates": false
+}

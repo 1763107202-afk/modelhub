@@ -1,0 +1,22 @@
+{
+  "part_nodes": 4424,
+  "cad_bodies": 4118,
+  "invalid_shapes": [],
+  "mesh_variants": 1716,
+  "unique_geometry": 1717,
+  "bbox_min_m": [
+    -3.670959217079073,
+    -5.7595591639976214e-05,
+    -3.6950001
+  ],
+  "bbox_max_m": [
+    3.6709592170790724,
+    3.026,
+    3.6950001
+  ],
+  "model_rotor_mass_kg": 122.03441555497345,
+  "model_rotor_Iy_kg_m2": 80.31553683974393,
+  "model_rotor_max_radius_m": 1.1604621879234154,
+  "structural_mass_kg": 2411.625217645068,
+  "note": "Homogeneous simplified geometry. Bearings/motors are envelopes; shaft and arms are explicit. Not a purchased-component mass certificate."
+}

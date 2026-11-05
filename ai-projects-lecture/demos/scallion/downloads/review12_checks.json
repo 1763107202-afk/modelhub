@@ -1,0 +1,59 @@
+{
+  "joint_samples": 20001,
+  "limit_failures": 0,
+  "index_interlock_failures": 0,
+  "invalid_state_values": 0,
+  "max_handoff_error_m": 9.485749680535094e-16,
+  "max_handoff_angle_rad": 0,
+  "handoff_worst": {
+    "from": "carousel",
+    "to": "weigh",
+    "l": 1,
+    "a": [
+      0.4850000000000003,
+      0.5800000000000001,
+      -0.8400446416709051
+    ],
+    "b": [
+      0.48499999999999965,
+      0.58,
+      -0.8400446416709058
+    ]
+  },
+  "material_handoffs": 8,
+  "full_cycle_seconds": 409.49247161443253,
+  "process_order": [
+    "输送与翻转",
+    "进料",
+    "去根",
+    "上料交接",
+    "去黄叶",
+    "去皮",
+    "冲洗",
+    "表面除水",
+    "套袋预封",
+    "独立连袋检重",
+    "封口复检",
+    "直立入杯",
+    "空夹回位"
+  ],
+  "collision_pose_samples": 1168,
+  "browser_webgl_tested": false,
+  "solidworks_tested": false,
+  "geometry_note": "新增/变更刚体离散筛查仍有123组表面相交候选，安装连接仍有0项距离候选，未作为制造放行。",
+  "cad_valid_solids": 4118,
+  "rigid_screen_poses": 234,
+  "rigid_surface_candidates": 123,
+  "mounts_checked": 741,
+  "rigid_mount_gap_candidates": 0,
+  "full_machine_zero_interference_verified": false,
+  "mechanical_release": false,
+  "geometry_file_sha256": "09baa102764c261827626078ebbb583b662f772f2aac6e3b301617d24f4f5435",
+  "source_file_sha256": {
+    "engineering/infeed12.py": "dc22d4aaaf784ecadb36e011fb814590d5066efa15e9a4c04f2c2b4fe6ef5d35",
+    "engineering/refine12.py": "9cb77dcec04cb9750f270a0087ff3bc73aeedfbf25458cc7c7c4fa3f93e34a02",
+    "workflow.js": "b7c61909a28bb734350aa402796af4766b416f395f7da0d32b1ed7711060b876",
+    "motion.js": "c824e530d2ab5c3e5efc6ceda5a11fe5658b8c064d3ed9292136d3850030b8bc",
+    "process-scene.js": "839db25154a00a3aecb1095fbdb8f444ec933166f24a7fdd8308ca1421d97a15"
+  }
+}

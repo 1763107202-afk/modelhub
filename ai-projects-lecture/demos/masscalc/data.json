@@ -1,0 +1,92 @@
+{
+  "source": "WSFM4022(5).pdf / 第二、三轮核算记录",
+  "viewer_note": "本次按已有参数重建的三维核算预览",
+  "models": [
+    {
+      "id": "P17",
+      "type": "sleeve",
+      "name": "下门槛安装套筒",
+      "code": "PDF-P06-套筒",
+      "page": 6,
+      "material": "Q235",
+      "density": 7850,
+      "grade": "A",
+      "volume": 94452.964878,
+      "mass": 0.7414558,
+      "params": {
+        "外径": 88.5,
+        "内腔径": 76.5,
+        "总长": 50,
+        "内腔深": 45,
+        "底孔径": 40
+      },
+      "why": "剖视：外Ø88.5/内腔Ø76.5深45、底部Ø40孔贯穿余下5，轴向总长50。",
+      "risk": "图纸无独立清晰图号；仅按名义几何，不计焊缝和倒钝。",
+      "drawing": "assets/drawing-6.webp"
+    },
+    {
+      "id": "P21",
+      "type": "shaft",
+      "name": "主轴",
+      "code": "ZXJY-03",
+      "page": 62,
+      "material": "40Cr",
+      "density": 7850,
+      "grade": "A",
+      "volume": 372857.567897,
+      "mass": 2.9269319,
+      "params": {
+        "法兰径": 55,
+        "法兰厚": 5,
+        "主体径": 45,
+        "主体长": 220,
+        "尾径": 42,
+        "尾长": 8
+      },
+      "why": "总长233；Ø55×5法兰、Ø45×220主体、Ø42×8端头（233-5-220）。",
+      "risk": "未扣C0.5/C1倒角及直径公差；名义体积。",
+      "drawing": "assets/drawing-62.webp"
+    },
+    {
+      "id": "P03",
+      "type": "washer",
+      "name": "大垫圈",
+      "code": "WSFM40XX(K)-P-S-03-04",
+      "page": 16,
+      "material": "Q355",
+      "density": 7850,
+      "grade": "A",
+      "volume": 20593.139844,
+      "mass": 0.1616561,
+      "params": {
+        "外径": 80,
+        "内径": 34,
+        "厚度": 5
+      },
+      "why": "V=π(外径²-内径²)×厚/4",
+      "risk": "第17页BOM单重0.02kg与几何尺寸严重不符，需核查",
+      "drawing": "assets/drawing-16.webp"
+    },
+    {
+      "id": "P01",
+      "type": "cover",
+      "name": "盖板",
+      "code": "BSH-04",
+      "page": 5,
+      "material": "Q235",
+      "density": 7850,
+      "grade": "A",
+      "volume": 14804.318531,
+      "mass": 0.1162139,
+      "params": {
+        "长": 104,
+        "宽": 72,
+        "圆角半径": 10,
+        "厚度": 2
+      },
+      "why": "V=[长×宽-(4-π)×R²]×厚",
+      "risk": "忽略微小倒角",
+      "drawing": "assets/drawing-5.webp"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "revision": "R23-detail-and-kinematic",
+  "status": "kinematic_checks_passed",
+  "source_sha256": "d73deb61bba8a7875b7a4e9d75e39f5424168910dd922ad308c438cca7827abd",
+  "motion_samples": 21601,
+  "handoff_boundaries": 468,
+  "max_handoff_jump_m": 2.5121479338940403e-15,
+  "inventory_samples": 2161,
+  "nominal_min_lane_pitch_m": 0.11999999999999922,
+  "film_feed_pitch_error_m": 1.1102230246251565e-16,
+  "matrix_checks": 132804,
+  "parts": 21934,
+  "new_packaging_parts": 4307,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_machine_collision_verified": false,
+  "material_trials_verified": false,
+  "summary": "R23整线名义位姿、展距/并距交接、固定袋长、整包检重及框体输出逻辑检查；不代表完整机械干涉、柔性膜/叶片或实料性能验收。"
+}

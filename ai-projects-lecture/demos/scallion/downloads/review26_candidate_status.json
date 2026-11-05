@@ -1,0 +1,270 @@
+{
+  "revision": "R26-candidate-not-accepted",
+  "source_sha256": "3b775a88e8d5076768b8aaf0b9742780285aa4ac34c0c9f44c5a6b459c9054f7",
+  "source_files": [
+    "dist/flow14.js",
+    "engineering/r26/candidate-machine.mjs",
+    "dist/process15.js",
+    "dist/mechanics17.js",
+    "dist/mechanical-details18.js",
+    "dist/mechanical-hardware19.js",
+    "dist/mechanical-drive20.js",
+    "dist/drive20-data.js",
+    "dist/packaging21.js",
+    "dist/mechanical-axes22.js",
+    "dist/axes22-data.js",
+    "dist/mechanical-cad23.js",
+    "dist/mechanical-refine23.js",
+    "dist/detail23-data.js",
+    "dist/film-unit16.js",
+    "dist/film16.js",
+    "dist/mechanical-adaptive25.js",
+    "dist/transfer25-data.js",
+    "dist/transfer26-data.js",
+    "dist/mechanical-transfer26.js",
+    "dist/transfer26.js",
+    "dist/adaptive24.js",
+    "dist/grip24-data.js"
+  ],
+  "local_unique_valid_solids": 55,
+  "local_internal_unresolved": 0,
+  "candidate_mesh_pair_tests": 305898,
+  "raw_contact_groups": 622,
+  "named_existing_rack_weld_groups": 16,
+  "remaining_contact_groups_to_classify": 606,
+  "candidate_integrated_into_main": false,
+  "candidate_source_release_allowed": false,
+  "positive_transverse_support_complete": false,
+  "full_machine_collision_verified": false,
+  "examples": [
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_1_1.35_moving_rod_and_fork",
+        "body": "R24_moving_2_1_1.35",
+        "module": "rotary",
+        "geo": "095e1a24-d374-448a-afe3-4c792af049e6"
+      },
+      "b": {
+        "name": "R26_unload_1_frame_odd_R",
+        "body": "R26_frame_unload_1_R",
+        "module": "unload",
+        "geo": "596d1b99-5209-48f2-a197-d39a4332d649"
+      },
+      "first_s": 73.7,
+      "last_s": 74.15,
+      "samples": 10,
+      "max_depth_m": 0.004598738990724152
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_3_1.35_moving_rod_and_fork",
+        "body": "R24_moving_2_3_1.35",
+        "module": "rotary",
+        "geo": "095e1a24-d374-448a-afe3-4c792af049e6"
+      },
+      "b": {
+        "name": "R26_unload_3_frame_odd_L",
+        "body": "R26_frame_unload_3_L",
+        "module": "unload",
+        "geo": "d87b6e88-6d03-48ad-a147-f795b264cd61"
+      },
+      "first_s": 73.7,
+      "last_s": 74.15,
+      "samples": 10,
+      "max_depth_m": 0.0020296271964911124
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_0_1.15_capture_front_and_cartridge_frame",
+        "body": "R24_fixed_2_0_1.15",
+        "module": "rotary",
+        "geo": "b2c9d2ba-dbca-4f4b-ae7d-fe269f105422"
+      },
+      "b": {
+        "name": "R26_unload_0_frame_even_R",
+        "body": "R26_frame_unload_0_R",
+        "module": "unload",
+        "geo": "0d299d1e-69b2-40f8-a9e3-355224bb1d38"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.001235413205616957
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_0_1.15_capture_rear_U_-25",
+        "body": "R24_rear_capture_2_0_1.15",
+        "module": "rotary",
+        "geo": "74617abe-63d8-43ae-8ca0-761638917a24"
+      },
+      "b": {
+        "name": "R26_unload_0_frame_even_L",
+        "body": "R26_frame_unload_0_L",
+        "module": "unload",
+        "geo": "831f1831-23f2-42cf-879a-47ba29671ae0"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.0028354008348479218
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_0_1.15_capture_rear_U_-25",
+        "body": "R24_rear_capture_2_0_1.15",
+        "module": "rotary",
+        "geo": "74617abe-63d8-43ae-8ca0-761638917a24"
+      },
+      "b": {
+        "name": "R26_unload_0_liner_even_L_60_115",
+        "body": "R26_frame_unload_0_L",
+        "module": "unload",
+        "geo": "17079268-dd04-488e-949f-8e4cbe21b31d"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.0003623162408308289
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_0_1.15_capture_rear_U_-25",
+        "body": "R24_rear_capture_2_0_1.15",
+        "module": "rotary",
+        "geo": "74617abe-63d8-43ae-8ca0-761638917a24"
+      },
+      "b": {
+        "name": "R26_unload_0_frame_even_R",
+        "body": "R26_frame_unload_0_R",
+        "module": "unload",
+        "geo": "0d299d1e-69b2-40f8-a9e3-355224bb1d38"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.002988670021295242
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_0_1.15_capture_rear_U_-25",
+        "body": "R24_rear_capture_2_0_1.15",
+        "module": "rotary",
+        "geo": "74617abe-63d8-43ae-8ca0-761638917a24"
+      },
+      "b": {
+        "name": "R26_unload_0_liner_even_R_60_115",
+        "body": "R26_frame_unload_0_R",
+        "module": "unload",
+        "geo": "f8cb1d50-bc3b-46a9-ad0b-ac2f8d9eb5c1"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.0003813835360981302
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_1_1.35_wheel_fixed_axle",
+        "body": "R24_moving_2_1_1.35",
+        "module": "rotary",
+        "geo": "692ddd2b-51d1-4664-b4b9-f6b525936f42"
+      },
+      "b": {
+        "name": "R26_unload_1_frame_odd_R",
+        "body": "R26_frame_unload_1_R",
+        "module": "unload",
+        "geo": "596d1b99-5209-48f2-a197-d39a4332d649"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.006953950391565133
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_1_1.35_wheel_axle_circlip",
+        "body": "R24_moving_2_1_1.35",
+        "module": "rotary",
+        "geo": "cfd19e1f-9f27-418d-8ecf-197505d1677a"
+      },
+      "b": {
+        "name": "R26_unload_1_frame_odd_R",
+        "body": "R26_frame_unload_1_R",
+        "module": "unload",
+        "geo": "596d1b99-5209-48f2-a197-d39a4332d649"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.00039683179961553486
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_1_1.35_wheel_inner_spacer_-1",
+        "body": "R24_moving_2_1_1.35",
+        "module": "rotary",
+        "geo": "7b0c9632-322a-4751-829b-a182867e7b90"
+      },
+      "b": {
+        "name": "R26_unload_1_frame_odd_R",
+        "body": "R26_frame_unload_1_R",
+        "module": "unload",
+        "geo": "596d1b99-5209-48f2-a197-d39a4332d649"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.003963508368650044
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_2_1.15_capture_front_and_cartridge_frame",
+        "body": "R24_fixed_2_2_1.15",
+        "module": "rotary",
+        "geo": "b2c9d2ba-dbca-4f4b-ae7d-fe269f105422"
+      },
+      "b": {
+        "name": "R26_unload_2_frame_even_L",
+        "body": "R26_frame_unload_2_L",
+        "module": "unload",
+        "geo": "831f1831-23f2-42cf-879a-47ba29671ae0"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.0017104736468932617
+    },
+    {
+      "test": "R26_unload_interface",
+      "a": {
+        "name": "R24_2_2_1.15_capture_rear_U_-25",
+        "body": "R24_rear_capture_2_2_1.15",
+        "module": "rotary",
+        "geo": "74617abe-63d8-43ae-8ca0-761638917a24"
+      },
+      "b": {
+        "name": "R26_unload_2_frame_even_L",
+        "body": "R26_frame_unload_2_L",
+        "module": "unload",
+        "geo": "831f1831-23f2-42cf-879a-47ba29671ae0"
+      },
+      "first_s": 73.7,
+      "last_s": 74.1,
+      "samples": 9,
+      "max_depth_m": 0.0028354008348479218
+    }
+  ],
+  "summary": "候选局部装配已完成55个有效单实体及7个导杆位置检查；整体换装3类接口共305898次网格候选对，原始接触622组，其中16组对应指定齿条焊面，其余606组尚未逐一分类，已检测到与原夹具的换装问题。候选未获接入许可，主流程继续使用原机构。"
+}

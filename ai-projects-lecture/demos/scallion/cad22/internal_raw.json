@@ -1,0 +1,492 @@
+{
+  "unresolved_contact_count": 0,
+  "unresolved_contacts": [],
+  "intentional_thread_overlaps": [
+    {
+      "a": "drive_cap_M3_-1_0",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729031,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_-1_1",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_-1_2",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729035,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_-1_3",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_1_0",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729031,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_1_1",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_1_2",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729035,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_cap_M3_1_3",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "drive_collar_setscrew",
+      "b": "drive_retaining_collar",
+      "volume_mm3": 4.253892446518246,
+      "reason": "explicit M3 collar thread"
+    },
+    {
+      "a": "drive_end_M4",
+      "b": "drive_stepped_shaft",
+      "volume_mm3": 38.127153842129324,
+      "reason": "explicit M4 shaft end thread"
+    },
+    {
+      "a": "idler_cap_M3_-1_0",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_-1_1",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729031,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_-1_2",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_-1_3",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729035,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_1_0",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_1_1",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729031,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_1_2",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729706,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_cap_M3_1_3",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729035,
+      "reason": "explicit M3 bearing-cap screw in tapped housing"
+    },
+    {
+      "a": "idler_end_M4_negative",
+      "b": "idler_stepped_shaft",
+      "volume_mm3": 38.127153842129324,
+      "reason": "explicit M4 shaft end thread"
+    },
+    {
+      "a": "idler_end_M4",
+      "b": "idler_stepped_shaft",
+      "volume_mm3": 38.127153842129324,
+      "reason": "explicit M4 shaft end thread"
+    },
+    {
+      "a": "motor_M4_0",
+      "b": "motor_flange",
+      "volume_mm3": 16.053538459842432,
+      "reason": "explicit M4 motor flange thread"
+    },
+    {
+      "a": "motor_M4_1",
+      "b": "motor_flange",
+      "volume_mm3": 16.0535384598441,
+      "reason": "explicit M4 motor flange thread"
+    },
+    {
+      "a": "motor_M4_2",
+      "b": "motor_flange",
+      "volume_mm3": 16.053538459842432,
+      "reason": "explicit M4 motor flange thread"
+    },
+    {
+      "a": "motor_M4_3",
+      "b": "motor_flange",
+      "volume_mm3": 16.0535384598441,
+      "reason": "explicit M4 motor flange thread"
+    },
+    {
+      "a": "coupling_M3_-52",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 28.76320569098997,
+      "reason": "explicit M3 coupling clamp thread envelope"
+    },
+    {
+      "a": "coupling_M3_-44",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 28.763205679353256,
+      "reason": "explicit M3 coupling clamp thread envelope"
+    },
+    {
+      "a": "clamp_M4_-11_-16_nut",
+      "b": "clamp_M4_-11_-16",
+      "volume_mm3": 12.84283076787507,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M4_-11_16_nut",
+      "b": "clamp_M4_-11_16",
+      "volume_mm3": 12.842830767875084,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M4_11_-16_nut",
+      "b": "clamp_M4_11_-16",
+      "volume_mm3": 12.84283076787507,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M4_11_16_nut",
+      "b": "clamp_M4_11_16",
+      "volume_mm3": 12.842830767875082,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "adapter_M4_-9_-16_nut",
+      "b": "adapter_M4_-9_-16",
+      "volume_mm3": 12.842830767875013,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "adapter_M4_-9_16_nut",
+      "b": "adapter_M4_-9_16",
+      "volume_mm3": 12.842830767875038,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "adapter_M4_9_-16_nut",
+      "b": "adapter_M4_9_-16",
+      "volume_mm3": 12.84283076787502,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "adapter_M4_9_16_nut",
+      "b": "adapter_M4_9_16",
+      "volume_mm3": 12.842830767875038,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "drive_base_M4_-24_-28_nut",
+      "b": "drive_base_M4_-24_-28",
+      "volume_mm3": 12.842830767873957,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "drive_base_M4_-24_28_nut",
+      "b": "drive_base_M4_-24_28",
+      "volume_mm3": 12.842830767875274,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "drive_base_M4_24_-28_nut",
+      "b": "drive_base_M4_24_-28",
+      "volume_mm3": 12.842830767873957,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "drive_base_M4_24_28_nut",
+      "b": "drive_base_M4_24_28",
+      "volume_mm3": 12.842830767875274,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "idler_base_M4_-24_-28_nut",
+      "b": "idler_base_M4_-24_-28",
+      "volume_mm3": 12.842830767875288,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "idler_base_M4_-24_28_nut",
+      "b": "idler_base_M4_-24_28",
+      "volume_mm3": 12.842830767873957,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "idler_base_M4_24_-28_nut",
+      "b": "idler_base_M4_24_-28",
+      "volume_mm3": 12.842830767875288,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "idler_base_M4_24_28_nut",
+      "b": "idler_base_M4_24_28",
+      "volume_mm3": 12.842830767873957,
+      "reason": "explicit screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "tension_adjuster_M6",
+      "b": "tension_reaction_block",
+      "volume_mm3": 103.67255756846319,
+      "reason": "explicit M6 tension adjustment thread"
+    }
+  ],
+  "pose": "axis-local at clamp z=0, shaft angle=0; CAD subset only",
+  "tested_pairs": 296,
+  "positive_volume_pairs": [
+    {
+      "a": "drive_cap_M3_-1_0",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729031
+    },
+    {
+      "a": "drive_cap_M3_-1_1",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "drive_cap_M3_-1_2",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729035
+    },
+    {
+      "a": "drive_cap_M3_-1_3",
+      "b": "drive_housing_-1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "drive_cap_M3_1_0",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729031
+    },
+    {
+      "a": "drive_cap_M3_1_1",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "drive_cap_M3_1_2",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729035
+    },
+    {
+      "a": "drive_cap_M3_1_3",
+      "b": "drive_housing_1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "drive_collar_setscrew",
+      "b": "drive_retaining_collar",
+      "volume_mm3": 4.253892446518246
+    },
+    {
+      "a": "drive_end_M4",
+      "b": "drive_stepped_shaft",
+      "volume_mm3": 38.127153842129324
+    },
+    {
+      "a": "idler_cap_M3_-1_0",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "idler_cap_M3_-1_1",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729031
+    },
+    {
+      "a": "idler_cap_M3_-1_2",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "idler_cap_M3_-1_3",
+      "b": "idler_housing_-1",
+      "volume_mm3": 14.038992170729035
+    },
+    {
+      "a": "idler_cap_M3_1_0",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "idler_cap_M3_1_1",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729031
+    },
+    {
+      "a": "idler_cap_M3_1_2",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729706
+    },
+    {
+      "a": "idler_cap_M3_1_3",
+      "b": "idler_housing_1",
+      "volume_mm3": 14.038992170729035
+    },
+    {
+      "a": "idler_end_M4_negative",
+      "b": "idler_stepped_shaft",
+      "volume_mm3": 38.127153842129324
+    },
+    {
+      "a": "idler_end_M4",
+      "b": "idler_stepped_shaft",
+      "volume_mm3": 38.127153842129324
+    },
+    {
+      "a": "motor_M4_0",
+      "b": "motor_flange",
+      "volume_mm3": 16.053538459842432
+    },
+    {
+      "a": "motor_M4_1",
+      "b": "motor_flange",
+      "volume_mm3": 16.0535384598441
+    },
+    {
+      "a": "motor_M4_2",
+      "b": "motor_flange",
+      "volume_mm3": 16.053538459842432
+    },
+    {
+      "a": "motor_M4_3",
+      "b": "motor_flange",
+      "volume_mm3": 16.0535384598441
+    },
+    {
+      "a": "coupling_M3_-52",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 28.76320569098997
+    },
+    {
+      "a": "coupling_M3_-44",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 28.763205679353256
+    },
+    {
+      "a": "clamp_M4_-11_-16_nut",
+      "b": "clamp_M4_-11_-16",
+      "volume_mm3": 12.84283076787507
+    },
+    {
+      "a": "clamp_M4_-11_16_nut",
+      "b": "clamp_M4_-11_16",
+      "volume_mm3": 12.842830767875084
+    },
+    {
+      "a": "clamp_M4_11_-16_nut",
+      "b": "clamp_M4_11_-16",
+      "volume_mm3": 12.84283076787507
+    },
+    {
+      "a": "clamp_M4_11_16_nut",
+      "b": "clamp_M4_11_16",
+      "volume_mm3": 12.842830767875082
+    },
+    {
+      "a": "adapter_M4_-9_-16_nut",
+      "b": "adapter_M4_-9_-16",
+      "volume_mm3": 12.842830767875013
+    },
+    {
+      "a": "adapter_M4_-9_16_nut",
+      "b": "adapter_M4_-9_16",
+      "volume_mm3": 12.842830767875038
+    },
+    {
+      "a": "adapter_M4_9_-16_nut",
+      "b": "adapter_M4_9_-16",
+      "volume_mm3": 12.84283076787502
+    },
+    {
+      "a": "adapter_M4_9_16_nut",
+      "b": "adapter_M4_9_16",
+      "volume_mm3": 12.842830767875038
+    },
+    {
+      "a": "drive_base_M4_-24_-28_nut",
+      "b": "drive_base_M4_-24_-28",
+      "volume_mm3": 12.842830767873957
+    },
+    {
+      "a": "drive_base_M4_-24_28_nut",
+      "b": "drive_base_M4_-24_28",
+      "volume_mm3": 12.842830767875274
+    },
+    {
+      "a": "drive_base_M4_24_-28_nut",
+      "b": "drive_base_M4_24_-28",
+      "volume_mm3": 12.842830767873957
+    },
+    {
+      "a": "drive_base_M4_24_28_nut",
+      "b": "drive_base_M4_24_28",
+      "volume_mm3": 12.842830767875274
+    },
+    {
+      "a": "idler_base_M4_-24_-28_nut",
+      "b": "idler_base_M4_-24_-28",
+      "volume_mm3": 12.842830767875288
+    },
+    {
+      "a": "idler_base_M4_-24_28_nut",
+      "b": "idler_base_M4_-24_28",
+      "volume_mm3": 12.842830767873957
+    },
+    {
+      "a": "idler_base_M4_24_-28_nut",
+      "b": "idler_base_M4_24_-28",
+      "volume_mm3": 12.842830767875288
+    },
+    {
+      "a": "idler_base_M4_24_28_nut",
+      "b": "idler_base_M4_24_28",
+      "volume_mm3": 12.842830767873957
+    },
+    {
+      "a": "tension_adjuster_M6",
+      "b": "tension_reaction_block",
+      "volume_mm3": 103.67255756846319
+    }
+  ],
+  "not_verified": [
+    "full_machine",
+    "continuous_rotation",
+    "belt_deformation",
+    "tolerances",
+    "procurement_load_ratings"
+  ],
+  "build_source_sha256": "1fd2497a75c63cafefaee1da58725b84a96ea41fd1349566b7e3981181068cfb",
+  "web_mesh_sha256": "dca678e14605fe5ba0b78203f691ee139bda8586cc9b8619c121468667d2fafb"
+}

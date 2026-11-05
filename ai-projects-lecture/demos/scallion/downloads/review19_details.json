@@ -1,0 +1,3144 @@
+{
+  "revision": "R19-mounting-details",
+  "generated_at": "2026-10-19T13:29:14.836Z",
+  "source_sha256": "375a6e654f1bec54e19120abce324c9f58346fcc102b2a1ee339912481755892",
+  "status": "limited_detail_checks_passed",
+  "detail_assemblies": 13,
+  "new_part_records": 314,
+  "nominal_connections": 294,
+  "pose_samples": 363,
+  "adjacency_checks": 106722,
+  "max_aabb_gap_m": 1.3038525814579316e-10,
+  "engagement_side_ear_to_rail_nominal_gap_m": 0.015500000000000014,
+  "peel_lift_motor_downward": true,
+  "peel_lift_plate_axis_bore_clear": true,
+  "records": [
+    {
+      "id": "engage_1",
+      "title": "工位 1 · 自转接合丝杠",
+      "base": "process",
+      "power": "电柜伺服驱动→接合电机；工位自转电机独立供电",
+      "support": "接合螺母→连接耳→活动安装板；两端支承→上横梁→固定下吊柱→中心固定架",
+      "drive": "伺服→同轴联轴器→丝杠/螺母→径向接合；滑轨承担侧向载荷",
+      "parts": [
+        12718,
+        12719,
+        12720,
+        12721,
+        12722,
+        12723,
+        12724,
+        12725,
+        12726,
+        12727,
+        12728,
+        12729,
+        12730,
+        12731,
+        12732,
+        12733,
+        12734,
+        12735,
+        12736,
+        12737,
+        12738,
+        12739,
+        12740,
+        12741
+      ],
+      "witness": 12718,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "engage_2",
+      "title": "工位 2 · 自转接合丝杠",
+      "base": "process",
+      "power": "电柜伺服驱动→接合电机；工位自转电机独立供电",
+      "support": "接合螺母→连接耳→活动安装板；两端支承→上横梁→固定下吊柱→中心固定架",
+      "drive": "伺服→同轴联轴器→丝杠/螺母→径向接合；滑轨承担侧向载荷",
+      "parts": [
+        12742,
+        12743,
+        12744,
+        12745,
+        12746,
+        12747,
+        12748,
+        12749,
+        12750,
+        12751,
+        12752,
+        12753,
+        12754,
+        12755,
+        12756,
+        12757,
+        12758,
+        12759,
+        12760,
+        12761,
+        12762,
+        12763,
+        12764,
+        12765
+      ],
+      "witness": 12742,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "engage_3",
+      "title": "工位 3 · 自转接合丝杠",
+      "base": "process",
+      "power": "电柜伺服驱动→接合电机；工位自转电机独立供电",
+      "support": "接合螺母→连接耳→活动安装板；两端支承→上横梁→固定下吊柱→中心固定架",
+      "drive": "伺服→同轴联轴器→丝杠/螺母→径向接合；滑轨承担侧向载荷",
+      "parts": [
+        12766,
+        12767,
+        12768,
+        12769,
+        12770,
+        12771,
+        12772,
+        12773,
+        12774,
+        12775,
+        12776,
+        12777,
+        12778,
+        12779,
+        12780,
+        12781,
+        12782,
+        12783,
+        12784,
+        12785,
+        12786,
+        12787,
+        12788,
+        12789
+      ],
+      "witness": 12766,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "engage_5",
+      "title": "工位 5 · 自转接合丝杠",
+      "base": "process",
+      "power": "电柜伺服驱动→接合电机；工位自转电机独立供电",
+      "support": "接合螺母→连接耳→活动安装板；两端支承→上横梁→固定下吊柱→中心固定架",
+      "drive": "伺服→同轴联轴器→丝杠/螺母→径向接合；滑轨承担侧向载荷",
+      "parts": [
+        12790,
+        12791,
+        12792,
+        12793,
+        12794,
+        12795,
+        12796,
+        12797,
+        12798,
+        12799,
+        12800,
+        12801,
+        12802,
+        12803,
+        12804,
+        12805,
+        12806,
+        12807,
+        12808,
+        12809,
+        12810,
+        12811,
+        12812,
+        12813
+      ],
+      "witness": 12790,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "engage_6",
+      "title": "工位 6 · 自转接合丝杠",
+      "base": "process",
+      "power": "电柜伺服驱动→接合电机；工位自转电机独立供电",
+      "support": "接合螺母→连接耳→活动安装板；两端支承→上横梁→固定下吊柱→中心固定架",
+      "drive": "伺服→同轴联轴器→丝杠/螺母→径向接合；滑轨承担侧向载荷",
+      "parts": [
+        12814,
+        12815,
+        12816,
+        12817,
+        12818,
+        12819,
+        12820,
+        12821,
+        12822,
+        12823,
+        12824,
+        12825,
+        12826,
+        12827,
+        12828,
+        12829,
+        12830,
+        12831,
+        12832,
+        12833,
+        12834,
+        12835,
+        12836,
+        12837
+      ],
+      "witness": 12814,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "peel_radial_1",
+      "title": "去皮 1 · 上置径向滑台",
+      "base": "process",
+      "power": "径向伺服→联轴器；气路经拖链进入歧管",
+      "support": "喷头横梁→抬高连接架→滑块/导轨→开口框→竖直滑块；螺母绕轨连接",
+      "drive": "径向导轨和丝杠分层；上部开口固定框给喷头横梁留出完整行程",
+      "parts": [
+        12838,
+        12839,
+        12840,
+        12841,
+        12842,
+        12843,
+        12844,
+        12845,
+        12846,
+        12847,
+        12848,
+        12849,
+        12850,
+        12851,
+        12852,
+        12853,
+        12854,
+        12855,
+        12856,
+        12857,
+        12858,
+        12859,
+        12860,
+        12861,
+        12862,
+        12863,
+        12864,
+        12865,
+        12866,
+        12867,
+        12868,
+        12869,
+        12870
+      ],
+      "witness": 12861,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "peel_lift_1",
+      "title": "去皮 1 · 竖直电机与固定端",
+      "base": "process",
+      "power": "竖直抱闸电机，经联轴器驱动扫描丝杠",
+      "support": "电机法兰→带孔顶板→立柱；丝杠轴向反力经固定端回到立柱",
+      "drive": "修正电机输出轴朝下；贯通顶板让输出轴与丝杠同轴连接",
+      "parts": [
+        12871,
+        12872,
+        12873,
+        12874,
+        12875,
+        12876,
+        12877,
+        12878,
+        12879,
+        12880,
+        12881,
+        12882,
+        12883,
+        12884
+      ],
+      "witness": 12875,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证；抱闸仅为电机集成设计要求，尚无选定电机保持转矩或停电验收"
+    },
+    {
+      "id": "peel_radial_2",
+      "title": "去皮 2 · 上置径向滑台",
+      "base": "process",
+      "power": "径向伺服→联轴器；气路经拖链进入歧管",
+      "support": "喷头横梁→抬高连接架→滑块/导轨→开口框→竖直滑块；螺母绕轨连接",
+      "drive": "径向导轨和丝杠分层；上部开口固定框给喷头横梁留出完整行程",
+      "parts": [
+        12885,
+        12886,
+        12887,
+        12888,
+        12889,
+        12890,
+        12891,
+        12892,
+        12893,
+        12894,
+        12895,
+        12896,
+        12897,
+        12898,
+        12899,
+        12900,
+        12901,
+        12902,
+        12903,
+        12904,
+        12905,
+        12906,
+        12907,
+        12908,
+        12909,
+        12910,
+        12911,
+        12912,
+        12913,
+        12914,
+        12915,
+        12916,
+        12917
+      ],
+      "witness": 12908,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "peel_lift_2",
+      "title": "去皮 2 · 竖直电机与固定端",
+      "base": "process",
+      "power": "竖直抱闸电机，经联轴器驱动扫描丝杠",
+      "support": "电机法兰→带孔顶板→立柱；丝杠轴向反力经固定端回到立柱",
+      "drive": "修正电机输出轴朝下；贯通顶板让输出轴与丝杠同轴连接",
+      "parts": [
+        12918,
+        12919,
+        12920,
+        12921,
+        12922,
+        12923,
+        12924,
+        12925,
+        12926,
+        12927,
+        12928,
+        12929,
+        12930,
+        12931
+      ],
+      "witness": 12922,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证；抱闸仅为电机集成设计要求，尚无选定电机保持转矩或停电验收"
+    },
+    {
+      "id": "airknife_5",
+      "title": "风刀 5 · 上置滑台与风箱连接",
+      "base": "process",
+      "power": "退让伺服→丝杠；风源为独立过滤鼓风机",
+      "support": "风箱加强立耳→高位滑块/导轨→开口固定框→原落地立柱",
+      "drive": "导轨在1.78m、丝杠在1.90m；螺母从内侧绕过导轨接回风箱",
+      "parts": [
+        12932,
+        12933,
+        12934,
+        12935,
+        12936,
+        12937,
+        12938,
+        12939,
+        12940,
+        12941,
+        12942,
+        12943,
+        12944,
+        12945,
+        12946,
+        12947,
+        12948,
+        12949,
+        12950,
+        12951,
+        12952,
+        12953,
+        12954,
+        12955,
+        12956,
+        12957,
+        12958,
+        12959,
+        12960,
+        12961,
+        12962,
+        12963,
+        12964,
+        12965,
+        12966,
+        12967
+      ],
+      "witness": 12960,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "airknife_6",
+      "title": "风刀 6 · 上置滑台与风箱连接",
+      "base": "process",
+      "power": "退让伺服→丝杠；风源为独立过滤鼓风机",
+      "support": "风箱加强立耳→高位滑块/导轨→开口固定框→原落地立柱",
+      "drive": "导轨在1.78m、丝杠在1.90m；螺母从内侧绕过导轨接回风箱",
+      "parts": [
+        12968,
+        12969,
+        12970,
+        12971,
+        12972,
+        12973,
+        12974,
+        12975,
+        12976,
+        12977,
+        12978,
+        12979,
+        12980,
+        12981,
+        12982,
+        12983,
+        12984,
+        12985,
+        12986,
+        12987,
+        12988,
+        12989,
+        12990,
+        12991,
+        12992,
+        12993,
+        12994,
+        12995,
+        12996,
+        12997,
+        12998,
+        12999,
+        13000,
+        13001,
+        13002,
+        13003
+      ],
+      "witness": 12996,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "grip_load",
+      "title": "上料 · 夹爪电机与轴承安装",
+      "base": "transfer",
+      "power": "夹爪电机→联轴器；上下输出经同步带分配",
+      "support": "电机法兰→背部连接板→笼背架；输出轴由独立有孔支座支承",
+      "drive": "电机→同步带/上下轴→反向齿条→两半笼；根端托叉承担竖直重量",
+      "parts": [
+        13004,
+        13005,
+        13006,
+        13007,
+        13008,
+        13009,
+        13010,
+        13011,
+        13012,
+        13013,
+        13014,
+        13015,
+        13016,
+        13017
+      ],
+      "witness": 13005,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    },
+    {
+      "id": "grip_unload",
+      "title": "卸料 · 夹爪电机与轴承安装",
+      "base": "transfer",
+      "power": "夹爪电机→联轴器；上下输出经同步带分配",
+      "support": "电机法兰→背部连接板→笼背架；输出轴由独立有孔支座支承",
+      "drive": "电机→同步带/上下轴→反向齿条→两半笼；根端托叉承担竖直重量",
+      "parts": [
+        13018,
+        13019,
+        13020,
+        13021,
+        13022,
+        13023,
+        13024,
+        13025,
+        13026,
+        13027,
+        13028,
+        13029,
+        13030,
+        13031
+      ],
+      "witness": 13019,
+      "limit": "名义安装细节；接邻检查不等于承载接触、孔配合、制动或疲劳验证"
+    }
+  ],
+  "connections": [
+    {
+      "detail": "engage_1",
+      "a": 12719,
+      "b": 12720,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12720,
+      "b": 4192,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12719,
+      "b": 12721,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12721,
+      "b": 4192,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12718,
+      "b": 12719,
+      "kind": "螺母壳体→绕导轨的上置耳板",
+      "a_name": "detail_engagement_ballnut",
+      "b_name": "detail_engagement_nut_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12722,
+      "b": 4179,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_bridge",
+      "b_name": "drive_drop_column_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12723,
+      "b": 12724,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12724,
+      "b": 12725,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12725,
+      "b": 4179,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12728,
+      "b": 12729,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_supported_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12729,
+      "b": 12730,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12730,
+      "b": 4179,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12734,
+      "b": 10333,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_motor_mount_shim",
+      "b_name": "station_drive_motor_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12735,
+      "b": 12722,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12736,
+      "b": 12735,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12737,
+      "b": 12722,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12738,
+      "b": 12737,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12741,
+      "b": 12740,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_stem",
+      "b_name": "detail_engagement_flag_root",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12739,
+      "b": 12741,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_flag",
+      "b_name": "detail_engagement_flag_stem",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_1",
+      "a": 12740,
+      "b": 4192,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_root",
+      "b_name": "drive_head_top_mount_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12743,
+      "b": 12744,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12744,
+      "b": 4325,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12743,
+      "b": 12745,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12745,
+      "b": 4325,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12742,
+      "b": 12743,
+      "kind": "螺母壳体→绕导轨的上置耳板",
+      "a_name": "detail_engagement_ballnut",
+      "b_name": "detail_engagement_nut_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12746,
+      "b": 4312,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_bridge",
+      "b_name": "drive_drop_column_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12747,
+      "b": 12748,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12748,
+      "b": 12749,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12749,
+      "b": 4312,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12752,
+      "b": 12753,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_supported_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12753,
+      "b": 12754,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12754,
+      "b": 4312,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12758,
+      "b": 10375,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_motor_mount_shim",
+      "b_name": "station_drive_motor_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12759,
+      "b": 12746,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12760,
+      "b": 12759,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12761,
+      "b": 12746,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12762,
+      "b": 12761,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12765,
+      "b": 12764,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_stem",
+      "b_name": "detail_engagement_flag_root",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12763,
+      "b": 12765,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_flag",
+      "b_name": "detail_engagement_flag_stem",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_2",
+      "a": 12764,
+      "b": 4325,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_root",
+      "b_name": "drive_head_top_mount_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12767,
+      "b": 12768,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12768,
+      "b": 4458,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_3",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12767,
+      "b": 12769,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12769,
+      "b": 4458,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_3",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12766,
+      "b": 12767,
+      "kind": "螺母壳体→绕导轨的上置耳板",
+      "a_name": "detail_engagement_ballnut",
+      "b_name": "detail_engagement_nut_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12770,
+      "b": 4445,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_bridge",
+      "b_name": "drive_drop_column_3",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12771,
+      "b": 12772,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12772,
+      "b": 12773,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12773,
+      "b": 4445,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_3",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12776,
+      "b": 12777,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_supported_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12777,
+      "b": 12778,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12778,
+      "b": 4445,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_3",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12782,
+      "b": 10417,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_motor_mount_shim",
+      "b_name": "station_drive_motor_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12783,
+      "b": 12770,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12784,
+      "b": 12783,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12785,
+      "b": 12770,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12786,
+      "b": 12785,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12789,
+      "b": 12788,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_stem",
+      "b_name": "detail_engagement_flag_root",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12787,
+      "b": 12789,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_flag",
+      "b_name": "detail_engagement_flag_stem",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_3",
+      "a": 12788,
+      "b": 4458,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_root",
+      "b_name": "drive_head_top_mount_3",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12791,
+      "b": 12792,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12792,
+      "b": 4514,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12791,
+      "b": 12793,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12793,
+      "b": 4514,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12790,
+      "b": 12791,
+      "kind": "螺母壳体→绕导轨的上置耳板",
+      "a_name": "detail_engagement_ballnut",
+      "b_name": "detail_engagement_nut_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12794,
+      "b": 4501,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_bridge",
+      "b_name": "drive_drop_column_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12795,
+      "b": 12796,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12796,
+      "b": 12797,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12797,
+      "b": 4501,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12800,
+      "b": 12801,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_supported_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12801,
+      "b": 12802,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12802,
+      "b": 4501,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12806,
+      "b": 10445,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_motor_mount_shim",
+      "b_name": "station_drive_motor_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12807,
+      "b": 12794,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12808,
+      "b": 12807,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12809,
+      "b": 12794,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12810,
+      "b": 12809,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12813,
+      "b": 12812,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_stem",
+      "b_name": "detail_engagement_flag_root",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12811,
+      "b": 12813,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_flag",
+      "b_name": "detail_engagement_flag_stem",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_5",
+      "a": 12812,
+      "b": 4514,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_root",
+      "b_name": "drive_head_top_mount_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12815,
+      "b": 12816,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12816,
+      "b": 4640,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12815,
+      "b": 12817,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_bridge",
+      "b_name": "detail_engagement_nut_side_leg",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12817,
+      "b": 4640,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_nut_side_leg",
+      "b_name": "drive_head_top_mount_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12814,
+      "b": 12815,
+      "kind": "螺母壳体→绕导轨的上置耳板",
+      "a_name": "detail_engagement_ballnut",
+      "b_name": "detail_engagement_nut_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12818,
+      "b": 4627,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_bridge",
+      "b_name": "drive_drop_column_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12819,
+      "b": 12820,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_fixed_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12820,
+      "b": 12821,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12821,
+      "b": 4627,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12824,
+      "b": 12825,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_supported_end",
+      "b_name": "detail_engagement_bearing_hanger",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12825,
+      "b": 12826,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_hanger",
+      "b_name": "detail_engagement_bearing_top_tie",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12826,
+      "b": 4627,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_bearing_top_tie",
+      "b_name": "drive_drop_column_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12830,
+      "b": 10473,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_motor_mount_shim",
+      "b_name": "station_drive_motor_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12831,
+      "b": 12818,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12832,
+      "b": 12831,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12833,
+      "b": 12818,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_sensor_bracket",
+      "b_name": "detail_engagement_fixed_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12834,
+      "b": 12833,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_sensor",
+      "b_name": "detail_engagement_sensor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12837,
+      "b": 12836,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_stem",
+      "b_name": "detail_engagement_flag_root",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12835,
+      "b": 12837,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_limit_flag",
+      "b_name": "detail_engagement_flag_stem",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "engage_6",
+      "a": 12836,
+      "b": 4640,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_engagement_flag_root",
+      "b_name": "drive_head_top_mount_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12839,
+      "b": 12838,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_vertical_guide_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12839,
+      "b": 12840,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12840,
+      "b": 4221,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_side",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12841,
+      "b": 12842,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "detail_peel_front_rail_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12842,
+      "b": 12840,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12843,
+      "b": 4221,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12841,
+      "b": 4217,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12843,
+      "b": 4217,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12844,
+      "b": 4229,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_tower",
+      "b_name": "peel_nozzle_bank_crosshead",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12845,
+      "b": 12844,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_tower",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12845,
+      "b": 12846,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12846,
+      "b": 4230,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_drop",
+      "b_name": "peel_radial_carriage_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12850,
+      "b": 12849,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_vertical_guide_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12850,
+      "b": 12851,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12851,
+      "b": 4221,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_side",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12852,
+      "b": 12853,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "detail_peel_front_rail_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12853,
+      "b": 12851,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12854,
+      "b": 4221,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12852,
+      "b": 4219,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12854,
+      "b": 4219,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12855,
+      "b": 4229,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_tower",
+      "b_name": "peel_nozzle_bank_crosshead",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12856,
+      "b": 12855,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_tower",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12856,
+      "b": 12857,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12857,
+      "b": 4231,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_drop",
+      "b_name": "peel_radial_carriage_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12860,
+      "b": 4232,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_top_cap",
+      "b_name": "peel_radial_ballnut",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12861,
+      "b": 12860,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_connection_ear",
+      "b_name": "detail_peel_nut_top_cap",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12861,
+      "b": 12862,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_connection_ear",
+      "b_name": "detail_peel_nut_lower_arm",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12862,
+      "b": 12846,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_lower_arm",
+      "b_name": "detail_peel_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12863,
+      "b": 10342,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_foot",
+      "b_name": "peel_radial_motor_plate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12863,
+      "b": 4223,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_foot",
+      "b_name": "peel_radial_servo_1_gearbox",
+      "max_aabb_gap_m": 2.220446049250313e-16
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12864,
+      "b": 10342,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_seat_link",
+      "b_name": "peel_radial_motor_plate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12864,
+      "b": 12840,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_seat_link",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12865,
+      "b": 10343,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "peel_radial_end_bearing_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12865,
+      "b": 12866,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "detail_peel_radial_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12866,
+      "b": 12840,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12867,
+      "b": 10345,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "peel_radial_end_bearing_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12867,
+      "b": 12868,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "detail_peel_radial_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12868,
+      "b": 12840,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12870,
+      "b": 4220,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_vertical_nut_bridge",
+      "b_name": "peel_vertical_ballnut",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_1",
+      "a": 12870,
+      "b": 12849,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_vertical_nut_bridge",
+      "b_name": "detail_peel_vertical_guide_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12871,
+      "b": 4203,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_pressure_gauge_stem",
+      "b_name": "peel_pressure_gauge_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12871,
+      "b": 4202,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_pressure_gauge_stem",
+      "b_name": "peel_pressure_regulator_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12872,
+      "b": 4207,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_top_column_extension",
+      "b_name": "peel_column_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12872,
+      "b": 4204,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_top_column_extension",
+      "b_name": "peel_regulator_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12872,
+      "b": 4298,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_top_column_extension",
+      "b_name": "peel_hose_anchor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12873,
+      "b": 12874,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_bored_motor_plate",
+      "b_name": "detail_peel_lift_top_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12874,
+      "b": 4207,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_top_seat",
+      "b_name": "peel_column_1",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12875,
+      "b": 12873,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_motor_flange",
+      "b_name": "detail_peel_lift_bored_motor_plate",
+      "max_aabb_gap_m": 1.303848140565833e-10
+    },
+    {
+      "detail": "peel_lift_1",
+      "a": 12875,
+      "b": 4210,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_motor_flange",
+      "b_name": "peel_scan_servo_1_gearbox",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12886,
+      "b": 12885,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_vertical_guide_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12886,
+      "b": 12887,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12887,
+      "b": 4354,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_side",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12888,
+      "b": 12889,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "detail_peel_front_rail_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12889,
+      "b": 12887,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12890,
+      "b": 4354,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12888,
+      "b": 4350,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12890,
+      "b": 4350,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12891,
+      "b": 4362,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_tower",
+      "b_name": "peel_nozzle_bank_crosshead",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12892,
+      "b": 12891,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_tower",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12892,
+      "b": 12893,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12893,
+      "b": 4363,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_drop",
+      "b_name": "peel_radial_carriage_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12897,
+      "b": 12896,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_vertical_guide_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12897,
+      "b": 12898,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_riser",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12898,
+      "b": 4354,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_open_frame_side",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12899,
+      "b": 12900,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "detail_peel_front_rail_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12900,
+      "b": 12898,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12901,
+      "b": 4354,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_vertical_crossplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12899,
+      "b": 4352,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_front_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12901,
+      "b": 4352,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_rear_rail_drop",
+      "b_name": "peel_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12902,
+      "b": 4362,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_tower",
+      "b_name": "peel_nozzle_bank_crosshead",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12903,
+      "b": 12902,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_tower",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12903,
+      "b": 12904,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_bridge",
+      "b_name": "detail_peel_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12904,
+      "b": 4364,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_carriage_drop",
+      "b_name": "peel_radial_carriage_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12907,
+      "b": 4365,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_top_cap",
+      "b_name": "peel_radial_ballnut",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12908,
+      "b": 12907,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_connection_ear",
+      "b_name": "detail_peel_nut_top_cap",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12908,
+      "b": 12909,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_connection_ear",
+      "b_name": "detail_peel_nut_lower_arm",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12909,
+      "b": 12893,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_nut_lower_arm",
+      "b_name": "detail_peel_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12910,
+      "b": 10384,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_foot",
+      "b_name": "peel_radial_motor_plate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12910,
+      "b": 4356,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_foot",
+      "b_name": "peel_radial_servo_2_gearbox",
+      "max_aabb_gap_m": 2.220446049250313e-16
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12911,
+      "b": 10384,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_seat_link",
+      "b_name": "peel_radial_motor_plate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12911,
+      "b": 12887,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_motor_seat_link",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12912,
+      "b": 10385,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "peel_radial_end_bearing_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12912,
+      "b": 12913,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "detail_peel_radial_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12913,
+      "b": 12887,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12914,
+      "b": 10387,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "peel_radial_end_bearing_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12914,
+      "b": 12915,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_hanger",
+      "b_name": "detail_peel_radial_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12915,
+      "b": 12887,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_radial_bearing_top",
+      "b_name": "detail_peel_open_frame_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12917,
+      "b": 4353,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_vertical_nut_bridge",
+      "b_name": "peel_vertical_ballnut",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_radial_2",
+      "a": 12917,
+      "b": 12896,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_vertical_nut_bridge",
+      "b_name": "detail_peel_vertical_guide_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12918,
+      "b": 4336,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_pressure_gauge_stem",
+      "b_name": "peel_pressure_gauge_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12918,
+      "b": 4335,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_pressure_gauge_stem",
+      "b_name": "peel_pressure_regulator_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12919,
+      "b": 4340,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_top_column_extension",
+      "b_name": "peel_column_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12919,
+      "b": 4337,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_top_column_extension",
+      "b_name": "peel_regulator_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12919,
+      "b": 4431,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_top_column_extension",
+      "b_name": "peel_hose_anchor_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12920,
+      "b": 12921,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_bored_motor_plate",
+      "b_name": "detail_peel_lift_top_seat",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12921,
+      "b": 4340,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_top_seat",
+      "b_name": "peel_column_2",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12922,
+      "b": 12920,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_motor_flange",
+      "b_name": "detail_peel_lift_bored_motor_plate",
+      "max_aabb_gap_m": 1.3038525814579316e-10
+    },
+    {
+      "detail": "peel_lift_2",
+      "a": 12922,
+      "b": 4343,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_peel_lift_motor_flange",
+      "b_name": "peel_scan_servo_2_gearbox",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12933,
+      "b": 4524,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "airknife_post",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12933,
+      "b": 12935,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "detail_airknife_column_top_link",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12935,
+      "b": 12934,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_top_link",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12934,
+      "b": 12936,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_fixed_side",
+      "b_name": "detail_airknife_rear_frame_riser",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12936,
+      "b": 12932,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_rear_frame_riser",
+      "b_name": "detail_airknife_rear_frame",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12937,
+      "b": 4525,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12937,
+      "b": 12938,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12938,
+      "b": 12934,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12939,
+      "b": 4525,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12939,
+      "b": 12940,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12940,
+      "b": 12934,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12941,
+      "b": 4535,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "airknife_plenum_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12941,
+      "b": 12942,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "detail_airknife_carriage_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12942,
+      "b": 12943,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_bridge",
+      "b_name": "detail_airknife_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12943,
+      "b": 4536,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_drop",
+      "b_name": "airknife_linear_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12946,
+      "b": 4526,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "airknife_post",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12946,
+      "b": 12948,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "detail_airknife_column_top_link",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12948,
+      "b": 12947,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_top_link",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12947,
+      "b": 12949,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_fixed_side",
+      "b_name": "detail_airknife_rear_frame_riser",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12949,
+      "b": 12932,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_rear_frame_riser",
+      "b_name": "detail_airknife_rear_frame",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12950,
+      "b": 4527,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12950,
+      "b": 12951,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12951,
+      "b": 12947,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12952,
+      "b": 4527,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12952,
+      "b": 12953,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12953,
+      "b": 12947,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12954,
+      "b": 4535,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "airknife_plenum_5",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12954,
+      "b": 12955,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "detail_airknife_carriage_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12955,
+      "b": 12956,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_bridge",
+      "b_name": "detail_airknife_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12956,
+      "b": 4537,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_drop",
+      "b_name": "airknife_linear_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12959,
+      "b": 4538,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_top_cap",
+      "b_name": "airknife_retract_ballnut",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12960,
+      "b": 12959,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_connection_ear",
+      "b_name": "detail_airknife_nut_top_cap",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12960,
+      "b": 12961,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_connection_ear",
+      "b_name": "detail_airknife_nut_lower_arm",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12961,
+      "b": 12943,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_lower_arm",
+      "b_name": "detail_airknife_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12962,
+      "b": 10447,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_motor_seat_link",
+      "b_name": "airknife_motor_plate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12962,
+      "b": 12934,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_motor_seat_link",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12963,
+      "b": 10448,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "airknife_screw_end_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12963,
+      "b": 12964,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "detail_airknife_screw_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12964,
+      "b": 12934,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12965,
+      "b": 10450,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "airknife_screw_end_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12965,
+      "b": 12966,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "detail_airknife_screw_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_5",
+      "a": 12966,
+      "b": 12934,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12969,
+      "b": 4650,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "airknife_post",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12969,
+      "b": 12971,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "detail_airknife_column_top_link",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12971,
+      "b": 12970,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_top_link",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12970,
+      "b": 12972,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_fixed_side",
+      "b_name": "detail_airknife_rear_frame_riser",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12972,
+      "b": 12968,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_rear_frame_riser",
+      "b_name": "detail_airknife_rear_frame",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12973,
+      "b": 4651,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12973,
+      "b": 12974,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12974,
+      "b": 12970,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12975,
+      "b": 4651,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12975,
+      "b": 12976,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12976,
+      "b": 12970,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12977,
+      "b": 4661,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "airknife_plenum_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12977,
+      "b": 12978,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "detail_airknife_carriage_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12978,
+      "b": 12979,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_bridge",
+      "b_name": "detail_airknife_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12979,
+      "b": 4662,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_drop",
+      "b_name": "airknife_linear_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12982,
+      "b": 4652,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "airknife_post",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12982,
+      "b": 12984,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_extension",
+      "b_name": "detail_airknife_column_top_link",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12984,
+      "b": 12983,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_column_top_link",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12983,
+      "b": 12985,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_fixed_side",
+      "b_name": "detail_airknife_rear_frame_riser",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12985,
+      "b": 12968,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_rear_frame_riser",
+      "b_name": "detail_airknife_rear_frame",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12986,
+      "b": 4653,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12986,
+      "b": 12987,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12987,
+      "b": 12983,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12988,
+      "b": 4653,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "airknife_radial_guide",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12988,
+      "b": 12989,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_drop",
+      "b_name": "detail_airknife_guide_end_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12989,
+      "b": 12983,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_guide_end_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12990,
+      "b": 4661,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "airknife_plenum_6",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12990,
+      "b": 12991,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_tower",
+      "b_name": "detail_airknife_carriage_bridge",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12991,
+      "b": 12992,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_bridge",
+      "b_name": "detail_airknife_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12992,
+      "b": 4663,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_carriage_drop",
+      "b_name": "airknife_linear_block",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12995,
+      "b": 4664,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_top_cap",
+      "b_name": "airknife_retract_ballnut",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12996,
+      "b": 12995,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_connection_ear",
+      "b_name": "detail_airknife_nut_top_cap",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12996,
+      "b": 12997,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_connection_ear",
+      "b_name": "detail_airknife_nut_lower_arm",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12997,
+      "b": 12979,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_nut_lower_arm",
+      "b_name": "detail_airknife_carriage_drop",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12998,
+      "b": 10475,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_motor_seat_link",
+      "b_name": "airknife_motor_plate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12998,
+      "b": 12970,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_motor_seat_link",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12999,
+      "b": 10476,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "airknife_screw_end_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 12999,
+      "b": 13000,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "detail_airknife_screw_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 13000,
+      "b": 12970,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 13001,
+      "b": 10478,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "airknife_screw_end_mount",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 13001,
+      "b": 13002,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_seat",
+      "b_name": "detail_airknife_screw_bearing_top",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "airknife_6",
+      "a": 13002,
+      "b": 12970,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_airknife_screw_bearing_top",
+      "b_name": "detail_airknife_fixed_side",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_load",
+      "a": 13004,
+      "b": 3848,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_motor_backplate",
+      "b_name": "load_slotted_backing_strip",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_load",
+      "a": 13005,
+      "b": 13004,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_motor_flange",
+      "b_name": "detail_grip_motor_backplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_load",
+      "a": 13014,
+      "b": 13015,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_output_bearing",
+      "b_name": "detail_grip_bearing_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_load",
+      "a": 13015,
+      "b": 13004,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_bearing_bracket",
+      "b_name": "detail_grip_motor_backplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_load",
+      "a": 13016,
+      "b": 13017,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_output_bearing",
+      "b_name": "detail_grip_bearing_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_load",
+      "a": 13017,
+      "b": 13004,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_bearing_bracket",
+      "b_name": "detail_grip_motor_backplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_unload",
+      "a": 13018,
+      "b": 4021,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_motor_backplate",
+      "b_name": "unload_backing_frame",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_unload",
+      "a": 13019,
+      "b": 13018,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_motor_flange",
+      "b_name": "detail_grip_motor_backplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_unload",
+      "a": 13028,
+      "b": 13029,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_output_bearing",
+      "b_name": "detail_grip_bearing_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_unload",
+      "a": 13029,
+      "b": 13018,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_bearing_bracket",
+      "b_name": "detail_grip_motor_backplate",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_unload",
+      "a": 13030,
+      "b": 13031,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_output_bearing",
+      "b_name": "detail_grip_bearing_bracket",
+      "max_aabb_gap_m": 0
+    },
+    {
+      "detail": "grip_unload",
+      "a": 13031,
+      "b": 13018,
+      "kind": "固定件名义接邻",
+      "a_name": "detail_grip_bearing_bracket",
+      "b_name": "detail_grip_motor_backplate",
+      "max_aabb_gap_m": 0
+    }
+  ],
+  "failures": [],
+  "failure_count": 0,
+  "full_CAD_collision_verified": false,
+  "load_fit_fatigue_verified": false,
+  "browser_webgl_verified": false,
+  "four_lane_packaging_integrated": false,
+  "sw_generated": false,
+  "scope": "本轮连接的轴对齐包围盒接邻，在动作时刻重复检查；包围盒接邻不证明真实表面接触、紧固和承载。另检查两台竖直电机输出方向及顶板中心通孔。完整CAD、丝杠支承内部配合、载荷、热漂移、清洗与安全仍待验证。",
+  "summary": "13组安装细节、294组名义连接、363个姿态的106,722次接邻检查通过；修正两台去皮升降电机出轴方向并检查顶板中心通孔。接邻不等于承载接触或整机干涉验收。"
+}

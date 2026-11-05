@@ -1,0 +1,7 @@
+{
+  "revision": "R23",
+  "valid_unique_BRep_solids": 146,
+  "nominal_CAD_parts": 199,
+  "manufacturing_released": false,
+  "source_sha256": "96b84e9d7ddcf61ffc26958ce46314b4398921c2f80062a6eea550379e7666a5"
+}

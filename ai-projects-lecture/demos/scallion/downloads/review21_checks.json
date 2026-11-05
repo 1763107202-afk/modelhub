@@ -1,0 +1,20 @@
+{
+  "revision": "R21-integrated-packaging",
+  "status": "kinematic_checks_passed",
+  "source_sha256": "5ea6e12b41e054756db01c562e205c52ae66058a45f45f375a666bd93914c528",
+  "motion_samples": 21601,
+  "handoff_boundaries": 444,
+  "max_handoff_jump_m": 2.5121479338940403e-15,
+  "inventory_samples": 2161,
+  "nominal_min_lane_pitch_m": 0.11999999999999922,
+  "film_feed_pitch_error_m": 1.1102230246251565e-16,
+  "matrix_checks": 84308,
+  "parts": 18365,
+  "new_packaging_parts": 4307,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_machine_collision_verified": false,
+  "material_trials_verified": false,
+  "summary": "R21整线名义位姿、展距/并距交接、固定袋长、整包检重及框体输出逻辑检查；不代表完整机械干涉、柔性膜/叶片或实料性能验收。"
+}

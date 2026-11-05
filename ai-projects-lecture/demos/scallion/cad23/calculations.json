@@ -1,0 +1,64 @@
+{
+  "revision": "R23",
+  "status": "preliminary_assumed_load_calculations",
+  "material_assumption": "All beam calculations use 304-like stainless E=193 GPa, density 7930 kg/m3. Actual material, weld condition and supplier must be frozen.",
+  "portal": {
+    "section_mm": [
+      80,
+      160,
+      4
+    ],
+    "boundary_condition": "simply supported at column centres; conservative for ideal welded frame but DOES NOT verify joints/columns or actual out-of-plane restraint",
+    "assumed_centre_load_N": 1600.0,
+    "previous_span_approx": {
+      "span_mm": 5400.0,
+      "I_mm4": 6235818.666666667,
+      "assumed_centre_load_N": 1600.0,
+      "beam_self_weight_N_per_mm": 0.14438436480000003,
+      "point_deflection_mm": 4.361232482216683,
+      "self_weight_deflection_mm": 1.3282603207523083,
+      "combined_deflection_mm": 5.689492802968991,
+      "max_bending_stress_MPa": 34.46259300714325
+    },
+    "revised_span": {
+      "span_mm": 2700.0,
+      "I_mm4": 6235818.666666667,
+      "assumed_centre_load_N": 1600.0,
+      "beam_self_weight_N_per_mm": 0.14438436480000003,
+      "point_deflection_mm": 0.5451540602770854,
+      "self_weight_deflection_mm": 0.08301627004701927,
+      "combined_deflection_mm": 0.6281703303241046,
+      "max_bending_stress_MPa": 15.543367338763753
+    },
+    "not_verified": [
+      "post and weld stiffness",
+      "bolt slip",
+      "local plate bending",
+      "fatigue",
+      "modal response",
+      "real loads and safety factors"
+    ]
+  },
+  "tucker_motion": {
+    "stroke_mm": 300,
+    "lowering_s": 2.0,
+    "raising_s": 1.4,
+    "quintic_ramp": true,
+    "max_raising_speed_m_per_s": 0.4017857142857143,
+    "max_raising_accel_m_per_s2": 0.8836993916167742,
+    "screw_lead_mm": 20,
+    "max_screw_rpm": 1205.357142857143,
+    "cycle_s": 8
+  },
+  "candidate_drive_envelope": {
+    "assumed_total_moving_mass_kg": 40.0,
+    "assumed_axial_friction_N": 100.0,
+    "assumed_screw_efficiency": 0.9,
+    "estimated_peak_lifting_force_N": 527.747975664671,
+    "estimated_screw_torque_Nm": 1.8665266451949707,
+    "torque_with_1_5_service_factor_Nm": 2.799789967792456,
+    "motor_selected": false,
+    "note": "Candidate envelope, not measured. Display motor is not a selected manufacturer model. Torque-speed curve, screw inertia, brake/static holding, jam load, buckling, critical speed and safe stop remain required."
+  },
+  "manufacturing_released": false
+}

@@ -1,0 +1,322 @@
+{
+  "revision": "R19-mechanical-support",
+  "generated_at": "2026-10-19T13:29:13.583Z",
+  "source_sha256": "375a6e654f1bec54e19120abce324c9f58346fcc102b2a1ee339912481755892",
+  "status": "limited_mechanical_checks_passed",
+  "records": [
+    {
+      "id": "rotor",
+      "title": "旋转主体与支承",
+      "module": "rotary",
+      "support": "托座→横梁/辐条→回转支承与轨道轮→底架/地脚",
+      "power": "电柜驱动器→分度减速伺服",
+      "transmission": "联轴器→小齿轮→环齿轮",
+      "witness": [
+        "mast_base_flange",
+        "rotor_output_coupling",
+        "track_wheel_stub"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 1826
+    },
+    {
+      "id": "gates",
+      "title": "旋转托座保持与开笼",
+      "module": "rotary",
+      "support": "滚轮笼→滑块/背柱→托座横梁；根底托条承重",
+      "power": "固定上/下料工位的径向伺服与四个小电机；回位弹簧",
+      "transmission": "径向接合→四丝杠拨叉→从动销；闭合后拨叉退出再分度",
+      "witness": [
+        "keeper_actuation_follower",
+        "keeper_opener_radial_screw",
+        "keeper_tension_spring"
+      ],
+      "limit": "限位与锁止、夹伤和停电保持须实料与电气验证；弹簧力未标定",
+      "parts": 1782
+    },
+    {
+      "id": "feed",
+      "title": "自动来料带与承接辊",
+      "module": "infeed",
+      "support": "带面/辊轴→轴承/侧梁→纵梁→落地支腿；低侧导向限横向偏移",
+      "power": "三段四槽公共轴电机；承接辊独立减速电机",
+      "transmission": "共轴带辊；下置横轴→纵轴/直角箱→承接小辊",
+      "witness": [
+        "input_section_0_common_shaft",
+        "pickup_lower_common_input",
+        "pickup_motor_mount"
+      ],
+      "limit": "自动接入上游定向载具输送；不包含无序散堆自动理料。湿态摩擦、弯葱和夹持力待试料",
+      "parts": 375
+    },
+    {
+      "id": "trim",
+      "title": "切根切叶与废料出口",
+      "module": "trim",
+      "support": "刀片→刀轴/轴承→移动滑座→双导向→固定桥/立柱→来料床身；斜槽排至侧置箱",
+      "power": "横移伺服与两只刀轴电机",
+      "transmission": "横移丝杠/螺母→滑座；电机→同步带→刀轴",
+      "witness": [
+        "saw_travelling_ballnut",
+        "saw_cross_motor_flange",
+        "saw_vertical_timing_belt"
+      ],
+      "limit": "刀槽与局部包络已核对；切削载荷、刀片强度、防护联锁与废料堵塞须验证",
+      "parts": 130
+    },
+    {
+      "id": "pinch",
+      "title": "弹性上压辊架同步升降",
+      "module": "infeed",
+      "support": "压辊→轴承/弹性导向→纵梁/吊杆→导向滑块→落地桥架",
+      "power": "来料由下带驱动，上压辊被动随动；辊架用抱闸减速电机升降",
+      "transmission": "公共横轴→三个直角箱→三根丝杠→螺母",
+      "witness": [
+        "pinch_lift_common_shaft",
+        "pinch_lift_ballnut",
+        "pressure_food_roller"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 280
+    },
+    {
+      "id": "stop",
+      "title": "挡根梳升降",
+      "module": "trim",
+      "support": "挡根梳→滑块→双导向→固定桥",
+      "power": "带抱闸电机",
+      "transmission": "联轴器→竖直丝杠→梳架螺母",
+      "witness": [
+        "root_stop_travelling_nut",
+        "root_stop_coupling",
+        "root_stop_slide_block"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 27
+    },
+    {
+      "id": "transfer",
+      "title": "上下料承托移载",
+      "module": "load",
+      "support": "托叉/笼→转轴/悬臂→升降导向→径向滑块→地脚床身",
+      "power": "径移伺服、升降抱闸电机、翻转抱闸伺服、夹持及托叉电机",
+      "transmission": "丝杠/螺母＋翻转同步带＋分体笼齿条",
+      "witness": [
+        "load_radial_ballnut",
+        "unload_lift_ballnut",
+        "load_toe_fixed_bearing"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 697
+    },
+    {
+      "id": "process",
+      "title": "去皮、清洗与风刀安装",
+      "module": "peel",
+      "support": "喷头/风刀→滑台/导向→落地立柱；固定驱动头另接中心柱",
+      "power": "厂务压缩气/有压水；独立鼓风机；扫描/退让伺服",
+      "transmission": "阀组与拖链→歧管；丝杠→工作头",
+      "witness": [
+        "station_ground_1_riser",
+        "peel_distribution_manifold_1",
+        "airknife_screw_end_mount"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 1261
+    },
+    {
+      "id": "blower",
+      "title": "鼓风机及固定管路",
+      "module": "dry",
+      "support": "风机/电机→轴承和鞍座→底座；风管→立柱/管卡",
+      "power": "电柜变频器→鼓风电机",
+      "transmission": "同轴联轴器→叶轮轴；过滤进气→主管→风刀",
+      "witness": [
+        "blower_flexible_coupling",
+        "blower_housing_saddle",
+        "blower_duct_mast"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 130
+    },
+    {
+      "id": "weigh",
+      "title": "独立检重受力链",
+      "module": "weigh",
+      "support": "称重带/电机全在活动秤架→传感器活动端→固定端→秤底架",
+      "power": "独立小电机与柔性供电/信号线",
+      "transmission": "角向输出→同步带→驱动辊",
+      "witness": [
+        "load_cell_live_spacer_0",
+        "load_cell_fixed_spacer_0",
+        "weigh_vertical_timing_belt"
+      ],
+      "limit": "角向传动与活动秤架上的驱动已建模；柔性线缆约束、偏载和动态称重精度须试验，不以父子归属证明精度",
+      "parts": 217
+    },
+    {
+      "id": "insert",
+      "title": "检重后固定窄带送框",
+      "module": "out",
+      "support": "窄带内部梁/轴承→前置固定悬臂→秤旁固定床身/地脚；不压在活动秤架",
+      "power": "固定架外侧独立减速电机",
+      "transmission": "公共轴→四条窄带；收集框底槽让带穿过",
+      "witness": [
+        "insert_upstream_fixed_crosshead",
+        "insert_belt_gearmotor_gearbox",
+        "insert_internal_roller"
+      ],
+      "limit": "保留名义槽带间隙；整袋柔性下垂、挤夹和摩擦输送须实料验证",
+      "parts": 76
+    },
+    {
+      "id": "guards",
+      "title": "防溅板及落地安装",
+      "module": "guard",
+      "support": "板件→立柱→接地加长座/底板→地脚",
+      "power": "固定被动构件，无驱动需求",
+      "transmission": "固定安装；本版不把防溅板当作安全联锁护罩",
+      "witness": [
+        "splash_guard_post",
+        "guard_ground_1_plate"
+      ],
+      "limit": "防溅板仅为布置模型；门锁、安全距离和清洗拆装待详细设计",
+      "parts": 138
+    },
+    {
+      "id": "dock",
+      "title": "A/B 横移、前移与托框",
+      "module": "out",
+      "support": "上置骨架/吊指→短轴→升降导向→前移导轨→横移导轨→地脚",
+      "power": "两套独立横移伺服；前移、升降和抱闸翻转电机",
+      "transmission": "错开布置的两根丝杠；升降双丝杠；锁销/释放执行器",
+      "witness": [
+        "dock_shuttle_ballnut_-1",
+        "dock_shuttle_ballnut_1",
+        "dock_holder_hanging_finger"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 471
+    },
+    {
+      "id": "stock",
+      "title": "空框升降与正向补框",
+      "module": "out",
+      "support": "叠框接触垫→平台→四导向滑块/螺母→仓架",
+      "power": "抱闸升降电机、横送减速电机、推框伺服",
+      "transmission": "丝杠托升→同步横送带→丝杠推杆推外侧叠柱；退开80mm→抬杆340mm→高位返回",
+      "witness": [
+        "empty_stack_contact_pad",
+        "empty_stack_drive_nut",
+        "empty_pusher_ballnut"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 262
+    },
+    {
+      "id": "feet",
+      "title": "可复用收集框及展开支脚",
+      "module": "out",
+      "support": "框底→铰座/根部连接梁→四支脚→辊道",
+      "power": "托床电动释放器；扭簧展开、过中心锁保持",
+      "transmission": "释放杆→脚锁释放；铰销与扭簧→展开支脚",
+      "witness": [
+        "cassette_hinge_foundation_0",
+        "cassette_foot_torsion_spring",
+        "cassette_release_bar_0"
+      ],
+      "limit": "展开力、锁止与疲劳待样机；不把确定性脚部动画当作弹簧动力学",
+      "parts": 1104
+    },
+    {
+      "id": "buffer",
+      "title": "直立成品缓存",
+      "module": "out",
+      "support": "支脚→辊子/轴承→辊道梁→地脚",
+      "power": "电柜三个分区驱动→三段减速电机；设同速/占位联锁",
+      "transmission": "三段分区电机→直角输出/联轴器→各段有背托导轨的链环→每辊链轮",
+      "witness": [
+        "buffer_chain_sprocket",
+        "buffer_segment_chain_run",
+        "buffer_final_motor_ground_plate"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 1016
+    },
+    {
+      "id": "utilities",
+      "title": "电、气、水与排污来源",
+      "module": "utilities",
+      "support": "电柜落地；罐体/过滤阀→底座；固定总管→管卡和立柱",
+      "power": "厂务电源/压缩空气/有压水；鼓风机独立驱动",
+      "transmission": "隔离/驱动器/24V→端子；减压阀→气歧管；斜盘→滤篮→排污口",
+      "witness": [
+        "electrical_cabinet",
+        "receiver_regulator_connection_1",
+        "header_split_clamp"
+      ],
+      "limit": "名义安装关系；载荷、孔配合、紧固及安全功能待验证",
+      "parts": 518
+    }
+  ],
+  "structural_part_records": 10557,
+  "classified_part_records": 10310,
+  "pending_by_module": {
+    "pack": 247
+  },
+  "finite_part_poses": 295596,
+  "opener_retracted_states": 202,
+  "output_support": {
+    "samples": 435,
+    "max_roller_pitch_m": 0.14999999999999947,
+    "foot_depth_m": 0.44,
+    "scope": "名义脚底几何接触，检查前后滚子位于根部基准两侧；不是重心、惯性或侧向稳定性计算"
+  },
+  "pusher_sequence": [
+    {
+      "side": -1,
+      "travel_m": 1.15,
+      "clear_before_lift_m": 0.08,
+      "return_lift_m": 0.34,
+      "phases_s": [
+        0.2,
+        1.4,
+        1.6,
+        1.8,
+        3,
+        3.1,
+        3.4
+      ]
+    },
+    {
+      "side": 1,
+      "travel_m": 1.15,
+      "clear_before_lift_m": 0.08,
+      "return_lift_m": 0.34,
+      "phases_s": [
+        0.2,
+        1.4,
+        1.6,
+        1.8,
+        3,
+        3.1,
+        3.4
+      ]
+    }
+  ],
+  "rigid_screen": {
+    "scenarios": 23,
+    "samples": 6783,
+    "mesh_pair_tests": 227068,
+    "contact_groups": 0,
+    "scope": "Selected rigid interfaces, sampled at the times listed in counts. Includes prior motion/support scenarios and new hardware versus surrounding parts and header clamps versus process heads, rotor and guards. New hardware scenarios use 0.05 s. Exact same-joint fastener meshes and designated plate/lug mates are excluded from collision screening; actual target bores and stack faces are checked separately in check-hardware19. Existing explicit bearing/nut/follower mates are excluded. Broad phase skips AABB overlap below 0.2 mm. Flexible leaves, film, hoses, continuous sweep, tolerances and remaining full-machine interfaces are not validated."
+  },
+  "full_CAD_collision_verified": false,
+  "browser_webgl_verified": false,
+  "load_fit_fatigue_verified": false,
+  "four_lane_packaging_integrated": false,
+  "sw_generated": false,
+  "failures": [],
+  "failure_count": 0,
+  "summary": "R19细化18处接头、40套穿栓与40根空心型材；保留13组滑台等安装细节。基础17 组机构支承/动力/传动记录，10310/10557 条结构零件已关联记录；推杆退让与高位回程、分度前拨叉退出及局部网格检查通过。记录关联不等于紧固、载荷或整机无干涉验收。四列包装对接仍待重构。"
+}

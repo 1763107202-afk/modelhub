@@ -1,0 +1,12 @@
+{
+  "revision": "R22",
+  "page": "axis-review22.html",
+  "dom_loaded": true,
+  "part_search_checked": true,
+  "selection_description_checked": true,
+  "webgl_verified": false,
+  "webgl_failure": "GL_VENDOR=Disabled; GL_RENDERER=Disabled; BindToCurrentSequence failed",
+  "full_line_browser_animation_verified": false,
+  "checked_at": "2026-10-21",
+  "notes": "Cloud browser: search stepped_shaft returned drive and idler; clicking drive updated description. 3D controls disabled by explicit WebGL fallback."
+}

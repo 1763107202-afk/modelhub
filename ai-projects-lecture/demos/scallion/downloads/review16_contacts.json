@@ -1,0 +1,24 @@
+{
+  "revision": "R16-single-lane",
+  "source_sha256": "e8f99a0a650e044bb2a25283a66c5a1a57f038a218dd4a5927cb2adcd8f7e1f0",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "single_lane_jaws_to_fixed_pack": {
+      "samples": 801,
+      "target_parts": 21,
+      "environment_parts": 314,
+      "broadphase_pairs": 148
+    },
+    "single_lane_nominal_crop_to_pack": {
+      "samples": 801,
+      "target_parts": 15,
+      "environment_parts": 349,
+      "broadphase_pairs": 1207
+    }
+  },
+  "narrowphase_pairs": 1355,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 0.04109048843383789,
+  "scope": "Two single-lane interfaces only: moving transverse jaws versus fixed packaging structures, and nominal crop meshes versus rigid packaging. 0.02 s samples; AABB overlap threshold 0.1 mm. Membrane, deformed leaves, bearings/screw intentional mates, remaining pairings and four-lane integration excluded. Discrete triangle tests do not prove continuous collision freedom."
+}

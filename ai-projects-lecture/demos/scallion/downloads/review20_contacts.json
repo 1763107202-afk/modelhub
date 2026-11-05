@@ -1,0 +1,173 @@
+{
+  "revision": "R20-selected-interfaces",
+  "source_sha256": "853c11fbdaabee3670f567f886777945e7156e0ae255bb7f2c69a3006e6dc802",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "index_heads": {
+      "samples": 101,
+      "target_parts": 328,
+      "environment_parts": 3058,
+      "broadphase_pairs": 816
+    },
+    "load_cage": {
+      "samples": 401,
+      "target_parts": 144,
+      "environment_parts": 4388,
+      "broadphase_pairs": 0
+    },
+    "unload_cage": {
+      "samples": 401,
+      "target_parts": 139,
+      "environment_parts": 3807,
+      "broadphase_pairs": 6838
+    },
+    "insert_to_collection": {
+      "samples": 501,
+      "target_parts": 76,
+      "environment_parts": 2853,
+      "broadphase_pairs": 67666
+    },
+    "opposite_collection_docks": {
+      "samples": 1201,
+      "target_parts": 132,
+      "environment_parts": 132,
+      "broadphase_pairs": 19182
+    },
+    "seal_to_conveyor": {
+      "samples": 81,
+      "target_parts": 2,
+      "environment_parts": 52,
+      "broadphase_pairs": 348
+    },
+    "keeper_openers_to_rotor": {
+      "samples": 401,
+      "target_parts": 102,
+      "environment_parts": 3058,
+      "broadphase_pairs": 5583
+    },
+    "pinch_lift_to_fixed_input": {
+      "samples": 161,
+      "target_parts": 196,
+      "environment_parts": 616,
+      "broadphase_pairs": 1588
+    },
+    "docks_to_fixed_out": {
+      "samples": 321,
+      "target_parts": 264,
+      "environment_parts": 1377,
+      "broadphase_pairs": 22858
+    },
+    "stock_lifts_and_pushers": {
+      "samples": 321,
+      "target_parts": 108,
+      "environment_parts": 1377,
+      "broadphase_pairs": 11464
+    },
+    "weigh_live_to_fixed": {
+      "samples": 1,
+      "target_parts": 176,
+      "environment_parts": 41,
+      "broadphase_pairs": 28
+    },
+    "weigh_live_adjacent": {
+      "samples": 1,
+      "target_parts": 88,
+      "environment_parts": 88,
+      "broadphase_pairs": 320
+    },
+    "pusher_to_cassettes": {
+      "samples": 321,
+      "target_parts": 78,
+      "environment_parts": 1368,
+      "broadphase_pairs": 2007
+    },
+    "detail_heads_to_rotor": {
+      "samples": 161,
+      "target_parts": 432,
+      "environment_parts": 3058,
+      "broadphase_pairs": 0
+    },
+    "detail_heads_to_headers": {
+      "samples": 161,
+      "target_parts": 248,
+      "environment_parts": 518,
+      "broadphase_pairs": 4025
+    },
+    "detail_heads_to_guards": {
+      "samples": 161,
+      "target_parts": 432,
+      "environment_parts": 138,
+      "broadphase_pairs": 1829
+    },
+    "detail_adjacent_peel_frames": {
+      "samples": 161,
+      "target_parts": 256,
+      "environment_parts": 256,
+      "broadphase_pairs": 1146
+    },
+    "detail_drive_live_to_fixed": {
+      "samples": 401,
+      "target_parts": 35,
+      "environment_parts": 821,
+      "broadphase_pairs": 14856
+    },
+    "detail_peel_live_to_fixed": {
+      "samples": 401,
+      "target_parts": 26,
+      "environment_parts": 346,
+      "broadphase_pairs": 4262
+    },
+    "detail_airknife_live_to_fixed": {
+      "samples": 401,
+      "target_parts": 26,
+      "environment_parts": 236,
+      "broadphase_pairs": 1727
+    },
+    "detail_grip_to_new_mounts": {
+      "samples": 401,
+      "target_parts": 112,
+      "environment_parts": 28,
+      "broadphase_pairs": 2705
+    },
+    "hardware_fasteners_to_surroundings": {
+      "samples": 161,
+      "target_parts": 240,
+      "environment_parts": 9719,
+      "broadphase_pairs": 57659
+    },
+    "header_clamps_to_heads_and_rotor": {
+      "samples": 161,
+      "target_parts": 160,
+      "environment_parts": 4190,
+      "broadphase_pairs": 161
+    },
+    "R20_new_drive_to_existing_machine": {
+      "samples": 101,
+      "target_parts": 234,
+      "environment_parts": 9716,
+      "broadphase_pairs": 19930
+    },
+    "R20_pinion_to_rotor": {
+      "samples": 101,
+      "target_parts": 16,
+      "environment_parts": 2955,
+      "broadphase_pairs": 101
+    },
+    "R20_rotor_to_new_fixed": {
+      "samples": 101,
+      "target_parts": 3058,
+      "environment_parts": 115,
+      "broadphase_pairs": 16034
+    }
+  },
+  "narrowphase_pairs": 263133,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 3.3652098178863525,
+  "scope": "Selected rigid interfaces, sampled at the times listed in counts. Includes prior motion/support scenarios and new hardware versus surrounding parts and header clamps versus process heads, rotor and guards. R20 main drive versus existing rigid geometry and rotor versus new fixed parts use 0.02 s; prior new hardware scenarios use 0.05 s. New CAD subassembly internal fits are screened separately by exact B-rep rest-pose checks and 2D tooth sweeps. Exact same-joint fastener meshes and designated plate/lug mates are excluded from collision screening; actual target bores and stack faces are checked separately in check-hardware20. Existing explicit bearing/nut/follower mates are excluded. Broad phase skips AABB overlap below 0.2 mm. Flexible leaves, film, hoses, continuous sweep, tolerances and remaining full-machine interfaces are not validated.",
+  "scenario_samples": 7086,
+  "status": "selected_mesh_interfaces_passed",
+  "browser_webgl_verified": false,
+  "full_machine_continuous_CAD_verified": false,
+  "summary": "26类选定刚体接口、7086个采样时刻、263,133次候选网格对检查，发现0组接触。新增主传动接口按0.02 s采样；螺纹/明确配合按记录排除，宽相跳过小于0.2 mm的AABB交叠。主传动内部另查CAD实体及二维齿形。结果不等于连续整机、柔性叶片/膜材、公差后间隙或包装对接验收。"
+}

@@ -1,0 +1,21 @@
+{
+  "revision": "12.1 方案确认版",
+  "motion_samples": 20001,
+  "joint_limit_failures": 0,
+  "index_position_interlock_failures": 0,
+  "invalid_numbers": 0,
+  "weigh_fixed_clamp_contacts": 0,
+  "film_without_nominal_holder_before_banding": 0,
+  "simulated_fault_cases": 7,
+  "proposed_inlet_handoffs_checked": 4,
+  "max_inlet_root_anchor_error_m": 2.220986328927664e-16,
+  "svg_states": 26,
+  "cycle_demo_seconds": 500.7154220893896,
+  "production_cycle_claimed": false,
+  "browser_webgl_tested": false,
+  "new_geometry_rebuilt": false,
+  "full_machine_zero_interference_verified": false,
+  "physical_grip_or_banding_tested": false,
+  "solidworks_export_this_round": false,
+  "scope": "概念时序、逻辑保持与参数估算检查。入料锚点为方案坐标，不是已完成CAD路径或柔性物料接触验证。修订12三维只做静态结构参考。"
+}

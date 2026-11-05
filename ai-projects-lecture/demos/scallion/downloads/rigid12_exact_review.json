@@ -1,0 +1,993 @@
+{
+  "baseline_revision": "12",
+  "step_sha256": "09baa102764c261827626078ebbb583b662f772f2aac6e3b301617d24f4f5435",
+  "checked_pairs": 123,
+  "positive_common_volumes": 123,
+  "scope": "原修订12 FCL候选的首次命中姿态OCC实体交集复核；正体积重叠不自动判为可接受配合，也不证明连续避碰。本轮方案未完成几何重建。",
+  "pairs": [
+    {
+      "a": "unload_Z12_reachC",
+      "b": "valve_mast_unload_grip_1",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 4069.374142065755,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "belt_surface12_2.12",
+      "b": "infeed_stop12_0",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 159.7495411033349,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "belt_surface12_2.12",
+      "b": "infeed_pad12_0_-1",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 1055.4569926748911,
+      "distance_mm": 1.3877787807814457e-14
+    },
+    {
+      "a": "belt_surface12_1.98",
+      "b": "infeed_pad12_1_1",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 1055.456992674891,
+      "distance_mm": 3.122502256758253e-14
+    },
+    {
+      "a": "belt_surface12_1.98",
+      "b": "infeed_stop12_1",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 159.7495411033349,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "unload_Z12_reachC",
+      "b": "valve_bracket_unload_grip_0",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 409.0547716304582,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_guide12_0.1",
+      "b": "infeed_settle_plate12",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 2035.752039526192,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_guide12_0.42",
+      "b": "infeed_settle_plate12",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 2035.7520395261872,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "belt_surface12_1.98",
+      "b": "infeed_pad12_1_-1",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 1055.4569926748911,
+      "distance_mm": 3.122502256758253e-14
+    },
+    {
+      "a": "belt_surface12_2.12",
+      "b": "infeed_pad12_0_1",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 1055.456992674891,
+      "distance_mm": 1.3877787807814457e-14
+    },
+    {
+      "a": "infeed_X12_side_shield_-0.15",
+      "b": "infeed_settle_base12",
+      "phase": "infeed",
+      "t": 0,
+      "volume_mm3": 2399.072920065868,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_arm12_0",
+      "b": "trim_blade_1",
+      "phase": "infeed",
+      "t": 3.3878071916158072,
+      "volume_mm3": 340.573902281341,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_0",
+      "b": "trim_blade_1",
+      "phase": "infeed",
+      "t": 3.3878071916158072,
+      "volume_mm3": 102.69010929616081,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_arm12_1",
+      "b": "trim_blade_0",
+      "phase": "infeed",
+      "t": 3.3878071916158072,
+      "volume_mm3": 340.57390228136074,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_1",
+      "b": "trim_blade_0",
+      "phase": "infeed",
+      "t": 3.3878071916158072,
+      "volume_mm3": 102.69010929615973,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawback12_1_1",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 3197.541471218164,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawbush12_1_-1_0.6",
+      "b": "trim_guide_-0.49",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 104.74210093641942,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawguide12_1_1_0.5399999999999999",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 169.64600329384285,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawbush12_1_1_0.5399999999999999",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 290.17320544881653,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_port_0",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 201.83247618526042,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawlink12_1_1",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 447.4007218865122,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_guide_mount12_1_1_0.5399999999999999",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 172.01044046112628,
+      "distance_mm": 1.3877787807814457e-14
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_1_1",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 6788.019050443396,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawguide12_1_-1_0.6",
+      "b": "trim_guide_-0.49",
+      "phase": "infeed",
+      "t": 6.523991837321992,
+      "volume_mm3": 11.347021040705709,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawbush12_1_1_0.6",
+      "b": "trim_guide_-0.49",
+      "phase": "infeed",
+      "t": 8.235102948433102,
+      "volume_mm3": 193.12928230681533,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_guide_mount12_1_1_0.5399999999999999",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 8.235102948433102,
+      "volume_mm3": 147.43752039526717,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_guide12_0.1",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 8.235102948433102,
+      "volume_mm3": 958.0676682596277,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawguide12_1_1_0.6",
+      "b": "trim_guide_-0.49",
+      "phase": "infeed",
+      "t": 8.235102948433102,
+      "volume_mm3": 11.34694384563506,
+      "distance_mm": 2.0001354155359497e-12
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_1_1",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 8.235102948433102,
+      "volume_mm3": 7721.352383777088,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_port_0",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 8.235102948433102,
+      "volume_mm3": 149.05778292862752,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_tie_-1",
+      "b": "infeed_settle_plate_link12",
+      "phase": "infeed",
+      "t": 18.26187062520078,
+      "volume_mm3": 39.4127078359454,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_barrel",
+      "b": "infeed_settle_plate_link12",
+      "phase": "infeed",
+      "t": 18.26187062520078,
+      "volume_mm3": 875.1217932828994,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_barrel",
+      "b": "infeed_settle_rod_link12",
+      "phase": "infeed",
+      "t": 18.26187062520078,
+      "volume_mm3": 1066.1965886347605,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_cap_1",
+      "b": "infeed_settle_plate_link12",
+      "phase": "infeed",
+      "t": 18.26187062520078,
+      "volume_mm3": 1565.483722814719,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_cap_1",
+      "b": "infeed_settle_rod_link12",
+      "phase": "infeed",
+      "t": 18.26187062520078,
+      "volume_mm3": 3076.2190865218304,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_0_0",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 311.5167381237485,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_0_1",
+      "b": "infeed_stop12_0",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 1015.707624591459,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_tab_11_0",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 149.66011871679922,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_0_1",
+      "b": "infeed_root_stop_stay12_0",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 311.51673812998166,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_0_0",
+      "b": "infeed_stop12_1",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 1015.7076245854863,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_tab_10_1",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 303.6474868268412,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_10_1",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 230.35429970898142,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_post_11_0",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 22.299749413079567,
+      "volume_mm3": 97.36784756823559,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_0_-1",
+      "b": "loader_grip_1_frame",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 240.00000000000406,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_0_-1",
+      "b": "loader_grip_1_guide_-0.036",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 1332.0352851221828,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_guide_cap12_0_-1_0.24000000000000002",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 354.7181151845319,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_0_-1",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 12569.252119805506,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_0_-1_piston",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 16.319404213572607,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_plate12",
+      "b": "root_stand_1.26",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 4464.589092852142,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_spoke_11_1",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 1.023529080101524,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_0_-1_cap_0",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 1106.6700342820868,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_0_-1_cap_1",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 1106.6700342820902,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_0_-1_barrel",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 1957.8665751370402,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawguide12_0_-1_0.24000000000000002",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 718.73771597397,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_guide_mount12_0_-1_0.24000000000000002",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 1113.8258935441281,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_spoke_10_1",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 26.337628200958356,
+      "volume_mm3": 12.736932923431127,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_plate12",
+      "b": "root_frame_cross_1.26",
+      "phase": "infeed",
+      "t": 30.375506988837145,
+      "volume_mm3": 2698.7123889803042,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_post_11_0",
+      "b": "infeed_grip_cyl12_0_-1_cap_0",
+      "phase": "infeed",
+      "t": 30.375506988837145,
+      "volume_mm3": 15.06203353333809,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_plate12",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 30.375506988837145,
+      "volume_mm3": 20136.108253593324,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_1",
+      "b": "loader_grip_1_mount_-0.043_-0.125",
+      "phase": "infeed",
+      "t": 30.375506988837145,
+      "volume_mm3": 132.58772114850478,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pivot_mast12_0.445",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 30.375506988837145,
+      "volume_mm3": 848.6365952658023,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_actuator_bridge12_1_1",
+      "b": "loader_grip_1_frame",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 354.9440674352308,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_cup_0_1",
+      "b": "infeed_stop12_0",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 3440.5014521304797,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pivot_mast12_0.105",
+      "b": "infeed_settle_base12",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 1177.9847416320688,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pad12_1_1",
+      "b": "loader_grip_1_PU_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 423.2442450666222,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_end_seat12_0_1",
+      "b": "infeed_stop12_0",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 904.7786842338598,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_actuator_bridge12_1_1",
+      "b": "loader_grip_1_guide_-0.036",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 125.4365346671448,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_1",
+      "b": "loader_grip_1_cyl_mount_-1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 1005.5426427668416,
+      "distance_mm": 2.7755575615628914e-14
+    },
+    {
+      "a": "infeed_actuator_bridge12_1_-1",
+      "b": "loader_grip_1_frame",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 354.9440674352308,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_end_seat12_0_0",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 287.88886931159095,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_actuator_bridge12_1_-1",
+      "b": "loader_grip_1_guide_-0.036",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 125.4365346671448,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_cup_0_0",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 580.9857660875645,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pad12_1_1",
+      "b": "loader_grip_1_PU_-1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 423.2442450666274,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_spoke_11_1",
+      "b": "infeed_cyl_mount_plate12_0_-1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 633.5078381451303,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_1",
+      "b": "loader_grip_1_guide_-0.036",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 951.2081101511385,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_cup_10_1",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 1230.5442257584796,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_1",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 440.0433728688949,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_X12_carriage",
+      "b": "infeed_pivot_mast12_0.105",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 1538.1095432608886,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_cup_11_0",
+      "b": "infeed_root_stop_stay12_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 693.2673407445042,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_end_seat12_0_0",
+      "b": "infeed_stop12_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 904.7786842338598,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_cup_0_1",
+      "b": "infeed_root_stop_stay12_0",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 580.9857660885446,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_cup_0_0",
+      "b": "infeed_stop12_1",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 3440.5017190165418,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pivot_mast12_0.445",
+      "b": "infeed_settle_base12",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 1177.9847416237253,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_end_seat12_0_1",
+      "b": "infeed_root_stop_stay12_0",
+      "phase": "infeed",
+      "t": 32.923991837321985,
+      "volume_mm3": 287.8888696823806,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawlink12_0_-1",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 36.15429486762501,
+      "volume_mm3": 580.6290130139582,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "feed_clip_tab_11_0",
+      "b": "infeed_grip_cyl12_0_-1_cap_0",
+      "phase": "infeed",
+      "t": 36.15429486762501,
+      "volume_mm3": 26.913484605443955,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_stop12_1",
+      "b": "loader_grip_1_PU_1",
+      "phase": "infeed",
+      "t": 44.23005244338259,
+      "volume_mm3": 7.288239820998066,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_stop12_1",
+      "b": "loader_grip_1_PU_-1",
+      "phase": "infeed",
+      "t": 44.23005244338259,
+      "volume_mm3": 7.28824031409463,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_root_stop_stay12_1",
+      "b": "loader_grip_1_jaw_body_-1",
+      "phase": "infeed",
+      "t": 44.23005244338259,
+      "volume_mm3": 1748.2918055810094,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_root_stop_stay12_1",
+      "b": "loader_grip_1_cyl_mount_-1",
+      "phase": "infeed",
+      "t": 44.23005244338259,
+      "volume_mm3": 214.63529784805303,
+      "distance_mm": 2.7755575615628914e-14
+    },
+    {
+      "a": "infeed_settle_guide12_0.42",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 51.11843628176643,
+      "volume_mm3": 357.29260536713156,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_tie_1",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 55.39621405954421,
+      "volume_mm3": 81.9501381242813,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_guide_mount12_1_1_0.6",
+      "b": "trim_guide_-0.49",
+      "phase": "infeed",
+      "t": 55.39621405954421,
+      "volume_mm3": 138.21049412155668,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_tie_-1",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 55.39621405954421,
+      "volume_mm3": 94.20941180517605,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_settle_cyl12_barrel",
+      "b": "trim_gantry_foot_-0.24",
+      "phase": "infeed",
+      "t": 55.39621405954421,
+      "volume_mm3": 1429.6665823077522,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_0",
+      "b": "trim_knife_drop_0",
+      "phase": "infeed",
+      "t": 55.39621405954421,
+      "volume_mm3": 430.9483883561051,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_1_1",
+      "b": "trim_guide_-0.49",
+      "phase": "infeed",
+      "t": 55.39621405954421,
+      "volume_mm3": 2875.1236496855636,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_1",
+      "b": "trim_knife_drop_0",
+      "phase": "infeed",
+      "t": 57.53510294843309,
+      "volume_mm3": 713.9229023165072,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_pick_reach12_0",
+      "b": "trim_knife_drop_1",
+      "phase": "infeed",
+      "t": 57.53510294843309,
+      "volume_mm3": 713.9229025009112,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_port_1",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 57.53510294843309,
+      "volume_mm3": 197.9203371761646,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_rod",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 32.08406416915052,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_arm12_1_1",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 675.3701934005014,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_tie_-1",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 75.39822368615435,
+      "distance_mm": 1.3877787807814457e-14
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_cap_0",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 842.7942592314048,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_rod",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 128.42064837783929,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_piston",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 91.58432061132739,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_arm12_1_1",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 839.0129865747681,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_rod_nut",
+      "b": "trim_fixed_frame_link_-0.4",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 113.15011305276002,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_grip_cyl12_1_1_barrel",
+      "b": "trim_fixed_frame_link_-0.26",
+      "phase": "infeed",
+      "t": 59.01789543312989,
+      "volume_mm3": 836.9450386358874,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawback12_1_1",
+      "b": "trim_counter_1",
+      "phase": "infeed",
+      "t": 60.58598775598298,
+      "volume_mm3": 1119.133229632209,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_jawback12_1_-1",
+      "b": "trim_counter_0",
+      "phase": "infeed",
+      "t": 60.58598775598298,
+      "volume_mm3": 1119.1332296322178,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "infeed_cyl_mount_plate12_1_1",
+      "b": "trim_counter_1",
+      "phase": "infeed",
+      "t": 60.58598775598298,
+      "volume_mm3": 1119.133229632207,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_arm11_0_1_-1",
+      "b": "wrap_former11_1_-1",
+      "phase": "wrap",
+      "t": 298.6626788766099,
+      "volume_mm3": 126.30262402029221,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_arm11_0_0_-1",
+      "b": "wrap_former11_0_-1",
+      "phase": "wrap",
+      "t": 298.6626788766099,
+      "volume_mm3": 126.30262402030304,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_arm11_0_1_1",
+      "b": "wrap_former11_1_1",
+      "phase": "wrap",
+      "t": 298.6626788766099,
+      "volume_mm3": 126.30267581315849,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_arm11_0_0_1",
+      "b": "wrap_former11_0_1",
+      "phase": "wrap",
+      "t": 298.6626788766099,
+      "volume_mm3": 126.30267581318503,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_PU11_0_1_-1",
+      "b": "wrap_former11_1_-1",
+      "phase": "wrap",
+      "t": 300.36675933638026,
+      "volume_mm3": 133.56184672756999,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_PU11_0_0_-1",
+      "b": "wrap_former11_0_-1",
+      "phase": "wrap",
+      "t": 300.36675933638026,
+      "volume_mm3": 133.5618467275566,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_PU11_0_0_1",
+      "b": "wrap_former11_0_1",
+      "phase": "wrap",
+      "t": 300.36675933638026,
+      "volume_mm3": 133.56183082255203,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "film_clip_PU11_0_1_1",
+      "b": "wrap_former11_1_1",
+      "phase": "wrap",
+      "t": 300.36675933638026,
+      "volume_mm3": 133.5618308185037,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "collector_sensor_post12",
+      "b": "unload_transverse_reach",
+      "phase": "seal",
+      "t": 360.2546785753451,
+      "volume_mm3": 424.41610115281395,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "collector_sensor_post12",
+      "b": "unload_outrigger_-0.14",
+      "phase": "seal",
+      "t": 360.2546785753451,
+      "volume_mm3": 848.8322023056928,
+      "distance_mm": 0.0
+    },
+    {
+      "a": "collector_sensor_post12",
+      "b": "unload_cross",
+      "phase": "seal",
+      "t": 360.2546785753451,
+      "volume_mm3": 424.416101152847,
+      "distance_mm": 0.0
+    }
+  ]
+}

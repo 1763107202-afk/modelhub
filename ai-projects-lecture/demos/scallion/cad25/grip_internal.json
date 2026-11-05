@@ -1,0 +1,335 @@
+{
+  "revision": "R25",
+  "candidate_pairs": 1171,
+  "q_mm": [
+    -13.464119480624197,
+    -10.548806011585828,
+    -7.775990921542331,
+    -5.108347594818387,
+    -2.521846727513317,
+    0.0,
+    2.4690501682575032,
+    4.894144134456404,
+    7.282063893382073
+  ],
+  "unresolved": [],
+  "explicit_mates": [
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": -13.464119480624197,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -13.464119480624197,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -13.464119480624197,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -13.464119480624197,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -13.464119480624197,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": -10.548806011585828,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -10.548806011585828,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -10.548806011585828,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -10.548806011585828,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -10.548806011585828,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": -7.775990921542331,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -7.775990921542331,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -7.775990921542331,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -7.775990921542331,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -7.775990921542331,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": -5.108347594818387,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -5.108347594818387,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -5.108347594818387,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -5.108347594818387,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -5.108347594818387,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": -2.521846727513317,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -2.521846727513317,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -2.521846727513317,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": -2.521846727513317,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": -2.521846727513317,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": 0.0,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 0.0,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 0.0,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 0.0,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 0.0,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": 2.4690501682575032,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 2.4690501682575032,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 2.4690501682575032,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 2.4690501682575032,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 2.4690501682575032,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": 4.894144134456404,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 4.894144134456404,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 4.894144134456404,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 4.894144134456404,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 4.894144134456404,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "encoder_mount_M2",
+      "b": "encoder_sensor",
+      "volume_mm3": 2.61538,
+      "q_mm": 7.282063893382073,
+      "reason": "M2 mounting screw in sensor tapped envelope"
+    },
+    {
+      "a": "clamp_M3_22_-11_nut",
+      "b": "clamp_M3_22_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 7.282063893382073,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_22_11_nut",
+      "b": "clamp_M3_22_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 7.282063893382073,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_-11_nut",
+      "b": "clamp_M3_52_-11",
+      "volume_mm3": 5.52198,
+      "q_mm": 7.282063893382073,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    },
+    {
+      "a": "clamp_M3_52_11_nut",
+      "b": "clamp_M3_52_11",
+      "volume_mm3": 5.52198,
+      "q_mm": 7.282063893382073,
+      "reason": "matching M3 screw/nut nominal thread envelopes"
+    }
+  ],
+  "source_sha256": "fc4d559ba84beed65c6e52819b8a403816ff1eb5c65f48414cadbd41d15bad5b",
+  "manufacturing_released": false
+}

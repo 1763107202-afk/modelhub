@@ -1,0 +1,32 @@
+{
+  "revision": "R26-belt-support-before-opening",
+  "adaptive24": {
+    "range_cases": 561,
+    "permit_cases": 20,
+    "min_guard_clearance_mm": 2.1872023771575684,
+    "min_open_clearance_mm": 5,
+    "min_coil_to_solid_mm": 7.8179361066179265,
+    "min_rod_endcap_clearance_mm": 2.717936106617927,
+    "min_collar_stop_clearance_mm": 0.5358805193758034,
+    "summary": "561组直径/弓高几何计算与20组交接许可组合检查；候选夹持范围，非变径整线或实料认证"
+  },
+  "front_grippers_integrated": true,
+  "nominal_transfer_integrated": true,
+  "status": "kinematic_checks_passed",
+  "source_sha256": "8349a282d2641de8064733dbfbc98ca9765f2ef45c4fec016d6029cc6270dbcd",
+  "motion_samples": 21601,
+  "handoff_boundaries": 468,
+  "max_handoff_jump_m": 2.5121479338940403e-15,
+  "inventory_samples": 2161,
+  "nominal_min_lane_pitch_m": 0.11999999999999922,
+  "film_feed_pitch_error_m": 1.1102230246251565e-16,
+  "matrix_checks": 146244,
+  "parts": 27222,
+  "new_packaging_parts": 4307,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_machine_collision_verified": false,
+  "material_trials_verified": false,
+  "summary": "R26整线Ø28直葱名义位姿、展距/并距交接、固定袋长、整包检重及框体输出逻辑检查；不代表完整机械干涉、柔性膜/叶片或实料性能验收。"
+}

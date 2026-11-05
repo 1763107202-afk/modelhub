@@ -1,0 +1,205 @@
+{
+  "duration": 409.49247161443253,
+  "stages": [
+    {
+      "id": "infeed",
+      "label": "输送与翻转",
+      "focus": "infeed_flip12",
+      "caption": "输送带提供根向一致的双通道来料，到料检测后夹持，翻转90°，送入空托杯；不再需要手工往圆盘逐根插葱。",
+      "schematic": false,
+      "start": 0,
+      "end": 69.56450231515689
+    },
+    {
+      "id": "feed",
+      "label": "进料",
+      "focus": "stock",
+      "caption": "追踪A组双通道原料。托杯与上层夹片共同定位；黄叶、外皮和根须保持可见。",
+      "schematic": false,
+      "start": 69.56450231515689,
+      "end": 70.76450231515689
+    },
+    {
+      "id": "root",
+      "label": "去根",
+      "focus": "root_knife_bridge",
+      "caption": "取料夹先夹稳原料，再驱动双刀切根；切口离开杯托后由取料夹保持，退刀后才移载。",
+      "schematic": false,
+      "start": 70.76450231515689,
+      "end": 82.29783564849023
+    },
+    {
+      "id": "load",
+      "label": "上料交接",
+      "focus": "batch",
+      "caption": "取料夹闭合后接管物料，主夹闭合后取料夹松开；追踪组不会在交接时消失。",
+      "schematic": false,
+      "start": 82.29783564849023,
+      "end": 110.24503319968684
+    },
+    {
+      "id": "trim",
+      "label": "去黄叶",
+      "focus": "trim_knife",
+      "caption": "反刃先退让，刀架进入后反刃从侧面就位，剪叶后按相反次序退出。",
+      "schematic": false,
+      "start": 110.24503319968684,
+      "end": 204.70503319968685
+    },
+    {
+      "id": "index_1",
+      "label": "转位 → 去皮",
+      "focus": "batch",
+      "caption": "各径向工具退出、夹具闭合、隔水门上升后，主盘正向分度60°。",
+      "schematic": false,
+      "start": 204.70503319968685,
+      "end": 208.8220262031057
+    },
+    {
+      "id": "peel",
+      "label": "去皮",
+      "focus": "peel_head",
+      "caption": "半环闭合，工艺气喷出，竖直丝杠带喷环向下扫描，再上行打开并退出。",
+      "schematic": false,
+      "start": 208.8220262031057,
+      "end": 234.62702620310566
+    },
+    {
+      "id": "index_2",
+      "label": "转位 → 冲洗",
+      "focus": "batch",
+      "caption": "各径向工具退出、夹具闭合、隔水门上升后，主盘正向分度60°。",
+      "schematic": false,
+      "start": 234.62702620310566,
+      "end": 238.7440192065245
+    },
+    {
+      "id": "wash",
+      "label": "冲洗",
+      "focus": "wash_axis_slide",
+      "caption": "两侧隔水门先下降，喷淋组件进入后开水；可见喷流、滴水和独立下排。",
+      "schematic": false,
+      "start": 238.7440192065245,
+      "end": 255.27735253985784
+    },
+    {
+      "id": "dry",
+      "label": "表面除水",
+      "focus": "wash_axis_slide",
+      "caption": "水阀关闭后风刀吹干，水滴逐渐减少；组件退出、隔水门上升后才转位。",
+      "schematic": false,
+      "start": 255.27735253985784,
+      "end": 272.3106858731911
+    },
+    {
+      "id": "index_3",
+      "label": "转位 → 套袋预封",
+      "focus": "batch",
+      "caption": "各径向工具退出、夹具闭合、隔水门上升后，主盘正向分度60°。",
+      "schematic": false,
+      "start": 272.3106858731911,
+      "end": 276.42767887660995
+    },
+    {
+      "id": "wrap",
+      "label": "套袋预封",
+      "focus": "wrap_axis_slide",
+      "caption": "双膜卷经动力夹辊横向拉膜，半成形器围合并纵封；成袋机构打开后整体退出。",
+      "schematic": false,
+      "start": 276.42767887660995,
+      "end": 328.9110122099499
+    },
+    {
+      "id": "index_4",
+      "label": "转位 → 独立连袋检重",
+      "focus": "batch",
+      "caption": "各径向工具退出、夹具闭合、隔水门上升后，主盘正向分度60°。",
+      "schematic": false,
+      "start": 328.9110122099499,
+      "end": 333.0280052133687
+    },
+    {
+      "id": "weigh",
+      "label": "独立连袋检重",
+      "focus": "weigh_lift",
+      "caption": "径向座进入、杯托抬升承接整袋，主夹和保膜夹片完全松开、与上游膜卷断开后静置检重，显示毛重；读数为演示数据。承接座与杯托已纳入本版CAD。",
+      "schematic": false,
+      "start": 333.0280052133687,
+      "end": 348.91467188003526
+    },
+    {
+      "id": "index_5",
+      "label": "转位 → 封口复检",
+      "focus": "batch",
+      "caption": "各径向工具退出、夹具闭合、隔水门上升后，主盘正向分度60°。",
+      "schematic": false,
+      "start": 348.91467188003526,
+      "end": 353.0316648834541
+    },
+    {
+      "id": "seal",
+      "label": "封口复检",
+      "focus": "seal_axis_slide",
+      "caption": "袋底已经在成袋工位预封并保压冷却。此站停留进行封口复检，合格后才允许移载；不再让低位封口头穿过收集盘。",
+      "schematic": false,
+      "start": 353.0316648834541,
+      "end": 372.1797096312457
+    },
+    {
+      "id": "outfeed",
+      "label": "直立入杯",
+      "focus": "batch",
+      "caption": "卸料夹接管并上提，袋底越过两层扶正圈后平移，竖直下放到空杯内。杯底承接后松夹，再转盘30°送出。成品杯承接座已纳入本版CAD。",
+      "schematic": false,
+      "start": 372.1797096312457,
+      "end": 404.1254786110137
+    },
+    {
+      "id": "return",
+      "label": "空夹回位",
+      "focus": "batch",
+      "caption": "成品留在成品盘，空主夹继续完成360°回转，回到下一轮进料位置。",
+      "schematic": false,
+      "start": 404.1254786110137,
+      "end": 409.49247161443253
+    }
+  ],
+  "owners": [
+    {
+      "time": 0,
+      "owner": "belt"
+    },
+    {
+      "time": 2.1333333333333333,
+      "owner": "infeed"
+    },
+    {
+      "time": 31.990658503988655,
+      "owner": "stock"
+    },
+    {
+      "time": 77.64783564849023,
+      "owner": "loader"
+    },
+    {
+      "time": 93.18116898182357,
+      "owner": "carousel"
+    },
+    {
+      "time": 339.521338546702,
+      "owner": "weigh"
+    },
+    {
+      "time": 343.12133854670196,
+      "owner": "carousel"
+    },
+    {
+      "time": 372.8797096312457,
+      "owner": "unload"
+    },
+    {
+      "time": 394.32399534553144,
+      "owner": "outfeed"
+    }
+  ]
+}

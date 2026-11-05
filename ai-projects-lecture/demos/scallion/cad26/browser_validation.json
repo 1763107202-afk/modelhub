@@ -1,0 +1,45 @@
+{
+  "revision": "R26",
+  "webgl_created": false,
+  "three_dimensional_browser_visual_acceptance": false,
+  "offline_projection_checked": true,
+  "main_checks_source_sha256": "8349a282d2641de8064733dbfbc98ca9765f2ef45c4fec016d6029cc6270dbcd",
+  "ui_checks": [
+    {
+      "action": "看落带接重",
+      "at_s": 77.3,
+      "owner": "接料带已接重，移载笼随后打开、托叉退出",
+      "passed": true
+    },
+    {
+      "action": "missing receiving belt, timeline End",
+      "at_s": 77.25,
+      "owner": "卸料托叉承重＋两道分体笼包围",
+      "passed": true
+    },
+    {
+      "action": "candidate entry from home initial position",
+      "navigated_to": "transfer-review26.html",
+      "passed": true
+    },
+    {
+      "action": "D34, bow4, Z direction",
+      "upper_pads_mm": [
+        13.02,
+        20.98
+      ],
+      "release_blocked": true,
+      "passed": true
+    },
+    {
+      "action": "D28, hypothetical mu1",
+      "scalar_capacity_passed": true,
+      "release_still_blocked": true,
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "WebGL unavailable in acceptance browser; no 3D visual acceptance",
+    "Local parameter UI and nominal simulation only; not actual PLC or physical holding verification"
+  ]
+}

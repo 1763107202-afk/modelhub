@@ -1,0 +1,165 @@
+{
+  "revision": "R23-selected-interfaces",
+  "source_sha256": "c0574ecc9bb7f3868db687b8c0e795f95b90d65cff3f4630a001c6dda5108781",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R23_wash_to_existing": {
+      "samples": 9,
+      "target_parts": 55,
+      "environment_parts": 15897,
+      "broadphase_pairs": 741
+    },
+    "R23_tucker_to_existing": {
+      "samples": 321,
+      "target_parts": 148,
+      "environment_parts": 9221,
+      "broadphase_pairs": 16222
+    },
+    "R22_axes_to_carriers": {
+      "samples": 161,
+      "target_parts": 2808,
+      "environment_parts": 584,
+      "broadphase_pairs": 34270
+    },
+    "R22_adapters_to_existing_carriers": {
+      "samples": 4,
+      "target_parts": 216,
+      "environment_parts": 368,
+      "broadphase_pairs": 266
+    },
+    "R21_seal_tucker_to_output": {
+      "samples": 321,
+      "target_parts": 140,
+      "environment_parts": 3146,
+      "broadphase_pairs": 13595
+    },
+    "R21_inlet_to_existing": {
+      "samples": 81,
+      "target_parts": 2258,
+      "environment_parts": 9696,
+      "broadphase_pairs": 1671
+    },
+    "R21_unloader_to_new_inlet": {
+      "samples": 161,
+      "target_parts": 139,
+      "environment_parts": 2258,
+      "broadphase_pairs": 0
+    },
+    "R21_wrappers_adjacent": {
+      "samples": 5,
+      "target_parts": 674,
+      "environment_parts": 674,
+      "broadphase_pairs": 1335
+    },
+    "R21_outlet_to_existing": {
+      "samples": 81,
+      "target_parts": 2178,
+      "environment_parts": 3146,
+      "broadphase_pairs": 13798
+    },
+    "R21_shuttle_adjacent": {
+      "samples": 81,
+      "target_parts": 292,
+      "environment_parts": 292,
+      "broadphase_pairs": 12399
+    },
+    "R21_shuttle_to_wrappers": {
+      "samples": 81,
+      "target_parts": 584,
+      "environment_parts": 1348,
+      "broadphase_pairs": 3595
+    }
+  },
+  "narrowphase_pairs": 97892,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 0.8509840965270996,
+  "scope": "Eleven explicitly named R23 and retained R21/R22 rigid-interface scopes; sampled at counts. New wash parts against legacy structure (9 poses), new tucker against legacy packaging/weigh/output (0.05s) plus nine retained scopes. AABB overlap below 0.2mm is skipped. No continuous swept volume, flexible material, tolerance or whole-machine claim; new CAD internal overlap is checked separately with exact B-rep.",
+  "raw_contact_groups": 4,
+  "explicit_weld_face_contacts": [
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_0",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "95400201-15a4-4e7e-b270-c8267196d360"
+      },
+      "b": {
+        "name": "leg_3",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "208c5675-ab5f-46e0-bb85-6108194d3f64"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Named side-face weld. Exact B-rep brace vs existing leg envelope has zero positive-volume overlap."
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_1",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "aef10380-6101-4051-8dee-41d6ed5a6bf0"
+      },
+      "b": {
+        "name": "leg_2",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "07cdc02e-9baf-4439-be36-5e289da5b1de"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Named side-face weld. Exact B-rep brace vs existing leg envelope has zero positive-volume overlap."
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_2",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "ed9a5945-bd8b-42ac-a9ab-b41d107edbb9"
+      },
+      "b": {
+        "name": "leg_0",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "7b251a96-1b93-4dfd-8c62-962df2d70229"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Named side-face weld. Exact B-rep brace vs existing leg envelope has zero positive-volume overlap."
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_3",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "19fb8433-4eb8-4be2-bcf1-5a2fb6c67096"
+      },
+      "b": {
+        "name": "leg_1",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "31d1e26b-f9c1-4d44-ae00-93584e4562bb"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Named side-face weld. Exact B-rep brace vs existing leg envelope has zero positive-volume overlap."
+    }
+  ],
+  "manufacturing_released": false,
+  "full_machine_collision_verified": false,
+  "browser_webgl_verified": false,
+  "summary": "11类选定刚性接口，共97892次网格候选对检查；未解释相交0组，另记录4组指定焊接侧面贴合并用精确CAD核对零体积重叠。0.2mm以下AABB重叠、连续扫掠、公差、柔性膜/叶片与其余整机接口未验证。"
+}

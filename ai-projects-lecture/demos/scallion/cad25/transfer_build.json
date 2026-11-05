@@ -1,0 +1,64 @@
+{
+  "revision": "R25",
+  "valid_unique_single_solids": 23,
+  "generator_sha256": "d026511f0230d275234947e335c8b86f9cb835734bf984c42894216682ffa717",
+  "rack_weld_mates": [
+    {
+      "frame": "frame_even_L",
+      "rack_y_mm": 70,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_even_L",
+      "rack_y_mm": 230,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_even_R",
+      "rack_y_mm": 70,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_even_R",
+      "rack_y_mm": 230,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_L",
+      "rack_y_mm": 70,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_L",
+      "rack_y_mm": 230,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_R",
+      "rack_y_mm": 70,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_R",
+      "rack_y_mm": 230,
+      "intersection_mm3": 0.0,
+      "gap_mm": 0.0
+    }
+  ],
+  "steel_liner_overlap_mm3": 0,
+  "nominal_thread_envelopes_mm3": 14.049071977108888,
+  "washer_collar_overlap_mm3": 0.0,
+  "limitations": [
+    "nominal thread envelopes, no helical thread",
+    "bond/material/strength/hygiene pending",
+    "stop clamp slip and impact strength not verified"
+  ],
+  "manufacturing_released": false
+}

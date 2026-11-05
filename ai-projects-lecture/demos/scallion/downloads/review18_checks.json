@@ -1,0 +1,51 @@
+{
+  "revision": "R18-mechanical-support",
+  "generated_at": "2026-10-19T13:04:08.681Z",
+  "source_sha256": "47458f554bedd6906301611eba17673d13d4491d303fbf9f6d36c9bacd8684d1",
+  "status": "logic_checks_passed",
+  "motion_samples": 21601,
+  "handoff_checks": 264,
+  "max_handoff_jump_m": 3.972054645195637e-15,
+  "max_handoff_angle_rad": 0,
+  "inventory_samples": 2161,
+  "stem_capsule_min_gap_m": 0.09089664899867232,
+  "stem_capsule_scope": {
+    "diameter_m": 0.028,
+    "length_m": 0.37,
+    "step_s": 0.1,
+    "excludes": [
+      "leaves",
+      "film",
+      "all_machine_geometry"
+    ]
+  },
+  "fault_cases": 8,
+  "world_matrix_checks": 99588,
+  "interface_datum_clearances": {
+    "trim_plane_0_belt_gap_m": 0.004531729459762769,
+    "trim_plane_1_belt_gap_m": 0.004531729459762769,
+    "bare_stem_to_receiving_belt_m": 2.220446049250313e-16,
+    "deployed_feet_to_output_roller_m": 2.220446049250313e-16,
+    "root_heel_to_output_roller_m": 0.01200000000000001,
+    "cassette_lift_m": 0.15999999999999992,
+    "lifted_pedestal_to_fixed_insert_m": 0.13600000000000012,
+    "insert_belt_side_gap_m": 0.0024999999999999988,
+    "finished_cassette_pitch_m": 0.5
+  },
+  "parts": 13344,
+  "draw_meshes": 135,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_CAD_collision_verified": false,
+  "material_trials_verified": false,
+  "sw_generated": false,
+  "summary": "R18 机构逻辑与局部范围；四列包装对接尚未通过。21,601 个产品位姿采样、264 次交接边界、2,161 次数量核对与 3,204 个喷头/停转退让状态采样通过。局部检查包含裸料落带、刀槽、抬框离带与出料脚标高。完整机械干涉、WebGL 浏览器及实料性能尚未验收。 21类局部接口、6,461个场景时刻、168,949对候选网格，采样中未检出相交。新增范围包含安装件与固定滑台、喷头架与转子/固定总管/防溅板、相邻去皮工位及夹爪与新安装板。明确配合按规则排除，宽相跳过小于0.2mm的AABB交叠；不证明连续扫掠、完整CAD、公差、叶片膜材或整线包装集成。",
+  "process_samples": 3204,
+  "rigid_interface_screen": {
+    "scenario_samples": 6461,
+    "triangle_pair_tests": 168949,
+    "contact_groups": 0,
+    "scope": "Selected rigid interface scenarios listed in counts: prior 13 interfaces, new mounting members versus fixed heads, gripper halves versus new mounts, adjacent peel stations, and head structures versus rotor, utilities and splash guards. Core/gripper/detail live-to-fixed scenarios use 0.02 s; utility/guard/adjacent additions and conveyor additions use 0.05 s; weighing uses a static pose. Explicit bearing/nut mates, the engagement ballnut versus its screw, and opening-fork follower contact are excluded.  Broad phase skips AABB overlap below 0.2 mm. Flexible leaves, membrane, hoses, intentional internal joints and remaining full-machine interfaces are not validated."
+  }
+}

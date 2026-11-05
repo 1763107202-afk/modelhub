@@ -1,0 +1,1343 @@
+{
+  "revision": "R24-unreleased-integration-snapshot",
+  "source_sha256": "663fb96b9e9e78a5e48953ef2df40c569920c523e353d5a48d7f3af642193479",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R24_closed_cartridge_to_carrier": {
+      "samples": 1,
+      "target_parts": 432,
+      "environment_parts": 272,
+      "broadphase_pairs": 80
+    },
+    "R24_load_interface": {
+      "samples": 121,
+      "target_parts": 432,
+      "environment_parts": 14562,
+      "broadphase_pairs": 0
+    },
+    "R24_unload_interface": {
+      "samples": 121,
+      "target_parts": 432,
+      "environment_parts": 14562,
+      "broadphase_pairs": 4240
+    },
+    "R24_index_station_interfaces": {
+      "samples": 241,
+      "target_parts": 432,
+      "environment_parts": 14416,
+      "broadphase_pairs": 1916
+    },
+    "R24_neighbor_cartridges": {
+      "samples": 16,
+      "target_parts": 200,
+      "environment_parts": 200,
+      "broadphase_pairs": 642
+    },
+    "R24_transfer_link_to_environment": {
+      "samples": 242,
+      "target_parts": 80,
+      "environment_parts": 14992,
+      "broadphase_pairs": 28288
+    }
+  },
+  "narrowphase_pairs": 35166,
+  "contacts": [
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_0L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.08450000000000024
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_0R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.014500000000000374
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_1L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.059500000000000386
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_1R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.12450000000000042
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_2L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.08450000000000032
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_2R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.014500000000000374
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_3L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.059500000000000386
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_3R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.1245000000000003
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_0L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.08450000000000019
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_0R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.014500000000000207
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_1L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.05950000000000025
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_1R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.12450000000000039
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_2L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.08450000000000027
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_2R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.014500000000000235
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_3L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.059500000000000414
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_3R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.12450000000000028
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_0L0.02",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497430944
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_0L0.25",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497430805
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_0R0.02",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263671033
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_0R0.25",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263671033
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_1L0.19",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429695
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_1L0.27",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497430944
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_1R0.19",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669923
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_1R0.27",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263671172
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_2L0.02",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497430944
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_2L0.25",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497430805
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_2R0.02",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263671033
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_2R0.25",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263671033
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_3L0.19",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429695
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_3L0.27",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497430805
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_3R0.19",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669923
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_split_C_3R0.27",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263671033
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_0L0.02",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429278
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_0L0.25",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_0R0.02",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669923
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_0R0.25",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263668952
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_1L0.19",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429695
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_1L0.27",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497428723
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_1R0.19",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669923
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_1R0.27",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669507
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_2L0.02",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429278
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_2L0.25",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429833
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_2R0.02",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669923
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_2R0.25",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0011709040263669923
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_3L0.19",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.001644062649743011
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_3L0.27",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f7e5cdda-c69c-4403-8bfb-463c90ca2577"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.0016440626497429833
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_3R0.19",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.00117090402636702
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_split_C_3R0.27",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "63cc9f7a-3fdf-4092-a07c-66b87fd7d795"
+      },
+      "first_s": 16,
+      "last_s": 78,
+      "samples": 242,
+      "max_depth_m": 0.00117090402636702
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_0R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.25,
+      "last_s": 77.5,
+      "samples": 6,
+      "max_depth_m": 0.12450000000000033
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_1L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.25,
+      "last_s": 77.5,
+      "samples": 6,
+      "max_depth_m": 0.08450000000000023
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_1R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.25,
+      "last_s": 77.5,
+      "samples": 6,
+      "max_depth_m": 0.0844999999999999
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_2L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.25,
+      "last_s": 77.5,
+      "samples": 6,
+      "max_depth_m": 0.12449999999999994
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_2R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.25,
+      "last_s": 77.5,
+      "samples": 6,
+      "max_depth_m": 0.12450000000000039
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "unload_split_longitudinal_rail_3L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.25,
+      "last_s": 77.5,
+      "samples": 6,
+      "max_depth_m": 0.08450000000000023
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_0R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.2,
+      "last_s": 77.05,
+      "samples": 4,
+      "max_depth_m": 0.059500000000000025
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_1L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.2,
+      "last_s": 77.05,
+      "samples": 4,
+      "max_depth_m": 0.014499999999999985
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_1R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.2,
+      "last_s": 77.05,
+      "samples": 4,
+      "max_depth_m": 0.014499999999999985
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_2L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.2,
+      "last_s": 77.05,
+      "samples": 4,
+      "max_depth_m": 0.05950000000000003
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_2R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.2,
+      "last_s": 77.05,
+      "samples": 4,
+      "max_depth_m": 0.059500000000000025
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "load_split_longitudinal_rail_3L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16.2,
+      "last_s": 77.05,
+      "samples": 4,
+      "max_depth_m": 0.014500000000000207
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_2_1_0",
+        "body": "sliding_front_keeper_2_1",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 21.2,
+      "last_s": 21.35,
+      "samples": 4,
+      "max_depth_m": 0.001499999999999958
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_2_3_0",
+        "body": "sliding_front_keeper_2_3",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 21.2,
+      "last_s": 21.35,
+      "samples": 4,
+      "max_depth_m": 0.0015000000000000551
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_9_1_0",
+        "body": "sliding_front_keeper_9_1",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 77.2,
+      "last_s": 77.35,
+      "samples": 4,
+      "max_depth_m": 0.0015000000000001605
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_9_3_0",
+        "body": "sliding_front_keeper_9_3",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 77.2,
+      "last_s": 77.35,
+      "samples": 4,
+      "max_depth_m": 0.0014999999999998227
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_7_1_0",
+        "body": "sliding_front_keeper_7_1",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 16.1,
+      "samples": 3,
+      "max_depth_m": 0.001499999999998778
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_7_3_0",
+        "body": "sliding_front_keeper_7_3",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 16,
+      "last_s": 16.1,
+      "samples": 3,
+      "max_depth_m": 0.0015000000000011423
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_2_1_0",
+        "body": "sliding_front_keeper_2_1",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 72,
+      "last_s": 72.1,
+      "samples": 3,
+      "max_depth_m": 0.0014999999999995082
+    },
+    {
+      "test": "R24_transfer_link_to_environment",
+      "a": {
+        "name": "R24_transfer_C_radial_link",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "b": {
+        "name": "keeper_C_arm_2_3_0",
+        "body": "sliding_front_keeper_2_3",
+        "module": "rotary",
+        "geo": "de67847f-a094-494d-a32b-f5a08124b6ac"
+      },
+      "first_s": 72,
+      "last_s": 72.1,
+      "samples": 3,
+      "max_depth_m": 0.0015000000000003218
+    }
+  ],
+  "contact_groups": 68,
+  "elapsed_s": 0.4001154899597168,
+  "scope": "未接入主场景的前浮动夹具换装试案快照。6类已命名采样范围；包含显式安装/包覆接触及未解决运动相交，不能把contact_groups当作全部无害。",
+  "unresolved_moving_contact_groups": 20,
+  "integration_passed": false
+}

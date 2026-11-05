@@ -1,0 +1,39 @@
+{
+  "revision": "R26",
+  "source_sha256": "0c220c967bf59442d1d6bc67efe329e931a113533fcd5d683e43e0950280029e",
+  "CAD23_nominal_parts": 199,
+  "CAD23_unique_geometries": 146,
+  "closed_surface_instances": 84,
+  "RHS_converted": 157,
+  "separate_endplates": 314,
+  "model_mesh_inventory": 21048,
+  "counts": {
+    "RHS-with-separate-endplates": 157,
+    "other-geometry-and-joints-unreviewed": 9335,
+    "fastener-and-thread-interface-pending": 762,
+    "bearing-guide-and-fits-pending": 1968,
+    "transmission-interface-pending": 503,
+    "procurement-model-and-installation-pending": 600,
+    "fluid-endpoints-and-supports-pending": 352,
+    "closed-wire-cable": 60,
+    "spring-endpoints-and-loads-pending": 348,
+    "closed-belt-wrap": 24,
+    "prior nominal CAD": 1522,
+    "R23 nominal CAD": 199,
+    "welded-endplate": 314,
+    "R24 front and rear nominal CAD": 4800,
+    "R25 transfer nominal CAD": 104
+  },
+  "failures": [],
+  "all_simplified_parts_completed": false,
+  "manufacturing_released": false,
+  "meaning": "Model meshes, including split subparts and repeated geometry; NOT a manufacturing BOM. Closed meshes and detailed appearance do not imply supported/fastened/selected/verified assembly.",
+  "remaining": [
+    "全机余下简化螺杆的孔、叠厚、防松及工具空间",
+    "弹簧固定端、线径/工作长度/固高、初拉力、疲劳与掉料试验；现有弹簧动画仍有理想化缩放",
+    "采购电机与轴承真实型号、法兰与预紧、寿命/制动选型",
+    "加工头、供膜/切断、翻转机构各轴系和全部接口",
+    "接水盘穿柱密封、管路端接/管卡、可清洗底坡和卫生焊缝",
+    "整机连续碰撞、柔性材料、实际力/热封工艺及安全回路验收"
+  ]
+}

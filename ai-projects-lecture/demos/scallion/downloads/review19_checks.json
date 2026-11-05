@@ -1,0 +1,51 @@
+{
+  "revision": "R19-mechanical-support",
+  "generated_at": "2026-10-19T13:30:57.939Z",
+  "source_sha256": "657b0bb6596b1b0ad7b753fce343ffc74909025af44b3be485da0c9f200101a7",
+  "status": "logic_checks_passed",
+  "motion_samples": 21601,
+  "handoff_checks": 264,
+  "max_handoff_jump_m": 3.972054645195637e-15,
+  "max_handoff_angle_rad": 0,
+  "inventory_samples": 2161,
+  "stem_capsule_min_gap_m": 0.09089664899867232,
+  "stem_capsule_scope": {
+    "diameter_m": 0.028,
+    "length_m": 0.37,
+    "step_s": 0.1,
+    "excludes": [
+      "leaves",
+      "film",
+      "all_machine_geometry"
+    ]
+  },
+  "fault_cases": 8,
+  "world_matrix_checks": 100276,
+  "interface_datum_clearances": {
+    "trim_plane_0_belt_gap_m": 0.004531729459762769,
+    "trim_plane_1_belt_gap_m": 0.004531729459762769,
+    "bare_stem_to_receiving_belt_m": 2.220446049250313e-16,
+    "deployed_feet_to_output_roller_m": 2.220446049250313e-16,
+    "root_heel_to_output_roller_m": 0.01200000000000001,
+    "cassette_lift_m": 0.15999999999999992,
+    "lifted_pedestal_to_fixed_insert_m": 0.13600000000000012,
+    "insert_belt_side_gap_m": 0.0024999999999999988,
+    "finished_cassette_pitch_m": 0.5
+  },
+  "parts": 13824,
+  "draw_meshes": 272,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_CAD_collision_verified": false,
+  "material_trials_verified": false,
+  "sw_generated": false,
+  "summary": "R19 机构逻辑与局部范围；四列包装对接尚未通过。21,601 个产品位姿采样、264 次交接边界、2,161 次数量核对与 3,204 个喷头/停转退让状态采样通过。局部检查包含裸料落带、刀槽、抬框离带与出料脚标高。完整机械干涉、WebGL 浏览器及实料性能尚未验收。 23类局部接口、6,783个场景时刻、227,068对候选网格，采样中未检出相交。范围含新增紧固件与周边及分体管夹与加工头/转子/挡水板。指定配合按规则排除；孔和叠厚另查，宽相跳过小于0.2mm的AABB交叠。不证明完整CAD、连续扫掠、公差或叶片膜材无干涉。",
+  "process_samples": 3204,
+  "rigid_interface_screen": {
+    "scenario_samples": 6783,
+    "triangle_pair_tests": 227068,
+    "contact_groups": 0,
+    "scope": "Selected rigid interfaces, sampled at the times listed in counts. Includes prior motion/support scenarios and new hardware versus surrounding parts and header clamps versus process heads, rotor and guards. New hardware scenarios use 0.05 s. Exact same-joint fastener meshes and designated plate/lug mates are excluded from collision screening; actual target bores and stack faces are checked separately in check-hardware19. Existing explicit bearing/nut/follower mates are excluded. Broad phase skips AABB overlap below 0.2 mm. Flexible leaves, film, hoses, continuous sweep, tolerances and remaining full-machine interfaces are not validated."
+  }
+}

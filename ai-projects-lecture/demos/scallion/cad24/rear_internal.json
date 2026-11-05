@@ -1,0 +1,41 @@
+{
+  "revision": "R24",
+  "explicit_mates": [
+    {
+      "a": "rear_hub_clamp_M3",
+      "b": "rear_split_clamp_hub",
+      "volume_mm3": 14.973759706380768,
+      "intent": "M3 nominal clamp screw in tapped half"
+    }
+  ],
+  "shaft_overlap": [
+    {
+      "part": "rear_crowned_tyre",
+      "volume_mm3": 0.0
+    },
+    {
+      "part": "rear_split_clamp_hub",
+      "volume_mm3": 0.0
+    },
+    {
+      "part": "rear_hub_clamp_M3",
+      "volume_mm3": 0.0
+    }
+  ],
+  "new_parts_outside_old_roller_envelope": [
+    {
+      "part": "rear_crowned_tyre",
+      "outside_old_roller_mm3": 0.0
+    },
+    {
+      "part": "rear_split_clamp_hub",
+      "outside_old_roller_mm3": 0.0
+    },
+    {
+      "part": "rear_hub_clamp_M3",
+      "outside_old_roller_mm3": 0.0
+    }
+  ],
+  "unresolved": 0,
+  "manufacturing_released": false
+}

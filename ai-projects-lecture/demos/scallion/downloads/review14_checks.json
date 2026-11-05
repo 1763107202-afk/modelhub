@@ -1,0 +1,43 @@
+{
+  "revision": "R14-restored",
+  "generated_at": "2026-10-18T23:59:44.417Z",
+  "source_sha256": "e2d6e07904565e4fd769efb1ad3dfff48fb31a3865e289d5b0b251f16b63eeaf",
+  "status": "logic_checks_passed",
+  "motion_samples": 21601,
+  "handoff_checks": 240,
+  "max_handoff_jump_m": 3.972054645195637e-15,
+  "max_handoff_angle_rad": 0,
+  "inventory_samples": 2161,
+  "stem_capsule_min_gap_m": 0.08494871908575814,
+  "stem_capsule_scope": {
+    "diameter_m": 0.028,
+    "length_m": 0.37,
+    "step_s": 0.1,
+    "excludes": [
+      "leaves",
+      "paper",
+      "film",
+      "all_machine_geometry"
+    ]
+  },
+  "fault_cases": 8,
+  "world_matrix_checks": 66435,
+  "interface_datum_clearances": {
+    "trim_plane_0_belt_gap_m": 0.004531729459762769,
+    "trim_plane_1_belt_gap_m": 0.004531729459762769,
+    "paper_floor_to_wrap_belt_m": 0,
+    "deployed_feet_to_output_roller_m": 2.220446049250313e-16,
+    "root_heel_to_output_roller_m": 0.006000000000000005,
+    "transfer_belt_to_cassette_edge_m": 0.019999999999999574,
+    "finished_cassette_pitch_m": 0.5
+  },
+  "parts": 8304,
+  "draw_meshes": 62,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_CAD_collision_verified": false,
+  "material_trials_verified": false,
+  "sw_generated": false,
+  "summary": "本版完成 21,601 个时间点的产品位姿检查、240 次交接边界检查、2,161 次产品数量核对、关键承托面标高/刀槽检查及 8 类模拟故障检查。这些逻辑与局部标高检查通过。 茎部胶囊只覆盖 28 mm × 370 mm 茎段；完整机械、叶片、膜材的干涉以及浏览器 WebGL、实料处理仍未验收。"
+}

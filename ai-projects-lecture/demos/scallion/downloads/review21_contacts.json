@@ -1,0 +1,54 @@
+{
+  "revision": "R21-selected-interfaces",
+  "source_sha256": "68d1121f0316c8eb9dde48e1be158c4debdf9ee098ce3b9196eee2e3f068a8e3",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R21_seal_tucker_to_output": {
+      "samples": 321,
+      "target_parts": 151,
+      "environment_parts": 3146,
+      "broadphase_pairs": 7588
+    },
+    "R21_inlet_to_existing": {
+      "samples": 81,
+      "target_parts": 746,
+      "environment_parts": 9719,
+      "broadphase_pairs": 1671
+    },
+    "R21_unloader_to_new_inlet": {
+      "samples": 161,
+      "target_parts": 139,
+      "environment_parts": 746,
+      "broadphase_pairs": 0
+    },
+    "R21_wrappers_adjacent": {
+      "samples": 5,
+      "target_parts": 650,
+      "environment_parts": 650,
+      "broadphase_pairs": 1200
+    },
+    "R21_outlet_to_existing": {
+      "samples": 81,
+      "target_parts": 666,
+      "environment_parts": 3146,
+      "broadphase_pairs": 11829
+    },
+    "R21_shuttle_adjacent": {
+      "samples": 81,
+      "target_parts": 192,
+      "environment_parts": 192,
+      "broadphase_pairs": 11226
+    },
+    "R21_shuttle_to_wrappers": {
+      "samples": 81,
+      "target_parts": 384,
+      "environment_parts": 1300,
+      "broadphase_pairs": 3421
+    }
+  },
+  "narrowphase_pairs": 36935,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 0.24410009384155273,
+  "scope": "Seven selected rigid interface scenarios, discrete sampling only. Counts identify each scenario. Broad phase excludes AABB overlaps below 0.2 mm. No full-machine continuous sweep, internal purchased-part fits, tolerance stack, flexible film/leaves/hoses or actual fastener bores validated. No narrow-phase contact found within this limited scope."
+}

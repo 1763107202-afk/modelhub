@@ -1,0 +1,155 @@
+{
+  "revision": "R25-selected-rigid-interfaces",
+  "source_sha256": "b84b742a55bc3727223d18f37aa200403ad5eacd71e87bec6deef9cb419ad98e",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R23_wash_to_existing": {
+      "samples": 9,
+      "target_parts": 55,
+      "environment_parts": 19665,
+      "broadphase_pairs": 731
+    },
+    "R23_tucker_to_existing": {
+      "samples": 321,
+      "target_parts": 148,
+      "environment_parts": 9221,
+      "broadphase_pairs": 16222
+    },
+    "R22_axes_to_carriers": {
+      "samples": 161,
+      "target_parts": 2808,
+      "environment_parts": 584,
+      "broadphase_pairs": 34270
+    },
+    "R22_adapters_to_existing_carriers": {
+      "samples": 4,
+      "target_parts": 216,
+      "environment_parts": 368,
+      "broadphase_pairs": 266
+    },
+    "R21_seal_tucker_to_output": {
+      "samples": 321,
+      "target_parts": 140,
+      "environment_parts": 3146,
+      "broadphase_pairs": 13595
+    },
+    "R21_inlet_to_existing": {
+      "samples": 81,
+      "target_parts": 2258,
+      "environment_parts": 13464,
+      "broadphase_pairs": 1600
+    },
+    "R21_unloader_to_new_inlet": {
+      "samples": 161,
+      "target_parts": 151,
+      "environment_parts": 2258,
+      "broadphase_pairs": 0
+    },
+    "R21_wrappers_adjacent": {
+      "samples": 5,
+      "target_parts": 674,
+      "environment_parts": 674,
+      "broadphase_pairs": 1335
+    },
+    "R21_outlet_to_existing": {
+      "samples": 81,
+      "target_parts": 2178,
+      "environment_parts": 3146,
+      "broadphase_pairs": 13798
+    },
+    "R21_shuttle_adjacent": {
+      "samples": 81,
+      "target_parts": 292,
+      "environment_parts": 292,
+      "broadphase_pairs": 12399
+    },
+    "R21_shuttle_to_wrappers": {
+      "samples": 81,
+      "target_parts": 584,
+      "environment_parts": 1348,
+      "broadphase_pairs": 3595
+    }
+  },
+  "narrowphase_pairs": 97811,
+  "contacts": [
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_0",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "0b18decf-63d7-4b5a-8a25-1210db6190a4"
+      },
+      "b": {
+        "name": "leg_3",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "873b96bd-9e80-4698-8fee-a46dffe3200a"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-08
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_1",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "53cb4eb1-ea75-4afe-8992-ae0bbd42dfaa"
+      },
+      "b": {
+        "name": "leg_2",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "a584528b-cbd1-46d7-b4af-eee6ce77add6"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-08
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_2",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "5aae8741-b207-4435-8639-70b706207981"
+      },
+      "b": {
+        "name": "leg_0",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "ecb7e31d-709e-420c-9961-87fc54cc53da"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-08
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_3",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "71a8314b-aa7c-4240-9a55-d18680a00d86"
+      },
+      "b": {
+        "name": "leg_1",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "e02c64a4-3b5b-474e-9fb5-e73aa1e6e724"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-08
+    }
+  ],
+  "contact_groups": 4,
+  "elapsed_s": 0.9066848754882812,
+  "scope": "Named R25 and retained regression rigid-interface scopes; sampled at counts. New wash parts against legacy structure (9 poses), new tucker against legacy packaging/weigh/output (0.05s) plus nine retained scopes. AABB overlap below 0.2mm is skipped. No continuous swept volume, flexible material, tolerance or whole-machine claim; new CAD internal overlap is checked separately with exact B-rep."
+}

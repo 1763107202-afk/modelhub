@@ -1,0 +1,16 @@
+{
+  "revision": "R20",
+  "cadquery": "2.7.0",
+  "valid_unique_BRep_solids": 50,
+  "assembly_part_instances": 234,
+  "new_fastener_sets": 51,
+  "all_solids_valid": true,
+  "construction_elapsed_s": 65.92700780799987,
+  "step_bytes": 26231610,
+  "native_SW_generated": false,
+  "full_machine_CAD": false,
+  "mesh_linear_tolerance_mm": 0.06,
+  "root_fillet_machining_verified": false,
+  "drive_data_sha256": "522879a1a8ec9da19826f7b1a2ec4935f57b1d1ffde00d9898bfe86abc766906",
+  "step_sha256": "2cdb9740f75dca548b49e34b5b967a980633a709c38faaf70706c5b22b8bdd85"
+}

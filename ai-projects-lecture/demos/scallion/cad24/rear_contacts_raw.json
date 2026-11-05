@@ -1,0 +1,24 @@
+{
+  "revision": "R23-selected-interfaces",
+  "source_sha256": "a20d0a873e9701a08facf4e71674bcacfce194c77b7b27aa0632826513d1409d",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R24_rear_to_existing": {
+      "samples": 241,
+      "target_parts": 48,
+      "environment_parts": 15712,
+      "broadphase_pairs": 11711
+    },
+    "R24_rear_adjacent_lanes": {
+      "samples": 8,
+      "target_parts": 24,
+      "environment_parts": 24,
+      "broadphase_pairs": 0
+    }
+  },
+  "narrowphase_pairs": 11711,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 2.0539112091064453,
+  "scope": "Eleven explicitly named R23 and retained R21/R22 rigid-interface scopes; sampled at counts. New wash parts against legacy structure (9 poses), new tucker against legacy packaging/weigh/output (0.05s) plus nine retained scopes. AABB overlap below 0.2mm is skipped. No continuous swept volume, flexible material, tolerance or whole-machine claim; new CAD internal overlap is checked separately with exact B-rep."
+}

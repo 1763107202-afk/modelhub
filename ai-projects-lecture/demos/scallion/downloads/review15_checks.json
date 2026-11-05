@@ -1,0 +1,51 @@
+{
+  "revision": "R15-self-spin-trayless",
+  "generated_at": "2026-10-19T02:05:45.832Z",
+  "source_sha256": "91a0344d1258400d96b6de2f69d7361d92582ca3df8efde99334525a81e970bf",
+  "status": "logic_checks_passed",
+  "motion_samples": 21601,
+  "handoff_checks": 264,
+  "max_handoff_jump_m": 3.972054645195637e-15,
+  "max_handoff_angle_rad": 0,
+  "inventory_samples": 2161,
+  "stem_capsule_min_gap_m": 0.09089664899867232,
+  "stem_capsule_scope": {
+    "diameter_m": 0.028,
+    "length_m": 0.37,
+    "step_s": 0.1,
+    "excludes": [
+      "leaves",
+      "film",
+      "all_machine_geometry"
+    ]
+  },
+  "fault_cases": 8,
+  "world_matrix_checks": 86559,
+  "interface_datum_clearances": {
+    "trim_plane_0_belt_gap_m": 0.004531729459762769,
+    "trim_plane_1_belt_gap_m": 0.004531729459762769,
+    "bare_stem_to_receiving_belt_m": 2.220446049250313e-16,
+    "deployed_feet_to_output_roller_m": 2.220446049250313e-16,
+    "root_heel_to_output_roller_m": 0.01200000000000001,
+    "cassette_lift_m": 0.15999999999999992,
+    "lifted_pedestal_to_fixed_insert_m": 0.03100000000000014,
+    "insert_belt_side_gap_m": 0.0024999999999999988,
+    "finished_cassette_pitch_m": 0.5
+  },
+  "parts": 9745,
+  "draw_meshes": 65,
+  "failures": [],
+  "failure_count": 0,
+  "browser_webgl_verified": false,
+  "full_CAD_collision_verified": false,
+  "material_trials_verified": false,
+  "sw_generated": false,
+  "summary": "R15 历史局部范围，包装机构现实性未通过 R16 复核。21,601 个产品位姿采样、264 次交接边界、2,161 次数量核对与 3,204 个喷头/停转退让状态采样通过。局部检查包含裸料落带、刀槽、抬框离带与出料脚标高。完整机械干涉、WebGL 浏览器及实料性能尚未验收。 六类选定刚体接口共2,686个场景采样、79,641次三角网格对检测，未检出碰撞；范围限于加工头分度退让、上下料笼、固定窄带与收集机构、A/B机构之间及横封与输送面。步长0.02 s、预筛阈值0.2 mm，不等于整机零干涉。",
+  "process_samples": 3204,
+  "rigid_interface_screen": {
+    "scenario_samples": 2686,
+    "triangle_pair_tests": 79641,
+    "contact_groups": 0,
+    "scope": "六类选定刚体接口，时间步长0.02 s，AABB重叠小于0.2 mm的候选不进入窄相。离散三角网格筛查，不是全机连续扫掠、精确CAD干涉、柔性叶片/膜材或内部配合验收。"
+  }
+}

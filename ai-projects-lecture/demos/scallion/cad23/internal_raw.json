@@ -1,0 +1,501 @@
+{
+  "revision": "R23",
+  "CAD_parts": 199,
+  "unique_solids": 146,
+  "poses_mm": [
+    0,
+    300
+  ],
+  "tested_pairs": 574,
+  "unresolved_contact_count": 0,
+  "unresolved_contacts": [],
+  "explicit_mating_overlaps": [
+    {
+      "a": "bearing_cover_M4_0",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 0,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "bearing_cover_M4_1",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 0,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "bearing_cover_M4_2",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 0,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "bearing_cover_M4_3",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 0,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "supported_under_nut_0",
+      "b": "supported_cover_M3_0",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "supported_under_nut_1",
+      "b": "supported_cover_M3_1",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "supported_under_nut_2",
+      "b": "supported_cover_M3_2",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "supported_under_nut_3",
+      "b": "supported_cover_M3_3",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_0",
+      "b": "bearing_to_bridge_M6_0",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_1",
+      "b": "bearing_to_bridge_M6_1",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_2",
+      "b": "bearing_to_bridge_M6_2",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_3",
+      "b": "bearing_to_bridge_M6_3",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "shaft_locknut",
+      "b": "lift_screw_20x20",
+      "volume_mm3": 168.89202105700787,
+      "lift_mm": 0,
+      "reason": "M12 nominal shaft-end locknut thread envelope"
+    },
+    {
+      "a": "ballnut_M5_0",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.244243860841095,
+      "lift_mm": 0,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "ballnut_M5_1",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.244243860841095,
+      "lift_mm": 0,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "ballnut_M5_2",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.24424386084108,
+      "lift_mm": 0,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "ballnut_M5_3",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.24424386084108,
+      "lift_mm": 0,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "coupling_clamp_M3_0",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 18.756772590061164,
+      "lift_mm": 0,
+      "reason": "explicit M3 clamp screw in coupling tapped half"
+    },
+    {
+      "a": "coupling_clamp_M3_1",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 18.75677261771407,
+      "lift_mm": 0,
+      "reason": "explicit M3 clamp screw in coupling tapped half"
+    },
+    {
+      "a": "motor_under_nut_0",
+      "b": "motor_flange_M6_0",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "motor_under_nut_1",
+      "b": "motor_flange_M6_1",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "motor_under_nut_2",
+      "b": "motor_flange_M6_2",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "motor_under_nut_3",
+      "b": "motor_flange_M6_3",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 0,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "basket_handle_-90",
+      "b": "removable_perforated_basket",
+      "volume_mm3": 0.5321828738226594,
+      "lift_mm": 0,
+      "reason": "explicit welded handle attachment (<1mm3 lap)"
+    },
+    {
+      "a": "basket_handle_90",
+      "b": "removable_perforated_basket",
+      "volume_mm3": 0.5321828738226884,
+      "lift_mm": 0,
+      "reason": "explicit welded handle attachment (<1mm3 lap)"
+    },
+    {
+      "a": "filter_flange_M5_0_nut",
+      "b": "filter_flange_M5_0_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 0,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "filter_flange_M5_1_nut",
+      "b": "filter_flange_M5_1_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 0,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "filter_flange_M5_2_nut",
+      "b": "filter_flange_M5_2_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 0,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "filter_flange_M5_3_nut",
+      "b": "filter_flange_M5_3_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 0,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "bearing_cover_M4_0",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 300,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "bearing_cover_M4_1",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 300,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "bearing_cover_M4_2",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 300,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "bearing_cover_M4_3",
+      "b": "fixed_bearing_housing",
+      "volume_mm3": 60.20076922442091,
+      "lift_mm": 300,
+      "reason": "explicit M4 retainer cover screw in tapped fixed housing"
+    },
+    {
+      "a": "supported_under_nut_0",
+      "b": "supported_cover_M3_0",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "supported_under_nut_1",
+      "b": "supported_cover_M3_1",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "supported_under_nut_2",
+      "b": "supported_cover_M3_2",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "supported_under_nut_3",
+      "b": "supported_cover_M3_3",
+      "volume_mm3": 5.521977407215957,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_0",
+      "b": "bearing_to_bridge_M6_0",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_1",
+      "b": "bearing_to_bridge_M6_1",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_2",
+      "b": "bearing_to_bridge_M6_2",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "bearing_under_nut_3",
+      "b": "bearing_to_bridge_M6_3",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "shaft_locknut",
+      "b": "lift_screw_20x20",
+      "volume_mm3": 168.89202105700787,
+      "lift_mm": 300,
+      "reason": "M12 nominal shaft-end locknut thread envelope"
+    },
+    {
+      "a": "ballnut_M5_0",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.244243860841095,
+      "lift_mm": 300,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "ballnut_M5_1",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.244243860841095,
+      "lift_mm": 300,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "ballnut_M5_2",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.24424386084108,
+      "lift_mm": 300,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "ballnut_M5_3",
+      "b": "lift_flanged_ballnut",
+      "volume_mm3": 46.24424386084108,
+      "lift_mm": 300,
+      "reason": "explicit M5 screw in nut flange tapped hole"
+    },
+    {
+      "a": "coupling_clamp_M3_0",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 18.756772590061164,
+      "lift_mm": 300,
+      "reason": "explicit M3 clamp screw in coupling tapped half"
+    },
+    {
+      "a": "coupling_clamp_M3_1",
+      "b": "split_clamp_coupling",
+      "volume_mm3": 18.75677261771407,
+      "lift_mm": 300,
+      "reason": "explicit M3 clamp screw in coupling tapped half"
+    },
+    {
+      "a": "motor_under_nut_0",
+      "b": "motor_flange_M6_0",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "motor_under_nut_1",
+      "b": "motor_flange_M6_1",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "motor_under_nut_2",
+      "b": "motor_flange_M6_2",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "motor_under_nut_3",
+      "b": "motor_flange_M6_3",
+      "volume_mm3": 44.175819257723944,
+      "lift_mm": 300,
+      "reason": "explicit matching nominal thread envelopes"
+    },
+    {
+      "a": "basket_handle_-90",
+      "b": "removable_perforated_basket",
+      "volume_mm3": 0.5321828738226594,
+      "lift_mm": 300,
+      "reason": "explicit welded handle attachment (<1mm3 lap)"
+    },
+    {
+      "a": "basket_handle_90",
+      "b": "removable_perforated_basket",
+      "volume_mm3": 0.5321828738226884,
+      "lift_mm": 300,
+      "reason": "explicit welded handle attachment (<1mm3 lap)"
+    },
+    {
+      "a": "filter_flange_M5_0_nut",
+      "b": "filter_flange_M5_0_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 300,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "filter_flange_M5_1_nut",
+      "b": "filter_flange_M5_1_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 300,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "filter_flange_M5_2_nut",
+      "b": "filter_flange_M5_2_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 300,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    },
+    {
+      "a": "filter_flange_M5_3_nut",
+      "b": "filter_flange_M5_3_bolt",
+      "volume_mm3": 25.564710218587003,
+      "lift_mm": 300,
+      "reason": "explicit matching outlet flange M5 screw/nut thread envelopes"
+    }
+  ],
+  "explicit_existing_leg_weld_faces": [
+    {
+      "brace": "pan_RHS_brace_0",
+      "existing_leg_centre_mm": [
+        750,
+        390,
+        750
+      ],
+      "overlap_mm3": 0.0,
+      "interface": "notched side-face weld; no positive-volume interference",
+      "weld_strength_verified": false
+    },
+    {
+      "brace": "pan_RHS_brace_1",
+      "existing_leg_centre_mm": [
+        -750,
+        390,
+        750
+      ],
+      "overlap_mm3": 0.0,
+      "interface": "notched side-face weld; no positive-volume interference",
+      "weld_strength_verified": false
+    },
+    {
+      "brace": "pan_RHS_brace_2",
+      "existing_leg_centre_mm": [
+        -750,
+        390,
+        -750
+      ],
+      "overlap_mm3": 0.0,
+      "interface": "notched side-face weld; no positive-volume interference",
+      "weld_strength_verified": false
+    },
+    {
+      "brace": "pan_RHS_brace_3",
+      "existing_leg_centre_mm": [
+        750,
+        390,
+        -750
+      ],
+      "overlap_mm3": 0.0,
+      "interface": "notched side-face weld; no positive-volume interference",
+      "weld_strength_verified": false
+    }
+  ],
+  "explicit_portal_column_weld_faces": [
+    {
+      "knee": "portal_mitered_knee_-1350",
+      "column_mm": [
+        8280,
+        1077.5,
+        -1350
+      ],
+      "overlap_mm3": 0.0,
+      "weld_strength_verified": false
+    },
+    {
+      "knee": "portal_mitered_knee_1350",
+      "column_mm": [
+        8280,
+        1077.5,
+        1350
+      ],
+      "overlap_mm3": 0.0,
+      "weld_strength_verified": false
+    }
+  ],
+  "generator_source_sha256": "96b84e9d7ddcf61ffc26958ce46314b4398921c2f80062a6eea550379e7666a5",
+  "live_all_steel_mass_kg": 5.9979840418256245,
+  "manufacturing_released": false,
+  "not_verified": [
+    "bearing internals",
+    "supplier rolling race",
+    "thread helices",
+    "preload",
+    "full machine",
+    "load and fatigue",
+    "all installation holes",
+    "continuous collision"
+  ]
+}

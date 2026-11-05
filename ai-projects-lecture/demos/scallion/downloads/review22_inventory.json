@@ -1,0 +1,19 @@
+{
+  "revision": "R22",
+  "model_parts_listed": 17194,
+  "cad_axis_instances": 8,
+  "cad_parts_per_axis": 161,
+  "spines_with_matched_bores": 8,
+  "manufacturing_BOM": false,
+  "meaning": "Model mesh inventory, not procurement quantities or a certified complete manufacturing BOM. Split meshes and repeated geometry are included.",
+  "missing_interfaces": [
+    "rotary_infeed_full_fasteners",
+    "process_head_plumbing_endpoints",
+    "leaf_trim_and_capture_details",
+    "wrapper_internal_fasteners_and_bores",
+    "tucker_vertical_screw_support_and_portal_stiffness",
+    "whole_machine_guards_and_safe_stop",
+    "supplier_belt_tooth_profile_and_clamp_pullout",
+    "washdown_and_return_frame_supply"
+  ]
+}

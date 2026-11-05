@@ -1,0 +1,180 @@
+{
+  "revision": "R25",
+  "generator_sha256": "d026511f0230d275234947e335c8b86f9cb835734bf984c42894216682ffa717",
+  "rack_mates": [
+    {
+      "frame": "frame_even_L",
+      "rack_start_x_mm": 80,
+      "rack_y_mm": 70,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_even_L",
+      "rack_start_x_mm": 80,
+      "rack_y_mm": 230,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_even_R",
+      "rack_start_x_mm": 80,
+      "rack_y_mm": 70,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_even_R",
+      "rack_start_x_mm": 80,
+      "rack_y_mm": 230,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_L",
+      "rack_start_x_mm": 105,
+      "rack_y_mm": 70,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_L",
+      "rack_start_x_mm": 105,
+      "rack_y_mm": 230,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_R",
+      "rack_start_x_mm": 105,
+      "rack_y_mm": 70,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "frame": "frame_odd_R",
+      "rack_start_x_mm": 105,
+      "rack_y_mm": 230,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    }
+  ],
+  "halfspace_bounds": [
+    {
+      "name": "frame_even_L",
+      "zmin_mm": -31.5,
+      "zmax_mm": 0.0
+    },
+    {
+      "name": "liner_even_L_60_0",
+      "zmin_mm": -15.000000100000083,
+      "zmax_mm": 1e-07
+    },
+    {
+      "name": "liner_even_L_60_90",
+      "zmin_mm": -22.0000001,
+      "zmax_mm": -12.99038105676658
+    },
+    {
+      "name": "liner_even_L_250_0",
+      "zmin_mm": -15.000000100024604,
+      "zmax_mm": 1e-07
+    },
+    {
+      "name": "liner_even_L_250_90",
+      "zmin_mm": -22.000000000000007,
+      "zmax_mm": -12.99038105676658
+    },
+    {
+      "name": "frame_even_R",
+      "zmin_mm": 0.0,
+      "zmax_mm": 31.5
+    },
+    {
+      "name": "liner_even_R_60_0",
+      "zmin_mm": -1e-07,
+      "zmax_mm": 15.000000100000083
+    },
+    {
+      "name": "liner_even_R_60_90",
+      "zmin_mm": 12.99038105676658,
+      "zmax_mm": 22.0
+    },
+    {
+      "name": "liner_even_R_250_0",
+      "zmin_mm": -1e-07,
+      "zmax_mm": 15.000000100024604
+    },
+    {
+      "name": "liner_even_R_250_90",
+      "zmin_mm": 12.99038105676658,
+      "zmax_mm": 22.0000001
+    },
+    {
+      "name": "frame_odd_L",
+      "zmin_mm": -31.5,
+      "zmax_mm": 0.0
+    },
+    {
+      "name": "liner_odd_L_190_0",
+      "zmin_mm": -15.000000100000005,
+      "zmax_mm": 1e-07
+    },
+    {
+      "name": "liner_odd_L_190_90",
+      "zmin_mm": -22.000000000000007,
+      "zmax_mm": -12.99038105676658
+    },
+    {
+      "name": "liner_odd_L_270_0",
+      "zmin_mm": -15.000000100775171,
+      "zmax_mm": 1e-07
+    },
+    {
+      "name": "liner_odd_L_270_90",
+      "zmin_mm": -22.0,
+      "zmax_mm": -12.99038105676658
+    },
+    {
+      "name": "frame_odd_R",
+      "zmin_mm": 0.0,
+      "zmax_mm": 31.5
+    },
+    {
+      "name": "liner_odd_R_190_0",
+      "zmin_mm": -1e-07,
+      "zmax_mm": 15.000000100000005
+    },
+    {
+      "name": "liner_odd_R_190_90",
+      "zmin_mm": 12.99038105676658,
+      "zmax_mm": 22.0000001
+    },
+    {
+      "name": "liner_odd_R_270_0",
+      "zmin_mm": -1e-07,
+      "zmax_mm": 15.000000100775171
+    },
+    {
+      "name": "liner_odd_R_270_90",
+      "zmin_mm": 12.99038105676658,
+      "zmax_mm": 22.0000001
+    }
+  ],
+  "stop_mates": [
+    {
+      "sign": -1,
+      "stroke_mm": 22,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    },
+    {
+      "sign": 1,
+      "stroke_mm": 22,
+      "volume_mm3": 0.0,
+      "gap_mm": 0.0
+    }
+  ],
+  "unresolved": 0,
+  "scope": "Named actual rack extents, two opposite C halfspaces and mechanical stop only; no strength/tolerance/full machine claim."
+}

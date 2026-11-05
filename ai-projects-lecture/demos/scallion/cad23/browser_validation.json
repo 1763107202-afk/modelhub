@@ -1,0 +1,14 @@
+{
+  "revision": "R23",
+  "preview_page": "detail-review23.html",
+  "directory_loaded": true,
+  "search_term": "lift_screw",
+  "search_matches": 1,
+  "selected_part": "R23_lift_screw_20x20",
+  "support_and_power_text_verified": true,
+  "webgl_verified": false,
+  "render_and_animation_verified": false,
+  "limitation": "Cloud browser could not create a WebGL context. Directory, search and selection text were inspected through the actual page; 3D appearance, clipping, camera and playback are unverified.",
+  "final_CAD_check_text_visible": true,
+  "final_selected_interface_text_visible": true
+}

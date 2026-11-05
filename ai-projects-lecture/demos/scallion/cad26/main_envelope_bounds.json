@@ -1,0 +1,30 @@
+{
+  "revision": "R26",
+  "vertices_checked": 6620819,
+  "rotating_rigid_radius_m": 1.4200000533824721,
+  "gate_translation_endpoints_m": [
+    0,
+    0.042
+  ],
+  "cage_xmin_m": -0.010999999940395133,
+  "cage_ymax_m": 0.48,
+  "non_tilting_frame_min_relative_x_m": -0.04628596329689039,
+  "empty_tilt_min_radial_projection_m": 1.839873974878794,
+  "empty_upright_return_min_radial_projection_m": 1.6037140367031095,
+  "empty_rotor_gap_bound_mm": 183.71398332063737,
+  "adjacent_C_gap_bound_mm": 12.999999999999998,
+  "adjacent_rack_gap_bound_mm": 4.99999999999999,
+  "continuous_relationships_only": [
+    "empty unloader against rigid rotating envelope, p6..8",
+    "new adjacent C frames, opening0..22mm",
+    "new frame versus adjacent original rack supports"
+  ],
+  "proof": "Rigid rotation radial norm is invariant; norm is convex in the gate translation, so the endpoints bound its stroke. For tilt0..90deg: x*cos(theta)-y*sin(theta)>=-hypot(max(0,-xmin),max(0,ymax)). Empty tilt holds radius2.32; upright return has radius>=1.65. This is a conservative plane separation bound.",
+  "not_verified": [
+    "nominal/flexible crop envelope",
+    "fixed station interfaces continuous sweep",
+    "whole machine",
+    "material/tolerance/load/safety"
+  ],
+  "whole_machine_continuous_collision_verified": false
+}

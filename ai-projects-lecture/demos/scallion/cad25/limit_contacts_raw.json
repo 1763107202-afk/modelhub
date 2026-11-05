@@ -1,0 +1,973 @@
+{
+  "revision": "R25-selected-rigid-interfaces",
+  "source_sha256": "b84b742a55bc3727223d18f37aa200403ad5eacd71e87bec6deef9cb419ad98e",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R25_closed_cartridge_to_carrier": {
+      "samples": 1,
+      "target_parts": 432,
+      "environment_parts": 126,
+      "broadphase_pairs": 80
+    },
+    "R25_load_interface": {
+      "samples": 161,
+      "target_parts": 432,
+      "environment_parts": 14554,
+      "broadphase_pairs": 7244
+    },
+    "R25_unload_interface": {
+      "samples": 161,
+      "target_parts": 432,
+      "environment_parts": 14554,
+      "broadphase_pairs": 30620
+    },
+    "R25_index_station_interfaces": {
+      "samples": 481,
+      "target_parts": 432,
+      "environment_parts": 14554,
+      "broadphase_pairs": 12228
+    },
+    "R25_neighbor_cartridges": {
+      "samples": 16,
+      "target_parts": 200,
+      "environment_parts": 200,
+      "broadphase_pairs": 380
+    },
+    "R25_transfer_to_existing": {
+      "samples": 322,
+      "target_parts": 80,
+      "environment_parts": 14576,
+      "broadphase_pairs": 28118
+    },
+    "R25_transfer_halves": {
+      "samples": 322,
+      "target_parts": 40,
+      "environment_parts": 40,
+      "broadphase_pairs": 12916
+    },
+    "R25_stop_to_existing": {
+      "samples": 322,
+      "target_parts": 24,
+      "environment_parts": 19840,
+      "broadphase_pairs": 14342
+    }
+  },
+  "narrowphase_pairs": 105928,
+  "contacts": [
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.07_-1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "eba8b22c-f3b6-488f-86f1-4820f251e056"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999012085796352e-10
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.07_1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "eba8b22c-f3b6-488f-86f1-4820f251e056"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999032902478064e-10
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.23_-1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "eba8b22c-f3b6-488f-86f1-4820f251e056"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999011391906961e-10
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.23_1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "eba8b22c-f3b6-488f-86f1-4820f251e056"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999014167464523e-10
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.084098125675325e-18
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "9aa7fea7-e0f8-4528-a3dc-1fbe3503e90c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "7223e984-b360-44c9-ac82-527b1b893f3f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 2.9229255071969162e-05
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "7223e984-b360-44c9-ac82-527b1b893f3f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "9aa7fea7-e0f8-4528-a3dc-1fbe3503e90c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.084098125675325e-18
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "9aa7fea7-e0f8-4528-a3dc-1fbe3503e90c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "7223e984-b360-44c9-ac82-527b1b893f3f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 2.9229255071969162e-05
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "7223e984-b360-44c9-ac82-527b1b893f3f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "9aa7fea7-e0f8-4528-a3dc-1fbe3503e90c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f8105aef-13a1-4ddd-ae54-5e6577339b03"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f2fd9786-3e3b-4cce-924b-7f81d51515a4"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.9229858169301653e-05
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f2fd9786-3e3b-4cce-924b-7f81d51515a4"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f8105aef-13a1-4ddd-ae54-5e6577339b03"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.151699732999707e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a42c97c1-0cf5-4d1a-a081-a16bb7bf10ad"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "51755393-cf3d-4b63-8213-37115fee6842"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "363e2fa1-cdcc-4804-9ae2-5da8e2c440dd"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.9229858169301653e-05
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "363e2fa1-cdcc-4804-9ae2-5da8e2c440dd"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a42c97c1-0cf5-4d1a-a081-a16bb7bf10ad"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "8c036573-bc01-455a-aea6-197e31de1b3d"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.7755575615628914e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "8c036573-bc01-455a-aea6-197e31de1b3d"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "51755393-cf3d-4b63-8213-37115fee6842"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f8105aef-13a1-4ddd-ae54-5e6577339b03"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f2fd9786-3e3b-4cce-924b-7f81d51515a4"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.9229858169301653e-05
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "f2fd9786-3e3b-4cce-924b-7f81d51515a4"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f8105aef-13a1-4ddd-ae54-5e6577339b03"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.151699732999707e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a42c97c1-0cf5-4d1a-a081-a16bb7bf10ad"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "51755393-cf3d-4b63-8213-37115fee6842"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "363e2fa1-cdcc-4804-9ae2-5da8e2c440dd"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.9229858169301653e-05
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "363e2fa1-cdcc-4804-9ae2-5da8e2c440dd"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a42c97c1-0cf5-4d1a-a081-a16bb7bf10ad"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "8c036573-bc01-455a-aea6-197e31de1b3d"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.7755575615628914e-17
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "8c036573-bc01-455a-aea6-197e31de1b3d"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "51755393-cf3d-4b63-8213-37115fee6842"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_0_frame_even_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953497
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_0_frame_even_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104796
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_1_frame_odd_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_1_frame_odd_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_2_frame_even_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953497
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_2_frame_even_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104823
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_3_frame_odd_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_3_frame_odd_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953455
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.01450000134110465
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395296615807e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395296615807e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ee1d6f44-06e4-4f78-ab0c-f3298ae48814"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.00900000196695358
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "297b280e-0e23-4716-9979-0995f8c893ff"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104622
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "5af5986b-d709-4498-957b-9779436e1bc3"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033953243713825e-09
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "186e9c43-f513-4650-bab3-ccce875b305d"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "b8b5641c-92fc-46b5-8504-2f8b53e3e194"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395352126958e-09
+    }
+  ],
+  "contact_groups": 48,
+  "elapsed_s": 3.3608617782592773,
+  "scope": "Named R25 and retained regression rigid-interface scopes; sampled at counts. New wash parts against legacy structure (9 poses), new tucker against legacy packaging/weigh/output (0.05s) plus nine retained scopes. AABB overlap below 0.2mm is skipped. No continuous swept volume, flexible material, tolerance or whole-machine claim; new CAD internal overlap is checked separately with exact B-rep."
+}

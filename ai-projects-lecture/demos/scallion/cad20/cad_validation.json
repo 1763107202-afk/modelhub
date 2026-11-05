@@ -1,0 +1,25 @@
+{
+  "revision": "R20",
+  "status": "nominal_BRep_checks_passed",
+  "assembly_instances": 234,
+  "valid_unique_solids": 50,
+  "rest_pose_candidate_pairs": 301,
+  "unexpected_intersections": [],
+  "clearance_point_probes": 1212,
+  "step_roundtrip_solids": 234,
+  "step_volume_relative_difference": 1.0982334857214149e-13,
+  "step_bounds_mm": {
+    "xmin": -391.9986193905,
+    "xmax": 720.0,
+    "ymin": -150.0,
+    "ymax": 1945.0000001,
+    "zmin": -391.9986193905,
+    "zmax": 391.99861939051107
+  },
+  "intentional_fit_pair_exclusions": 274,
+  "failures": [],
+  "elapsed_s": 145.11270885099975,
+  "drive_data_sha256": "522879a1a8ec9da19826f7b1a2ec4935f57b1d1ffde00d9898bfe86abc766906",
+  "step_sha256": "2cdb9740f75dca548b49e34b5b967a980633a709c38faaf70706c5b22b8bdd85",
+  "scope": "Exact B-rep rest-pose overlaps >0.01 mm3 after explicit nominal thread/fit exclusions; 0.005 mm AABB threshold. Real clearance bores are probed on source B-reps. Purchased bearing internals not modeled. Gear mesh swept separately in 2D. Does not validate continuous full-machine motion, flexible products, fits, preload, strength, fatigue, clamping torque or native SW mates."
+}

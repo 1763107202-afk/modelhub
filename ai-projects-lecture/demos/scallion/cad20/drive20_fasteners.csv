@@ -1,0 +1,52 @@
+﻿id,body,nominal_screw,type,targets,protrusion_mm,engagement_mm,blind_bottom_clearance_mm,status
+gear_mount_M8_0,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_0,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_1,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_1,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_2,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_2,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_3,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_3,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_4,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_4,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_5,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_5,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_6,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_6,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_7,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_7,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_8,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_8,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_9,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_9,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_10,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_10,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+gear_mount_M8_11,rotor,M8×70,through,ring_gear / rotor_hub_hollow / gear_spacer_11,5.299999999999983,,,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_0,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_0,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_1,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_1,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_2,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_2,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_3,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_3,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_4,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_4,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_5,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_5,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_6,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_6,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_7,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_7,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_8,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_8,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_9,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_9,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_10,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_10,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+carrier_mount_M10_11,rotor,M10×90,blind,slew_rolling_race / rotor_hub_hollow / carrier_spacer_11,,24.5,2.5,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_0,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_1,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_2,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_3,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_4,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_5,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_6,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_7,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_8,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_9,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_10,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_fixed_M10_11,fixed,M10×90,through,slew_fixed_race / fixed_central_mast,3.0,,,名义包络，等级/扭矩/公差/防松待选型
+motor_flange_M8_0,fixed,M8×45,through,rotor_servo_gearbox / rotor_motor_portal_and_bearing_stand,2.799999999999976,,,名义包络，等级/扭矩/公差/防松待选型
+motor_flange_M8_1,fixed,M8×45,through,rotor_servo_gearbox / rotor_motor_portal_and_bearing_stand,2.799999999999976,,,名义包络，等级/扭矩/公差/防松待选型
+motor_flange_M8_2,fixed,M8×45,through,rotor_servo_gearbox / rotor_motor_portal_and_bearing_stand,2.799999999999976,,,名义包络，等级/扭矩/公差/防松待选型
+motor_flange_M8_3,fixed,M8×45,through,rotor_servo_gearbox / rotor_motor_portal_and_bearing_stand,2.799999999999976,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_0_0,fixed,M4×16,blind,pinion_bearing_cover_0 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_0_1,fixed,M4×16,blind,pinion_bearing_cover_0 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_0_2,fixed,M4×16,blind,pinion_bearing_cover_0 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_0_3,fixed,M4×16,blind,pinion_bearing_cover_0 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_1_0,fixed,M4×16,blind,pinion_bearing_cover_1 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_1_1,fixed,M4×16,blind,pinion_bearing_cover_1 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_1_2,fixed,M4×16,blind,pinion_bearing_cover_1 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+bearing_cover_M4_1_3,fixed,M4×16,blind,pinion_bearing_cover_1 / rotor_motor_portal_and_bearing_stand,,,,名义包络，等级/扭矩/公差/防松待选型
+pinion_end_M6,pinion,M6×16,blind,pinion_end_retaining_disc / pinion_stepped_shaft,,,,名义包络，等级/扭矩/公差/防松待选型
+coupling_clamp_M8_lower,pinion,M8×40,blind,clamp_jaw_coupling_lower,,21.6,,名义包络，等级/扭矩/公差/防松待选型
+coupling_clamp_M8_upper,pinion,M8×40,blind,clamp_jaw_coupling_upper,,21.6,,名义包络，等级/扭矩/公差/防松待选型

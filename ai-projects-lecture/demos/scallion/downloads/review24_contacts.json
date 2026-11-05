@@ -1,0 +1,27 @@
+{
+  "revision": "R24-shipped-rear-interface",
+  "source_sha256": "a20d0a873e9701a08facf4e71674bcacfce194c77b7b27aa0632826513d1409d",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "R24_rear_to_existing": {
+      "samples": 241,
+      "target_parts": 48,
+      "environment_parts": 15712,
+      "broadphase_pairs": 11711
+    },
+    "R24_rear_adjacent_lanes": {
+      "samples": 8,
+      "target_parts": 24,
+      "environment_parts": 24,
+      "broadphase_pairs": 0
+    }
+  },
+  "narrowphase_pairs": 11711,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 2.0539112091064453,
+  "scope": "Published rear wheel CAD against existing rigid machine, one full 96s rotor revolution sampled every 0.4s; adjacent lanes at 8 poses. AABB overlap below0.2mm skipped. Does not cover whole machine, flexible crops, tolerance or continuous swept motion.",
+  "summary": "已接入后驱动轮：11711组候选网格对，采样范围内未发现相交；不代表整机或全工况零干涉。前浮动夹具换装仍有未解决冲突，未接入主场景。",
+  "unresolved_contact_groups": 0,
+  "integration_candidate_passed": false
+}

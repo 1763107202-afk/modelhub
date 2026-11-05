@@ -1,0 +1,52 @@
+{
+  "revision": "R15",
+  "source_sha256": "c4aac812d383cca75e72320fd01323d337f3f80be5fa76e10b83a533245d3640",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "index_heads": {
+      "samples": 101,
+      "target_parts": 225,
+      "environment_parts": 2813,
+      "broadphase_pairs": 816
+    },
+    "load_cage": {
+      "samples": 401,
+      "target_parts": 118,
+      "environment_parts": 3479,
+      "broadphase_pairs": 60
+    },
+    "unload_cage": {
+      "samples": 401,
+      "target_parts": 113,
+      "environment_parts": 3088,
+      "broadphase_pairs": 6467
+    },
+    "insert_to_collection": {
+      "samples": 501,
+      "target_parts": 55,
+      "environment_parts": 1570,
+      "broadphase_pairs": 63239
+    },
+    "opposite_collection_docks": {
+      "samples": 1201,
+      "target_parts": 76,
+      "environment_parts": 76,
+      "broadphase_pairs": 8711
+    },
+    "seal_to_conveyor": {
+      "samples": 81,
+      "target_parts": 2,
+      "environment_parts": 52,
+      "broadphase_pairs": 348
+    }
+  },
+  "narrowphase_pairs": 79641,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 0.2730104923248291,
+  "scope": "六类选定刚体接口，时间步长0.02 s，AABB重叠小于0.2 mm的候选不进入窄相。离散三角网格筛查，不是全机连续扫掠、精确CAD干涉、柔性叶片/膜材或内部配合验收。",
+  "scenario_samples": 2686,
+  "generated_at": "2026-10-19T01:28:52.990248+00:00",
+  "status": "no_contacts_detected_in_selected_samples",
+  "summary": "六类选定刚体接口共2,686个场景采样、79,641次三角网格对检测，未检出碰撞；范围限于加工头分度退让、上下料笼、固定窄带与收集机构、A/B机构之间及横封与输送面。步长0.02 s、预筛阈值0.2 mm，不等于整机零干涉。"
+}

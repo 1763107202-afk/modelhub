@@ -1,0 +1,2263 @@
+{
+  "revision": "R26",
+  "source_sha256": "99dc7d07eb54b93e16f1b7ae25071d2c18ccdb07d3886fc462333a7cf5f3303a",
+  "source_files": [
+    "dist/flow14.js",
+    "dist/machine14.js",
+    "dist/process15.js",
+    "dist/mechanics17.js",
+    "dist/mechanical-details18.js",
+    "dist/mechanical-hardware19.js",
+    "dist/mechanical-drive20.js",
+    "dist/drive20-data.js",
+    "dist/packaging21.js",
+    "dist/mechanical-axes22.js",
+    "dist/axes22-data.js",
+    "dist/mechanical-cad23.js",
+    "dist/mechanical-refine23.js",
+    "dist/detail23-data.js",
+    "dist/film-unit16.js",
+    "dist/film16.js",
+    "dist/mechanical-adaptive25.js",
+    "dist/transfer25-data.js",
+    "dist/adaptive24.js",
+    "dist/grip24-data.js"
+  ],
+  "counts": [
+    {
+      "run": "20mm_normal",
+      "pairs": 105870,
+      "scopes": {
+        "R25_closed_cartridge_to_carrier": {
+          "samples": 1,
+          "target_parts": 432,
+          "environment_parts": 126,
+          "broadphase_pairs": 80
+        },
+        "R25_load_interface": {
+          "samples": 161,
+          "target_parts": 432,
+          "environment_parts": 14554,
+          "broadphase_pairs": 7324
+        },
+        "R25_unload_interface": {
+          "samples": 161,
+          "target_parts": 432,
+          "environment_parts": 14554,
+          "broadphase_pairs": 30568
+        },
+        "R25_index_station_interfaces": {
+          "samples": 481,
+          "target_parts": 432,
+          "environment_parts": 14554,
+          "broadphase_pairs": 12204
+        },
+        "R25_neighbor_cartridges": {
+          "samples": 16,
+          "target_parts": 200,
+          "environment_parts": 200,
+          "broadphase_pairs": 380
+        },
+        "R25_transfer_to_existing": {
+          "samples": 322,
+          "target_parts": 80,
+          "environment_parts": 14576,
+          "broadphase_pairs": 28100
+        },
+        "R25_transfer_halves": {
+          "samples": 322,
+          "target_parts": 40,
+          "environment_parts": 40,
+          "broadphase_pairs": 12890
+        },
+        "R25_stop_to_existing": {
+          "samples": 322,
+          "target_parts": 24,
+          "environment_parts": 19840,
+          "broadphase_pairs": 14324
+        }
+      }
+    },
+    {
+      "run": "22mm_limit",
+      "pairs": 105928,
+      "scopes": {
+        "R25_closed_cartridge_to_carrier": {
+          "samples": 1,
+          "target_parts": 432,
+          "environment_parts": 126,
+          "broadphase_pairs": 80
+        },
+        "R25_load_interface": {
+          "samples": 161,
+          "target_parts": 432,
+          "environment_parts": 14554,
+          "broadphase_pairs": 7244
+        },
+        "R25_unload_interface": {
+          "samples": 161,
+          "target_parts": 432,
+          "environment_parts": 14554,
+          "broadphase_pairs": 30620
+        },
+        "R25_index_station_interfaces": {
+          "samples": 481,
+          "target_parts": 432,
+          "environment_parts": 14554,
+          "broadphase_pairs": 12228
+        },
+        "R25_neighbor_cartridges": {
+          "samples": 16,
+          "target_parts": 200,
+          "environment_parts": 200,
+          "broadphase_pairs": 380
+        },
+        "R25_transfer_to_existing": {
+          "samples": 322,
+          "target_parts": 80,
+          "environment_parts": 14576,
+          "broadphase_pairs": 28118
+        },
+        "R25_transfer_halves": {
+          "samples": 322,
+          "target_parts": 40,
+          "environment_parts": 40,
+          "broadphase_pairs": 12916
+        },
+        "R25_stop_to_existing": {
+          "samples": 322,
+          "target_parts": 24,
+          "environment_parts": 19840,
+          "broadphase_pairs": 14342
+        }
+      }
+    },
+    {
+      "run": "regression",
+      "pairs": 97863,
+      "scopes": {
+        "R23_wash_to_existing": {
+          "samples": 9,
+          "target_parts": 55,
+          "environment_parts": 19665,
+          "broadphase_pairs": 731
+        },
+        "R23_tucker_to_existing": {
+          "samples": 321,
+          "target_parts": 148,
+          "environment_parts": 9221,
+          "broadphase_pairs": 16222
+        },
+        "R22_axes_to_carriers": {
+          "samples": 161,
+          "target_parts": 2808,
+          "environment_parts": 584,
+          "broadphase_pairs": 34270
+        },
+        "R22_adapters_to_existing_carriers": {
+          "samples": 4,
+          "target_parts": 216,
+          "environment_parts": 368,
+          "broadphase_pairs": 266
+        },
+        "R21_seal_tucker_to_output": {
+          "samples": 321,
+          "target_parts": 140,
+          "environment_parts": 3146,
+          "broadphase_pairs": 13595
+        },
+        "R21_inlet_to_existing": {
+          "samples": 81,
+          "target_parts": 2258,
+          "environment_parts": 13464,
+          "broadphase_pairs": 1652
+        },
+        "R21_unloader_to_new_inlet": {
+          "samples": 161,
+          "target_parts": 151,
+          "environment_parts": 2258,
+          "broadphase_pairs": 0
+        },
+        "R21_wrappers_adjacent": {
+          "samples": 5,
+          "target_parts": 674,
+          "environment_parts": 674,
+          "broadphase_pairs": 1335
+        },
+        "R21_outlet_to_existing": {
+          "samples": 81,
+          "target_parts": 2178,
+          "environment_parts": 3146,
+          "broadphase_pairs": 13798
+        },
+        "R21_shuttle_adjacent": {
+          "samples": 81,
+          "target_parts": 292,
+          "environment_parts": 292,
+          "broadphase_pairs": 12399
+        },
+        "R21_shuttle_to_wrappers": {
+          "samples": 81,
+          "target_parts": 584,
+          "environment_parts": 1348,
+          "broadphase_pairs": 3595
+        }
+      }
+    }
+  ],
+  "narrowphase_pairs": 309661,
+  "unresolved_contact_groups": 0,
+  "contacts": [],
+  "explicit_mates": [
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.084098125675325e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "243afd80-5252-4d00-87d0-8ec4d067792c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ab82860d-52c6-4105-98d6-756480b89421"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 0.000029229255071969162,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ab82860d-52c6-4105-98d6-756480b89421"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "243afd80-5252-4d00-87d0-8ec4d067792c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.084098125675325e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "243afd80-5252-4d00-87d0-8ec4d067792c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ab82860d-52c6-4105-98d6-756480b89421"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 0.000029229255071969162,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "ab82860d-52c6-4105-98d6-756480b89421"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "243afd80-5252-4d00-87d0-8ec4d067792c"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "5c13689e-f1e0-40ac-84f5-29b0c942b579"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "632a091e-f831-41fe-abd2-21b52bb51cde"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "632a091e-f831-41fe-abd2-21b52bb51cde"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "5c13689e-f1e0-40ac-84f5-29b0c942b579"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.151699732999707e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "58a5d0bc-cdb6-4233-8cd5-3b295b4eae37"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a78510f5-88a7-407d-bc41-c676c271bcea"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "576e5013-4673-4bff-8dac-adca1fdb99a5"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "576e5013-4673-4bff-8dac-adca1fdb99a5"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "58a5d0bc-cdb6-4233-8cd5-3b295b4eae37"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c196b86f-fa1f-40a4-a745-18381de19c12"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.7755575615628914e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c196b86f-fa1f-40a4-a745-18381de19c12"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a78510f5-88a7-407d-bc41-c676c271bcea"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "5c13689e-f1e0-40ac-84f5-29b0c942b579"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "632a091e-f831-41fe-abd2-21b52bb51cde"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "632a091e-f831-41fe-abd2-21b52bb51cde"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "5c13689e-f1e0-40ac-84f5-29b0c942b579"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.151699732999707e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "58a5d0bc-cdb6-4233-8cd5-3b295b4eae37"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a78510f5-88a7-407d-bc41-c676c271bcea"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "576e5013-4673-4bff-8dac-adca1fdb99a5"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "576e5013-4673-4bff-8dac-adca1fdb99a5"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "58a5d0bc-cdb6-4233-8cd5-3b295b4eae37"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c196b86f-fa1f-40a4-a745-18381de19c12"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.7755575615628914e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c196b86f-fa1f-40a4-a745-18381de19c12"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "a78510f5-88a7-407d-bc41-c676c271bcea"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_0_frame_even_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953497,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_0_frame_even_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104796,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_1_frame_odd_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_1_frame_odd_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_2_frame_even_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953497,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_2_frame_even_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104823,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_3_frame_odd_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_3_frame_odd_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953455,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.01450000134110465,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395296615807e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395296615807e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "703be94f-84f5-4030-8b30-a479d0609a21"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.00900000196695358,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "1cb38105-902b-4f49-afd0-c23bb6fda4a9"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104622,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e3e93be6-920d-46f2-86aa-577795e7fd4f"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033953243713825e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "8f86d6e9-0faf-46c5-a813-04f8aa4bb9e8"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "c3f1d9e8-d7b2-4b24-bb9b-c95167ddd8c6"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395352126958e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "20mm_normal"
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.07_-1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "44a86521-0bcc-4258-80c0-6219df3f7ab1"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999012085796352e-10,
+      "reason": "22mm endpoint touches named hard stop face. Exact BRep stop vs30x25x60 slide has zero volume, zero gap. Clamp-slip and impact strength pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.07_1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "44a86521-0bcc-4258-80c0-6219df3f7ab1"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999032902478064e-10,
+      "reason": "22mm endpoint touches named hard stop face. Exact BRep stop vs30x25x60 slide has zero volume, zero gap. Clamp-slip and impact strength pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.23_-1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "44a86521-0bcc-4258-80c0-6219df3f7ab1"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999011391906961e-10,
+      "reason": "22mm endpoint touches named hard stop face. Exact BRep stop vs30x25x60 slide has zero volume, zero gap. Clamp-slip and impact strength pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_stop_to_existing",
+      "a": {
+        "name": "R25_unload_0.23_1_stop_collar",
+        "body": "unload_rotating_cage",
+        "module": "unload",
+        "geo": "44a86521-0bcc-4258-80c0-6219df3f7ab1"
+      },
+      "b": {
+        "name": "unload_grip_slide",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 124,
+      "max_depth_m": 1.8999014167464523e-10,
+      "reason": "22mm endpoint touches named hard stop face. Exact BRep stop vs30x25x60 slide has zero volume, zero gap. Clamp-slip and impact strength pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.084098125675325e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "96e091fd-d75d-4c29-8b90-3d92c66f8a58"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "be1c0bd8-e7dc-46bf-b93c-bd3bc7e90c67"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 0.000029229255071969162,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "be1c0bd8-e7dc-46bf-b93c-bd3bc7e90c67"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "96e091fd-d75d-4c29-8b90-3d92c66f8a58"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.084098125675325e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "96e091fd-d75d-4c29-8b90-3d92c66f8a58"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "be1c0bd8-e7dc-46bf-b93c-bd3bc7e90c67"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 0.000029229255071969162,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_60_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "be1c0bd8-e7dc-46bf-b93c-bd3bc7e90c67"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_60_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "96e091fd-d75d-4c29-8b90-3d92c66f8a58"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 152,
+      "max_depth_m": 7.107228538370052e-18,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "e972180d-dc25-40ff-9462-a0f899b5a6ca"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e8b5557b-4c3b-4ae2-a814-70adc8020a2b"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_0_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e8b5557b-4c3b-4ae2-a814-70adc8020a2b"
+      },
+      "b": {
+        "name": "R25_transfer_unload_0_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "e972180d-dc25-40ff-9462-a0f899b5a6ca"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.151699732999707e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "11f1830c-e10e-445e-8e59-a1b5116471e2"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f6d6cda7-63db-4831-aff5-82418a9bc0b5"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "abaa184a-4d43-4e54-b09b-b9c699e5cb5f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "abaa184a-4d43-4e54-b09b-b9c699e5cb5f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "11f1830c-e10e-445e-8e59-a1b5116471e2"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8e50e53-b5f9-459c-afb2-c4b82e048933"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.7755575615628914e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_1_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8e50e53-b5f9-459c-afb2-c4b82e048933"
+      },
+      "b": {
+        "name": "R25_transfer_unload_1_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f6d6cda7-63db-4831-aff5-82418a9bc0b5"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "e972180d-dc25-40ff-9462-a0f899b5a6ca"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e8b5557b-4c3b-4ae2-a814-70adc8020a2b"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_2_liner_even_L_250_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "e8b5557b-4c3b-4ae2-a814-70adc8020a2b"
+      },
+      "b": {
+        "name": "R25_transfer_unload_2_liner_even_R_250_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "e972180d-dc25-40ff-9462-a0f899b5a6ca"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.8201465741550226e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.151699732999707e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "11f1830c-e10e-445e-8e59-a1b5116471e2"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f6d6cda7-63db-4831-aff5-82418a9bc0b5"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "abaa184a-4d43-4e54-b09b-b9c699e5cb5f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 0.000029229858169301653,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_190_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "abaa184a-4d43-4e54-b09b-b9c699e5cb5f"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_190_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "11f1830c-e10e-445e-8e59-a1b5116471e2"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.1540127329101487e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8e50e53-b5f9-459c-afb2-c4b82e048933"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 2.7755575615628914e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_halves",
+      "a": {
+        "name": "R25_transfer_unload_3_liner_odd_L_270_0",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "b8e50e53-b5f9-459c-afb2-c4b82e048933"
+      },
+      "b": {
+        "name": "R25_transfer_unload_3_liner_odd_R_270_0",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "f6d6cda7-63db-4831-aff5-82418a9bc0b5"
+      },
+      "first_s": 17.3,
+      "last_s": 77.35,
+      "samples": 149,
+      "max_depth_m": 3.042191132757939e-17,
+      "reason": "Named opposite C halves; exact BRep halfspace bounds put all left pieces at z<=0 and right at z>=0. Only closed seam contact; opening separates these halfspaces.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_0_frame_even_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953497,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_0_frame_even_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104796,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_1_frame_odd_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_1_frame_odd_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_2_frame_even_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953497,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_2_frame_even_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104823,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_3_frame_odd_L",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_left_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_load_3_frame_odd_R",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "b": {
+        "name": "load_rack_support",
+        "body": "load_right_split_cages",
+        "module": "load",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033952688602312e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.009000001966953455,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_0_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.01450000134110465,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395296615807e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_1_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395296615807e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "1aa3a8c5-f52a-4cb0-8cdb-0d936f8ca814"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.00900000196695358,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_2_frame_even_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "236208e3-c8a1-4231-b9ba-758e0fbf1738"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 0.014500001341104622,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_L",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "177c1b5f-6785-4f98-8030-41a70d81aeb8"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_left_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.5033953243713825e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R25_transfer_to_existing",
+      "a": {
+        "name": "R25_transfer_unload_3_frame_odd_R",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "ce55f722-ddeb-4a83-8c6e-57a70e2c3c23"
+      },
+      "b": {
+        "name": "unload_rack_support",
+        "body": "unload_right_split_cages",
+        "module": "unload",
+        "geo": "80531371-3acf-4462-aa44-6a06c39ad005"
+      },
+      "first_s": 16,
+      "last_s": 80,
+      "samples": 322,
+      "max_depth_m": 2.503395352126958e-9,
+      "reason": "Named frame rod notch against its own original rack support. Exact BRep actual rack extents: zero volume and zero face gap; structural weld calculation pending.",
+      "run": "22mm_limit"
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_0",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "1e09b775-cf32-4c03-b783-298d95ee73c5"
+      },
+      "b": {
+        "name": "leg_3",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "55e82209-e2fb-4a4b-871d-4fa11f39fe7a"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Retained named R23 leg/brace side-face weld; separate historical BRep zero-volume proof retained.",
+      "run": "regression"
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_1",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "b414e4dd-074d-42e4-969d-74b2094e4d52"
+      },
+      "b": {
+        "name": "leg_2",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "93a479f5-f863-47f5-ae2c-0a77f6d74c79"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Retained named R23 leg/brace side-face weld; separate historical BRep zero-volume proof retained.",
+      "run": "regression"
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_2",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "51c5c311-1398-4b58-8070-8249b897f8cd"
+      },
+      "b": {
+        "name": "leg_0",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "15c7dc31-fe27-44ac-bd4a-bbe2e22b4dbf"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Retained named R23 leg/brace side-face weld; separate historical BRep zero-volume proof retained.",
+      "run": "regression"
+    },
+    {
+      "test": "R23_wash_to_existing",
+      "a": {
+        "name": "R23_pan_RHS_brace_3",
+        "body": "R23_filter_and_drain",
+        "module": "wash",
+        "geo": "0e429d7f-1929-42ef-9cd1-533eac4efb87"
+      },
+      "b": {
+        "name": "leg_1",
+        "body": "grounded_welded_frame",
+        "module": "frame",
+        "geo": "c9dce11b-80b1-4293-a645-615b48e5eb6c"
+      },
+      "first_s": 0,
+      "last_s": 134,
+      "samples": 9,
+      "max_depth_m": 2.60770320892334e-8,
+      "reason": "Retained named R23 leg/brace side-face weld; separate historical BRep zero-volume proof retained.",
+      "run": "regression"
+    }
+  ],
+  "specific_continuous_envelope_bounds": {
+    "revision": "R26",
+    "vertices_checked": 6620819,
+    "rotating_rigid_radius_m": 1.4200000533824721,
+    "gate_translation_endpoints_m": [
+      0,
+      0.042
+    ],
+    "cage_xmin_m": -0.010999999940395133,
+    "cage_ymax_m": 0.48,
+    "non_tilting_frame_min_relative_x_m": -0.04628596329689039,
+    "empty_tilt_min_radial_projection_m": 1.839873974878794,
+    "empty_upright_return_min_radial_projection_m": 1.6037140367031095,
+    "empty_rotor_gap_bound_mm": 183.71398332063737,
+    "adjacent_C_gap_bound_mm": 12.999999999999998,
+    "adjacent_rack_gap_bound_mm": 4.99999999999999,
+    "continuous_relationships_only": [
+      "empty unloader against rigid rotating envelope, p6..8",
+      "new adjacent C frames, opening0..22mm",
+      "new frame versus adjacent original rack supports"
+    ],
+    "proof": "Rigid rotation radial norm is invariant; norm is convex in the gate translation, so the endpoints bound its stroke. For tilt0..90deg: x*cos(theta)-y*sin(theta)>=-hypot(max(0,-xmin),max(0,ymax)). Empty tilt holds radius2.32; upright return has radius>=1.65. This is a conservative plane separation bound.",
+    "not_verified": [
+      "nominal/flexible crop envelope",
+      "fixed station interfaces continuous sweep",
+      "whole machine",
+      "material/tolerance/load/safety"
+    ],
+    "whole_machine_continuous_collision_verified": false
+  },
+  "full_machine_collision_verified": false,
+  "browser_webgl_verified": false,
+  "manufacturing_released": false,
+  "summary": "8类新夹具/移载接口按20mm指令和22mm端点分别筛查，保留11类整线回归接口，共309661次网格候选对检查；未解释相交0组。另列96组指定闭笼接缝、连接焊面和硬限位接触，并有精确CAD复核。空返与刚性转盘包络保守间距≥183.7mm；这只覆盖列明关系，不能代表整机连续零干涉。AABB重叠低于0.2mm、柔性食材/膜、制造公差、载荷与实料尚未验收。"
+}

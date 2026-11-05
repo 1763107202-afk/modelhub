@@ -1,0 +1,93 @@
+{
+  "revision": "R17-selected-interfaces",
+  "source_sha256": "f1e1bd2eff477ae78486cdad159878139675981bb5aa10bcd72c02ca287bd9df",
+  "engine": "python-fcl / triangulated procedural meshes",
+  "counts": {
+    "index_heads": {
+      "samples": 101,
+      "target_parts": 241,
+      "environment_parts": 3053,
+      "broadphase_pairs": 816
+    },
+    "load_cage": {
+      "samples": 401,
+      "target_parts": 130,
+      "environment_parts": 4063,
+      "broadphase_pairs": 0
+    },
+    "unload_cage": {
+      "samples": 401,
+      "target_parts": 125,
+      "environment_parts": 3482,
+      "broadphase_pairs": 6814
+    },
+    "insert_to_collection": {
+      "samples": 501,
+      "target_parts": 76,
+      "environment_parts": 2845,
+      "broadphase_pairs": 67666
+    },
+    "opposite_collection_docks": {
+      "samples": 1201,
+      "target_parts": 128,
+      "environment_parts": 128,
+      "broadphase_pairs": 19182
+    },
+    "seal_to_conveyor": {
+      "samples": 81,
+      "target_parts": 2,
+      "environment_parts": 52,
+      "broadphase_pairs": 348
+    },
+    "keeper_openers_to_rotor": {
+      "samples": 401,
+      "target_parts": 102,
+      "environment_parts": 3053,
+      "broadphase_pairs": 5583
+    },
+    "pinch_lift_to_fixed_input": {
+      "samples": 161,
+      "target_parts": 196,
+      "environment_parts": 616,
+      "broadphase_pairs": 1588
+    },
+    "docks_to_fixed_out": {
+      "samples": 321,
+      "target_parts": 256,
+      "environment_parts": 1377,
+      "broadphase_pairs": 22858
+    },
+    "stock_lifts_and_pushers": {
+      "samples": 321,
+      "target_parts": 108,
+      "environment_parts": 1377,
+      "broadphase_pairs": 11464
+    },
+    "weigh_live_to_fixed": {
+      "samples": 1,
+      "target_parts": 176,
+      "environment_parts": 41,
+      "broadphase_pairs": 28
+    },
+    "weigh_live_adjacent": {
+      "samples": 1,
+      "target_parts": 88,
+      "environment_parts": 88,
+      "broadphase_pairs": 320
+    },
+    "pusher_to_cassettes": {
+      "samples": 321,
+      "target_parts": 78,
+      "environment_parts": 1360,
+      "broadphase_pairs": 2007
+    }
+  },
+  "narrowphase_pairs": 138674,
+  "contacts": [],
+  "contact_groups": 0,
+  "elapsed_s": 2.693575382232666,
+  "scope": "Selected rigid interface scenarios listed in counts. Existing six and gate openers sampled at 0.02 s; pinch/dock/stock/pusher additions at 0.05 s; weigh frame interfaces at a static pose. Explicit bearing/nut mates and opening-fork follower contact are excluded.  Broad phase skips AABB overlap below 0.2 mm. Flexible leaves, membrane, hoses, intentional internal joints and remaining full-machine interfaces are not validated.",
+  "generated_at": "2026-10-19T06:46:08.618886+00:00",
+  "scenario_samples": 4213,
+  "summary": "13类选定刚体接口、4,213个场景时刻、138,674对候选网格检查，采样中未检出相交。此结果限于所列场景和时刻；明确配合界面按规则排除，宽相跳过小于0.2mm的AABB交叠。未覆盖连续扫掠、完整CAD、公差、柔性叶片、膜材和软管，也不代表四列包装集成通过。"
+}

@@ -1,0 +1,48 @@
+{
+  "revision": "R25",
+  "source_checks_sha256": "e5085a741b17741eb61a65252de4637240a191bc07e02e47f248b3d61f35915d",
+  "webgl_created": false,
+  "three_dimensional_browser_visual_acceptance": false,
+  "offline_model_projection_checked": true,
+  "ui_checks": [
+    {
+      "action": "看接重闭合",
+      "at_s": 73,
+      "phase": "托叉接根与收笼",
+      "owner": "旋转托座：根底托条承重＋上下滚轮笼限位",
+      "passed": true
+    },
+    {
+      "action": "卸料接重/闭合未确认 + timeline End",
+      "at_s": 73.3,
+      "owner_retained": true,
+      "passed": true
+    },
+    {
+      "action": "part search R25_transfer_unload_0_frame_even_L and select",
+      "part_id": 26858,
+      "support_and_drive_records_visible": true,
+      "passed": true
+    },
+    {
+      "action": "看空返外停",
+      "at_s": 79.5,
+      "passed": true
+    },
+    {
+      "action": "local diameter/bow End",
+      "whole_line_release_blocked": true,
+      "passed": true
+    },
+    {
+      "action": "restore nominal and uncheck receiver toe",
+      "missing": "receiver_toe",
+      "source_release_blocked": true,
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Cloud browser cannot create WebGL. No whole-line 3D visual acceptance.",
+    "UI test uses model permissions, not real PLC or safety functions."
+  ]
+}
