@@ -59,9 +59,9 @@ jobs:
                       target.parent.mkdir(parents=True, exist_ok=True)
                       target.write_bytes(data)
                       return rel
-                  except (OSError, urllib.error.URLError, ValueError):
+                  except (OSError, urllib.error.URLError, ValueError) as error:
                       if attempt == 3:
-                          raise
+                          raise RuntimeError('Unable to migrate ' + rel) from error
                       time.sleep(2 ** attempt)
           with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
               for count, rel in enumerate(pool.map(download, manifest['files']), 1):
