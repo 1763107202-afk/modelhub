@@ -37,9 +37,16 @@
   $$('[data-analysis]').forEach(b=>b.onclick=()=>showAnalysis(b.dataset.analysis));
   $('shipPlay').onclick=()=>{$('shipVideo').play().catch(()=>toast('请点击视频原生播放按钮'));};$('shipVideo').addEventListener('play',()=>$('shipPlay').hidden=true);$('shipVideo').addEventListener('ended',()=>$('shipPlay').hidden=false);$('shipFull').onclick=async()=>{try{const el=!$('shipLatestPanel').hidden?$('shipLatestPanel'):($('shipVideoPanel').hidden?$('shipGallery'):$('shipVideo'));if(el.requestFullscreen)await el.requestFullscreen();else if(el.webkitEnterFullscreen)el.webkitEnterFullscreen();else throw Error();}catch{toast('可使用视频播放器的全屏按钮');}};
   const liveLabPages={home:'https://1763107202-afk.github.io/modelhub/',space:'https://1763107202-afk.github.io/modelhub/space.html',files:'https://1763107202-afk.github.io/modelhub/files/',tutorials:'https://1763107202-afk.github.io/modelhub/tutorials.html'};
+  const labFrame=$('liveLabFrame');
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(entries=>{for(const entry of entries){
+      if(entry.isIntersecting){if(!labFrame.getAttribute('src'))labFrame.src=labFrame.dataset.src;}
+      else if(document.activeElement===labFrame)labFrame.blur();
+    }},{threshold:0}).observe(labFrame);
+  }else labFrame.src=labFrame.dataset.src;
   $$('[data-live-lab]').forEach(b=>b.onclick=()=>{$$('[data-live-lab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));$('liveLabFrame').src=liveLabPages[b.dataset.liveLab];});
   function frameCase(title,description,src){openModal(title,description,`<iframe src="${src}" title="${escapeHTML(title)}" allow="autoplay; fullscreen"></iframe>`,'iframe-body');}
-  $('labExpand').onclick=()=>frameCase('机械创新实验室交流平台','真实网站公开页面',$('liveLabFrame').src);
+  $('labExpand').onclick=()=>frameCase('机械创新实验室交流平台','真实网站公开页面',labFrame.getAttribute('src')||labFrame.dataset.src);
   $('labDirectLink').onclick=$('labExpand').onclick;
   $('labSpaceExpand').onclick=()=>frameCase('实验室进度空间','真实网站公开页面',liveLabPages.space);
   $('loadShipModel').onclick=()=>{$('shipPoster').hidden=true;$('shipModelFrame').hidden=false;$('shipModelFrame').src=$('shipModelFrame').dataset.src;};
