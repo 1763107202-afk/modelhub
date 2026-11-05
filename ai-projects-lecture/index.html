@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f5f3ed">
-  <meta name="description" content="吴群彪的竞赛经验分享：约20分钟，通过真实工程项目、三维核算、软件开发和PCB分步学习，展示AI怎样参与工程实践。案例公开访问，可在同一网页查看。">
-  <title>竞赛经验分享 · 吴群彪</title>
+  <meta name="description" content="吴群彪的AI辅助学习与竞赛分享：从理解原理、学习操作，到数字船厂、小蜘蛛和工程工具，通过真实项目说明怎样借助AI推进实践并检查结果。">
+  <title>AI 辅助学习与竞赛 · 吴群彪</title>
   <link rel="icon" href="assets/lecture-mark.svg">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="refinement.css">
+  <link rel="stylesheet" href="presentation.css?v=20261105-1">
   <script src="app.js?v=github-20261105" defer></script>
+  <script src="presentation.js?v=20261105-1" defer></script>
 </head>
 <body class="field-notes">
   <a class="skip" href="#main">跳到内容</a>
@@ -20,13 +22,16 @@
   </header>
   <main id="main">
     <section id="opening" class="scene cover active" data-label="开场" data-duration="1:00"><div class="wrap cover-wrap">
- <div class="cover-overline"><span>竞赛经验分享 / AI 与工程实践</span><span>约 20 分钟</span></div>
+ <div class="cover-overline"><span>AI 辅助学习与竞赛 / 实践分享</span><span>约 20 分钟</span></div>
  <div class="cover-heading">
-  <h1>从一个问题，<br>到一件作品。</h1>
-  <div class="cover-intro"><p>建模、仿真、写程序、做汇报。<br>借几个实际项目，聊聊 AI 在这些工作里<br>能帮上什么，以及怎样把结果检查清楚。</p><button class="button primary" id="startTalk">开始分享 <span>→</span></button><span class="cover-byline">分享人　吴群彪</span></div>
+  <h1>用 AI 辅助学习，<br>把竞赛想法做出来。</h1>
+  <div class="cover-intro"><p>把不懂的原理和操作一步步学明白，<br>再将想法落实到模型、程序和竞赛作品。<br>用真实项目，讲清 AI 怎样帮忙、结果怎样检查。</p><button class="button primary" id="startTalk">开始分享 <span>→</span></button><span class="cover-byline">分享人　吴群彪</span></div>
  </div>
- <a href="#shipyard" class="cover-panorama" aria-label="进入数字船厂案例"><img src="assets/ship-latest-line.webp" alt="最新船厂工程几何的分段生产线局部渲染"></a>
- <div class="cover-caption"><div><span>图 01</span><strong>船舶平面分段生产线</strong><small>完整工程几何 / 网页与 VR 场景</small></div><a href="#shipyard">进入第一个项目 <span>↗</span></a></div>
+ <div class="cover-projects" aria-label="三个真实项目入口">
+  <a class="cover-project" href="#shipyard" aria-label="查看数字船厂项目"><div class="cover-project-image ship-cover"><img src="assets/ship-latest-line.webp" alt="数字船厂的分段生产线工程模型"></div><div class="cover-project-caption"><span>01 / 场景与建模</span><strong>数字船厂 <i aria-hidden="true">↗</i></strong><small>把工艺过程变成可以参观的场景。</small></div></a>
+  <a class="cover-project" href="#more" aria-label="查看大葱处理设备项目"><div class="cover-project-image mechanical-cover"><img src="assets/scallion-final-card.webp" alt="大葱处理设备R26圆周处理机构局部"></div><div class="cover-project-caption"><span>02 / 机械设计与迭代</span><strong>大葱处理设备 <i aria-hidden="true">↗</i></strong><small>从机构方案，到整机模型与运行检查。</small></div></a>
+  <a class="cover-project" href="#tools" aria-label="查看工程工具项目"><div class="cover-project-image tools-cover"><img src="assets/nexus-prototype.webp" alt="PROJECT NEXUS现有工程工作台网页原型"></div><div class="cover-project-caption"><span>03 / 工具与效率</span><strong>工程工作台 <i aria-hidden="true">↗</i></strong><small>把重复操作整理为顺手的工具。</small></div></a>
+ </div>
  <div class="cover-route"><span>今天的线索</span><a href="#more">工程案例</a><i>—</i><a href="#tools">效率工具</a><i>—</i><a href="#multiai">工具搭配与学习方法</a></div>
 </div><aside class="speaker-note" hidden><b>开场 · 约 1 分钟</b><p>有了一个竞赛想法，下一步怎么做？往往还要面对建模、程序、仿真、调试和汇报。今天用几个实际项目，分享 AI 怎样参与这个过程：把需求拆清楚，遇到不会的操作一步步学，把结果做出来，再检查是否正确。</p><p>接下来先看一个完整的数字船厂，再看机械、电路和核算工具。最后把这些案例串成一套自己可以复用的方法。现场不用逐项念目录，直接点击“数字船厂”进入演示。</p></aside>
     </section>
