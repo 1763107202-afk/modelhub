@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+ <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+ <meta name="theme-color" content="#101a2a"><meta name="description" content="双子星裂隙 Twin Rift 三维运行演示。根据V2.0方案建立双环错层轨道、独立走行座舱、主动滚转及回转平台，展示完整玩法与未来主题园区。">
+ <title>双子星裂隙 Twin Rift · 三维运行演示</title>
+ <link rel="icon" type="image/svg+xml" href="./favicon.svg"><link rel="stylesheet" href="./style.css">
+ <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+<style>.error img{display:block;max-height:65vh;max-width:85vw;object-fit:contain;margin:0 auto 18px}.error{width:100%;max-width:none;position:fixed;inset:0;z-index:99;background:#101f2b;display:flex;align-items:center;justify-content:center;flex-direction:column}.error[hidden]{display:none}.error strong{color:#e7d8ad}.error p{font-size:12px;color:#98b3be}</style></head>
+<body>
+ <main id="workspace">
+  <div id="scene" aria-label="双子星裂隙三维场景"><canvas id="canvas"></canvas></div>
+  <header class="topbar">
+   <div class="brand"><img src="./favicon.svg" alt="" width="36" height="36"><div><strong>TWIN RIFT</strong><span>双子星裂隙</span></div><em>V2.0</em></div>
+   <div class="top-actions"><button id="reference" class="ghost">原效果图</button><button id="environment" class="ghost" aria-label="切换昼夜光照">暮色园区</button><button id="fullscreen" class="icon-button" aria-label="全屏观看">⛶</button><button id="panel-toggle" class="icon-button" aria-label="展开或收起运行面板">☰</button></div>
+  </header>
+  <div class="scene-caption"><span class="eyebrow">双环交错追逐式全姿态游乐设施</span><h1>双子星裂隙</h1><p>独立轨道 · 双舱追逐 · 主动滚转</p></div>
+  <div class="view-tools" role="group" aria-label="观察视角"><button data-view="orbit" class="active">全景</button><button data-view="chase">跟随 A 舱</button><button data-view="rider">乘员视角</button><button data-view="detail">机构细节</button><button data-view="top">俯视</button></div>
+  <aside id="panel" class="panel">
+   <div class="panel-head"><div><span class="eyebrow">运行演示</span><h2>选择你的航程</h2></div><span class="duration-pill" id="duration-label">165 s</span></div>
+   <div class="modes" role="group" aria-label="玩法模式"><button data-mode="explore">探索<small>轻刺激</small></button><button data-mode="stellar" class="active">星际<small>全流程</small></button><button data-mode="rift">裂隙<small>全滚转</small></button></div>
+   <p id="mode-note" class="mode-note">独立追逐、中央掠过、90°侧倾与180°翻转。</p>
+   <div class="stage-card"><span id="stage-number">01 / 07</span><strong id="stage-title">登舱 · 锁定</strong><p id="stage-detail">站台静止，头肩压杠闭合，完成锁定自检。</p></div>
+   <div class="telemetry"><div><span>A 舱速度</span><strong id="speed-a">0.0<small> m/s</small></strong></div><div><span>B 舱速度</span><strong id="speed-b">0.0<small> m/s</small></strong></div><div><span>主动滚转 A / B</span><strong id="roll-value">0° / 0°</strong></div><div><span>底座回转</span><strong id="rpm-value">0.00<small> rpm</small></strong></div></div>
+   <div class="legend"><span><i class="cyan"></i>A 舱 · 冷色</span><span><i class="amber"></i>B 舱 · 暖色</span></div>
+   <div class="toggles"><label><input type="checkbox" id="structure">机构观察</label><label><input type="checkbox" id="envelope">座舱包络</label><label><input type="checkbox" id="autoorbit">自动环视</label></div>
+   <details class="spec"><summary>文档参数与结构</summary><dl><div><dt>整体包络</dt><dd>约 18 × 18 × 15 m</dd></div><div><dt>双环倾角</dt><dd>+25° / −25°</dd></div><div><dt>中央轨道错层</dt><dd>2.3 m</dd></div><div><dt>座舱配置</dt><dd>2 舱 × 8 座（2 × 4）</dd></div><div><dt>回转平台</dt><dd>直径 11 m</dd></div><div><dt>轨道速度上限</dt><dd>6.5 m/s</dd></div><div><dt>底座回转上限</dt><dd>1.5 rpm</dd></div></dl><p>固定基础 → 回转支承与齿圈 → V 形主支撑 → 独立双环轨道 → 抱轨转向架 → 主动滚转座舱。</p><p>本演示对应概念方案，用于外观和运动展示。制造尺寸及实际乘员载荷需在工程阶段复核。</p></details>
+  </aside>
+  <footer class="playback">
+   <div class="transport"><button id="play" class="play-button" aria-label="开始完整演示">▶ <span>开始航程</span></button><button id="reset" class="reset-button" aria-label="回到站台">↺</button><div class="clock"><strong id="clock">00:00</strong><span id="clock-total"> / 02:45</span></div><label class="rate">播放<select id="rate" aria-label="播放倍速"><option value=".5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div>
+   <input id="scrub" type="range" min="0" max="165" value="0" step=".05" aria-label="运行时间轴">
+   <div class="stage-markers" id="stage-markers"></div>
+  </footer>
+  <div id="hint" class="hint">拖动旋转 · 双指缩放</div>
+  <div id="loading" class="loading"><div class="loading-ring"></div><strong>正在建立双环航程</strong><span>准备三维场景与机构</span></div>
+  <div id="error" class="error" hidden><img src="reference.png" alt="双子星裂隙原项目造型参考图"><strong>双子星裂隙 · 概念设计参考</strong><p>原效果图展示。三维运行模式需要浏览器图形支持。</p></div>
+  <dialog id="reference-dialog" aria-labelledby="reference-title"><div class="reference-heading"><div><span class="eyebrow">文档中的造型参考</span><h2 id="reference-title">双子星裂隙 · 原效果图</h2></div><button id="reference-close" class="icon-button" aria-label="关闭原效果图">×</button></div><img src="./reference.png" loading="lazy" alt="原文档内的双子星裂隙效果图：横向斜交的蓝橙双环，银色座舱和分层圆形底座，暮色主题园区"><p>三维版按横向斜交双环、金属包覆、分层底座与暮色园区精修，运行参数对应 V2.0 方案。</p></dialog>
+ </main>
+ <script type="module" src="./app.js"></script>
+</body>
+</html>

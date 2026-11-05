@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#112633"><title>江苏省兴化中学 · 三维校园</title>
+  <meta name="description" content="参照前后全景重建的江苏省兴化中学三维校园，游览教学区、湖畔、运动场、塔楼与园林院落，自由切换早晚、晴雨和雪景。">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23112633'/%3E%3Cpath d='M6 25V10q10 3 20 0v15h-4V15H10v10' fill='%23ead3a5'/%3E%3Cpath d='M12 25V19h8v6' fill='%2398cad1'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css?v=3">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+  <main id="app">
+    <div id="scene" aria-label="可以拖动旋转、双指缩放的三维校园" tabindex="0"></div>
+    <div id="loading" role="status"><div class="loader-gate"><i></i><i></i></div><strong>正在走进校园</strong><span>构建建筑与光影…</span></div>
+    <header class="brand glass"><span class="brand-mark" aria-hidden="true">兴</span><div><h1>江苏省兴化中学</h1><p>三维全校园 <span>·</span> 光阴与四季</p></div></header>
+    <div class="scene-state glass"><span id="weather-symbol" aria-hidden="true">☀</span><div><strong id="scene-label">午后 · 晴空</strong><span id="clock">15:00</span></div></div>
+    <div class="view-nav glass" role="group" aria-label="观赏位置">
+      <button data-view="aerial" aria-pressed="true">全校</button>
+      <button data-view="gate" aria-pressed="false">校门</button>
+      <button data-view="plaza" aria-pressed="false">广场</button>
+      <button data-view="teaching" aria-pressed="false">教学区</button>
+      <button data-view="admin" aria-pressed="false">行政区</button>
+      <button data-view="westgate" aria-pressed="false">西门</button>
+      <button data-view="eastgate" aria-pressed="false">东门</button>
+      <button data-view="lake" aria-pressed="false">湖畔</button>
+      <button data-view="sports" aria-pressed="false">运动场</button>
+      <button data-view="tower" aria-pressed="false">塔楼</button>
+      <button data-view="garden" aria-pressed="false">园林院落</button>
+      <button data-view="commons" aria-pressed="false">配套建筑</button>
+      <button data-view="rear" aria-pressed="false">后侧</button>
+    </div>
+    <div class="scene-actions glass">
+      <button id="rotate" aria-pressed="false" title="自动环绕" aria-label="自动环绕"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 10a8 8 0 1 0-2 7M20 4v6h-6"/></svg></button>
+      <button id="reset" title="复位视角" aria-label="复位视角"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m3 10 9-7 9 7M6 9v11h12V9M10 20v-6h4v6"/></svg></button>
+      <button id="fullscreen" title="全屏观看" aria-label="全屏观看"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+    </div>
+    <aside class="controls glass" aria-label="光照与天气">
+      <div class="panel-heading"><span>光照与天气</span><button id="collapse" aria-label="收起设置" aria-expanded="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      <div class="panel-content">
+        <div class="control-label"><label for="time">一天的光影</label><output id="time-output" for="time">15:00</output></div>
+        <input id="time" type="range" min="0" max="24" value="15" step="0.1" aria-label="时刻">
+        <div class="time-presets"><button data-time="6.5">清晨</button><button data-time="12">正午</button><button data-time="17.8">黄昏</button><button data-time="21">夜晚</button></div>
+        <div class="control-label weather-heading"><span>天气</span><span id="weather-note">阳光落在熟悉的屋檐</span></div>
+        <div class="weather-options" role="group" aria-label="选择天气">
+          <button data-weather="sunny" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><span>晴天</span></button>
+          <button data-weather="cloudy" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 18a5 5 0 1 1 1-9 6 6 0 1 1 10 9Z"/></svg><span>多云</span></button>
+          <button data-weather="rain" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 15a4 4 0 1 1 2-7 5 5 0 1 1 12 7M8 18l-1 3m6-3-1 3m6-3-1 3"/></svg><span>雨天</span></button>
+          <button data-weather="snow" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9 4l3 3 3-3M9 20l3-3 3 3M4 10l3-1-1-3m14 8-3 1 1 3M4 14l3 1-1 3m14-8-3-1 1-3"/></svg><span>雪景</span></button>
+        </div>
+      </div>
+    </aside>
+    <footer><span class="gesture-hint">单指旋转 · 双指缩放 / 平移</span><span class="model-note">按照片近似还原 · 局部布局与尺寸为估算</span></footer>
+    <div id="toast" role="status"></div>
+  </main>
+  <script type="module" src="./main.js?v=7"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CAD MassCalc · 三维核算预览</title><link rel="stylesheet" href="style.css"><script type="module" src="app.js"></script></head>
+<body>
+  <header class="workbench-head"><div class="mark">M<span>↗</span></div><div><h1>CAD MassCalc <span>三维核算预览</span></h1><p>原图纸 · 名义几何 · 质量依据</p></div><span class="source-badge">WSFM4022 / 精选 4 件</span></header>
+  <nav class="part-tabs" id="partTabs" aria-label="选择核算零件"></nav>
+  <main class="workspace">
+    <section class="drawing-panel"><div class="panel-label"><span>01 / 原始图纸</span><button id="drawingZoom" aria-label="放大原图纸">放大 ↗</button></div><button class="drawing-button" id="openDrawing"><img id="drawing" alt="对应零件的原始PDF图纸"></button><div class="drawing-origin"><strong id="partCode"></strong><span id="drawingPage"></span></div><p id="modelBasis"></p></section>
+    <section class="model-panel"><div class="panel-label"><span>02 / 三维几何预览</span><span class="live-label">可旋转</span></div><div class="canvas-wrap"><canvas id="modelCanvas" aria-label="按已有参数重建的零件三维模型，可拖动旋转"></canvas><div class="model-name"><small id="modelId"></small><h2 id="modelName"></h2></div><div class="view-hint">拖动旋转 · 滚轮缩放</div></div><div class="view-controls"><button id="rotate" aria-pressed="false">自动旋转</button><button id="section" aria-pressed="false">查看剖切</button><button id="reset">复位视角</button><span id="viewStatus">完整模型</span></div></section>
+    <aside class="result-panel"><div class="panel-label"><span>03 / 核算结果</span><span class="nominal">名义几何</span></div><div class="mass-number"><span>参考质量</span><strong id="mass">—</strong><small>kg / 件</small></div><dl class="result-data"><div><dt>净体积</dt><dd id="volume">—</dd></div><div><dt>材料</dt><dd id="material">—</dd></div><div><dt>参考密度</dt><dd>7,850 kg/m³</dd></div></dl><div class="formula">质量 = 体积 × 密度<small>mm³ → m³：除以 10⁹</small></div><details open class="parameters"><summary>当前模型参数 <span>mm</span></summary><dl id="parameters"></dl></details><div class="review-note"><span>结合原图核对</span><p id="risk"></p></div></aside>
+  </main>
+  <footer><span>源自既有第二、三轮核算记录；预览按原参数于本次重建。</span><span>剖切仅用于观察，质量对应完整零件。<button id="showProvenance">来源与范围 ↗</button></span></footer>
+  <dialog id="drawingDialog"><header><div><small>WSFM4022(5).pdf / 原始图纸</small><h2 id="drawingTitle"></h2></div><button id="closeDrawing" aria-label="关闭原图纸">×</button></header><img id="largeDrawing" alt="原始图纸整页"></dialog>
+  <dialog id="provenance"><header><h2>核算记录与本页范围</h2><button id="closeProvenance" aria-label="关闭来源说明">×</button></header><div class="provenance-copy"><p>参数与质量来自既有 CAD MassCalc / WSFM4022 第二、三轮核算文件。原图纸为《WSFM4022(5).pdf》中的对应页面。</p><p>第三轮记录包括 23 种独立零件 / 图号、28 个核算场景。本页挑选 4 件尺寸明确的零件，用原参数重建三维预览；这是本次整理的展示界面。</p><p>结果使用名义尺寸和参考材料密度；原记录中的倒角省略、BOM 冲突与待核对内容随零件列出。全套装配总重仍需完整 BOM 和工艺方案核对。</p><p>三维预览用于对照尺寸、孔与台阶。几何画面的圆周经过离散化，质量数值按原记录的解析公式计算。</p></div></dialog>
+  <div id="loadError" role="alert" hidden>核算材料暂未载入，请刷新页面重试。</div>
+</body></html>
