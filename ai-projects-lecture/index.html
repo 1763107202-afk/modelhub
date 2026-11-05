@@ -9,16 +9,16 @@
   <link rel="icon" href="assets/lecture-mark.svg">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="refinement.css">
-  <link rel="stylesheet" href="presentation.css?v=20261105-1">
-  <script src="app.js?v=github-20261105" defer></script>
-  <script src="presentation.js?v=20261105-1" defer></script>
+  <link rel="stylesheet" href="presentation.css?v=20261105-2">
+  <script src="app.js?v=20261105-fkey" defer></script>
+  <script src="presentation.js?v=20261105-2" defer></script>
 </head>
 <body class="field-notes">
   <a class="skip" href="#main">跳到内容</a>
   <header class="topbar">
     <a class="brand" href="#opening" aria-label="回到开场"><img class="site-mark" src="assets/lecture-mark.svg" alt="工字结构的工程实践标记"><span class="wordmark">竞赛经验分享<small>吴群彪 · 项目实践手记</small></span></a>
     <nav aria-label="讲座章节" id="mainNav"><a href="#opening" class="current">开场</a><a href="#shipyard">数字船厂</a><a href="#more">精选项目</a><a href="#tools">效率工具</a><a href="#lab">实验室网站</a><a href="#spider">小蜘蛛</a><a href="#multiai">多 AI 配合</a><a href="#method">带走方法</a></nav>
-    <button class="button small outline" id="presentTop">讲座模式 <span>↗</span></button>
+    <button class="button small outline" id="presentTop" aria-keyshortcuts="F" title="按 F 一键全屏讲座">讲座模式 <span>F</span></button>
   </header>
   <main id="main">
     <section id="opening" class="scene cover active" data-label="开场" data-duration="1:00"><div class="wrap cover-wrap">
@@ -114,7 +114,7 @@
     </section>
   </main>
   <footer class="site-footer"><span>吴群彪 · 竞赛经验分享</span><span>真实项目材料 / 互动与原网站</span><button class="text-button" id="footerSources">素材出处</button></footer>
-  <div class="lecture-controls" id="lectureControls" hidden><button id="exitTalk" aria-label="退出讲座模式">退出</button><div class="lecture-progress"><span id="currentChapter">01 / 08 开场</span><small id="segmentTime">建议 1 分钟</small><div><i id="lectureBar"></i></div></div><button id="timerToggle" aria-label="暂停或继续计时">20:00</button><button id="notesToggle" aria-pressed="false">讲解提示 <kbd>N</kbd></button><button id="fullscreenToggle" aria-label="全屏讲座">⛶</button><button id="prevScene" aria-label="上一章">←</button><button id="nextScene" aria-label="下一章">下一章 →</button></div>
+  <div class="lecture-controls" id="lectureControls" hidden><button id="exitTalk" aria-label="退出讲座模式">退出</button><div class="lecture-progress"><span id="currentChapter">01 / 08 开场</span><small id="segmentTime">建议 1 分钟</small><div><i id="lectureBar"></i></div></div><button id="timerToggle" aria-label="暂停或继续计时">20:00</button><button id="notesToggle" aria-pressed="false">讲解提示 <kbd>N</kbd></button><button id="fullscreenToggle" aria-label="全屏讲座（F）" aria-keyshortcuts="F">⛶ <kbd>F</kbd></button><button id="prevScene" aria-label="上一章">←</button><button id="nextScene" aria-label="下一章">下一章 →</button></div>
   <dialog id="projectDialog" aria-labelledby="modalTitle" aria-describedby="modalCategory"><div class="modal-head"><div><small id="modalCategory"></small><h2 id="modalTitle"></h2></div><div class="modal-window-actions"><button id="modalBack" hidden aria-label="返回当前案例">← 返回</button><button id="modalFullscreen" aria-label="全屏查看当前案例">⛶</button><button id="closeDialog" aria-label="关闭弹窗"><span class="close-word">关闭</span><span aria-hidden="true">×</span></button></div></div><div class="modal-body" id="modalBody"></div></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>

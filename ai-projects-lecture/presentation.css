@@ -108,7 +108,7 @@
     margin-bottom:calc(17px + var(--talk-space-extra)*.45);
     color:#5a6652;
   }
-  .field-notes.preso .material-picture { height:calc(154px + var(--talk-image-extra)); }
+  .field-notes.preso .material-picture { height:max(125px,calc(154px + var(--talk-image-extra))); }
   .field-notes.preso .material-caption { padding-block:calc(12px + var(--talk-space-extra)*.25); }
   .field-notes.preso .material-caption > span { font-size:calc(11px * var(--talk-scale)); }
   .field-notes.preso .material-caption h3 { font-size:calc(18px * var(--talk-scale)); }

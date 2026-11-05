@@ -5,10 +5,10 @@
   const desktop = matchMedia('(min-width:1100px) and (min-height:840px)');
   let pending = false;
 
-  function apply(wrap, growth) {
-    wrap.style.setProperty('--talk-scale', (1 + growth * .16).toFixed(4));
-    wrap.style.setProperty('--talk-image-extra', (growth * 150).toFixed(2) + 'px');
-    wrap.style.setProperty('--talk-space-extra', (growth * 18).toFixed(2) + 'px');
+  function apply(wrap, growth, compact = false) {
+    wrap.style.setProperty('--talk-scale', (1 + growth * .16 - (compact ? .04 : 0)).toFixed(4));
+    wrap.style.setProperty('--talk-image-extra', (growth * 150 - (compact ? 50 : 0)).toFixed(2) + 'px');
+    wrap.style.setProperty('--talk-space-extra', (growth * 18 - (compact ? 12 : 0)).toFixed(2) + 'px');
   }
   function fit() {
     pending = false;
@@ -19,15 +19,20 @@
     const limit = controls.getBoundingClientRect().top - 28;
     const padding = parseFloat(getComputedStyle(wrap).paddingBottom) || 0;
     const fits = () => wrap.getBoundingClientRect().bottom - padding <= limit;
-    if (!fits()) return;
+    let compact = false;
+    if (!fits()) {
+      compact = true;
+      apply(wrap, 0, compact);
+      if (!fits()) return;
+    }
     let lower = 0, upper = 1.6;
     for (let step = 0; step < 9; step++) {
       const candidate = (lower + upper) / 2;
-      apply(wrap, candidate);
+      apply(wrap, candidate, compact);
       if (fits()) lower = candidate;
       else upper = candidate;
     }
-    apply(wrap, lower);
+    apply(wrap, lower, compact);
   }
   function schedule() {
     if (!pending) { pending = true; requestAnimationFrame(fit); }
