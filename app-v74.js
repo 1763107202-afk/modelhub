@@ -841,8 +841,9 @@ function renderMessageCenter(){
    sentList.innerHTML=sentRows.length?sentRows.map(n=>{
      const ack=!!n.acknowledged_at;
      const label=ack?"已确认收到":n.read_at?"已读 · 待确认":"未确认";
-     return '<article class="messageSentCard" data-sent-id="'+esc(n.id)+'"><div class="messageSentCardHeader"><strong>'+esc(n.recipient_name||"成员")+'</strong><span class="messageStatus '+(ack?'isAck':'')+'">'+label+'</span></div><small>'+esc(n.message_type==="teacher_comment"?"教师私密评语":"进度更新提醒")+' · '+fmt(n.created_at)+'</small><p>'+esc(n.message||"")+'</p>'+(ack?'<div class="messageAckTime">✓ 于 '+fmt(n.acknowledged_at)+' 确认收到</div>':'<div class="messageAckPending">等待成员主动确认</div>')+'</article>';
+     return '<article class="messageSentCard" data-sent-id="'+esc(n.id)+'"><div class="messageSentCardHeader"><strong>'+esc(n.recipient_name||"成员")+'</strong><span class="messageStatus '+(ack?'isAck':'')+'">'+label+'</span></div><small>'+esc(n.message_type==="teacher_comment"?"教师私密评语":"进度更新提醒")+' · '+fmt(n.created_at)+'</small><p>'+esc(n.message||"")+'</p>'+(ack?'<div class="messageAckTime">✓ 于 '+fmt(n.acknowledged_at)+' 确认收到</div>':'<div class="messageAckPending">等待成员主动确认</div>')+(n.message_type==="teacher_comment"?teacherNoteDeleteButton(n.id):'')+'</article>';
    }).join(""):'<p class="messageLoading">'+(stateView.sent.length?"这一分类暂无记录。":"尚无最近 15 天内发出的教师通知。")+"</p>";
+   bindTeacherNoteDeleteButtons(sentList);
    const focusId=new URLSearchParams(location.search).get("notice");
    if(focusId){
      const selected=[...sentList.querySelectorAll("[data-sent-id]")].find(el=>el.dataset.sentId===focusId);
@@ -4823,13 +4824,44 @@ function spaceTeacherDialog({mode,commentId=null,item=null}){
  };
  dialog.showModal();
 }
+function teacherNoteDeleteButton(id){
+ return '<button type="button" class="btn ghost teacherPrivateDelete" data-delete-notice="'+esc(id)+'" aria-label="删除我发出的私密评语">删除</button>';
+}
+function bindTeacherNoteDeleteButtons(root){
+ root.querySelectorAll("[data-delete-notice]").forEach(button=>{
+  button.onclick=event=>{event.preventDefault();event.stopPropagation();void deleteOwnTeacherNote(button.dataset.deleteNotice,button)};
+ });
+}
+async function deleteOwnTeacherNote(noticeId,button){
+ const uid=state.user?.id;
+ if(!uid||button?.disabled)return;
+ const note=spaceState.privateNotes.find(n=>n.id===noticeId&&n.sender_id===uid)
+   ||messageCenterState.sent.find(n=>n.id===noticeId&&n.message_type==="teacher_comment");
+ if(!note){toast("只能删除自己发出的私密评语");return}
+ if(!confirm("确定删除这条私密评语？\n\n删除后，你和接收人的站内记录都会移除。已经送达的QQ或微信提示不会撤回。"))return;
+ if(button)button.disabled=true;
+ try{
+  const result=await supabase.from("progress_member_notices").delete().eq("id",noticeId).eq("sender_id",uid).eq("message_type","teacher_comment").select("id");
+  if(result.error)throw result.error;
+  if(state.user?.id!==uid)return;
+  if(!result.data?.length){toast("该私语已删除或你无权删除，请刷新查看");return}
+  spaceState.privateNotes=spaceState.privateNotes.filter(n=>n.id!==noticeId);
+  messageCenterState.sent=messageCenterState.sent.filter(n=>n.id!==noticeId);
+  globalThis.__notifyCache=null;
+  if(page==="space"){spaceRenderFeed();spaceRenderDesktop();spaceRenderBanner()}
+  else if(page==="messages")renderMessageCenter();
+  toast("私密评语已删除");
+  await loadSiteNotifications(false).catch(error=>console.warn("私语已删除，消息列表刷新失败",error));
+ }catch(error){toast("删除私密评语失败："+(error?.message||String(error)))}
+ finally{if(button)button.disabled=false}
+}
 function spacePrivateFeedback(item){
  const notes=spaceState.privateNotes.filter(n=>n.progress_type===item.type&&n.progress_id===item.id);
  if(!notes.length)return "";
  const unread=notes.filter(n=>n.recipient_id===state.user.id&&!n.read_at).length;
  return '<details class="spacePrivateFeedback"><summary>🔒 私密教师评语 <strong>'+notes.length+'</strong>'+(unread?'<span class="spacePrivateUnread">'+unread+' 条未读</span>':'')+'<small>仅相关发送人与接收人可见</small></summary><div class="spacePrivateFeedbackList">'+notes.map(n=>{
    const fromMe=n.sender_id===state.user.id,person=fromMe?"我发送的评语":n.sender_name||"指导老师";
-   return '<article class="spacePrivateNote" data-private-note="'+esc(n.id)+'"><div class="spacePrivateNoteMeta"><b>'+esc(person)+'</b><time>'+esc(fmt(n.created_at))+'</time></div><p>'+esc(n.message)+'</p></article>';
+   return '<article class="spacePrivateNote" data-private-note="'+esc(n.id)+'"><div class="spacePrivateNoteMeta"><b>'+esc(person)+'</b><time>'+esc(fmt(n.created_at))+'</time></div><p>'+esc(n.message)+'</p>'+(fromMe?teacherNoteDeleteButton(n.id):'')+'</article>';
  }).join("")+'</div></details>';
 }
 function spaceCommentTree(item){
@@ -4903,6 +4935,7 @@ function spaceRenderFeed(){
 
  box.querySelectorAll(".spacePost").forEach(article=>{
   const type=article.dataset.postType,id=article.dataset.postId,item=spaceFind(type,id);
+  bindTeacherNoteDeleteButtons(article);
   const privateBox=article.querySelector(".spacePrivateFeedback");
   if(privateBox)privateBox.addEventListener("toggle",async()=>{
    if(!privateBox.open||!state.user)return;
