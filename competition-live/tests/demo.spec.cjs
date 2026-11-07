@@ -31,9 +31,12 @@ test('demo judge can enter a score and audience sees it', async ({ page }) => {
   await page.locator('#authForm button[type="submit"]').click();
   await expect(page.getByText('裁判实时录分台')).toBeVisible();
   // The seeded demo starts at round 4 with unfinished teams.
+  await expect(page.locator('#scoreInput')).toBeDisabled();
   await page.locator('#startWatch').click();
   await page.waitForTimeout(180);
   await page.locator('#stopWatch').click();
+  await expect(page.locator('#scoreInput')).toBeEnabled();
+  await expect(page.locator('#submitScoreTime')).toBeEnabled();
   await expect(page.locator('#elapsedInput')).not.toHaveValue('');
   await page.locator('#scoreInput').fill('92.50');
   page.once('dialog', dialog => dialog.accept());
@@ -91,11 +94,12 @@ test('judge input requires timer stop and timed-score submission is visible on b
   await page.locator('#accessCode').fill('123456');
   await page.locator('#authForm button[type="submit"]').click();
   await page.locator('#startWatch').click();
-  await page.locator('#scoreInput').fill('96.00');
-  await page.locator('#elapsedInput').fill('1.00'); // permit form validation; JS must still block running timer
-  await page.locator('#scoreForm button[type="submit"]').click();
-  await expect(page.locator('#message')).toContainText('请先停止计时');
+  await expect(page.locator('#scoreInput')).toBeDisabled();
+  await expect(page.locator('#submitScoreTime')).toBeDisabled();
   await page.locator('#stopWatch').click();
+  await expect(page.locator('#scoreInput')).toBeEnabled();
+  await expect(page.locator('#submitScoreTime')).toBeEnabled();
+  await page.locator('#scoreInput').fill('96.00');
   await page.locator('#elapsedInput').fill('135.20');
   await page.locator('#scoreNote').fill('裁判依据备用计时器复核');
   page.once('dialog', dialog => dialog.accept());
