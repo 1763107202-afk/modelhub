@@ -1139,6 +1139,13 @@ body[data-view="screen"] .v6-rank-score{font-variant-numeric:tabular-nums}
  body[data-view="screen"] .v6-lane-points b.v7-score-long{font-size:22px}
  body[data-view="screen"] .v6-team-name{font-size:clamp(19px,4.9vw,27px)}
 }
+
+/* MOVE.ARENA admin reset action — visually separated destructive operation */
+.comp-reset-panel{border:1px solid #885e49!important;background:linear-gradient(160deg,#2b2528,#192a35)!important}
+.comp-reset-panel .panel-title{color:#f4d2ba!important}
+.comp-reset-panel .reset-hint{font-size:12px;line-height:1.8;color:#c0b9b6;margin:10px 0 15px}
+.comp-reset-panel .reset-button{border:1px solid #a87857!important;background:#442f2b!important;color:#ffe4cc!important}
+.comp-reset-panel .reset-button:hover{background:#6b3b30!important}
 </style>
 <script>// 公共 Supabase Publishable Key（不是服务端密钥），所有写操作由数据库权限与一次性分配的高强度访问码保护。
 window.COMP26_CONFIG = Object.freeze({
@@ -1496,6 +1503,7 @@ function control(){if(!state.token)return login();if(state.role!=='admin')return
  <section class="panel"><div class="panel-head"><span class="panel-title">故障顺延补赛</span><span class="eyebrow">ONE RETRY ONLY</span></div>${faults.length?faults.map(t=>`<div class="team-entry"><div><strong>${esc(t.name)}</strong><small>${esc(teamStatus(t))} · ${t.lane}赛道</small></div><span class="muted">${t.attempt_count}/2</span><button class="btn" data-retry="${esc(t.id)}" ${e.phase!=='retry'||e.active_retry_team||t.status!=='fault_pending'?'disabled':''}>安排补赛</button></div>`).join(''):'<p class="subtext">暂无等待顺延补赛的队伍。</p>'}${e.active_retry_team?`<div class="btns" style="margin-top:14px"><button class="btn danger" id="retryFail">当前补赛未完成 · 记0分</button></div>`:''}</section></div>
  <div class="flex-col"><section class="panel"><div class="panel-head"><span class="panel-title">大屏即时广播</span><span class="eyebrow">ANNOUNCEMENT</span></div><p class="subtext">当前广播：${esc(e.announcement)}</p><form id="announceForm"><div class="field"><label>大屏显示的现场提示</label><input type="text" id="announceInput" maxlength="100" required placeholder="如：请第6轮队伍前往赛道准备"></div><button class="btn block" style="margin-top:12px">发布大屏提示</button></form><div class="btns" style="margin-top:13px"><button class="btn" id="fullscreenBtn">⛶ 大屏全屏</button><button class="btn" id="judgeShortcut">↗ 裁判台</button></div></section>
  <section class="panel"><div class="panel-head"><span class="panel-title">奖项核定与揭晓</span><span class="eyebrow">AWARDS RELEASE</span></div><div class="value-select"><div class="award-chip">一等奖 <strong>03</strong> 队</div><div class="award-chip">二等奖 <strong>07</strong> 队</div><div class="award-chip">三等奖 <strong>08</strong> 队</div></div><p class="tiny-note">按最终成绩降序分配。第3/4、10/11、18/19名若同分，必须先按已公布赛制由裁判录入裁决顺序，才允许揭晓。</p>${e.phase==='review'?`<div class="editor-notice">${allScored?'所有36队已有成绩，可以进行奖项边界同分核查。':'还有队伍未完成成绩确认，不能公布。'}</div><button id="revealButton" class="btn lime big block" style="margin-top:15px" ${!allScored?'disabled':''}>★ 一键公布获奖名单（全大屏联动）</button>`:e.awards_revealed?'<button class="btn lime block" id="openAwards">★ 播放颁奖动画</button>':'<p class="subtext">完成18轮正赛和补赛后自动开放。</p>'}</section>
+ <section class="panel comp-reset-panel"><div class="panel-head"><span class="panel-title">赛前测试数据重置</span><span class="eyebrow">ADMIN · RESET</span></div><p class="reset-hint">仅限赛事总管理员操作。重置将清除全部测试成绩、故障补赛和计时状态，恢复为第1轮待开赛。36队名单、抽签顺序、奖项名额和审计记录均保留；云端会先保存完整重置前快照。</p><button id="resetCompetition" class="btn block reset-button">↺ 清空测试成绩 · 恢复赛事初始状态</button><p class="tiny-note">重置需要输入“清空测试成绩”二次确认；正式比赛结束或颁奖后不可重置。</p></section>
  <section class="panel"><div class="panel-head"><span class="panel-title">成绩排行榜 · 同分裁决</span><span class="eyebrow">FINAL CHECK</span></div><div class="ranking-list" style="max-height:370px;overflow:auto">${ranked.map((t,i)=>`<div class="rank-item ${i===0?'top1':''}"><span class="rank-no">${pad(i+1)}</span><span class="rank-name">${esc(t.name)}</span><span class="rank-score">${displayedScore(t)}</span></div>`).join('')||'<p class="subtext">暂无分数</p>'}</div>${e.phase==='review'?`<form id="tieForm" style="margin-top:17px"><div class="form-grid"><div class="field"><label>同分队伍</label><select id="tieTeam">${ranked.map(t=>`<option value="${esc(t.id)}">${esc(t.name)} (${displayedScore(t)})</option>`).join('')}</select></div><div class="field"><label>裁判裁决序（数值越小优先）</label><input id="tieNumber" type="number" min="1" max="36" placeholder="1"></div></div><button type="submit" class="btn block" style="margin-top:12px">保存裁决序</button></form>`:''}</section><button class="btn ghost" id="logoutBtn">退出总控账号</button></div></div>${footer()}`;
 }
 function render(){if(!state.event)return;const el=$('app');el.innerHTML=state.view==='screen'?screen():state.view==='judge'?judge():control();bindEvents();tick();}
@@ -1507,6 +1515,28 @@ function bindEvents(){
  $('openAwards')?.addEventListener('click',showAwards);
  $('logoutBtn')?.addEventListener('click',()=>{state.token='';state.role='';for(const k of ['comp26_token','comp26_role','comp26_token_v2','comp26_role_v2'])sessionStorage.removeItem(k);render()});
  $('authForm')?.addEventListener('submit',async ev=>{ev.preventDefault();const code=$('accessCode').value.trim();const selected=$('accessRole').value;if(!/^[0-9]{6}$/.test(code)||!roleText[selected]){toast('请正确选择身份并填写6位数字访问码',true);return;}const token='MOVE.ARENA:2026:'+selected+':'+code;const old=state.token,oldRole=state.role;state.token=token;state.role=selected;try{const probe=await rpc('probe');if(probe.role!==selected)throw Error('身份验证不一致，请联系管理员');state.role=probe.role;sessionStorage.setItem('comp26_token_v2',token);sessionStorage.setItem('comp26_role_v2',probe.role);toast('验证成功：'+roleText[probe.role]);render()}catch(e){state.token=old;state.role=oldRole;toast(e.message,true)}});
+
+ $('resetCompetition')?.addEventListener('click',async()=>{
+   if(state.role!=='admin'||!state.token){toast('仅管理员可重置赛事',true);return;}
+   if(state.event.awards_revealed){toast('获奖名单已公布，禁止重置',true);return;}
+   const count=state.teams.filter(t=>t.score!==null).length;
+   const ok=prompt('警告：将清空本次赛事所有成绩与比赛进度（当前 '+count+' 支队伍已录分），并恢复第1轮待开赛。\n\n请输入：清空测试成绩');
+   if(ok===null)return;
+   if(ok!=='清空测试成绩'){toast('确认文字不正确，未执行重置',true);return;}
+   if(!confirm('最后确认：清空全部测试成绩、重置本场赛事？\n将保存重置前快照及审计记录。'))return;
+   const button=$('resetCompetition');if(button){button.disabled=true;button.textContent='正在安全重置…';}
+   try{
+     if(demoMode){
+       state.teams=state.teams.map(t=>({...t,score:null,status:'pending',attempt_count:1,tie_order:null,note:null,scored_at:null}));
+       state.event={...state.event,phase:'upcoming',current_round:1,round_started_at:null,active_retry_team:null,awards_revealed:false,announcement:'欢迎参加智能搬运小车校内赛，请第一轮队伍提前准备'};
+       persistDemo();state.lastSnapshot='';toast('演示数据已清空');render();return;
+     }
+     const outcome=await req('rpc/comp26_reset',{method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({p_secret:state.token,p_confirmation:ok,p_expected_scores:count})});
+     toast('赛事已重置：清空 '+outcome.cleared+' 队测试成绩，36队名单保留');
+     await refresh(true);
+   }catch(e){toast(e.message||'重置失败',true);if(button){button.disabled=false;button.textContent='↺ 清空测试成绩 · 恢复赛事初始状态';}}
+ });
  $('scoreForm')?.addEventListener('submit',async ev=>{ev.preventDefault();const team=state.teams.find(t=>t.id===$('currentTeamId').value);const score=Number($('scoreInput').value);const note=$('scoreNote').value.trim();if(!Number.isFinite(score)||score<0||score>9999){toast('分数必须在0—9999之间',true);return}if(confirm(`确认提交？\n队伍：${team.name}\n赛道：${team.lane}\n最终成绩：${score.toFixed(2)} 分\n\n提交后实时显示于大屏。`))await execute('submit',{p_team_id:team.id,p_score:score,p_note:note},'成绩已提交 · 大屏同步更新')});
  $('faultBtn')?.addEventListener('click',async()=>{const t=state.teams.find(t=>t.id===$('currentTeamId').value);if(confirm(`确定申报 ${t.name} 的临时硬件故障？\n确认后该队将顺延至补赛时段，每队仅允许一次补赛。`))await execute('fault',{p_team_id:t.id,p_note:'临时硬件故障 · 现场裁判确认'},'已加入故障补赛队列')});
  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async()=>{const act=b.dataset.action;if(confirm(act==='start'?'确定宣布赛事正式开始？':act==='next'?'本轮双赛道成绩已确认，确定有请下一轮队伍？':'所有故障队伍均已处理，进入成绩核对？') )await execute(act,{},'比赛进程已同步到全场大屏')}));
