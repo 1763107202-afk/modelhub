@@ -14,6 +14,7 @@ module.exports = defineConfig({
   },
   webServer: {
     command: 'python3 -m http.server 8765 --bind 127.0.0.1',
+    cwd: require('path').resolve(__dirname, '..'),
     url: 'http://127.0.0.1:8765/competition-live/index.html?demo=1',
     timeout: 20000,
     reuseExistingServer: false
