@@ -1576,7 +1576,7 @@ function bindEvents(){
   });
   $('stopWatch')?.addEventListener('click',()=>{
    if(!w.running)return;
-   w.ms=Math.round(watchElapsed(w)/10)*10;w.running=false;w.startedAt=0;persistWatch(w);render();
+   w.ms=Math.max(10,Math.round(watchElapsed(w)/10)*10);w.running=false;w.startedAt=0;persistWatch(w);const input=$('elapsedInput');if(input){input.value=(w.ms/1000).toFixed(2);input.dataset.source='stopwatch'}$('startWatch').disabled=false;$('stopWatch').disabled=true;watchUI(w);
   });
   $('resetWatch')?.addEventListener('click',()=>{
    if(!confirm('确认清空此队的本地计时记录？已提交的云端成绩不会被删除。'))return;
