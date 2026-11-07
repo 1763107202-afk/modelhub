@@ -14,48 +14,58 @@ BEGIN
   SELECT id INTO b FROM public.comp26_teams WHERE draw_order=2;
 
   -- Required roles may call secured public RPC; auth checks must still happen server side.
-  IF NOT has_function_privilege('anon', 'public.comp26_action(text,text,uuid,numeric,text,integer,integer,text)', 'EXECUTE')
+  IF NOT has_function_privilege('anon', 'public.comp26_action_v8(text,text,uuid,numeric,text,integer,integer,text)', 'EXECUTE')
   THEN RAISE EXCEPTION 'CI: anon RPC role unexpectedly denied'; END IF;
   IF EXISTS(SELECT 1 FROM public.comp26_teams WHERE elapsed_ms IS NOT NULL)
   THEN RAISE EXCEPTION 'CI: fixture should begin with unrecorded times'; END IF;
   IF (SELECT count(*) FROM public.comp26_teams) <> 36 THEN RAISE EXCEPTION 'CI: incorrect team count'; END IF;
 
-  PERFORM public.comp26_action(adm,'start');
+  -- Legacy six-argument RPC still exists while old clients complete a handoff.
+  IF to_regprocedure('public.comp26_action(text,text,uuid,numeric,text,integer)') IS NULL
+    THEN RAISE EXCEPTION 'CI: legacy scorer was unexpectedly removed'; END IF;
+  PERFORM public.comp26_action_v8(adm,'start');
 
   BEGIN
-    PERFORM public.comp26_action(j_b,'submit',a,95,'',NULL,152340,'stopwatch');
+    PERFORM public.comp26_action_v8(j_b,'submit',a,95,'',NULL,152340,'stopwatch');
     RAISE EXCEPTION 'CI: lane B was able to score lane A';
   EXCEPTION WHEN OTHERS THEN
     IF SQLERRM NOT LIKE '%只能录入对应赛道%' THEN RAISE; END IF;
   END;
 
   BEGIN
-    PERFORM public.comp26_action(j_a,'submit',a,95,'',NULL,NULL,'stopwatch');
+    PERFORM public.comp26_action_v8(j_a,'submit',a,95,'',NULL,NULL,'stopwatch');
     RAISE EXCEPTION 'CI: missing elapsed_ms permitted';
   EXCEPTION WHEN OTHERS THEN
     IF SQLERRM NOT LIKE '%请先记录有效用时%' THEN RAISE; END IF;
   END;
 
   BEGIN
-    PERFORM public.comp26_action(j_a,'submit',a,95,'',NULL,200005,'stopwatch');
+    PERFORM public.comp26_action_v8(j_a,'submit',a,95,'',NULL,200005,'stopwatch');
     RAISE EXCEPTION 'CI: non-centisecond elapsed_ms permitted';
   EXCEPTION WHEN OTHERS THEN
     IF SQLERRM NOT LIKE '%精度%' THEN RAISE; END IF;
   END;
 
   BEGIN
-    PERFORM public.comp26_action(j_a,'submit',a,95,'',NULL,154320,'manual');
+    PERFORM public.comp26_action_v8(j_a,'submit',a,95,'',NULL,154320,'manual');
     RAISE EXCEPTION 'CI: manual time permitted without explanatory note';
   EXCEPTION WHEN OTHERS THEN
     IF SQLERRM NOT LIKE '%手工调整用时%' THEN RAISE; END IF;
   END;
 
-  PERFORM public.comp26_action(j_a,'submit',a,95.01,'CI official time',NULL,154320,'stopwatch');
-  PERFORM public.comp26_action(j_b,'submit',b,95.01,'CI official time',NULL,130500,'stopwatch');
+  PERFORM public.comp26_action_v8(j_a,'submit',a,95.01,'CI official time',NULL,154320,'stopwatch');
+  PERFORM public.comp26_action_v8(j_b,'submit',b,95.01,'CI official time',NULL,130500,'stopwatch');
   IF (SELECT elapsed_ms FROM public.comp26_teams WHERE id=b)<>130500
   THEN RAISE EXCEPTION 'CI: elapsed time not persisted'; END IF;
   IF (SELECT id FROM public.comp26_teams WHERE score=95.01 ORDER BY score DESC,elapsed_ms ASC LIMIT 1)<>b
   THEN RAISE EXCEPTION 'CI: shorter time did not win equal score'; END IF;
+
+  -- Existing score can receive a verified elapsed time without changing its points.
+  UPDATE public.comp26_teams SET elapsed_ms=NULL,elapsed_source=NULL WHERE id=a;
+  PERFORM public.comp26_action_v8(adm,'set_time',a,NULL,'备用计时器记录',NULL,154320,'manual');
+  IF (SELECT score FROM public.comp26_teams WHERE id=a)<>95.01 OR
+     (SELECT elapsed_ms FROM public.comp26_teams WHERE id=a)<>154320
+     THEN RAISE EXCEPTION 'CI: admin time backfill changed score'; END IF;
 
   -- Test reset snapshots and same score/time records are actually cleared.
   SELECT public.comp26_reset(adm,'清空测试成绩',2) INTO v;
@@ -66,14 +76,14 @@ BEGIN
   THEN RAISE EXCEPTION 'CI: reset left score or time'; END IF;
 
   -- Now create synthetic complete results to exercise award cutoffs and audit.
-  PERFORM public.comp26_action(adm,'start');
+  PERFORM public.comp26_action_v8(adm,'start');
   UPDATE public.comp26_events SET phase='review' WHERE id=ev; -- CI-only setup.
   UPDATE public.comp26_teams
     SET status='scored', score=(101-draw_order)::numeric, elapsed_ms=120000+draw_order*10, elapsed_source='stopwatch'
     WHERE event_id=ev;
   -- Equal score / different elapsed time must NOT require adjudication.
   UPDATE public.comp26_teams SET score=98 WHERE event_id=ev AND draw_order IN (3,4);
-  PERFORM public.comp26_action(adm,'reveal');
+  PERFORM public.comp26_action_v8(adm,'reveal');
   IF (SELECT phase FROM public.comp26_events WHERE id=ev)<>'awards'
   THEN RAISE EXCEPTION 'CI: award reveal failed for unequal times'; END IF;
 
@@ -88,14 +98,14 @@ BEGIN
   UPDATE public.comp26_events SET phase='review',awards_revealed=false WHERE id=ev;
   UPDATE public.comp26_teams SET elapsed_ms=120030 WHERE draw_order IN (3,4) AND event_id=ev;
   BEGIN
-    PERFORM public.comp26_action(adm,'reveal');
+    PERFORM public.comp26_action_v8(adm,'reveal');
     RAISE EXCEPTION 'CI: exact equal score/time at award cut was allowed';
   EXCEPTION WHEN OTHERS THEN
     IF SQLERRM NOT LIKE '%必须先由裁判确定同分裁决序%' THEN RAISE; END IF;
   END;
-  PERFORM public.comp26_action(adm,'tie',(SELECT id FROM public.comp26_teams WHERE draw_order=3),NULL,NULL,1);
-  PERFORM public.comp26_action(adm,'tie',(SELECT id FROM public.comp26_teams WHERE draw_order=4),NULL,NULL,2);
-  PERFORM public.comp26_action(adm,'reveal');
+  PERFORM public.comp26_action_v8(adm,'tie',(SELECT id FROM public.comp26_teams WHERE draw_order=3),NULL,NULL,1);
+  PERFORM public.comp26_action_v8(adm,'tie',(SELECT id FROM public.comp26_teams WHERE draw_order=4),NULL,NULL,2);
+  PERFORM public.comp26_action_v8(adm,'reveal');
   IF (SELECT count(*) FROM public.comp26_audit WHERE event_id=ev AND action='reveal')<>2
   THEN RAISE EXCEPTION 'CI: award audit missing'; END IF;
   RAISE NOTICE 'CI database integration: PASS (role isolation, elapsed input, reset snapshot, tie boundaries, awards, audits)';
