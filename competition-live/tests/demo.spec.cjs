@@ -48,8 +48,10 @@ test('admin reset requires explicit confirmation and clears demo scores only', a
   await page.locator('#resetCompetition').click();
   // Cancel must not reset the seeded demo score count.
   await expect(page.locator('.metric').filter({ hasText: '已确认成绩' })).toContainText('6 /36');
-  page.once('dialog', dialog => dialog.accept('清空测试成绩'));
-  page.once('dialog', dialog => dialog.accept());
+  page.on('dialog', async dialog => {
+    if (dialog.type() === 'prompt') await dialog.accept('清空测试成绩');
+    else await dialog.accept();
+  });
   await page.locator('#resetCompetition').click();
   await expect(page.locator('.metric').filter({ hasText: '已确认成绩' })).toContainText('0 /36');
   await expect(page.locator('.metric').filter({ hasText: '比赛轮次' })).toContainText('01 /18');
