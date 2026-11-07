@@ -1,0 +1,47 @@
+name: Competition Live Database Integration (ephemeral)
+on:
+  pull_request:
+    paths:
+      - 'competition-live/migrations/**'
+      - 'competition-live/tests/db/**'
+      - '.github/workflows/competition-live-db-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres-rpc:
+    name: Isolated PostgreSQL RPC and migration acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: comp26_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: local_ci_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d comp26_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: local_ci_only
+      PGDATABASE: comp26_ci
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+      - name: Create synthetic 36-team CI fixture
+        run: psql -v ON_ERROR_STOP=1 -f competition-live/tests/db/01-fixture.sql
+      - name: Apply EXACT proposed staging migration
+        run: psql -v ON_ERROR_STOP=1 -f competition-live/migrations/20261107_elapsed_time_v8_STAGING_ONLY.sql
+      - name: Assert authorization scoring reset tie and award rules
+        run: psql -v ON_ERROR_STOP=1 -f competition-live/tests/db/02-assert.sql
