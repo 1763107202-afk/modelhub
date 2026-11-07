@@ -134,7 +134,7 @@ begin
   insert into public.comp26_audit(event_id,actor_role,action,team_id,before_data,after_data)
     values(v_event.id,v_auth.role,v_action,p_team_id,v_old,v_new);
   return pg_catalog.jsonb_build_object('ok',true,'action',v_action,'event_id',v_event.id);
-end;$function$
+end;$function$;
 
 REVOKE ALL ON FUNCTION public.comp26_action(text,text,uuid,numeric,text,integer,integer,text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.comp26_action(text,text,uuid,numeric,text,integer,integer,text) TO anon, authenticated;
@@ -198,6 +198,6 @@ begin
  return pg_catalog.jsonb_build_object('ok',true,'cleared',v_score_count,
   'teams_preserved',v_team_count,'phase','upcoming','round',1,'snapshot_id',v_snapshot);
 end;
-$function$
+$function$;
 
 COMMIT;
