@@ -1375,6 +1375,22 @@ window.COMP26_TEAMS=[
   }
 ];
 </script>
+<script src="./ranking.js"></script>
+<style>
+/* V8: independent judge stopwatch and score/time ranking */
+.v8-stopwatch{margin:18px 0;padding:18px;border:1px solid #436476;background:linear-gradient(145deg,#112f40,#0d2536);border-radius:12px}
+.v8-timer-head{display:flex;justify-content:space-between;gap:12px;color:#a6c5d2;font-size:12px;font-weight:800}
+.v8-watch{font:900 clamp(39px,8vw,67px)/1.05 var(--font-display);letter-spacing:1px;color:var(--cyan);font-variant-numeric:tabular-nums;margin:10px 0 15px}
+.v8-watch.running{color:var(--lime)}.v8-watch.overtime{color:var(--orange)}
+.v8-stopwatch .btns{margin-bottom:14px}.v8-stopwatch .btn{flex:1;min-width:92px}
+.v8-clock-warning{font-size:11px;line-height:1.7;color:#afc5cf;margin:12px 0 0}
+.v8-rank-time{display:block;color:#9fc7ca;font:700 clamp(8px,.63vw,11px)/1.15 var(--font-display);margin-top:1px;letter-spacing:0}
+.v6-rank-score{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:0;line-height:1.1}
+.v6-rank-score b{font:inherit}.v6-rank-score .v8-rank-time{white-space:nowrap}
+.v8-lane-time{font:750 12px/1.2 var(--font-display);color:#b5dbd4;white-space:nowrap}
+.v8-admin-time{display:block;margin-top:3px;font-size:10px;color:#a4c5c7}
+@media(max-width:1200px){.v8-rank-time{font-size:8px}.v8-lane-time{font-size:10px}}
+</style>
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
 <header class="topbar">
@@ -1397,7 +1413,7 @@ const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>
 const pad=n=>String(n).padStart(2,'0');
 const nowTime = ()=>new Date().toLocaleTimeString('zh-CN',{hour12:false});
 const phaseText={upcoming:'等待开赛',live:'比赛进行中',retry:'故障顺延补赛',review:'成绩复核中',awards:'颁奖进行中',closed:'比赛结束'};
-const state={view:'screen',event:null,teams:[],role:sessionStorage.getItem('comp26_role_v2')||'',token:sessionStorage.getItem('comp26_token_v2')||'',lastSnapshot:'',loading:false,pollError:false,lastUpdate:0,awardOpened:false,demo:demoMode};
+const state={stopwatch:null,view:'screen',event:null,teams:[],role:sessionStorage.getItem('comp26_role_v2')||'',token:sessionStorage.getItem('comp26_token_v2')||'',lastSnapshot:'',loading:false,pollError:false,lastUpdate:0,awardOpened:false,demo:demoMode};
 const toast=(msg,bad=false)=>{const el=$('message');el.textContent=msg;el.className='toast visible'+(bad?' bad':'');clearTimeout(window._toastTimeout);window._toastTimeout=setTimeout(()=>el.classList.remove('visible'),4000)};
 const roleText = {admin:'赛事总管理员',judge_a:'A赛道裁判',judge_b:'B赛道裁判'};
 const req=async(path,options={})=>{
@@ -1414,17 +1430,17 @@ function prepareDemo(){
  const existing=localStorage.getItem('comp26_demo');
  if(existing){try{const x=JSON.parse(existing);if(x.teams?.length===36){state.event=x.event;state.teams=x.teams;return;}}catch{}}
  state.event={id:'demo',current_round:4,phase:'live',awards_revealed:false,active_retry_team:null,announcement:'有请第4轮：宝宝巴士、迅风小队！',round_started_at:new Date().toISOString()};
- state.teams=window.COMP26_TEAMS.map((t,i)=>({...t,id:'team-'+(i+1),draw_order:t.order,round_no:t.round,lane:t.lane,status:i<6?'scored':'pending',score:i<6?Number((80+(i*7)%18+(i*.23)).toFixed(2)):null,attempt_count:1,tie_order:null,note:''}));
+ state.teams=window.COMP26_TEAMS.map((t,i)=>({...t,id:'team-'+(i+1),draw_order:t.order,round_no:t.round,lane:t.lane,status:i<6?'scored':'pending',score:i<6?Number((80+(i*7)%18+(i*.23)).toFixed(2)):null,elapsed_ms:i<6?(105000+i*3500):null,elapsed_source:i<6?'stopwatch':null,attempt_count:1,tie_order:null,note:''}));
  localStorage.setItem('comp26_demo',JSON.stringify({event:state.event,teams:state.teams}));
 }
 function persistDemo(){localStorage.setItem('comp26_demo',JSON.stringify({event:state.event,teams:state.teams}))}
 function demoAction(action,d={}){
  const e=state.event,t=state.teams.find(x=>x.id===d.p_team_id);const err=m=>{throw Error(m)};
  if(action==='probe')return {ok:true,role:state.role||'admin'};
- if(action==='start'){e.phase='live';e.current_round=1;e.round_started_at=new Date().toISOString();state.teams.forEach(x=>{x.status='pending';x.score=null;x.attempt_count=1})}
- else if(action==='submit'){if(!t)err('队伍不存在');t.score=Number(d.p_score);t.status=e.phase==='retry'?'retry_scored':'scored';t.note=d.p_note||'';if(e.phase==='retry')e.active_retry_team=null}
+ if(action==='start'){e.phase='live';e.current_round=1;e.round_started_at=new Date().toISOString();state.teams.forEach(x=>{x.status='pending';x.score=null;x.elapsed_ms=null;x.elapsed_source=null;x.attempt_count=1})}
+ else if(action==='submit'){if(!t)err('队伍不存在');if(!Number.isInteger(d.p_elapsed_ms)||d.p_elapsed_ms<=0||d.p_elapsed_ms>600000)err('完成用时必须在0.01至600秒之间');t.score=Number(d.p_score);t.elapsed_ms=d.p_elapsed_ms;t.elapsed_source=d.p_time_source||'stopwatch';t.status=e.phase==='retry'?'retry_scored':'scored';t.note=d.p_note||'';if(e.phase==='retry')e.active_retry_team=null}
  else if(action==='fault'){if(!t)err('队伍不存在');t.status='fault_pending';t.note=d.p_note||'硬件临时故障'}
- else if(action==='mark_dnf'||action==='retry_fail'){t.score=0;t.status='dnf';e.active_retry_team=null}
+ else if(action==='mark_dnf'||action==='retry_fail'){t.score=0;t.elapsed_ms=null;t.elapsed_source=null;t.status='dnf';e.active_retry_team=null}
  else if(action==='next'){const pending=state.teams.filter(x=>x.round_no===e.current_round&&!['scored','fault_pending','dnf'].includes(x.status));if(pending.length)err('本轮仍有未确认队伍');if(e.current_round<18){e.current_round++;e.announcement='有请第'+e.current_round+'轮！';e.round_started_at=new Date().toISOString()}else{e.phase=state.teams.some(x=>x.status==='fault_pending')?'retry':'review';e.announcement='正赛结束，进入成绩核对'}}
  else if(action==='activate_retry'){t.status='retry_active';t.attempt_count=2;e.active_retry_team=t.id;e.announcement='补赛：'+t.name}
  else if(action==='finish_retries'){e.phase='review';e.announcement='正在核对获奖名单'}
@@ -1456,10 +1472,22 @@ async function refresh(force=false){
 }
 function connection(ok){const el=$('connection');el.classList.toggle('bad',!ok);$('connectionText').textContent=demoMode?'本机演示':ok?'实时同步 · ONLINE':'连接中断 · 正在重连';}
 function setView(view){if(!['screen','judge','control'].includes(view)||displayOnly)view='screen';state.view=view;document.body.dataset.view=view;document.body.dataset.display=displayOnly?'1':'0';location.hash='#'+view;document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('selected',b.dataset.nav===view));render();}
-function sortRank(){return state.teams.filter(x=>x.score!==null).slice().sort((a,b)=>Number(b.score)-Number(a.score)||(a.tie_order??99999)-(b.tie_order??99999)||a.draw_order-b.draw_order)}
-function rankNum(list,i){return list.findIndex(x=>x.score===list[i].score)+1}
+function sortRank(){return window.COMP26_RANKING.sortRank(state.teams)}
+function rankNum(list,i){return window.COMP26_RANKING.rankNum(list,i)}
 const roundTeams=(n)=>state.teams.filter(t=>t.round_no===n);
 const displayedScore=t=>t?.score===null?'—':Number(t?.score||0).toFixed(2);
+const displayedTime=t=>window.COMP26_RANKING.displayTime(t?.elapsed_ms);
+function watchFor(team){
+ const key='comp26_watch_v8_'+SLUG+'_'+team.id+'_'+(team.attempt_count||1);
+ if(state.stopwatch?.key===key)return state.stopwatch;
+ let old=null;try{old=JSON.parse(sessionStorage.getItem(key)||'null')}catch{}
+ const w=old&&Number.isFinite(old.ms)?{key,ms:old.ms,running:!!old.running,startedAt:Number(old.startedAt)||Date.now()}: {key,ms:Math.max(0,Number(team.elapsed_ms)||0),running:false,startedAt:0};
+ state.stopwatch=w;return w;
+}
+function watchElapsed(w){return Math.max(0,w.ms+(w.running?Date.now()-w.startedAt:0))}
+function persistWatch(w){sessionStorage.setItem(w.key,JSON.stringify({ms:w.ms,running:w.running,startedAt:w.startedAt}))}
+function watchUI(w){const el=$('judgeElapsed');if(el){const ms=Math.round(watchElapsed(w)/10)*10;el.textContent=window.COMP26_RANKING.displayTime(ms);el.classList.toggle('running',w.running);el.classList.toggle('overtime',ms>240000)}}
+
 const teamStatus=t=>!t?'':({pending:'等待上场',scored:'成绩已确认',fault_pending:'硬件故障 · 待补赛',retry_active:'补赛进行中',retry_scored:'补赛成绩已确认',dnf:'未完成'}[t.status]||t.status);
 const screenPhase=e=>e.phase==='upcoming'?'比赛倒计时 / 待开赛':e.phase==='live'?'ROUND IN PROGRESS':e.phase==='retry'?'TECHNICAL RETRY':e.phase==='review'?'RESULTS UNDER REVIEW':'AWARD CEREMONY';
 const footer=()=>`<footer class="footer"><span>2026 SMART TRANSPORT CHALLENGE · 双赛道 / 36队 / 18轮</span><span>${demoMode?'⚠ 演示数据仅用于本地操作，不代表真实成绩':'数据来自赛事云端 · 总分依据裁判评分规则录入'}</span></footer>`;
@@ -1473,15 +1501,15 @@ function screen(){
  const active=e.phase==='retry'?(retry?[retry]:[]):round;
  const stageLabel=e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩核对':e.phase==='awards'?'奖项公布':e.phase==='upcoming'?'待开赛':'比赛进行中';
  const hint=e.phase==='live'&&round.every(t=>['scored','fault_pending','dnf'].includes(t.status))?'本轮成绩已确认，请下一组前往比赛区':e.phase==='live'?'下一轮两队请进入同步调试区':e.phase==='upcoming'?'第一组赛前单独调试 4 分钟':e.phase==='retry'?(retry?'补赛队伍请准备':'等待安排补赛'):phaseText[e.phase];
- const laneCard=(t,lane)=>{const scored=t&&t.score!==null&&t.score!==undefined, order=t?.draw_order||t?.order; return `<article class="v6-lane v6-lane-${lane.toLowerCase()}"><div class="v6-lane-label"><span class="v6-lane-pill">${lane}</span><span>比赛赛道<br><b>LANE ${lane}</b></span></div><div class="v6-lane-main"><div class="v6-queue">${order?'第 '+pad(order)+' 签位':'候场'} <span class="v6-midline"></span> ${t?'第 '+pad(t.round_no)+' 轮':'等待安排'}</div><strong class="v6-team-name">${esc(t?.name||'等待安排')}</strong><span class="v6-team-status">${esc(t?teamStatus(t):'等待上场')}</span></div><div class="v6-lane-points"><small>本轮得分<br>POINTS</small><b class="${scored&&displayedScore(t).length>=6?'v7-score-long':''}">${scored?displayedScore(t):'—'}</b></div></article>`};
- const rankRow=(t,position)=>{const done=t.score!==null,rank=done?pad(rankNum(ranked,position)):'—', tier=done&&rankNum(ranked,position)<=3?' v6-medal':'';return `<div class="v6-rank-row${done?' v6-ranked':' v6-waiting'}${tier}" title="${esc(t.name)}"><span class="v6-rank-number">${rank}</span><span class="v6-rank-name">${esc(t.name)}</span><span class="v6-rank-score">${done?displayedScore(t):'待赛'}</span></div>`};
+ const laneCard=(t,lane)=>{const scored=t&&t.score!==null&&t.score!==undefined, order=t?.draw_order||t?.order; return `<article class="v6-lane v6-lane-${lane.toLowerCase()}"><div class="v6-lane-label"><span class="v6-lane-pill">${lane}</span><span>比赛赛道<br><b>LANE ${lane}</b></span></div><div class="v6-lane-main"><div class="v6-queue">${order?'第 '+pad(order)+' 签位':'候场'} <span class="v6-midline"></span> ${t?'第 '+pad(t.round_no)+' 轮':'等待安排'}</div><strong class="v6-team-name">${esc(t?.name||'等待安排')}</strong><span class="v6-team-status">${esc(t?teamStatus(t):'等待上场')}</span></div><div class="v6-lane-points"><small>本轮得分<br>POINTS</small><b class="${scored&&displayedScore(t).length>=6?'v7-score-long':''}">${scored?displayedScore(t):'—'}</b><span class="v8-lane-time">用时 ${scored?displayedTime(t):'—'}</span></div></article>`};
+ const rankRow=(t,position)=>{const done=t.score!==null,rank=done?pad(rankNum(ranked,position)):'—', tier=done&&rankNum(ranked,position)<=3?' v6-medal':'';return `<div class="v6-rank-row${done?' v6-ranked':' v6-waiting'}${tier}" title="${esc(t.name)}"><span class="v6-rank-number">${rank}</span><span class="v6-rank-name">${esc(t.name)}</span><span class="v6-rank-score">${done?`<b>${displayedScore(t)}</b><small class="v8-rank-time">${displayedTime(t)}</small>`:'待赛'}</span></div>`};
  const up=(lane)=>{const t=next.find(x=>x.lane===lane);return `<div class="v6-next-team"><span class="v6-next-letter">${lane}</span><div><small>下一轮 · ${lane} 赛道</small><strong>${esc(t?.name||'待安排')}</strong></div></div>`};
  return `<div class="v6-wrap">
   <header class="v6-heading"><div class="v6-heading-main"><span class="v6-eyebrow"><i class="v6-eyebrow-line"></i> 2026 · MECHANICAL INNOVATION CHALLENGE</span><h1>智能搬运小车<span>创新挑战赛</span></h1><div class="v6-edition">江苏科技大学机械创新实验室 / 2026 校内赛</div></div><div class="v6-metrics"><div class="v6-metric"><span>当前轮次</span><strong>${pad(e.current_round)}<small>/18</small></strong></div><div class="v6-metric"><span>已确认成绩</span><strong>${pad(finished)}<small>/36</small></strong></div><div class="v6-metric"><span>待补赛</span><strong>${pad(faultCount)}</strong></div><span class="v6-phase"><i></i>${esc(phaseText[e.phase])}</span></div></header>
   <div class="v6-columns"><section class="v6-competition" aria-label="当前双赛道与候场信息"><div class="v6-stage"><div class="v6-stage-header"><div class="v6-round-block"><span>LIVE NOW / 正在进行</span><div><strong>${pad(e.current_round)}</strong><small>ROUND / 18</small></div></div><div class="v6-timer-block"><span>每轮 4 分钟 · 比赛计时</span><strong id="roundTimer">${e.phase==='upcoming'?'04:00':'--:--'}</strong></div></div><div class="v6-bouts">${laneCard(active.find(t=>t.lane==='A'),'A')}${laneCard(active.find(t=>t.lane==='B'),'B')}</div><div class="v6-stage-message"><i></i>${esc(hint)}</div></div>
   <div class="v6-next"><div class="v6-block-heading"><span>下轮候场</span><strong>同步调试区 · 4 MIN</strong></div><div class="v6-next-grid">${next.length?up('A')+up('B'):'<div class="v6-next-empty">18轮结束，转入补赛与成绩复核</div>'}</div></div>
   <div class="v6-announcement"><span>现场广播</span><strong>${esc(e.announcement||hint)}</strong></div><div class="v6-progress"><span>比赛进度</span><div><i style="width:${finished/36*100}%"></i></div><b>${finished} / 36</b></div></section>
-  <aside class="v6-leaderboard" aria-label="36支队伍实时积分排行榜"><div class="v6-board-head"><div><span>OFFICIAL STANDINGS · 36 TEAMS</span><h2>实时积分榜</h2></div><div class="v6-ranking-live"><i></i> 已录分 ${finished} 队</div></div><div class="v6-rank-columns">${[0,1].map(k=>`<div class="v6-rank-column" aria-label="排行第${k*18+1}到${(k+1)*18}项">${sorted.slice(k*18,(k+1)*18).map((t,i)=>rankRow(t,k*18+i)).join('')}</div>`).join('')}</div><div class="v6-board-foot"><span>未评分队伍按抽签顺序显示</span><span>最终成绩以裁判核定为准</span></div></aside></div>
+  <aside class="v6-leaderboard" aria-label="36支队伍实时积分排行榜"><div class="v6-board-head"><div><span>OFFICIAL STANDINGS · 36 TEAMS</span><h2>实时积分榜</h2></div><div class="v6-ranking-live"><i></i> 已录分 ${finished} 队</div></div><div class="v6-rank-columns">${[0,1].map(k=>`<div class="v6-rank-column" aria-label="排行第${k*18+1}到${(k+1)*18}项">${sorted.slice(k*18,(k+1)*18).map((t,i)=>rankRow(t,k*18+i)).join('')}</div>`).join('')}</div><div class="v6-board-foot"><span>总分优先 · 同分用时短者优先</span><span>缺少用时须复核</span></div></aside></div>
  <div class="v6-footer"><span>${demoMode?'演示模式 / 数据仅在本机':'云端实时同步 / 裁判确认后自动更新'}　·　36支参赛队伍　·　双赛道</span><div>${e.awards_revealed?'<button class="v6-awards" id="openAwards">查看获奖名单</button>':''}<button id="openFullscreen" class="v6-fullscreen">⛶ 全屏投影</button></div></div>
  </div>`;
 }
