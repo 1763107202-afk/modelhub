@@ -440,18 +440,82 @@ body[data-view="screen"] .top-right{gap:14px}
  .arena-stage-round{font-size:59px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-/* Noninteractive line-art representation of the smart transport cart */
-.arena-cart-schematic{display:grid;place-items:center;flex:1 1 auto;min-height:0;overflow:hidden;pointer-events:none;position:relative;opacity:.91}
-.arena-cart-schematic svg{width:min(100%,260px);height:clamp(110px,17vh,200px);max-height:100%;filter:drop-shadow(0 0 18px #3fadb719)}
-.arena-cart-schematic:after{content:'';position:absolute;left:17%;right:17%;bottom:8%;height:1px;background:linear-gradient(90deg,transparent,#6fb1b04f,transparent)}
-.arena-lane-name{flex:0 0 auto;min-height:2.2em;margin:2px 0 7px;display:flex;align-items:center}
-.arena-lane-bottom{flex:0 0 auto}
-@media(min-width:1000px) and (max-height:810px){.arena-cart-schematic svg{height:clamp(68px,13vh,124px)}.arena-lane-name{min-height:1.4em;margin:1px 0 4px}}
-@media(max-width:999px){.arena-cart-schematic svg{height:95px}.arena-lane-name{min-height:1.6em}}
-@media(max-width:550px){.arena-cart-schematic svg{height:76px}}
-
 /* Network-free fallback is decorative; production loads the verified original lab logo. */
 .brand-emblem-fallback:after{content:'⚙';position:absolute;inset:0;display:grid;place-items:center;font:800 34px Georgia,serif;color:#e1c58b}
+/* LAB / EVENT • precision editorial v3. No decorative vehicle icons. */
+:root{--lab-gold:#e6c89b;--cyan:#74d5c7;--panel:#102234;--line:#395168}
+body{background:#081420}
+.topbar{box-shadow:0 8px 32px #00000015}
+.brand-emblem{border-radius:11px;box-shadow:inset 0 0 0 1px #b4d8d41c,0 4px 17px #0003}
+.brand-emblem:before{opacity:.35}
+.brand-lines strong{letter-spacing:0;font-weight:810}
+.nav{background:#102235;border-color:#33506a}
+.nav button.selected{background:#213f50;box-shadow:inset 0 0 0 1px #598781}
+.panel,.arena-next,.arena-leaderboard,.arena-stage-current{box-shadow:0 15px 28px #010b1620,inset 0 1px #ffffff07}
+.arena-stage-current{background:linear-gradient(125deg,#172f42 0%,#0d1f31 76%)}
+.arena-stage-lanes{background:linear-gradient(90deg,#153247,#102739)}
+.arena-lane{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:0;min-height:0;overflow:hidden;padding:clamp(15px,1.7vh,25px) clamp(17px,1.5vw,31px);isolation:isolate}
+.arena-lane:after{content:'';top:0;right:0;bottom:0;width:100%;height:auto;border:0;background:linear-gradient(180deg,transparent 12%,#7ea9b509 55%,transparent 94%);pointer-events:none;z-index:-1}
+.arena-lane:before{content:'';position:absolute;right:16px;top:64px;width:1px;height:calc(100% - 137px);background:linear-gradient(transparent,#89bbc12b,transparent);z-index:-1}
+.arena-lane-b{background:linear-gradient(140deg,#142838,#142331)}
+.lane-ident{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-height:56px}
+.lane-index{display:flex;align-items:center;gap:12px}
+.lane-index-digit{color:#86dbc9;font:780 clamp(38px,4vw,64px)/.9 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:-.8px}
+.arena-lane-b .lane-index-digit{color:#e6c892}
+.lane-index-label{font-size:12px;font-weight:650;line-height:1.28;letter-spacing:.8px;color:#c1d5dc;display:grid;gap:5px}
+.lane-index-label b{font:700 10px/1.1 'Barlow Condensed',sans-serif;letter-spacing:1.6px;color:#89a8b5}
+.lane-sign{color:#8fb0bc;letter-spacing:.4px;border:1px solid #426076;padding:5px 7px;border-radius:4px;font-size:10px;white-space:nowrap}
+.lane-focus{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:clamp(15px,2.25vh,31px);min-height:0;padding:0 1px 6px;position:relative}
+.lane-focus:before{content:'';width:65px;height:2px;background:linear-gradient(90deg,#86d9c7,#86d9c711);display:block}
+.arena-lane-b .lane-focus:before{background:linear-gradient(90deg,#e2c58e,#e2c58e0a)}
+.lane-meta{color:#9bb9c5;letter-spacing:1.6px;font:700 clamp(10px,.68vw,12px)/1.4 'Barlow Condensed','Microsoft YaHei',sans-serif}
+.lane-meta i{font-style:normal;color:#d6b98b;padding:0 7px}
+.arena-lane-name{margin:0;min-height:0!important;font-size:clamp(23px,2.25vw,43px);line-height:1.23;letter-spacing:-.45px;display:block;color:#f6f7f6;font-weight:860;overflow-wrap:anywhere;text-wrap:balance}
+.lane-footnote{color:#a0b7c2;font-size:clamp(10px,.76vw,13px);line-height:1.4}
+.arena-lane-bottom{border-top:1px solid #4261765d;padding-top:clamp(12px,1.5vh,22px);display:flex;justify-content:space-between;gap:6px;align-items:flex-end}
+.arena-lane-status{font-size:11px;border:1px solid #3f6e70;border-radius:4px;padding:7px 10px;color:#caeee6;background:#19404460;white-space:nowrap}
+.lane-score-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.lane-score-wrap>small{font-size:9px;letter-spacing:1px;color:#91adba}
+.arena-lane-result{font-family:'Barlow Condensed',system-ui,sans-serif;line-height:1.1;font-size:clamp(27px,3vw,52px);color:#e8d0a6}
+.arena-lane-result small{font-size:12px;color:#b6c6d0}
+.arena-rank-row.is-scored{background:#1a3949}
+.arena-rank-row.podium{background:linear-gradient(90deg,#614d3169,#1b3848)}
+.arena-rank-row.is-waiting{background:#112638;opacity:1}
+.arena-rank-team{color:#e7eef4}
+.arena-next-team{border-color:#44647a;background:#10283b}
+.arena-small-head strong,.arena-board-header h2{font-weight:790}
+.arena-announcement{background:#1438408a}
+.award-overlay{background:radial-gradient(ellipse at 50% 0%,#1b4551 0%,#081522 70%)}
+.award-heading{font-weight:830;letter-spacing:-1px}
+.award-group{border-radius:12px;background:linear-gradient(175deg,#1d374b,#122335)}
+.award-group.first{background:linear-gradient(175deg,#423e32,#1a2c3b);box-shadow:inset 0 0 0 1px #d4b98130}
+@media(min-width:1000px) and (max-height:810px){
+.arena-lane{padding:10px 13px}
+.lane-ident{min-height:44px}
+.lane-index-digit{font-size:42px}
+.lane-focus{gap:clamp(9px,1.9vh,17px)}
+.arena-lane-name{font-size:clamp(20px,2.15vw,33px)}
+.lane-meta{font-size:10px}
+.lane-footnote{font-size:10px}
+.arena-lane-bottom{padding-top:8px}
+.arena-lane-result{font-size:30px}
+.lane-score-wrap>small{font-size:8px}}
+@media(max-width:999px){
+.arena-lane{min-height:210px;padding:14px}
+.lane-focus{gap:9px;padding:16px 0}
+.arena-lane-name{font-size:clamp(22px,4vw,32px)}
+.lane-index-digit{font-size:40px}
+.arena-lane-result{font-size:31px}}
+@media(max-width:550px){
+.arena-lane{min-height:185px;padding:12px}
+.lane-ident{min-height:46px}
+.lane-sign{display:none}
+.lane-index-label{font-size:10px}
+.arena-lane-name{font-size:clamp(19px,5.5vw,27px)}
+.lane-focus{gap:8px;padding:12px 0}
+.lane-score-wrap>small{display:none}
+.arena-lane-result{font-size:27px}
+.arena-lane-status{font-size:9px;padding:5px 6px}}
 </style>
 <script>// 公共 Supabase Publishable Key（不是服务端密钥），所有写操作由数据库权限与一次性分配的高强度访问码保护。
 window.COMP26_CONFIG = Object.freeze({
@@ -779,7 +843,7 @@ function screen(){
  const active=e.phase==='retry'?(retry?[retry]:[]):round;
  const stageLabel=e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩核对中':e.phase==='awards'?'获奖揭晓':e.phase==='closed'?'赛事已结束':'正在比赛';
  const hint=e.phase==='live'&&round.every(t=>['scored','fault_pending','dnf'].includes(t.status))?'本轮成绩已确认 · 有请下一组入场':e.phase==='live'?'本轮比赛进行中 · 下一轮同步调试':e.phase==='upcoming'?'第一组赛前单独调试4分钟':e.phase==='retry'?(retry?'故障补赛队伍已就位':'等待管理员安排故障补赛'):phaseText[e.phase];
- const laneCard=(t,lane)=>`<article class="arena-lane ${lane==='B'?'arena-lane-b':''}"><span class="arena-lane-id">${lane==='B'?'B':'A'} <i>赛道 / LANE ${lane}</i></span><div class="arena-cart-schematic" aria-hidden="true"><svg viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg" fill="none"><g stroke="#6bc7c7" stroke-width="1.1" opacity=".5"><path d="M9 81H66M194 81H251M130 8V30M130 132V155" stroke-dasharray="4 6"/><circle cx="130" cy="81" r="71" stroke-dasharray="5 8" opacity=".34"/><circle cx="130" cy="81" r="58" stroke-dasharray="2 9" opacity=".35"/><path d="M57 36H203M57 124H203" opacity=".35"/><path d="M62 28v104M198 28v104" opacity=".3"/></g><g stroke="#a7e0d7" stroke-width="1.6"><rect x="95" y="31" width="70" height="101" rx="17" fill="#2a5863" fill-opacity=".24"/><rect x="98" y="34" width="64" height="95" rx="14" fill="#31505b" fill-opacity=".14"/><rect x="76" y="45" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="165" y="45" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="76" y="92" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="165" y="92" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="111" y="55" width="38" height="42" rx="5" stroke-opacity=".7"/><path d="M109 113H151M130 96v17M122 39h16" stroke-opacity=".75"/><path d="M130 34V12m-6 7 6-7 6 7" stroke="#e4c68c"/></g><g fill="#e5c58a"><circle cx="130" cy="81" r="4"/><circle cx="113" cy="53" r="2"/><circle cx="147" cy="53" r="2"/></g><g font-size="8" letter-spacing="1" font-family="Arial, sans-serif" fill="#b5cdd1" opacity=".75"><text x="13" y="74">PATH</text><text x="205" y="74">AUTO</text><text x="130" y="149" text-anchor="middle">MOTION / 4WD</text></g></svg></div><strong class="arena-lane-name">${esc(t?.name||'等待安排')}</strong><div class="arena-lane-bottom"><span class="arena-lane-status">${esc(t?teamStatus(t):'等待上场')}</span><span class="arena-lane-result">${t?.score!==null && t?.score!==undefined?displayedScore(t)+' <small>分</small>':'—'}</span></div></article>`;
+ const laneCard=(t,lane)=>{const scored=t?.score!==null&&t?.score!==undefined;const order=t?.draw_order||t?.order;return `<article class="arena-lane ${lane==='B'?'arena-lane-b':''}"><header class="lane-ident"><div class="lane-index"><span class="lane-index-digit">${lane}</span><span class="lane-index-label">比赛赛道 <b>LANE ${lane}</b></span></div><span class="lane-sign">${scored?'成绩已录入':'实时比赛席位'}</span></header><div class="lane-focus"><span class="lane-meta">CURRENT TEAM <i>/</i> ${order?'第 '+pad(order)+' 签位':'赛事候场'}</span><strong class="arena-lane-name">${esc(t?.name||'等待安排')}</strong><span class="lane-footnote">${t?'第 '+pad(t.round_no)+' 轮 · '+esc(teamStatus(t)):'等待管理员安排赛程'}</span></div><footer class="arena-lane-bottom"><span class="arena-lane-status">${esc(t?teamStatus(t):'等待上场')}</span><span class="lane-score-wrap"><small>本轮得分 / POINTS</small><span class="arena-lane-result">${scored?displayedScore(t)+' <small>分</small>':'—'}</span></span></footer></article>`};
  const rankRow=(t,position)=>{const done=t.score!==null;const rank=done?pad(rankNum(ranked,position)):'—';const tier=done&&rankNum(ranked,position)<=3?' podium':'';return `<div class="arena-rank-row${done?' is-scored':' is-waiting'}${tier}" title="${esc(t.name)}"><span class="arena-rank-no">${rank}</span><span class="arena-rank-team">${esc(t.name)}</span><span class="arena-rank-points">${done?displayedScore(t):'待赛'}</span></div>`};
  return `<div class="arena-overview">
   <div class="arena-heading"><div class="arena-heading-title"><span class="arena-kicker">JIANGSU UNIVERSITY OF SCIENCE AND TECHNOLOGY <span class="arena-kicker-divider">/</span> INNOVATION LAB</span><h1>智能搬运小车 <em>创新挑战赛</em><span class="arena-heading-tag">2026 校内赛</span></h1></div><div class="arena-summary"><span class="arena-phase"><i class="arena-live-dot"></i>${esc(phaseText[e.phase])}</span><span><b>${pad(e.current_round)}</b><small>/18 轮</small></span><span><b>${pad(finished)}</b><small>/36 已确认</small></span><span class="arena-fault"><b>${pad(faultCount)}</b><small>待补赛</small></span></div></div>
