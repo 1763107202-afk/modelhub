@@ -1062,6 +1062,83 @@ body[data-view="screen"] .topbar{min-height:114px!important;height:auto!importan
 }
 @media(prefers-reduced-motion:reduce){.v6-progress div i{transition:none}}
 
+
+/* MOVE.ARENA V7 / Broadcast score fit + measured UI refinement.
+   Rules are restricted to audience .v6-* classes, preserving staff and cloud logic. */
+body[data-view="screen"] .v6-heading{border-bottom-color:#d4e1df}
+body[data-view="screen"] .v6-heading h1{letter-spacing:-1.1px}
+body[data-view="screen"] .v6-heading h1 span{color:#178a82}
+body[data-view="screen"] .v6-stage{
+ background:#112d3b;
+ border:1px solid #335767;
+ box-shadow:0 16px 36px rgba(18,42,54,.16);
+}
+body[data-view="screen"] .v6-stage:before{width:4px;background:linear-gradient(180deg,#55c9b8,#dcb87f)}
+body[data-view="screen"] .v6-stage-header{background:#193a49;border-bottom-color:#41606b}
+body[data-view="screen"] .v6-timer-block strong{color:#f1bb8c;letter-spacing:1px}
+body[data-view="screen"] .v6-bouts{background:#132f3d}
+body[data-view="screen"] .v6-lane{
+ grid-template-columns:clamp(59px,5.1vw,91px) minmax(0,1fr) clamp(155px,24%,225px);
+ gap:clamp(10px,1.25vw,19px);
+ padding-inline:clamp(14px,1.7vw,27px);
+}
+body[data-view="screen"] .v6-lane-a{background:linear-gradient(112deg,#153947 0%,#16303e 100%)}
+body[data-view="screen"] .v6-lane-b{background:linear-gradient(112deg,#1b3542 0%,#152f3d 100%)}
+body[data-view="screen"] .v6-lane+.v6-lane{border-top-color:#46626a}
+body[data-view="screen"] .v6-lane-main{min-width:0}
+body[data-view="screen"] .v6-team-name{font-size:clamp(25px,2.65vw,49px);line-height:1.13;letter-spacing:-.7px}
+body[data-view="screen"] .v6-lane-points{
+ min-width:0;max-width:100%;overflow:visible;
+ border-left:1px solid #426674;
+ padding:12px 0 12px clamp(8px,1.25vw,19px);
+ align-items:flex-end;justify-content:center;
+ background:linear-gradient(90deg,transparent,rgba(24,77,89,.18));
+}
+body[data-view="screen"] .v6-lane-points small{
+ display:block;white-space:nowrap;text-align:right;
+ font-size:clamp(9px,.73vw,12px);letter-spacing:.6px;color:#b2cad0;
+}
+body[data-view="screen"] .v6-lane-points b{
+ display:block;width:100%;max-width:100%;min-width:0;
+ overflow:visible!important;text-overflow:clip!important;
+ white-space:nowrap;text-align:right;
+ font-family:'Barlow Condensed','Arial Narrow','Roboto Condensed',Arial,sans-serif;
+ font-size:clamp(34px,3.28vw,60px);font-weight:900;line-height:1.05;
+ font-variant-numeric:tabular-nums;letter-spacing:-1.3px;
+ color:#f4d19d;text-shadow:0 2px 18px rgba(0,0,0,.13);
+}
+body[data-view="screen"] .v6-lane-points b.v7-score-long{font-size:clamp(26px,2.36vw,44px);letter-spacing:-.9px}
+body[data-view="screen"] .v6-stage-message{background:#125046;color:#e0f8f1}
+body[data-view="screen"] .v6-next{border:1px solid #d7e5e2;box-shadow:0 8px 24px #3049550c}
+body[data-view="screen"] .v6-next-team{background:#e8f1ef;border:1px solid #e0eae6}
+body[data-view="screen"] .v6-announcement{background:#e4eeeb;border-color:#d4e4df}
+body[data-view="screen"] .v6-leaderboard{border:1px solid #d9e5e1;box-shadow:0 12px 28px #23445112}
+body[data-view="screen"] .v6-board-head{border-bottom:1px solid #e0eae7}
+body[data-view="screen"] .v6-board-head h2{letter-spacing:-.75px}
+body[data-view="screen"] .v6-rank-row{border-radius:4px}
+body[data-view="screen"] .v6-rank-row.v6-ranked{background:#e4f4ee;border-color:#aed9cd}
+body[data-view="screen"] .v6-rank-row.v6-medal{background:#faf0dc;border-color:#dfcca3}
+body[data-view="screen"] .v6-rank-name{font-weight:760}
+body[data-view="screen"] .v6-rank-score{font-variant-numeric:tabular-nums}
+@media(min-width:1024px) and (max-height:810px){
+ body[data-view="screen"] .v6-lane{grid-template-columns:clamp(55px,5vw,82px) minmax(0,1fr) clamp(146px,24%,195px);padding-inline:12px}
+ body[data-view="screen"] .v6-team-name{font-size:clamp(24px,2.45vw,37px)}
+ body[data-view="screen"] .v6-lane-points b{font-size:clamp(34px,3vw,46px)}
+ body[data-view="screen"] .v6-lane-points b.v7-score-long{font-size:clamp(24px,2.2vw,35px)}
+}
+@media(max-width:1023px){
+ body[data-view="screen"] .v6-lane{grid-template-columns:clamp(45px,10%,66px) minmax(0,1fr) clamp(108px,24%,158px);padding-inline:13px;gap:9px}
+ body[data-view="screen"] .v6-lane-points b{font-size:clamp(29px,4.4vw,45px)}
+ body[data-view="screen"] .v6-lane-points b.v7-score-long{font-size:clamp(23px,3.65vw,34px)}
+}
+@media(max-width:520px){
+ body[data-view="screen"] .v6-lane{grid-template-columns:40px minmax(0,1fr) 94px;gap:7px;padding:10px}
+ body[data-view="screen"] .v6-lane-points{padding-left:7px}
+ body[data-view="screen"] .v6-lane-points small{font-size:8px}
+ body[data-view="screen"] .v6-lane-points b{font-size:29px;letter-spacing:-1px}
+ body[data-view="screen"] .v6-lane-points b.v7-score-long{font-size:22px}
+ body[data-view="screen"] .v6-team-name{font-size:clamp(19px,4.9vw,27px)}
+}
 </style>
 <script>// 公共 Supabase Publishable Key（不是服务端密钥），所有写操作由数据库权限与一次性分配的高强度访问码保护。
 window.COMP26_CONFIG = Object.freeze({
@@ -1389,7 +1466,7 @@ function screen(){
  const active=e.phase==='retry'?(retry?[retry]:[]):round;
  const stageLabel=e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩核对':e.phase==='awards'?'奖项公布':e.phase==='upcoming'?'待开赛':'比赛进行中';
  const hint=e.phase==='live'&&round.every(t=>['scored','fault_pending','dnf'].includes(t.status))?'本轮成绩已确认，请下一组前往比赛区':e.phase==='live'?'下一轮两队请进入同步调试区':e.phase==='upcoming'?'第一组赛前单独调试 4 分钟':e.phase==='retry'?(retry?'补赛队伍请准备':'等待安排补赛'):phaseText[e.phase];
- const laneCard=(t,lane)=>{const scored=t&&t.score!==null&&t.score!==undefined, order=t?.draw_order||t?.order; return `<article class="v6-lane v6-lane-${lane.toLowerCase()}"><div class="v6-lane-label"><span class="v6-lane-pill">${lane}</span><span>比赛赛道<br><b>LANE ${lane}</b></span></div><div class="v6-lane-main"><div class="v6-queue">${order?'第 '+pad(order)+' 签位':'候场'} <span class="v6-midline"></span> ${t?'第 '+pad(t.round_no)+' 轮':'等待安排'}</div><strong class="v6-team-name">${esc(t?.name||'等待安排')}</strong><span class="v6-team-status">${esc(t?teamStatus(t):'等待上场')}</span></div><div class="v6-lane-points"><small>本轮得分<br>POINTS</small><b>${scored?displayedScore(t):'—'}</b></div></article>`};
+ const laneCard=(t,lane)=>{const scored=t&&t.score!==null&&t.score!==undefined, order=t?.draw_order||t?.order; return `<article class="v6-lane v6-lane-${lane.toLowerCase()}"><div class="v6-lane-label"><span class="v6-lane-pill">${lane}</span><span>比赛赛道<br><b>LANE ${lane}</b></span></div><div class="v6-lane-main"><div class="v6-queue">${order?'第 '+pad(order)+' 签位':'候场'} <span class="v6-midline"></span> ${t?'第 '+pad(t.round_no)+' 轮':'等待安排'}</div><strong class="v6-team-name">${esc(t?.name||'等待安排')}</strong><span class="v6-team-status">${esc(t?teamStatus(t):'等待上场')}</span></div><div class="v6-lane-points"><small>本轮得分<br>POINTS</small><b class="${scored&&displayedScore(t).length>=6?'v7-score-long':''}">${scored?displayedScore(t):'—'}</b></div></article>`};
  const rankRow=(t,position)=>{const done=t.score!==null,rank=done?pad(rankNum(ranked,position)):'—', tier=done&&rankNum(ranked,position)<=3?' v6-medal':'';return `<div class="v6-rank-row${done?' v6-ranked':' v6-waiting'}${tier}" title="${esc(t.name)}"><span class="v6-rank-number">${rank}</span><span class="v6-rank-name">${esc(t.name)}</span><span class="v6-rank-score">${done?displayedScore(t):'待赛'}</span></div>`};
  const up=(lane)=>{const t=next.find(x=>x.lane===lane);return `<div class="v6-next-team"><span class="v6-next-letter">${lane}</span><div><small>下一轮 · ${lane} 赛道</small><strong>${esc(t?.name||'待安排')}</strong></div></div>`};
  return `<div class="v6-wrap">
