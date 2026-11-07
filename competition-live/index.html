@@ -548,6 +548,74 @@ body[data-view="screen"] .topbar{background:#0c1b29;border-bottom-color:#344d5c;
 @media(max-width:999px){.arena-overview{display:block;height:auto}.arena-main{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}.arena-stage{display:flex;flex-direction:column;gap:10px;margin-bottom:0}.arena-stage-current{min-height:365px}.arena-leaderboard{min-height:835px}.arena-ranking-column{grid-template-rows:repeat(18,36px)}.arena-lane{min-height:205px}.brand-emblem{width:47px;height:47px}.brand-emblem img{width:43px;height:43px}}
 @media(max-width:550px){.arena-stage-current{min-height:320px}.arena-stage-lanes{grid-template-columns:1fr 1fr}.arena-lane{padding:12px!important}.arena-lane-name{font-size:clamp(24px,5.6vw,31px)}.arena-board-header h2{font-size:22px}.arena-rank-row{grid-template-columns:20px minmax(0,1fr) auto}.arena-rank-team{font-size:11px}.arena-rank-points{font-size:12px}.arena-ranking-grid{gap:6px}.arena-ranking-column{grid-template-rows:repeat(18,36px);gap:2px}}
 @media(prefers-reduced-motion:reduce){.arena-rank-row{transition:none!important}}
+
+/* === MOVE.ARENA V5 / circular laboratory seal and refined broadcast === */
+:root{--cyan:#78d6c6;--lime:#d3e9c7;--orange:#e7a28b;--panel:#122935;--panel2:#172f3a;--line:#314e5a;--dim:#9fb7c2}
+body{background:#081720;color:#edf5f4}.ambient-grid{opacity:.26;background-size:64px 64px}.ambient-glow{opacity:.47}
+.topbar{background:#0b1c27f5;border-bottom:1px solid #375162;box-shadow:0 6px 22px #00000017}
+.brand{gap:13px}
+.brand-emblem,body[data-view="screen"] .brand-emblem{width:56px!important;height:56px!important;flex:0 0 56px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:50%!important;box-shadow:none!important;overflow:hidden!important;display:grid!important;place-items:center!important}
+.brand-emblem:before,.brand-emblem:after,.brand-emblem-fallback:after{display:none!important}
+.brand-emblem img,body[data-view="screen"] .brand-emblem img{display:block!important;width:100%!important;height:100%!important;object-fit:contain;border-radius:50%;clip-path:circle(42% at 50% 50%);transform:scale(1.105);filter:drop-shadow(0 0 4px #95d5ea36)}
+.brand-lines .brand-owner{color:#dbe9ea;letter-spacing:.35px;font-weight:740}
+.brand-lines strong{color:#f7f7f4}.brand-lines small{color:#89aebd;letter-spacing:1.3px}.clock{color:#f2cd97}
+.connection{border-color:#355966;background:#12313a}.nav{border-color:#35515f;background:#122a34}
+.nav button.selected{background:#1b4d4c;color:#c4f2e9;box-shadow:inset 0 0 0 1px #42746e}
+.btn.primary{background:linear-gradient(135deg,#8ddbcc,#62c3b6);color:#0b2930}.btn.lime{background:#b7e8d7;color:#12333c}
+.btn:focus-visible,.nav button:focus-visible{outline:3px solid #e6c486;outline-offset:3px}
+body[data-view="screen"] .topbar{border-bottom:1px solid #36505d}
+body[data-view="screen"] .brand-emblem{width:54px!important;height:54px!important;flex-basis:54px!important}
+body[data-view="screen"] .brand-lines strong{font-size:18px;letter-spacing:.2px}
+body[data-view="screen"] .brand-lines .brand-owner{font-size:11px}
+body[data-view="screen"] .brand-lines small{font-size:8px;color:#9eb8c3}
+body[data-view="screen"] .shell{background:transparent}
+.arena-heading{border-bottom:1px solid #294552;padding-bottom:9px}
+.arena-kicker{color:#83cabb}.arena-heading-title h1{color:#f0f5f4;letter-spacing:-.65px}
+.arena-heading-title h1 em{color:#e9c58d}.arena-heading-tag{background:#193443;border-color:#426273;color:#d2e6e6}
+.arena-summary .arena-phase{background:#174340;border-color:#4b8377;color:#b4eadf}.arena-summary .arena-fault b{color:#e6a48d}
+.arena-stage-current,.arena-next,.arena-leaderboard{border:1px solid #345260;border-radius:10px;box-shadow:0 12px 30px #0000001a}
+.arena-stage-current{background:#132e3c}.arena-stage-current:before{background:linear-gradient(90deg,#dec08d 0%,#74cbbd 42%,transparent 95%)}
+.arena-stage-top{background:#1b3a47;border-bottom:1px solid #42616c}
+.arena-stage-round{color:#ecc991}.arena-stage-round span{color:#bdd5d9}.arena-section-label{color:#89ded0}
+.arena-clock-box>span{color:#acced4}.arena-clock-box strong{color:#f3cbb4;font-variant-numeric:tabular-nums}
+.arena-stage-lanes{background:#173443}
+.arena-lane{background:linear-gradient(160deg,#1b3a48 0%,#142d3a 100%)!important}
+.arena-lane-b{background:linear-gradient(160deg,#193544 0%,#132837 100%)!important}
+.arena-lane+.arena-lane{border-left-color:#42616e}
+.lane-index-digit{color:#8adfce}.arena-lane-b .lane-index-digit{color:#ecc68c}
+.lane-meta{color:#a8c6d0;letter-spacing:.9px}.lane-focus{justify-content:center;gap:clamp(12px,1.9vh,24px)}
+.lane-focus:before{background:linear-gradient(90deg,#86e2cf,transparent)}
+.arena-lane-b .lane-focus:before{background:linear-gradient(90deg,#f0c58c,transparent)}
+.arena-lane-name{color:#fcfcf9;font-size:clamp(31px,2.7vw,51px);letter-spacing:-.9px;line-height:1.15}
+.lane-footnote{color:#b3cfd5}.arena-lane-bottom{border-top-color:#41616b}
+.arena-lane-status{background:#1c4946;color:#d2f1e8;border-color:#527c79}
+.arena-lane-result{color:#f0d2a5}.arena-stage-hint{background:#16433e;color:#d2eee5;border-top-color:#356a65}
+.arena-next{background:#142d3c}.arena-next-team{background:#0f2735;border-color:#315264}
+.arena-next-team strong{color:#f2f6f2}.arena-next-lane{color:#85d9c9}
+.arena-announcement{background:#173b3b;border-color:#3b7770}.arena-announcement span{color:#e5c38b}
+.arena-leaderboard{background:#122b39}.arena-board-header{border-bottom-color:#375766}
+.arena-board-header h2{color:#f3f8f6;letter-spacing:-.4px}.arena-board-live{color:#96d9cb}
+.arena-ranking-grid{gap:9px}.arena-ranking-column{gap:3px}
+.arena-rank-row{background:#183240;border-color:#2c4857;border-radius:4px}
+.arena-rank-row:nth-child(even){background:#142d3a}
+.arena-rank-row.is-waiting{background:#112838;border-color:#244555}
+.arena-rank-row.is-waiting:nth-child(even){background:#102633}
+.arena-rank-row.is-scored{background:#225048;border-color:#54897d}
+.arena-rank-row.podium{background:#3e4138;border-color:#a28c68}
+.arena-rank-no{color:#8fb4c4}.arena-rank-team{color:#eff6f6;font-weight:700}
+.arena-rank-points{color:#cde6cf}.arena-rank-row.podium .arena-rank-points{color:#efcc98}
+.arena-ranking-foot{color:#a6bec8}.arena-footline{color:#a6bdc5}.arena-footline button{color:#9ee2d4}
+@media(min-width:1000px) and (max-height:810px){
+body[data-view="screen"] .brand-emblem{width:46px!important;height:46px!important;flex-basis:46px!important}
+body[data-view="screen"] .arena-lane-name{font-size:clamp(24px,2.12vw,35px)}
+body[data-view="screen"] .arena-rank-team{font-size:clamp(10px,.9vw,13px)}
+}
+@media(max-width:720px){
+.brand-emblem,body[data-view="screen"] .brand-emblem{width:45px!important;height:45px!important;flex-basis:45px!important}
+.brand-lines strong{font-size:15px}.arena-lane-name{font-size:clamp(20px,5.3vw,32px)}
+}
+@media(prefers-reduced-motion:reduce){.pulse-dot{animation:none!important}}
+
 </style>
 <script>// 公共 Supabase Publishable Key（不是服务端密钥），所有写操作由数据库权限与一次性分配的高强度访问码保护。
 window.COMP26_CONFIG = Object.freeze({
