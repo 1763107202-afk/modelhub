@@ -1,0 +1,32 @@
+name: Competition Live QA (demo only)
+on:
+  pull_request:
+    paths:
+      - 'competition-live/**'
+      - '.github/workflows/competition-live-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  demo-smoke:
+    name: Demo-only browser acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned test tooling (no project dependencies)
+        run: npm install --no-save --ignore-scripts @playwright/test@1.56.1
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Run acceptance in demo-only mode
+        run: npx playwright test --config=competition-live/playwright.config.cjs
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: competition-live-qa-failures
+          path: competition-live/test-results/
+          retention-days: 7
