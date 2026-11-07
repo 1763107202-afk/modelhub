@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#071020"><meta name="description" content="智能搬运小车校内赛 - 36队赛事实时数据大屏、裁判评分和颁奖总控">
-<title>智能搬运小车校内赛 · LIVE ARENA</title>
+<meta name="theme-color" content="#091726"><meta name="description" content="江苏科技大学机械创新实验室 · 2026智能搬运小车创新挑战赛，36队实时排名与赛事总控">
+<title>智能搬运小车创新挑战赛 | 江苏科技大学机械创新实验室</title>
 <style>@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap');
 :root{font-family:'Noto Sans SC',system-ui,-apple-system,'Microsoft YaHei',sans-serif;background:#07111f;color:#f0f7ff;--panel:#101e30;--panel2:#142438;--line:#283d52;--dim:#8fa6b8;--cyan:#5effe0;--lime:#dafa65;--orange:#ff9c71;--font-display:'Barlow Condensed','Arial Narrow',sans-serif}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;overflow-x:hidden}button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.38}a{color:inherit;text-decoration:none}strong{font-weight:800}.hidden{display:none!important}
@@ -182,6 +182,276 @@ body[data-view="screen"][data-display="1"] .top-right{margin-left:auto}
  .arena-announcement{padding:3px 9px}
  .arena-rank-row{border-radius:2px}
 }
+
+/* ============================================================
+  MECHANICAL INNOVATION LAB · EVENT DESIGN SYSTEM / 2026
+  Industrial editorial direction: precision steel, deep indigo,
+  brushed titanium, engineering cyan and ceremonial champagne.
+  Presentation-only. Original business logic stays unchanged.
+============================================================ */
+:root{
+ --panel:#101f30;--panel2:#142638;--line:#30485b;--dim:#95aabd;
+ --cyan:#52e1cc;--lime:#c6e6ac;--orange:#f0ab89;
+ --lab-gold:#e5c28a;--lab-deep:#071321;--lab-steel:#132738;
+ color-scheme:dark;
+}
+html{scroll-behavior:smooth}
+body{background:#081522;color:#eaf1f8;letter-spacing:.01em}
+.ambient-grid{background-image:linear-gradient(#5a8ca014 1px,transparent 1px),linear-gradient(90deg,#5a8ca014 1px,transparent 1px);background-size:52px 52px;opacity:.42;mask-image:linear-gradient(to bottom,#0007,transparent 91%)}
+.ambient-glow{background:radial-gradient(ellipse 70% 42% at 91% -5%,#24738d27,transparent),radial-gradient(ellipse 40% 55% at 7% 77%,#45537418,transparent)}
+.topbar{
+ background:linear-gradient(90deg,#0c1b2b 0%,#0b1a2a 49%,#091827 100%);
+ border-bottom:1px solid #345368;box-shadow:0 12px 35px #030c1635;
+ position:relative;isolation:isolate
+}
+.topbar:before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#d3b178 0%,#d3b178 15%,#409caa 43%,transparent 100%);opacity:.78}
+.topbar:after{content:'';position:absolute;bottom:0;left:23px;width:66px;height:2px;background:var(--lab-gold);opacity:.85}
+.brand{gap:12px;min-width:0;text-decoration:none;color:inherit}
+.brand-emblem{flex:none;display:grid;place-items:center;width:55px;height:55px;border:1px solid #507083;border-radius:13px;background:linear-gradient(135deg,#254355,#102435);box-shadow:inset 0 0 0 3px #102535,0 0 0 1px #142b3b;position:relative;overflow:hidden}
+.brand-emblem:before{content:'';position:absolute;inset:5px;border:1px solid #9bb0a02b;border-radius:50%;pointer-events:none}
+.brand-emblem img{width:45px;height:45px;object-fit:contain;filter:drop-shadow(0 2px 6px #0007)}
+.brand-lines{gap:3px}
+.brand-lines .brand-owner{font-size:12px;font-weight:700;letter-spacing:1.2px;color:#b7cad6;white-space:nowrap}
+.brand-owner i{font-style:normal;color:var(--lab-gold);padding:0 2px}
+.brand-lines strong{font-size:21px;font-weight:860;letter-spacing:.6px;line-height:1.14;color:#f0f5f9;white-space:nowrap}
+.brand-lines strong em{font-style:normal;color:#e2be80}
+.brand-lines small{font-family:var(--font-display);font-size:10px;letter-spacing:1.8px;color:#819db3}
+.brand-divider{color:#c8b084;padding:0 4px}
+.nav{padding:4px;border:1px solid #334e61;background:#0b1b29;border-radius:9px;box-shadow:inset 0 1px 2px #0004}
+.nav button{font-size:12px;font-weight:750;border-radius:6px;color:#a7bbc9;padding:11px 16px;letter-spacing:.2px;transition:background .17s,color .17s,border .17s}
+.nav button.selected{background:linear-gradient(145deg,#24495b,#1b3a4b);box-shadow:inset 0 0 0 1px #3e7885;color:#bff4e8}
+.nav button:hover{background:#223b4c;color:#fff}
+.top-right{gap:17px}
+.connection{border:1px solid #325363;background:#122939;padding:8px 11px;border-radius:18px;color:#aec7cc;font-size:11px;font-weight:650}
+.connection .pulse-dot{background:#5de3cc;box-shadow:0 0 0 3px #326f6150,0 0 13px #52e1cc65}
+.clock{font-family:var(--font-display);font-variant-numeric:tabular-nums;font-size:22px;letter-spacing:1.2px;color:#e5d0a5;font-weight:800}
+.shell{max-width:1700px}
+.eyebrow,.arena-kicker{font-family:var(--font-display);color:#73dbc8;letter-spacing:1.8px}
+.heading{font-weight:850;letter-spacing:-.6px}
+.subtext{color:#a1b3c3;line-height:1.8}
+.panel{border-radius:13px;border:1px solid #30495c;background:linear-gradient(155deg,#14293a 0%,#101f2f 65%,#0e1c2b 100%);box-shadow:0 12px 35px #030b142c,inset 0 1px #fff00008}
+.panel-head{border-bottom:1px solid #2f465750;padding-bottom:12px}
+.panel-title{font-size:15px;color:#dfe8ef}
+.btn{border-radius:8px;border:1px solid #446075;background:linear-gradient(180deg,#203a4d,#1a3042);color:#e7f1f8;box-shadow:inset 0 1px #ffffff0b}
+.btn:focus-visible,.nav button:focus-visible,.arena-footline button:focus-visible{outline:2px solid var(--lab-gold);outline-offset:3px}
+.btn.primary{background:linear-gradient(120deg,#5de6d1,#87ddcb);border-color:#83ebda;color:#0a2a31;box-shadow:0 8px 30px #2dd4bd24}
+.btn.lime{background:linear-gradient(120deg,#d6ebbe,#b6dca1);color:#18322b;border-color:#d4efb7}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.btn.danger{background:#402d36;border-color:#895a5b;color:#ffd8ce}
+.field label{font-size:13px;color:#c2ced8}
+.field input,.field select,.field textarea{background:#0a1928;border-color:#3c5b6e;border-radius:8px;color:#f2f7f9;font-size:15px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#75dccf;box-shadow:0 0 0 3px #48c8b823}
+.role-chip{border-radius:5px;border-color:#527a7d;background:#1c3945;color:#93eee1;font-size:11px;padding:10px 15px}
+.key-panel{max-width:640px;margin:clamp(24px,4vh,66px) auto 0;padding:40px 46px 33px;position:relative;border-color:#4c6976;background:linear-gradient(142deg,#182f43 0%,#102336 43%,#0e1e2e 100%)}
+.key-panel:before{content:'LAB / ACCESS';position:absolute;top:0;right:0;padding:8px 12px;border-left:1px solid #436878;border-bottom:1px solid #436878;border-radius:0 12px 0 9px;background:#102c3b;color:#8edccc;font:700 11px var(--font-display);letter-spacing:1.5px}
+.key-panel:after{content:'';position:absolute;left:46px;right:46px;top:0;height:2px;background:linear-gradient(90deg,var(--lab-gold),#46aaaf,transparent)}
+.key-panel h2{font-size:clamp(29px,3vw,39px);letter-spacing:-1.2px;font-weight:850;margin:12px 0 5px}
+.login-lab{font-size:12px;color:#c9d5dc;padding:0 0 15px;border-bottom:1px solid #38526575;margin-bottom:12px}
+.login-lab span{color:#daba88}
+.key-panel .subtext{font-size:13px;margin:8px 0 21px}
+.key-panel .field{gap:10px}
+.key-panel .field input{min-height:60px;font-size:23px;font-family:var(--font-display);font-variant-numeric:tabular-nums;letter-spacing:5px}
+.key-panel .field select{min-height:53px}
+.key-panel .btn.big{min-height:58px}
+.tiny-note{color:#819aad}
+.notice-strip{border-color:#3a6468;color:#d0ebea}
+.judge-card{border:1px solid #487785;border-radius:14px;background:linear-gradient(135deg,#1b3f51,#112b3b 53%,#102535 100%);box-shadow:0 15px 38px #0003}
+.judge-card:before{content:'';display:block;width:68px;height:3px;margin:-25px 0 23px;background:var(--lab-gold)}
+.judge-team{color:#f6f9fb;letter-spacing:-1px}
+.judge-title{color:#91f1e4}
+.metric{background:linear-gradient(155deg,#183145,#102537);border:1px solid #3b5666}
+.metric strong.accent,.round-mini span:first-child{color:#82e4d6}
+.metric strong.lime,.score-mini{color:#d9e9b2}
+.stage-card,.team-entry{border-color:#405c6c;background:linear-gradient(120deg,#1d394b,#14293b)}
+.award-chip{background:#142a3c;border-color:#445d6e}
+.award-chip strong{color:#edd19d}
+.award-overlay{background:radial-gradient(ellipse 72% 55% at 52% 5%,#19465c 0%,#081523 72%);border:9px solid #122b3b}
+.award-overlay:before{content:'';position:fixed;inset:23px;pointer-events:none;border:1px solid #8a9fa334}
+.award-kicker{color:#e0c38e;letter-spacing:3.5px;font-size:17px}
+.award-heading{color:#f3f2ee;text-shadow:0 7px 30px #020c17}
+.award-group{border-color:#526779;background:linear-gradient(150deg,#193145,#101e30)}
+.award-group.first{border-color:#c6a978;background:linear-gradient(148deg,#383a32,#172d3d)}
+.award-group .big-number{color:#c8e6bb}
+.award-group.first .big-number{color:#efcf90}
+.countdown-num{color:#e7c890;text-shadow:0 0 75px #cba36e52}
+.footer{color:#8ba2b4}
+
+/* 1080p operator-facing broadcast: fixed single frame, precise information density */
+body[data-view="screen"] .topbar{flex:0 0 72px;height:72px;border-bottom:1px solid #375467;padding:0 clamp(16px,1.7vw,30px)}
+body[data-view="screen"] .shell{height:calc(100dvh - 72px);padding:10px clamp(13px,1.25vw,23px) 9px}
+body[data-view="screen"] .brand-emblem{width:51px;height:51px}
+body[data-view="screen"] .brand-emblem img{width:42px;height:42px}
+body[data-view="screen"] .brand-lines strong{font-size:19px}
+body[data-view="screen"] .brand-lines .brand-owner{font-size:11px}
+body[data-view="screen"] .brand-lines small{font-size:8px}
+body[data-view="screen"] .top-right{gap:14px}
+.arena-overview{color:#f1f6f8;gap:9px;grid-template-rows:auto minmax(0,1fr) 21px}
+.arena-heading{padding:0 3px 5px;border-bottom:1px solid #2a4556;gap:12px}
+.arena-kicker{font-size:10px;color:#88b8c1;letter-spacing:1.55px}
+.arena-kicker-divider{color:#d6b77c;padding:0 6px}
+.arena-heading-title h1{font-size:clamp(24px,2.02vw,38px);font-weight:850;letter-spacing:-.8px;line-height:1.12;margin:5px 0}
+.arena-heading-title h1 em{color:#e5c58e;font-style:normal}
+.arena-heading-tag{display:inline-block;margin-left:12px;vertical-align:middle;color:#cbd6dd;font-size:clamp(9px,.9vw,14px);font-weight:650;border:1px solid #5e6971;background:#213747;padding:6px 10px;border-radius:4px;letter-spacing:.6px}
+.arena-summary{gap:clamp(9px,1.15vw,19px)}
+.arena-summary>span:not(.arena-phase){align-items:baseline;gap:5px}
+.arena-summary b{color:#edf4f7;font-size:clamp(23px,2vw,34px);font-weight:850}
+.arena-summary small{color:#90aab9;font-size:10px}
+.arena-summary .arena-phase{border-radius:5px;background:#12363d;border-color:#3a7e78;color:#a9eee0;padding:7px 11px;font-size:11px}
+.arena-live-dot,.arena-beacon{display:inline-block;flex:none;width:7px;height:7px;background:#5ee1cd;border-radius:50%;box-shadow:0 0 0 4px #3c9e9850,0 0 12px #38dbc565}
+.arena-summary .arena-fault b{color:#f6b49a}
+.arena-main{grid-template-columns:minmax(0,.97fr) minmax(0,1.03fr);gap:12px}
+.arena-stage{gap:9px;grid-template-rows:minmax(0,1fr) auto auto auto}
+.arena-stage-current,.arena-next,.arena-leaderboard{border:1px solid #39546a;border-radius:11px;background:linear-gradient(147deg,#172e42 0%,#0e2031 73%);box-shadow:0 12px 36px #030b152b,inset 0 1px #a5e5db0a}
+.arena-stage-current{position:relative}
+.arena-stage-current:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#e1ba82 0%,#66cfca 43%,transparent 100%);z-index:1;pointer-events:none}
+.arena-stage-top{padding:clamp(10px,1.5vh,19px) clamp(14px,1.5vw,23px);background:linear-gradient(100deg,#1b394e88,#182b3b43);border-color:#385365;gap:8px}
+.arena-section-label{font-family:var(--font-display);font-size:11px;color:#93d9d4;display:flex;gap:11px;align-items:center;letter-spacing:1.4px}
+.arena-section-label .arena-beacon{width:6px;height:6px}
+.arena-stage-round{color:#f0d1a0;font-size:clamp(57px,7vh,90px);margin-top:5px;font-weight:850}
+.arena-stage-round span{font-size:14px;color:#abbfc9}
+.arena-clock-box>span{color:#9db2c0;letter-spacing:1px;font-size:10px}
+.arena-clock-box strong{font-weight:800;color:#e9f5f4;font-size:clamp(37px,5.7vh,67px)}
+.arena-stage-lanes{background:repeating-linear-gradient(0deg,transparent,transparent 38px,#7ca1ae0a 39px),linear-gradient(90deg,#17314790,#11263a50)}
+.arena-lane{padding:clamp(10px,1.3vh,18px) clamp(14px,1.4vw,25px);position:relative;gap:9px}
+.arena-lane+.arena-lane{border-color:#40596b}
+.arena-lane:after{content:'';position:absolute;top:0;right:16px;height:52px;width:52px;border-right:1px solid #a3c6d11e;border-bottom:1px solid #a3c6d11e;pointer-events:none}
+.arena-lane-id{color:#79e1d3;font-size:clamp(25px,2.6vw,40px);font-weight:850}
+.arena-lane-id i{font-size:10px;color:#8fb7c5;letter-spacing:.9px}
+.arena-lane-b .arena-lane-id{color:#e4c88c}
+.arena-lane-name{font-size:clamp(18px,1.65vw,31px);font-weight:840;color:#f3f7fa;line-height:1.26}
+.arena-lane-status{font-size:10px;font-weight:650;padding:5px 7px;color:#b2d3d5;border-color:#416676;border-radius:4px;background:#173748}
+.arena-lane-result{color:#e5d3a4;font-weight:850;font-size:clamp(22px,2.4vw,41px)}
+.arena-stage-hint{background:#15394386;border-top:1px solid #3d6d70;color:#c0e3e1;font-size:11px;font-weight:750;padding:8px 16px}
+.arena-next{padding:clamp(10px,1.25vh,16px) clamp(12px,1.4vw,21px);background:linear-gradient(130deg,#18374b,#122738)}
+.arena-small-head{margin-bottom:8px}
+.arena-small-head strong{font-size:13px;color:#edf4f5}
+.arena-next-sep{font-style:normal;color:#d4b37c;padding:0 3px}
+.arena-small-head span{color:#e2c58b;font-size:10px;letter-spacing:1px}
+.arena-next-teams{gap:8px}
+.arena-next-team{background:#102638;border-color:#3a5b6b;border-radius:6px;padding:clamp(9px,1.1vh,13px) 12px;gap:8px;min-width:0}
+.arena-next-lane,.arena-next-team:nth-child(2) .arena-next-lane{color:#94d9d4;font-family:var(--font-display);letter-spacing:1px;font-size:10px}
+.arena-next-team:nth-child(2) .arena-next-lane{color:#dcc18c}
+.arena-next-team strong{font-size:clamp(12px,1.04vw,17px);color:#eaf3f8}
+.arena-announcement{background:#153440a6;border-color:#3d646a;border-radius:7px;padding:7px 12px;min-height:32px}
+.arena-announcement span{color:#e6c38a;font-size:11px}
+.arena-announcement strong{font-size:11px;color:#deedf0}
+.arena-progress{color:#9aafba;font-size:10px}
+.arena-progress-track{background:#263c4b;height:6px}
+.arena-progress-track>div{background:linear-gradient(90deg,#3a9a9a,#dfbf88)}
+.arena-leaderboard{padding:12px clamp(11px,1.05vw,18px) 9px}
+.arena-board-header{padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #3a5366}
+.arena-board-header h2{font-size:clamp(20px,1.7vw,29px);font-weight:830;letter-spacing:-.4px;color:#f2f5f7;margin:3px 0 0}
+.arena-board-header h2 small{font-size:clamp(9px,.74vw,12px);color:#94aeba;letter-spacing:1.3px;font-family:var(--font-display);font-weight:700;margin-left:7px}
+.arena-board-live{color:#a4e8df;font-size:10px;letter-spacing:1px}
+.arena-ranking-grid{gap:8px}
+.arena-ranking-column{gap:3px}
+.arena-rank-row{background:#142b3d;border-color:#2d4658;border-radius:3px;padding:0 7px;grid-template-columns:28px minmax(0,1fr) auto;gap:7px;position:relative}
+.arena-rank-row:before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:#4b6c7a42}
+.arena-rank-row.is-scored{background:#183748;border-color:#476574}
+.arena-rank-row.is-scored:before{background:#6bcfc2}
+.arena-rank-row.is-waiting{background:#0f2232;border-color:#243d4d;opacity:.92}
+.arena-rank-row.podium{border-color:#b28d586e;background:linear-gradient(90deg,#634d324f,#183042)}
+.arena-rank-row.podium:before{background:#dcbf83}
+.arena-rank-no{font-family:var(--font-display);font-size:clamp(15px,1.3vw,23px);font-weight:800;color:#adc0cb}
+.arena-rank-row.podium .arena-rank-no{color:#ebc98f}
+.arena-rank-team{font-size:clamp(10px,.87vw,15px);font-weight:760;color:#dce8ef}
+.arena-rank-points{color:#dfd1ab;font-weight:850;font-size:clamp(13px,1.1vw,20px)}
+.arena-rank-row.is-waiting .arena-rank-points{color:#7d9aaa;font-size:10px;letter-spacing:.5px}
+.arena-ranking-foot{color:#91a5b4;border-top:1px solid #304758;margin-top:7px;padding-top:6px;font-size:9px}
+.arena-footline{font-size:10px;color:#8aa9b5}
+.arena-footline .arena-view-award{color:#edd29a}
+.arena-footline button{color:#91dbd5}
+
+@media (min-width:1000px) and (max-height:810px){
+ body[data-view="screen"] .topbar{flex-basis:62px;height:62px}
+ body[data-view="screen"] .shell{height:calc(100dvh - 62px);padding-top:7px;padding-bottom:7px}
+ body[data-view="screen"] .brand-emblem{width:45px;height:45px}
+ body[data-view="screen"] .brand-emblem img{width:38px;height:38px}
+ .arena-overview{gap:6px;grid-template-rows:auto minmax(0,1fr) 20px}
+ .arena-heading-title h1{font-size:clamp(20px,1.8vw,28px);margin:3px 0}
+ .arena-heading-tag{font-size:10px;padding:4px 7px}
+ .arena-summary b{font-size:24px}
+ .arena-stage{gap:6px}
+ .arena-stage-top{padding:8px 14px}
+ .arena-stage-round{font-size:clamp(49px,7vh,64px)}
+ .arena-clock-box strong{font-size:clamp(38px,5.7vh,50px)}
+ .arena-lane{padding:8px 13px;gap:6px}
+ .arena-lane-name{font-size:clamp(17px,1.5vw,24px)}
+ .arena-lane-result{font-size:clamp(23px,2.2vw,30px)}
+ .arena-stage-hint{padding:6px 12px;font-size:10px}
+ .arena-next{padding:8px 11px}
+ .arena-small-head{margin-bottom:6px}
+ .arena-next-team{padding:7px}
+ .arena-next-team strong{font-size:clamp(11px,1vw,15px)}
+ .arena-announcement{padding:5px 10px;min-height:28px}
+ .arena-leaderboard{padding:8px 10px 6px}
+ .arena-board-header{margin-bottom:6px;padding-bottom:5px}
+ .arena-board-header h2{font-size:clamp(19px,1.65vw,24px)}
+ .arena-ranking-column{gap:2px}
+ .arena-rank-row{padding:0 5px;grid-template-columns:22px minmax(0,1fr) auto;gap:4px}
+ .arena-rank-no{font-size:clamp(15px,1.3vw,18px)}
+ .arena-rank-team{font-size:clamp(10px,.8vw,12px)}
+ .arena-rank-points{font-size:clamp(13px,1.1vw,17px)}
+ .arena-ranking-foot{padding-top:3px;margin-top:4px}
+}
+@media (max-width:1120px){
+ .brand-lines strong{font-size:18px}
+ .brand-lines .brand-owner{font-size:10px}
+ .brand-lines small{font-size:8px}
+ .nav button{padding:9px 10px}
+}
+@media (max-width:999px){
+ body[data-view="screen"] .topbar{min-height:70px;height:auto;padding:12px 14px;flex-basis:auto}
+ body[data-view="screen"] .shell{height:auto;overflow:visible;padding:13px}
+ .arena-heading{padding:0 0 12px}
+ .arena-heading-title h1{font-size:clamp(20px,4vw,29px)}
+ .arena-heading-tag{margin-left:7px}
+ .arena-main{grid-template-columns:1fr;gap:12px}
+ .arena-stage{margin-bottom:12px}
+ .arena-leaderboard{min-height:830px}
+ .arena-rank-row{grid-template-columns:25px minmax(0,1fr) auto}
+}
+@media (max-width:720px){
+ .topbar{padding:13px 15px;gap:10px}
+ .brand{gap:10px}
+ .brand-emblem{width:43px;height:43px;border-radius:10px}
+ .brand-emblem img{width:36px;height:36px}
+ .brand-lines strong,body[data-view="screen"] .brand-lines strong{font-size:15px}
+ .brand-lines .brand-owner,body[data-view="screen"] .brand-lines .brand-owner{font-size:10px}
+ .brand-lines small,body[data-view="screen"] .brand-lines small{font-size:7px;letter-spacing:1px}
+ .top-right{gap:7px;margin-left:auto}
+ .connection{padding:5px 8px;font-size:9px}
+ .clock{font-size:15px}
+ .nav{order:3;width:100%;justify-content:space-between}
+ .nav button{flex:1;font-size:11px;padding:10px 5px}
+ .key-panel{padding:30px 21px 24px;margin-top:23px}
+ .key-panel:after{left:21px;right:21px}
+ .key-panel h2{font-size:30px}
+ .login-lab{font-size:11px;line-height:1.8}
+ .judge-card{padding:20px}
+ .judge-card:before{margin:-20px 0 22px}
+ .judge-team{font-size:29px}
+ .hero-row{gap:10px}
+ .arena-heading-title h1{font-size:22px}
+ .arena-board-header h2 small{font-size:9px}
+ .arena-rank-team{font-size:11px}
+ .arena-rank-points{font-size:14px}
+ .arena-next-team{padding:10px}
+ .arena-stage-round{font-size:59px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+/* Noninteractive line-art representation of the smart transport cart */
+.arena-cart-schematic{display:grid;place-items:center;flex:1 1 auto;min-height:0;overflow:hidden;pointer-events:none;position:relative;opacity:.91}
+.arena-cart-schematic svg{width:min(100%,260px);height:clamp(110px,17vh,200px);max-height:100%;filter:drop-shadow(0 0 18px #3fadb719)}
+.arena-cart-schematic:after{content:'';position:absolute;left:17%;right:17%;bottom:8%;height:1px;background:linear-gradient(90deg,transparent,#6fb1b04f,transparent)}
+.arena-lane-name{flex:0 0 auto;min-height:2.2em;margin:2px 0 7px;display:flex;align-items:center}
+.arena-lane-bottom{flex:0 0 auto}
+@media(min-width:1000px) and (max-height:810px){.arena-cart-schematic svg{height:clamp(68px,13vh,124px)}.arena-lane-name{min-height:1.4em;margin:1px 0 4px}}
+@media(max-width:999px){.arena-cart-schematic svg{height:95px}.arena-lane-name{min-height:1.6em}}
+@media(max-width:550px){.arena-cart-schematic svg{height:76px}}
+
+/* Network-free fallback is decorative; production loads the verified original lab logo. */
+.brand-emblem-fallback:after{content:'⚙';position:absolute;inset:0;display:grid;place-items:center;font:800 34px Georgia,serif;color:#e1c58b}
 </style>
 <script>// 公共 Supabase Publishable Key（不是服务端密钥），所有写操作由数据库权限与一次性分配的高强度访问码保护。
 window.COMP26_CONFIG = Object.freeze({
@@ -414,9 +684,9 @@ window.COMP26_TEAMS=[
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
 <header class="topbar">
- <a class="brand" href="#screen" aria-label="赛事大屏"><span class="brand-icon">↗</span><span class="brand-lines"><strong>MOVE<span class="brand-punct">.</span>ARENA</strong><small>智能搬运小车 · 2026 校内挑战赛</small></span></a>
- <nav class="nav"><button data-nav="screen" class="selected">大屏 LIVE</button><button data-nav="judge">裁判录分</button><button data-nav="control">赛事总控</button></nav>
- <div class="top-right"><span class="connection" id="connection"><span class="pulse-dot"></span><span id="connectionText">正在连接</span></span><span id="clock" class="clock">--:--:--</span></div>
+ <a class="brand" href="#screen" aria-label="江苏科技大学机械创新实验室 · 赛事大屏"><span class="brand-emblem"><img src="../assets/lab-logo-transparent.svg?v=3" alt="江苏科技大学机械创新实验室 Logo" onerror="this.style.display='none';this.parentElement.classList.add('brand-emblem-fallback')" width="50" height="50"></span><span class="brand-lines"><span class="brand-owner">江苏科技大学 <i>·</i> 机械创新实验室</span><strong>智能搬运小车 <em>创新挑战赛</em></strong><small>MECHANICAL INNOVATION LAB <span class="brand-divider">/</span> EVENT 2026</small></span></a>
+ <nav class="nav" aria-label="工作台导航"><button data-nav="screen" class="selected">▣ 赛事大屏</button><button data-nav="judge">⌁ 裁判工作台</button><button data-nav="control">▤ 赛事总控</button></nav>
+ <div class="top-right"><span class="connection" id="connection" title="云端数据同步状态"><span class="pulse-dot"></span><span id="connectionText">正在连接</span></span><span id="clock" class="clock">--:--:--</span></div>
 </header>
 <div id="message" class="toast" role="status" aria-live="polite"></div>
 <main id="app" class="shell"><section class="loading"><div class="spinner"></div><p>正在加载实时赛事数据</p></section></main>
@@ -490,7 +760,7 @@ async function refresh(force=false){
  }catch(err){state.pollError=true;connection(false);if(force){$('app').innerHTML=`<section class="panel key-panel"><div class="eyebrow">连接失败</div><h2>无法加载赛事数据</h2><p class="subtext">${esc(err.message)}</p><button class="btn" id="retryConnect">重试连接</button><p class="tiny-note">可在地址末尾加 ?demo=1 进入可操作的演示模式（仅当前设备，不会同步）。</p></section>`;$('retryConnect').onclick=()=>refresh(true)} }
  finally{state.loading=false;}
 }
-function connection(ok){const el=$('connection');el.classList.toggle('bad',!ok);$('connectionText').textContent=demoMode?'本机演示':ok?'赛事数据已同步':'连接中断 · 正在重连';}
+function connection(ok){const el=$('connection');el.classList.toggle('bad',!ok);$('connectionText').textContent=demoMode?'本机演示':ok?'实时同步 · ONLINE':'连接中断 · 正在重连';}
 function setView(view){if(!['screen','judge','control'].includes(view)||displayOnly)view='screen';state.view=view;document.body.dataset.view=view;document.body.dataset.display=displayOnly?'1':'0';location.hash='#'+view;document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('selected',b.dataset.nav===view));render();}
 function sortRank(){return state.teams.filter(x=>x.score!==null).slice().sort((a,b)=>Number(b.score)-Number(a.score)||(a.tie_order??99999)-(b.tie_order??99999)||a.draw_order-b.draw_order)}
 function rankNum(list,i){return list.findIndex(x=>x.score===list[i].score)+1}
@@ -509,36 +779,36 @@ function screen(){
  const active=e.phase==='retry'?(retry?[retry]:[]):round;
  const stageLabel=e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩核对中':e.phase==='awards'?'获奖揭晓':e.phase==='closed'?'赛事已结束':'正在比赛';
  const hint=e.phase==='live'&&round.every(t=>['scored','fault_pending','dnf'].includes(t.status))?'本轮成绩已确认 · 有请下一组入场':e.phase==='live'?'本轮比赛进行中 · 下一轮同步调试':e.phase==='upcoming'?'第一组赛前单独调试4分钟':e.phase==='retry'?(retry?'故障补赛队伍已就位':'等待管理员安排故障补赛'):phaseText[e.phase];
- const laneCard=(t,lane)=>`<article class="arena-lane ${lane==='B'?'arena-lane-b':''}"><span class="arena-lane-id">${lane==='B'?'B':'A'} <i>赛道 / LANE ${lane}</i></span><strong class="arena-lane-name">${esc(t?.name||'等待安排')}</strong><div class="arena-lane-bottom"><span class="arena-lane-status">${esc(t?teamStatus(t):'等待上场')}</span><span class="arena-lane-result">${t?.score!==null && t?.score!==undefined?displayedScore(t)+' <small>分</small>':'—'}</span></div></article>`;
+ const laneCard=(t,lane)=>`<article class="arena-lane ${lane==='B'?'arena-lane-b':''}"><span class="arena-lane-id">${lane==='B'?'B':'A'} <i>赛道 / LANE ${lane}</i></span><div class="arena-cart-schematic" aria-hidden="true"><svg viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg" fill="none"><g stroke="#6bc7c7" stroke-width="1.1" opacity=".5"><path d="M9 81H66M194 81H251M130 8V30M130 132V155" stroke-dasharray="4 6"/><circle cx="130" cy="81" r="71" stroke-dasharray="5 8" opacity=".34"/><circle cx="130" cy="81" r="58" stroke-dasharray="2 9" opacity=".35"/><path d="M57 36H203M57 124H203" opacity=".35"/><path d="M62 28v104M198 28v104" opacity=".3"/></g><g stroke="#a7e0d7" stroke-width="1.6"><rect x="95" y="31" width="70" height="101" rx="17" fill="#2a5863" fill-opacity=".24"/><rect x="98" y="34" width="64" height="95" rx="14" fill="#31505b" fill-opacity=".14"/><rect x="76" y="45" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="165" y="45" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="76" y="92" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="165" y="92" width="19" height="26" rx="5" fill="#4e8b91" fill-opacity=".22"/><rect x="111" y="55" width="38" height="42" rx="5" stroke-opacity=".7"/><path d="M109 113H151M130 96v17M122 39h16" stroke-opacity=".75"/><path d="M130 34V12m-6 7 6-7 6 7" stroke="#e4c68c"/></g><g fill="#e5c58a"><circle cx="130" cy="81" r="4"/><circle cx="113" cy="53" r="2"/><circle cx="147" cy="53" r="2"/></g><g font-size="8" letter-spacing="1" font-family="Arial, sans-serif" fill="#b5cdd1" opacity=".75"><text x="13" y="74">PATH</text><text x="205" y="74">AUTO</text><text x="130" y="149" text-anchor="middle">MOTION / 4WD</text></g></svg></div><strong class="arena-lane-name">${esc(t?.name||'等待安排')}</strong><div class="arena-lane-bottom"><span class="arena-lane-status">${esc(t?teamStatus(t):'等待上场')}</span><span class="arena-lane-result">${t?.score!==null && t?.score!==undefined?displayedScore(t)+' <small>分</small>':'—'}</span></div></article>`;
  const rankRow=(t,position)=>{const done=t.score!==null;const rank=done?pad(rankNum(ranked,position)):'—';const tier=done&&rankNum(ranked,position)<=3?' podium':'';return `<div class="arena-rank-row${done?' is-scored':' is-waiting'}${tier}" title="${esc(t.name)}"><span class="arena-rank-no">${rank}</span><span class="arena-rank-team">${esc(t.name)}</span><span class="arena-rank-points">${done?displayedScore(t):'待赛'}</span></div>`};
  return `<div class="arena-overview">
-  <div class="arena-heading"><div class="arena-heading-title"><span class="arena-kicker">2026 · SMART TRANSPORT CHALLENGE</span><h1>智能搬运小车 <em>校内挑战赛</em></h1></div><div class="arena-summary"><span class="arena-phase"><i class="arena-live-dot"></i>${esc(phaseText[e.phase])}</span><span><b>${pad(e.current_round)}</b><small>/18 轮</small></span><span><b>${pad(finished)}</b><small>/36 已确认</small></span><span class="arena-fault"><b>${pad(faultCount)}</b><small>待补赛</small></span></div></div>
+  <div class="arena-heading"><div class="arena-heading-title"><span class="arena-kicker">JIANGSU UNIVERSITY OF SCIENCE AND TECHNOLOGY <span class="arena-kicker-divider">/</span> INNOVATION LAB</span><h1>智能搬运小车 <em>创新挑战赛</em><span class="arena-heading-tag">2026 校内赛</span></h1></div><div class="arena-summary"><span class="arena-phase"><i class="arena-live-dot"></i>${esc(phaseText[e.phase])}</span><span><b>${pad(e.current_round)}</b><small>/18 轮</small></span><span><b>${pad(finished)}</b><small>/36 已确认</small></span><span class="arena-fault"><b>${pad(faultCount)}</b><small>待补赛</small></span></div></div>
   <div class="arena-main"><section class="arena-stage" aria-label="当前比赛与下一组">
-   <div class="arena-stage-current"><div class="arena-stage-top"><div><span class="arena-section-label">● LIVE STAGE · ${esc(stageLabel)}</span><div class="arena-stage-round"><span>第</span> ${pad(e.current_round)} <span>轮</span></div></div><div class="arena-clock-box"><span>每轮4分钟</span><strong id="roundTimer">${e.phase==='upcoming'?'04:00':'--:--'}</strong></div></div>
+   <div class="arena-stage-current"><div class="arena-stage-top"><div><span class="arena-section-label"><span class="arena-beacon"></span> LIVE STAGE · ${esc(stageLabel)}</span><div class="arena-stage-round"><span>第</span> ${pad(e.current_round)} <span>轮</span></div></div><div class="arena-clock-box"><span>4 MIN / ROUND · 本轮计时</span><strong id="roundTimer">${e.phase==='upcoming'?'04:00':'--:--'}</strong></div></div>
     <div class="arena-stage-lanes">${laneCard(active.find(t=>t.lane==='A'),'A')}${laneCard(active.find(t=>t.lane==='B'),'B')}</div><div class="arena-stage-hint">${esc(hint)}</div></div>
-   <div class="arena-next"><div class="arena-small-head"><strong>下一组 · 同步调试区</strong><span>UP NEXT · 4 MIN</span></div><div class="arena-next-teams">${next.length?next.map(t=>`<div class="arena-next-team"><span class="arena-next-lane">${esc(t.lane)} 赛道</span><strong>${esc(t.name)}</strong></div>`).join(''):'<p class="arena-next-last">18轮正赛结束后，进入故障补赛及成绩核对环节</p>'}</div></div>
-   <div class="arena-announcement"><span>赛事广播</span><strong>${esc(e.announcement||hint)}</strong></div>
+   <div class="arena-next"><div class="arena-small-head"><strong>下一组 <i class="arena-next-sep">/</i> 同步调试区</strong><span>UP NEXT · 4 MIN</span></div><div class="arena-next-teams">${next.length?next.map(t=>`<div class="arena-next-team"><span class="arena-next-lane">${esc(t.lane)} / LANE</span><strong>${esc(t.name)}</strong></div>`).join(''):'<p class="arena-next-last">18轮正赛结束后，进入故障补赛及成绩核对环节</p>'}</div></div>
+   <div class="arena-announcement"><span>▸ 现场广播</span><strong>${esc(e.announcement||hint)}</strong></div>
    <div class="arena-progress"><span>已完成 ${finished}/36</span><div class="arena-progress-track"><div style="width:${(finished/36)*100}%"></div></div><span>${Math.round(finished/36*100)}%</span></div>
   </section>
-  <aside class="arena-leaderboard" aria-label="36支参赛队伍实时排行榜"><div class="arena-board-header"><div><span class="arena-kicker">REAL-TIME STANDINGS</span><h2>实时积分排行榜</h2></div><div class="arena-board-live"><i class="arena-live-dot"></i><span>LIVE · ${finished}队有成绩</span></div></div>
+  <aside class="arena-leaderboard" aria-label="36支参赛队伍实时排行榜"><div class="arena-board-header"><div><span class="arena-kicker">OFFICIAL LIVE STANDINGS <span class="arena-kicker-divider">/</span> 36 TEAMS</span><h2>实时积分榜 <small>LIVE RANKING</small></h2></div><div class="arena-board-live"><i class="arena-live-dot"></i><span>LIVE · ${finished}队有成绩</span></div></div>
     <div class="arena-ranking-grid">${[0,1].map(k=>`<div class="arena-ranking-column" aria-label="排行第${k*18+1}至${(k+1)*18}项">${sorted.slice(k*18,(k+1)*18).map((t,i)=>rankRow(t,k*18+i)).join('')}</div>`).join('')}</div>
     <div class="arena-ranking-foot"><span>仅已确认成绩参与排名，未比赛队伍不计名次</span><span>同分暂并列 · 最终名次以裁判复核为准</span></div>
   </aside></div>
   <div class="arena-footline"><span>${demoMode?'演示模式 · 所有数据仅存在当前浏览器':'◉ 云端同步 · 裁判确认后自动刷新排名'} · 双赛道 · 36支队伍</span><div>${e.awards_revealed?'<button class="arena-view-award" id="openAwards">★ 查看获奖名单</button>':''}<button id="openFullscreen" class="arena-view-fullscreen">⛶ 全屏显示</button></div></div>
  </div>`;
 }
-function login(){const selected=state.view==='control'?'admin':'judge_a';return `<section class="panel key-panel"><div class="eyebrow">SECURE OFFICIAL ACCESS</div><h2>赛事权限验证</h2><p class="subtext">请选择进入身份并输入统一的6位访问码。大屏无需登录，即可查看实时排名。访问码只存于当前浏览器会话。</p><form id="authForm"><div class="field" style="margin-bottom:16px"><label for="accessRole">进入身份</label><select id="accessRole" required><option value="admin" ${selected==='admin'?'selected':''}>赛事管理员 · 总控台</option><option value="judge_a" ${selected==='judge_a'?'selected':''}>A赛道裁判 · 手机录分</option><option value="judge_b">B赛道裁判 · 手机录分</option></select></div><div class="field"><label for="accessCode">统一6位访问码</label><input type="password" id="accessCode" inputmode="numeric" autocomplete="off" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="请输入6位数字" required></div><button type="submit" class="btn primary block big">验证并进入工作台 →</button></form>${demoMode?'<p class="tiny-note">演示模式：选择身份并填写任意6位数字即可进入；演示不会上传正式成绩。</p>':''}<p class="tiny-note">所有角色共用一个6位访问码：知晓访问码的人也可选择管理员身份，请仅向受信任的比赛工作人员提供，勿在参赛群公开。</p></section>`}
+function login(){const selected=state.view==='control'?'admin':'judge_a';return `<section class="panel key-panel"><div class="eyebrow">OFFICIAL STAFF ACCESS · 2026</div><h2>赛事工作台登录</h2><div class="login-lab">江苏科技大学机械创新实验室 <span>｜</span> 智能搬运小车校内赛</div><p class="subtext">请选择进入身份并输入统一的6位访问码。大屏无需登录，即可查看实时排名。访问码只存于当前浏览器会话。</p><form id="authForm"><div class="field" style="margin-bottom:16px"><label for="accessRole">进入身份</label><select id="accessRole" required><option value="admin" ${selected==='admin'?'selected':''}>赛事管理员 · 总控台</option><option value="judge_a" ${selected==='judge_a'?'selected':''}>A赛道裁判 · 手机录分</option><option value="judge_b">B赛道裁判 · 手机录分</option></select></div><div class="field"><label for="accessCode">统一6位访问码</label><input type="password" id="accessCode" inputmode="numeric" autocomplete="off" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="请输入6位数字" required></div><button type="submit" class="btn primary block big">验证并进入工作台 →</button></form>${demoMode?'<p class="tiny-note">演示模式：选择身份并填写任意6位数字即可进入；演示不会上传正式成绩。</p>':''}<p class="tiny-note">所有角色共用一个6位访问码：知晓访问码的人也可选择管理员身份，请仅向受信任的比赛工作人员提供，勿在参赛群公开。</p></section>`}
 function editor(t){return `<section class="judge-card"><div class="judge-title">LANE ${esc(t.lane)} · 第 ${pad(t.round_no)} 轮</div><div class="judge-team">${esc(t.name)}</div><div class="subtext">${esc(teamStatus(t))} · 当前录入成绩：<strong style="color:var(--lime)">${displayedScore(t)}</strong></div>
  <form id="scoreForm"><input type="hidden" id="currentTeamId" value="${esc(t.id)}"><div class="field" style="margin:18px 0"><label for="scoreInput">最终得分 · POINTS（依据现场评分表）</label><input id="scoreInput" type="number" inputmode="decimal" min="0" max="9999" step="0.01" value="${t.score===null?'':Number(t.score)}" placeholder="例如 92.50" required></div><div class="field" style="margin-bottom:17px"><label for="scoreNote">备注 / 扣分依据（选填）</label><textarea id="scoreNote" maxlength="240" placeholder="例如：超时、漏放、裁判确认情况">${esc(t.note||'')}</textarea></div><button type="submit" class="btn lime big block">✓ 确认提交本队成绩</button></form>
  <div class="btns" style="margin-top:12px"><button class="btn danger block" id="faultBtn" ${t.status!=='pending'?'disabled':''}>⚠ 临时硬件故障 · 申请顺延一次</button></div><p class="tiny-note">提交后立即同步大屏与排行榜；因操作失误需要修正的成绩仅可在该轮结束前重新提交。故障顺延由裁判现场确认，补赛仅一次。</p></section>`}
 function judge(){if(!state.token)return login();const e=state.event;const lane=state.role==='judge_a'?'A':state.role==='judge_b'?'B':'A';const active=e.phase==='retry'?state.teams.find(t=>t.id===e.active_retry_team && (state.role==='admin'||t.lane===lane)):roundTeams(e.current_round).find(t=>t.lane===lane);
  const allowed=e.phase==='live'&&active||e.phase==='retry'&&active;const canSubmit=allowed&&(active.status==='pending'||active.status==='scored'||active.status==='retry_active');
- return `<div class="hero-row"><div><div class="eyebrow">JUDGE CONSOLE · MOBILE READY</div><h1 class="heading">裁判实时录分台</h1><p class="subtext">提交后全场屏幕约2秒同步更新 · 第 ${pad(e.current_round)} 轮 · ${esc(phaseText[e.phase])}</p></div><span class="role-chip">${esc(roleText[state.role])}</span></div><div class="admin-layout"><div class="flex-col">${canSubmit?editor(active):`<section class="panel"><div class="eyebrow">STANDBY</div><h2>${esc(phaseText[e.phase])}</h2><p class="subtext">${active?`${esc(active.name)} · ${esc(teamStatus(active))}`:'当前没有需要本裁判录分的队伍。'}</p>${active?.score!==null?`<strong class="lane-score">${displayedScore(active)} PTS</strong>`:''}</section>`}<div class="notice-strip"><b>赛事广播</b>${esc(e.announcement)}</div></div>
+ return `<div class="hero-row"><div><div class="eyebrow">PRECISION SCORING · JUDGE WORKSTATION</div><h1 class="heading">裁判实时录分台</h1><p class="subtext">提交后全场屏幕约2秒同步更新 · 第 ${pad(e.current_round)} 轮 · ${esc(phaseText[e.phase])}</p></div><span class="role-chip">${esc(roleText[state.role])}</span></div><div class="admin-layout"><div class="flex-col">${canSubmit?editor(active):`<section class="panel"><div class="eyebrow">STANDBY</div><h2>${esc(phaseText[e.phase])}</h2><p class="subtext">${active?`${esc(active.name)} · ${esc(teamStatus(active))}`:'当前没有需要本裁判录分的队伍。'}</p>${active?.score!==null?`<strong class="lane-score">${displayedScore(active)} PTS</strong>`:''}</section>`}<div class="notice-strip"><b>赛事广播</b>${esc(e.announcement)}</div></div>
  <div class="flex-col"><section class="panel"><div class="panel-head"><span class="panel-title">本轮双赛道状态</span><span class="eyebrow">ROUND ${pad(e.current_round)}</span></div><div class="team-list">${roundTeams(e.current_round).map(t=>`<div class="team-entry"><div><strong>LANE ${t.lane} · ${esc(t.name)}</strong><small>${esc(teamStatus(t))}</small></div><span class="score">${displayedScore(t)}</span></div>`).join('')}</div></section><section class="panel"><div class="panel-head"><span class="panel-title">下一轮候赛区</span><span class="eyebrow">NEXT UP</span></div>${roundTeams(e.current_round+1).map(t=>`<p class="subtext">${t.lane} 赛道　<strong style="color:#eaf8ff">${esc(t.name)}</strong></p>`).join('')||'<p class="subtext">正赛即将结束，等待补赛。</p>'}</section><button class="btn ghost" id="logoutBtn">退出当前裁判账号</button></div></div>${footer()}`;
 }
 function control(){if(!state.token)return login();if(state.role!=='admin')return `<section class="panel key-panel"><div class="eyebrow">ACCESS DENIED</div><h2>需要赛事管理员权限</h2><p class="subtext">当前为 ${esc(roleText[state.role])}。裁判请使用录分台，只有管理员可以切换下一轮和公布奖项。</p><button class="btn" id="logoutBtn">换一个访问码</button></section>`;
  const e=state.event,arr=roundTeams(e.current_round),ranked=sortRank();const pending=arr.filter(t=>!['scored','fault_pending','dnf'].includes(t.status));const faults=state.teams.filter(t=>['fault_pending','retry_active'].includes(t.status));const allScored=state.teams.every(t=>t.score!==null);
- return `<div class="hero-row"><div><div class="eyebrow">EVENT CONTROL CENTER</div><h1 class="heading">赛事总控指挥台</h1><p class="subtext">只允许管理员执行开赛、切轮、故障安排与获奖揭晓；所有操作在云端记录。</p></div><span class="role-chip">ADMIN ONLY</span></div>
+ return `<div class="hero-row"><div><div class="eyebrow">EVENT OPERATIONS · OFFICIAL CONTROL DESK</div><h1 class="heading">赛事总控指挥台</h1><p class="subtext">只允许管理员执行开赛、切轮、故障安排与获奖揭晓；所有操作在云端记录。</p></div><span class="role-chip">ADMIN ONLY</span></div>
  <div class="metrics" style="margin-bottom:20px"><div class="metric"><span>当前阶段</span><strong style="font:800 19px sans-serif">${esc(phaseText[e.phase])}</strong></div><div class="metric"><span>比赛轮次</span><strong class="accent">${pad(e.current_round)} /18</strong></div><div class="metric"><span>已确认成绩</span><strong class="lime">${state.teams.filter(t=>t.score!==null).length} /36</strong></div><div class="metric"><span>补赛待处理</span><strong>${faults.length}</strong></div></div>
  <div class="admin-layout"><div class="flex-col"><section class="panel"><div class="panel-head"><span class="panel-title">比赛进程管理</span><span class="eyebrow">RACE OPERATIONS</span></div><div class="stage-card"><div><span class="eyebrow">CURRENT ROUND</span><h2>第 ${pad(e.current_round)} 轮 · ${esc(phaseText[e.phase])}</h2><p class="subtext">A ${esc(arr[0]?.name)} ／ B ${esc(arr[1]?.name)}</p></div><span class="status-tag">${arr.length-pending.length}/2 已确认</span></div><div class="btns" style="margin-top:17px">${e.phase==='upcoming'?'<button class="btn primary big" data-action="start">▶ 宣布正式开始比赛</button>':''}${e.phase==='live'?`<button class="btn primary big" data-action="next" ${pending.length?'disabled':''}>${e.current_round===18?'✓ 结束18轮正赛':'➜ 确认成绩 · 有请下一组'}</button>`:''}${e.phase==='retry'?'<button class="btn lime" data-action="finish_retries" '+(faults.length?'disabled':'')+'>✓ 全部补赛完成 · 开始核对奖项</button>':''}</div>${pending.length&&e.phase==='live'?`<p class="tiny-note">还需处理：${pending.map(t=>esc(t.name)).join('、')}。录分、申报故障或标记未完成后才能切轮。</p>`:''}</section>
  <section class="panel"><div class="panel-head"><span class="panel-title">当前赛道裁判复核</span><span class="eyebrow">LANE STATUS</span></div><div class="team-list">${arr.map(t=>`<div class="team-entry"><div><strong>${t.lane} 赛道 · ${esc(t.name)}</strong><small>${esc(teamStatus(t))}</small></div><span class="score">${displayedScore(t)}</span><button class="btn danger" data-dnf="${esc(t.id)}" ${!(['pending','fault_pending'].includes(t.status)&&e.phase==='live')?'disabled':''}>未完成</button></div>`).join('')}</div><p class="tiny-note">只有正式未完成、未到场的队伍才应标记为0分；临时硬件故障应走补赛流程。</p></section>
@@ -568,9 +838,9 @@ function bindEvents(){
 }
 function tick(){ $('clock').textContent=nowTime();const timer=$('roundTimer');if(timer&&state.event?.round_started_at&&state.event.phase==='live'){const elapsed=Math.floor((Date.now()-new Date(state.event.round_started_at).getTime())/1000);const remain=Math.max(0,240-elapsed);timer.textContent=pad(Math.floor(remain/60))+':'+pad(remain%60);timer.style.color=remain===0?'var(--orange)':'';}else if(timer)timer.textContent=state.event?.phase==='upcoming'?'04:00':'--:--';}
 let awardTimers=[];function showAwards(){if(!state.event?.awards_revealed){toast('奖项尚未由管理员正式公布',true);return;}sessionStorage.removeItem('comp26_skip_awards');state.awardOpened=true;const el=$('awardOverlay');el.classList.remove('hidden');awardTimers.forEach(clearTimeout);awardTimers=[];const r=sortRank();const prizes=[{n:3,label:'三等奖',list:r.slice(10,18),cls:''},{n:2,label:'二等奖',list:r.slice(3,10),cls:''},{n:1,label:'一等奖',list:r.slice(0,3),cls:'first'}];
- const content=$('awardContent');content.innerHTML='<div class="award-kicker">2026 MOVE ARENA · AWARD CEREMONY</div><h1 class="award-heading">荣誉即将揭晓</h1><div class="countdown-num">3</div>';
+ const content=$('awardContent');content.innerHTML='<div class="award-kicker">机械创新实验室 · 2026 AWARD CEREMONY</div><h1 class="award-heading">荣誉即将揭晓</h1><div class="countdown-num">3</div>';
  for(let i=2;i>=1;i--)awardTimers.push(setTimeout(()=>{content.innerHTML='<div class="award-kicker">THE MOMENT OF GLORY</div><h1 class="award-heading">最终获奖名单</h1><div class="countdown-num">'+i+'</div>'},(3-i)*1100));
- awardTimers.push(setTimeout(()=>{content.innerHTML=`<div class="award-kicker">HONOR · EXCELLENCE · INNOVATION</div><h1 class="award-heading">荣誉时刻 · 获奖揭晓</h1><p class="subtext" style="margin-bottom:30px">一等奖3队 · 二等奖7队 · 三等奖8队 / 按正式最终成绩排序</p><div class="award-podium">${prizes.map(g=>`<section class="award-group ${g.cls}"><div class="big-number">0${g.n}</div><h3>${g.label} <small>/ ${g.list.length}支队伍</small></h3>${g.list.map(t=>`<p>${esc(t.name)} <b>${displayedScore(t)}</b><small> 分</small></p>`).join('')}</section>`).join('')}</div><p class="subtext" style="margin-top:28px">感谢参赛同学、指导老师、裁判及全体工作人员。科技创新，精彩继续！</p>`;},3300));
+ awardTimers.push(setTimeout(()=>{content.innerHTML=`<div class="award-kicker">HONOR · ENGINEERING · INNOVATION</div><h1 class="award-heading">机械创新 · 荣誉时刻</h1><p class="subtext" style="margin-bottom:30px">一等奖3队 · 二等奖7队 · 三等奖8队 / 按正式最终成绩排序</p><div class="award-podium">${prizes.map(g=>`<section class="award-group ${g.cls}"><div class="big-number">0${g.n}</div><h3>${g.label} <small>/ ${g.list.length}支队伍</small></h3>${g.list.map(t=>`<p>${esc(t.name)} <b>${displayedScore(t)}</b><small> 分</small></p>`).join('')}</section>`).join('')}</div><p class="subtext" style="margin-top:28px">感谢参赛同学、指导老师、裁判及全体工作人员。科技创新，精彩继续！</p>`;},3300));
 }
 $('closeAwards').addEventListener('click',()=>{$('awardOverlay').classList.add('hidden');awardTimers.forEach(clearTimeout);sessionStorage.setItem('comp26_skip_awards','1')});
 document.querySelectorAll('[data-nav]').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.nav)));
