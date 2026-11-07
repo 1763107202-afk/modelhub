@@ -38,7 +38,7 @@ test('demo judge can enter a score and audience sees it', async ({ page }) => {
   await page.locator('#scoreInput').fill('92.50');
   page.once('dialog', dialog => dialog.accept());
   await page.locator('#scoreForm button[type="submit"]').click();
-  await expect(page.locator('#message')).toContainText('成绩已提交');
+  await expect(page.locator('#message')).toContainText('成绩与完成用时已同步');
   await page.locator('[data-nav="screen"]').click();
   await expect(page.locator('.v6-rank-score').filter({ hasText: '92.50' })).toHaveCount(1);
 });
@@ -92,6 +92,7 @@ test('judge input requires timer stop and timed-score submission is visible on b
   await page.locator('#authForm button[type="submit"]').click();
   await page.locator('#startWatch').click();
   await page.locator('#scoreInput').fill('96.00');
+  await page.locator('#elapsedInput').fill('1.00'); // permit form validation; JS must still block running timer
   await page.locator('#scoreForm button[type="submit"]').click();
   await expect(page.locator('#message')).toContainText('请先停止计时');
   await page.locator('#stopWatch').click();
