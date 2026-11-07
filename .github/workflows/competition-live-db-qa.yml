@@ -38,7 +38,7 @@ jobs:
       - name: Install PostgreSQL client
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client-17
+          sudo apt-get install -y -qq postgresql-client
       - name: Create synthetic 36-team CI fixture
         run: psql -v ON_ERROR_STOP=1 -f competition-live/tests/db/01-fixture.sql
       - name: Apply EXACT proposed staging migration
