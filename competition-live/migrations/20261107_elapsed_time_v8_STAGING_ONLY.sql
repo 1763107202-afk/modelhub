@@ -3,6 +3,23 @@
 -- Compatibility release: retain the existing six-argument comp26_action for old phones.
 -- The new page calls comp26_action_v8; live scores with missing historical times require authorized backfill.
 BEGIN;
+-- Private durable pre-upgrade snapshot. Never exposes token hashes or access codes.
+CREATE TABLE IF NOT EXISTS public.comp26_release_snapshots (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id uuid NOT NULL,
+  release_tag text NOT NULL,
+  captured_at timestamptz NOT NULL DEFAULT now(),
+  event_data jsonb NOT NULL,
+  teams_data jsonb NOT NULL,
+  UNIQUE(event_id,release_tag)
+);
+ALTER TABLE public.comp26_release_snapshots ENABLE ROW LEVEL SECURITY;
+INSERT INTO public.comp26_release_snapshots(event_id,release_tag,event_data,teams_data)
+SELECT e.id,'V8_20261107_PRE',to_jsonb(e),
+ coalesce((SELECT jsonb_agg(to_jsonb(t) ORDER BY t.draw_order)
+    FROM public.comp26_teams t WHERE t.event_id=e.id),'[]'::jsonb)
+FROM public.comp26_events e WHERE e.slug='smart-cart-2026'
+ON CONFLICT(event_id,release_tag) DO NOTHING;
 ALTER TABLE public.comp26_teams
   ADD COLUMN IF NOT EXISTS elapsed_ms integer,
   ADD COLUMN IF NOT EXISTS elapsed_source text;
