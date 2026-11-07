@@ -1,6 +1,7 @@
 -- MOVE.ARENA V8 | STAGING-ONLY MIGRATION (DO NOT RUN ON PRODUCTION WITHOUT APPROVAL)
 -- Backup and test this entire transaction on a SEPARATE Supabase project first.
--- Old clients that submit without p_elapsed_ms will be rejected after migration.
+-- Compatibility release: retain the existing six-argument comp26_action for old phones.
+-- The new page calls comp26_action_v8; live scores with missing historical times require authorized backfill.
 BEGIN;
 ALTER TABLE public.comp26_teams
   ADD COLUMN IF NOT EXISTS elapsed_ms integer,
@@ -17,10 +18,8 @@ BEGIN
 END;
 $constraints$;
 
--- Drop old 6-argument RPC to eliminate ambiguous overloaded signatures.
--- No CASCADE: unexpected dependencies abort the transaction for review.
-DROP FUNCTION public.comp26_action(text,text,uuid,numeric,text,integer);
-CREATE OR REPLACE FUNCTION public.comp26_action(p_secret text, p_action text, p_team_id uuid DEFAULT NULL::uuid, p_score numeric DEFAULT NULL::numeric, p_note text DEFAULT NULL::text, p_tie integer DEFAULT NULL::integer, p_elapsed_ms integer DEFAULT NULL::integer, p_time_source text DEFAULT NULL::text)
+-- Preserve legacy RPC unchanged. Use a distinct name to avoid PostgREST overload ambiguity.
+CREATE OR REPLACE FUNCTION public.comp26_action_v8(p_secret text, p_action text, p_team_id uuid DEFAULT NULL::uuid, p_score numeric DEFAULT NULL::numeric, p_note text DEFAULT NULL::text, p_tie integer DEFAULT NULL::integer, p_elapsed_ms integer DEFAULT NULL::integer, p_time_source text DEFAULT NULL::text)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -37,13 +36,13 @@ begin
   if not found then raise exception '访问码不正确'; end if;
   select * into v_event from public.comp26_events where id=v_auth.event_id for update;
   if not found then raise exception '比赛尚未初始化'; end if;
-  if v_action in ('start','next','activate_retry','retry_fail','finish_retries','mark_dnf','tie','reveal','announce')
+  if v_action in ('start','next','activate_retry','retry_fail','finish_retries','mark_dnf','tie','reveal','announce','set_time')
      and v_auth.role <> 'admin' then raise exception '无管理员权限'; end if;
-  if v_action in ('submit','fault','activate_retry','retry_fail','mark_dnf','tie') then
+  if v_action in ('submit','fault','activate_retry','retry_fail','mark_dnf','tie','set_time') then
     select * into v_team from public.comp26_teams where id=p_team_id and event_id=v_event.id for update;
     if not found then raise exception '队伍不在本次赛事中'; end if;
   end if;
-  v_old := case when v_action in ('submit','fault','activate_retry','retry_fail','mark_dnf','tie') then to_jsonb(v_team) else to_jsonb(v_event) end;
+  v_old := case when v_action in ('submit','fault','activate_retry','retry_fail','mark_dnf','tie','set_time') then to_jsonb(v_team) else to_jsonb(v_event) end;
   if v_action = 'start' then
     if v_event.phase <> 'upcoming' then raise exception '比赛已开始，无法重复开赛'; end if;
     update public.comp26_events set phase='live', current_round=1, round_started_at=now(),
@@ -61,6 +60,14 @@ begin
       update public.comp26_teams set score=round(p_score,2),elapsed_ms=p_elapsed_ms,elapsed_source=p_time_source,tie_order=null,status='retry_scored',note=left(coalesce(p_note,''),240),scored_at=now() where id=v_team.id;
       update public.comp26_events set active_retry_team=null, announcement='补赛成绩已确认',updated_at=now() where id=v_event.id;
     else raise exception '当前队伍不处于可录分状态'; end if;
+  elsif v_action = 'set_time' then
+    if v_event.awards_revealed or v_event.phase in ('awards','closed') then raise exception '已公布成绩不允许补录用时'; end if;
+    if v_team.score is null or v_team.status='dnf' then raise exception '该队伍暂无可补录用时的已确认成绩'; end if;
+    if p_elapsed_ms is null or p_elapsed_ms<10 or p_elapsed_ms>600000 or p_elapsed_ms%10<>0 then raise exception '用时格式不正确（0.01—600秒）'; end if;
+    if length(trim(coalesce(p_note,'')))<2 then raise exception '补录用时必须说明计时依据'; end if;
+    update public.comp26_teams set elapsed_ms=p_elapsed_ms,elapsed_source='manual',tie_order=null,
+      note=left(coalesce(v_team.note,'') || ' [管理员补录计时] ' || trim(p_note),240)
+      where id=v_team.id;
   elsif v_action = 'fault' then
     if v_auth.role not in ('admin',case when v_team.lane='A' then 'judge_a' else 'judge_b' end) then raise exception '只能申报对应赛道故障'; end if;
     if v_event.phase <> 'live' or v_team.round_no <> v_event.current_round or v_team.status <> 'pending' then raise exception '只有当前未评分队伍可申请故障顺延'; end if;
@@ -128,7 +135,7 @@ begin
     update public.comp26_events set announcement=left(trim(p_note),100),updated_at=now() where id=v_event.id;
   else raise exception '不支持的操作';
   end if;
-  v_new:=case when v_action in ('submit','fault','activate_retry','retry_fail','mark_dnf','tie')
+  v_new:=case when v_action in ('submit','fault','activate_retry','retry_fail','mark_dnf','tie','set_time')
     then (select to_jsonb(t) from public.comp26_teams t where t.id=p_team_id)
     else (select to_jsonb(e) from public.comp26_events e where e.id=v_event.id) end;
   insert into public.comp26_audit(event_id,actor_role,action,team_id,before_data,after_data)
@@ -136,8 +143,8 @@ begin
   return pg_catalog.jsonb_build_object('ok',true,'action',v_action,'event_id',v_event.id);
 end;$function$;
 
-REVOKE ALL ON FUNCTION public.comp26_action(text,text,uuid,numeric,text,integer,integer,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.comp26_action(text,text,uuid,numeric,text,integer,integer,text) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.comp26_action_v8(text,text,uuid,numeric,text,integer,integer,text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.comp26_action_v8(text,text,uuid,numeric,text,integer,integer,text) TO anon, authenticated;
 CREATE OR REPLACE FUNCTION public.comp26_reset(p_secret text, p_confirmation text, p_expected_scores integer DEFAULT NULL::integer)
  RETURNS jsonb
  LANGUAGE plpgsql
