@@ -1857,8 +1857,21 @@ function bindEvents(){
    w.ms=Math.max(10,Math.round(watchElapsed(w)/10)*10);w.running=false;w.paused=false;w.startedAt=0;persistWatch(w);const input=$('elapsedInput');if(input){input.value=(w.ms/1000).toFixed(2);input.dataset.source='stopwatch'}$('startWatch').disabled=false;$('stopWatch').disabled=true;if($('scoreInput'))$('scoreInput').disabled=false;if($('submitScoreTime'))$('submitScoreTime').disabled=false;watchUI(w);
   });
   $('resetWatch')?.addEventListener('click',()=>{
-   if(!confirm('确认清空此队的本地计时记录？已提交的云端成绩不会被删除。'))return;
-   w.ms=0;w.running=false;w.paused=false;w.startedAt=0;persistWatch(w);render();
+   const resetBtn=$('resetWatch');if(!resetBtn)return;
+   if(resetBtn.dataset.confirmReset!=='yes'){
+     resetBtn.dataset.confirmReset='yes';
+     resetBtn.textContent='再次点击确认重置';
+     resetBtn.style.borderColor='#dea778';
+     toast('请再点击一次确认，仅重置当前队伍本机计时');
+     return;
+   }
+   w.ms=0;w.running=false;w.paused=false;w.startedAt=0;
+   persistWatch(w);
+   const elapsed=$('elapsedInput');if(elapsed){elapsed.value='';elapsed.dataset.source='stopwatch';}
+   if($('scoreInput'))$('scoreInput').disabled=true;
+   if($('submitScoreTime'))$('submitScoreTime').disabled=true;
+   toast('本机计时已重置 · 云端提交成绩未改变');
+   render();
   });
   $('elapsedInput')?.addEventListener('input',ev=>{ev.target.dataset.source='manual'});
  }
