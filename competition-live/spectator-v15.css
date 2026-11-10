@@ -24,8 +24,7 @@ body[data-view="screen"] .v13-screen{
  font-variant-numeric:tabular-nums;
 }
 .v13-header{
- display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
- align-items:center;gap:clamp(12px,1.35vw,27px);
+ display:flex;align-items:center;gap:clamp(12px,1.15vw,22px);
  min-width:0;min-height:0;border-bottom:1px solid #566069;
 }
 .v13-brand{display:flex;gap:clamp(9px,.75vw,14px);align-items:center;
@@ -42,15 +41,15 @@ body[data-view="screen"] .v13-screen{
  letter-spacing:.18px;font-weight:600}
 .v13-brand-copy strong{font-size:clamp(15px,1.25vw,25px);font-weight:850;
  letter-spacing:.05px;line-height:1.2}
-.v13-title-wrap{display:flex;align-items:center;justify-self:center;min-width:0;
- gap:clamp(11px,1.1vw,22px)}
-.v13-title{margin:0;font-size:clamp(23px,2.25vw,44px);line-height:1.05;
+.v13-title-wrap{display:flex;align-items:center;justify-content:center;flex:1 1 auto;min-width:0;
+ gap:clamp(7px,.75vw,13px)}
+.v13-title{margin:0;font-size:clamp(21px,1.92vw,37px);line-height:1.05;
  font-weight:760;letter-spacing:-.65px;white-space:nowrap;color:#F4F6F7}
 .v13-season{flex:0 0 auto;white-space:nowrap;color:#0D161B;background:#D9A454;
  font-size:clamp(10px,.8vw,15px);font-weight:900;letter-spacing:.35px;
  padding:clamp(6px,.6vh,9px) clamp(10px,.9vw,18px);
  clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%)}
-.v13-header-right{display:flex;align-items:center;justify-self:end;gap:clamp(9px,1vw,17px);flex:0 0 auto}
+.v13-header-right{display:flex;align-items:center;margin-left:auto;gap:clamp(9px,1vw,17px);flex:0 0 auto}
 .v13-network{display:inline-flex;align-items:center;gap:7px;color:#E6A66D;
  font-size:clamp(10px,.7vw,12px);white-space:nowrap}
 .v13-network>i{display:block;width:7px;height:7px;border-radius:50%;background:#32CBA4}
@@ -70,18 +69,18 @@ body[data-view="screen"] .v13-screen{
 .v13-stage-head{display:flex;align-items:center;justify-content:space-between;
  gap:clamp(10px,1vw,20px);padding:12px clamp(15px,1.2vw,22px);
  background:#252B30;border-bottom:1px solid #46525B}
-.v13-stage-round{display:flex;align-items:center;gap:clamp(11px,1.15vw,24px)}
+.v13-stage-round{display:flex;align-items:center;flex:0 0 auto;gap:clamp(8px,.75vw,16px);min-width:0}
 .v13-live-label{display:flex;align-items:center;gap:9px;color:#E8EDF1;
  font-size:clamp(12px,.95vw,17px);font-weight:750;white-space:nowrap}
 .v13-live-label:before{content:'';width:6px;height:12px;background:#DBA24F}
-.v13-round-digit{font:800 clamp(44px,4.45vw,76px)/.9 var(--v14-font-metric);
+.v13-round-digit{font:800 clamp(42px,4vw,70px)/.95 var(--v14-font-metric);
  color:#E8AE61;letter-spacing:-1px;white-space:nowrap}
 .v13-round-total{color:#A5B8C5;font-size:clamp(10px,.78vw,14px);
  font-weight:700;align-self:center;margin-bottom:0;white-space:nowrap}
-.v13-stage-clock{display:flex;align-items:center;gap:clamp(8px,1vw,20px);margin-left:auto}
-.v13-clock-caption{color:#AEC0CB;font-size:clamp(10px,.79vw,14px);
- line-height:1.4;white-space:nowrap;font-weight:600}
-.v13-countdown{font:800 clamp(48px,4.35vw,75px)/.9 var(--v14-font-metric);
+.v13-stage-clock{display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;min-width:0;gap:clamp(5px,.65vw,13px);margin-left:auto}
+.v13-clock-caption{color:#AEC0CB;font-size:clamp(10px,.69vw,13px);
+ line-height:1.35;max-width:88px;white-space:normal;text-align:right;font-weight:600}
+.v13-countdown{font:800 clamp(44px,3.85vw,70px)/.95 var(--v14-font-metric);
  color:#E6B46B;letter-spacing:-.8px;white-space:nowrap;min-width:0}
 .v13-lanes{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));min-height:0}
 .v13-lane{display:grid;
@@ -515,4 +514,54 @@ body[data-view="screen"] .overlay-close:focus-visible{
     animation:none!important
   }
   .v15-round-rail > i{transition:none!important}
+}
+
+/* V15.1 fit protections for projection viewports */
+@media(min-width:1050px){
+ body[data-view="screen"] .v13-screen{
+  grid-template-rows:clamp(57px,7vh,74px) minmax(0,1fr) clamp(35px,4.1vh,44px)!important;
+  row-gap:5px!important;padding-bottom:6px!important
+ }
+ body[data-view="screen"] .v13-main,
+ body[data-view="screen"] .v13-ranking,
+ body[data-view="screen"] .v13-ranking-columns,
+ body[data-view="screen"] .v13-ranking-column{
+  min-height:0!important;max-height:100%!important;overflow:hidden!important
+ }
+ body[data-view="screen"] .v13-ranking{
+  grid-template-rows:clamp(44px,5.8vh,58px) minmax(0,1fr) 14px!important;
+  padding:0 clamp(7px,.8vw,15px)!important
+ }
+ body[data-view="screen"] .v13-ranking-columns{
+  padding:2px 0!important;height:100%!important
+ }
+ body[data-view="screen"] .v13-ranking-column{
+  display:grid!important;grid-template-rows:repeat(18,minmax(0,1fr))!important;
+  grid-auto-rows:minmax(0,1fr)!important;gap:0!important;height:100%!important
+ }
+ body[data-view="screen"] .v13-rank-row{
+  min-height:0!important;max-height:100%!important;
+  line-height:1!important;padding-top:0!important;padding-bottom:0!important
+ }
+ body[data-view="screen"] .v13-rank-name{font-size:clamp(10px,.79vw,14px)!important;line-height:1.05!important}
+ body[data-view="screen"] .v13-rank-right{font-size:clamp(9px,.68vw,12px)!important;line-height:1!important}
+ body[data-view="screen"] .v13-stage-head{min-width:0!important}
+ body[data-view="screen"] .v13-clock-caption{flex:0 1 88px!important}
+ body[data-view="screen"] .v13-title-wrap{flex:1 1 auto!important;min-width:0!important}
+ body[data-view="screen"] .v13-season{flex:0 0 auto!important}
+}
+@media(min-width:1050px) and (max-width:1550px){
+ body[data-view="screen"] .v13-brand{gap:7px;padding-right:10px!important}
+ body[data-view="screen"] .v13-brand-copy strong{font-size:clamp(14px,1.15vw,18px)!important}
+ body[data-view="screen"] .v13-title{font-size:clamp(19px,1.75vw,27px)!important;letter-spacing:-.4px!important}
+ body[data-view="screen"] .v13-season{font-size:10px!important;padding:5px 8px!important}
+ body[data-view="screen"] .v13-round-digit{font-size:clamp(40px,3.7vw,58px)!important}
+ body[data-view="screen"] .v13-countdown{font-size:clamp(43px,3.9vw,62px)!important}
+}
+@media(min-width:1050px) and (max-height:780px){
+ body[data-view="screen"] .v13-screen{grid-template-rows:56px minmax(0,1fr) 34px!important;row-gap:4px!important}
+ body[data-view="screen"] .v13-ranking{grid-template-rows:40px minmax(0,1fr) 12px!important}
+ body[data-view="screen"] .v13-ranking-columns{padding:0!important}
+ body[data-view="screen"] .v13-rank-name{font-size:clamp(9px,.72vw,12px)!important}
+ body[data-view="screen"] .v13-rank-right{font-size:9px!important}
 }
