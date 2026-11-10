@@ -1398,7 +1398,7 @@ window.COMP26_TEAMS=[
 
 /* V9-V12 spectator CSS retired in V13; staff stopwatch styles above retained. */
 </style>
-<link rel="stylesheet" href="./spectator-v13.css?v=13.1.0">
+<link rel="stylesheet" href="./spectator-v13.css?v=13.2.0">
 
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
@@ -1512,6 +1512,9 @@ function screen(){
  const retry=e.phase==='retry'?state.teams.find(t=>t.id===e.active_retry_team):null;
  const active=e.phase==='retry'?(retry?[retry]:[]):round;
  const activeIds=new Set(active.map(t=>t.id));
+ const inRounds=e.phase==='live'||e.phase==='upcoming'||e.phase==='retry';
+ const pendingNext=e.phase==='live'||e.phase==='upcoming'?next:[];
+ const nextIds=new Set(pendingNext.filter(t=>t.score===null).map(t=>t.id));
  const stageLabel=e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩复核':e.phase==='awards'?'获奖公布':e.phase==='upcoming'?'待开赛':'比赛进行中';
  const hint=e.phase==='live'&&round.every(t=>['scored','fault_pending','dnf'].includes(t.status))?'本轮成绩已确认，请下一组前往比赛区':e.phase==='live'?'下一轮选手请前往调试区':e.phase==='upcoming'?'第一组赛前调试4分钟':e.phase==='retry'?(retry?'故障补赛队伍请准备':'等待安排补赛'):phaseText[e.phase];
  const clockLabel=e.phase==='upcoming'?'04:00':'--:--';
@@ -1521,12 +1524,14 @@ function screen(){
    const score=scored?displayedScore(t):'---';
    const time=scored&&Number.isFinite(Number(t?.elapsed_ms))&&t?.elapsed_ms!==null?displayedTime(t):'--:--.--';
    const status=t?teamStatus(t):'等待安排';
+   const idle=!t||(!scored&&e.phase==='upcoming')||status==='等待上场';
+   const statusClass=idle?' is-idle':scored?' is-complete':'';
    return `<article class="v13-lane v13-lane-${key.toLowerCase()}">
      <div class="v13-lane-index" aria-label="${key}赛道">${key}</div>
      <div class="v13-identity">
        <div class="v13-identity-meta">${order?'第 '+pad(order)+' 签位':'等待安排'}　/　第${pad(t?.round_no||e.current_round)}轮</div>
        <strong class="v13-team-name" title="${esc(t?.name||'等待安排')}">${esc(t?.name||'等待安排')}</strong>
-       <span class="v13-identity-status"><i></i>${esc(status)}</span>
+       <span class="v13-identity-status${statusClass}"><i></i>${esc(status)}</span>
      </div>
      <div class="v13-data" aria-label="${key}赛道成绩及用时">
        <div class="v13-data-box"><span class="v13-data-label">本轮得分</span><strong class="v13-data-value ${!scored?'is-idle':score.length>=7?'is-long':''}">${score}</strong></div>
@@ -1536,11 +1541,16 @@ function screen(){
  const rankRow=(t,index)=>{
    const done=t.score!==null,position=done?rankNum(ranked,index):(t.draw_order||t.order||index+1);
    const rank=pad(position);
-   const medal=done&&position<=3,playing=activeIds.has(t.id);
-   return `<div class="v13-rank-row ${done?'is-finished':'is-unscored'}${medal?' is-medal':''}${playing?' is-current':''}" title="${esc(t.name)} · ${done?'当前排名':'抽签签位'}${rank}">
+   const medal=done&&position<=3;
+   const playing=!done&&inRounds&&activeIds.has(t.id);
+   const waiting=!done&&!playing&&nextIds.has(t.id);
+   const laneId=(t.lane==='B'?'b':'a');
+   const message=playing?('本轮'+t.lane):waiting?'候场':'待赛';
+   const linkedClass=(playing?' is-current':waiting?' is-next':'')+(playing||waiting?' is-lane-'+laneId:'');
+   return `<div class="v13-rank-row ${done?'is-finished':'is-unscored'}${medal?' is-medal':''}${linkedClass}" title="${esc(t.name)} · ${done?'当前排名':'抽签签位'}${rank}${playing?' · 本轮'+t.lane+'赛道':waiting?' · 下轮候场':''}">
      <span class="v13-rank-position">${rank}</span>
      <span class="v13-rank-name">${esc(t.name)}</span>
-     <span class="v13-rank-right">${done?`<strong>${displayedScore(t)}</strong><small>${displayedTime(t)}</small>`:'待赛'}</span>
+     <span class="v13-rank-right">${done?`<strong>${displayedScore(t)}</strong><small>${displayedTime(t)}</small>`:`<span class="v13-status-label">${message}</span>`}</span>
    </div>`;
  };
  const nextLane=(key)=>{
