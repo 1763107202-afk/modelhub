@@ -1398,7 +1398,7 @@ window.COMP26_TEAMS=[
 
 /* V9-V12 spectator CSS retired in V13; staff stopwatch styles above retained. */
 </style>
-<link rel="stylesheet" href="./spectator-v16.css?v=16.0.0">
+<link rel="stylesheet" href="./spectator-v17.css?v=17.0.0">
 
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
@@ -1481,7 +1481,22 @@ async function refresh(force=false){
  }catch(err){state.pollError=true;connection(false);if(force){$('app').innerHTML=`<section class="panel key-panel"><div class="eyebrow">连接失败</div><h2>无法加载赛事数据</h2><p class="subtext">${esc(err.message)}</p><button class="btn" id="retryConnect">重试连接</button><p class="tiny-note">可在地址末尾加 ?demo=1 进入可操作的演示模式（仅当前设备，不会同步）。</p></section>`;$('retryConnect').onclick=()=>refresh(true)} }
  finally{state.loading=false;}
 }
-function connection(ok){const el=$('connection');el.classList.toggle('bad',!ok);$('connectionText').textContent=demoMode?'本机演示':ok?'实时同步 · ONLINE':'连接中断 · 正在重连';const spectator=$('v13Network');if(spectator){spectator.classList.toggle('is-offline',!ok);spectator.title=demoMode?'本机演示模式':ok?'赛事数据实时同步':'网络连接中断，正在重连';}}
+function connection(ok){
+ const el=$('connection');
+ if(ok){state.connectionFailures=0;state.lastGoodConnectionAt=Date.now()}
+ else state.connectionFailures=(state.connectionFailures||0)+1;
+ const retrying=!ok&&!!state.lastGoodConnectionAt&&(Date.now()-state.lastGoodConnectionAt<30000);
+ const connectionMsg=demoMode?'本机演示':ok?'实时同步 · ONLINE':retrying?'同步重试中':'连接中断 · 正在重连';
+ if(el){el.classList.toggle('bad',!ok);$('connectionText').textContent=connectionMsg}
+ const spectator=$('v13Network');
+ if(spectator){
+   spectator.classList.toggle('is-offline',!ok&&!retrying);
+   spectator.classList.toggle('is-retrying',retrying);
+   spectator.title=demoMode?'本机演示模式':ok?'赛事数据同步正常':retrying?'上次连接正常，正在重新获取赛事数据':'连接失败，正在自动重试';
+   const label=spectator.querySelector('.v13-network-label');
+   if(label)label.textContent=retrying?'同步重试中':'连接中断';
+ }
+}
 function setView(view){if(!['screen','judge','control'].includes(view)||displayOnly)view='screen';state.view=view;document.body.dataset.view=view;document.body.dataset.display=displayOnly?'1':'0';location.hash='#'+view;document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('selected',b.dataset.nav===view));render();}
 function sortRank(){return window.COMP26_RANKING.sortRank(state.teams)}
 function rankNum(list,i){return window.COMP26_RANKING.rankNum(list,i)}
@@ -1526,7 +1541,7 @@ function screen(){
    const status=t?teamStatus(t):'等待安排';
    const idle=!t||(!scored&&e.phase==='upcoming')||status==='等待上场';
    const statusClass=idle?' is-idle':scored?' is-complete':'';
-   return `<article class="v13-lane v13-lane-${key.toLowerCase()}${broadcastMotion.round?' v15-round-enter':''}">
+   return `<article class="v13-lane v13-lane-${key.toLowerCase()}${broadcastMotion.round?' v15-round-enter':''}${t&&(e.phase==='live'||e.phase==='retry')?' v17-live-lane':''}">
      <div class="v13-lane-index" aria-label="${key}赛道">${key}</div>
      <div class="v13-identity">
        <div class="v13-identity-meta">${order?'第 '+pad(order)+' 签位':'等待安排'}　/　第${pad(t?.round_no||e.current_round)}轮</div>
@@ -1574,7 +1589,7 @@ function screen(){
    </header>
    <main class="v13-main">
      <section class="v13-left" aria-label="实时赛事">
-       <section class="v13-stage">
+       <section class="v13-stage${e.phase==='live'||e.phase==='retry'?' is-live':''}">
          <div class="v13-stage-head">
            <div class="v13-stage-round"><span class="v13-live-label">${esc(stageLabel)}</span><span class="v13-round-digit">${pad(e.current_round)}</span><span class="v13-round-total">/ 18轮</span></div>
            <div class="v13-stage-clock"><span class="v13-clock-caption">本轮倒计时 · 4分钟</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div>
