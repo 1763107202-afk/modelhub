@@ -2477,6 +2477,39 @@ body[data-view="screen"] .v6-footer{color:#6e8791!important}
  body[data-view="screen"] .v12-broadcast-actions button{background:#273441!important;border:1px solid #445563!important;color:#F3F5F6!important;border-radius:2px!important}
 }
 
+
+/* MOVE.ARENA V12.1 broadcast readability hotfix */
+@media(min-width:1040px){
+ body[data-view="screen"] .brand-emblem{
+   display:grid!important;place-items:center!important;
+   isolation:isolate!important;
+   width:clamp(46px,3.8vw,64px)!important;
+   height:clamp(46px,3.8vw,64px)!important;
+   flex:0 0 clamp(46px,3.8vw,64px)!important;
+   background:#F4F7F7!important;
+   border:1px solid #C6D1D9!important;
+   border-radius:50%!important;
+   overflow:hidden!important;
+ }
+ body[data-view="screen"] .brand-emblem img{
+   display:block!important;
+   width:100%!important;height:100%!important;
+   clip-path:circle(44% at 50% 50%)!important;
+   transform:scale(1.05)!important;object-fit:cover!important
+ }
+ body[data-view="screen"] .v6-rank-column>.v6-rank-row:nth-child(odd):not(.v6-medal),
+ body[data-view="screen"] .v6-rank-column>.v6-rank-row.v6-waiting:nth-child(odd),
+ body[data-view="screen"] .v6-rank-column>.v6-rank-row.v6-ranked:nth-child(odd):not(.v6-medal){
+   background:rgba(255,255,255,.065)!important
+ }
+ body[data-view="screen"] .v6-rank-column>.v6-rank-row:nth-child(even):not(.v6-medal){
+   background:rgba(255,255,255,0)!important
+ }
+ body[data-view="screen"] .v6-rank-column>.v6-rank-row.v6-medal{
+   background:#2E2B23!important
+ }
+}
+
 </style>
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
