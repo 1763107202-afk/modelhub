@@ -294,3 +294,37 @@ body[data-view="screen"] .v13-screen{
  .v13-actions button{font-size:9px;padding:5px}
 }
 @media(prefers-reduced-motion:reduce){.v13-screen *{transition:none!important;animation:none!important}}
+
+/* V13.1 strict desktop viewport containment */
+@media(min-width:1050px){
+ html:has(body[data-view="screen"]){height:100%!important;max-height:100%!important;overflow:hidden!important}
+ body[data-view="screen"]{
+   height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+   overflow:hidden!important;overscroll-behavior:none!important
+ }
+ body[data-view="screen"] .shell{
+   position:fixed!important;inset:0!important;
+   height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+   overflow:hidden!important;overscroll-behavior:none!important;
+   padding:0!important;margin:0!important;width:100%!important;max-width:none!important
+ }
+ body[data-view="screen"] .v13-screen{
+   position:absolute!important;inset:0!important;
+   min-height:0!important;max-height:100dvh!important;height:100dvh!important;
+   overflow:hidden!important;
+   grid-template-rows:clamp(64px,7.8vh,84px) minmax(0,1fr) clamp(40px,4.8vh,52px)!important
+ }
+ body[data-view="screen"] .v13-main,
+ body[data-view="screen"] .v13-left,
+ body[data-view="screen"] .v13-stage,
+ body[data-view="screen"] .v13-ranking,
+ body[data-view="screen"] .v13-ranking-columns,
+ body[data-view="screen"] .v13-ranking-column{
+   min-height:0!important;overflow:hidden!important
+ }
+ body[data-view="screen"] .v13-ranking-column{
+   height:100%!important;grid-auto-rows:minmax(0,1fr)!important;
+   grid-template-rows:repeat(18,minmax(0,1fr))!important
+ }
+ body[data-view="screen"] .v13-rank-row{min-height:0!important;max-height:100%!important;overflow:hidden!important}
+}
