@@ -68,7 +68,7 @@ body[data-view="screen"] .v13-screen{
  border:1px solid var(--v13-line);border-left:3px solid #D9A454}
 .v13-stage-head{display:flex;align-items:center;justify-content:space-between;
  gap:clamp(10px,1vw,20px);padding:12px clamp(15px,1.2vw,22px);
- background:#20272D;border-bottom:1px solid #46525B}
+ background:#252B30;border-bottom:1px solid #46525B}
 .v13-stage-round{display:flex;align-items:center;gap:clamp(11px,1.15vw,24px)}
 .v13-live-label{display:flex;align-items:center;gap:9px;color:#E8EDF1;
  font-size:clamp(12px,.95vw,17px);font-weight:750;white-space:nowrap}
@@ -88,7 +88,7 @@ body[data-view="screen"] .v13-screen{
  gap:clamp(10px,1.1vw,22px);
  align-items:stretch;padding:clamp(10px,1.3vh,18px) clamp(14px,1.5vw,29px);
  min-height:0;border-bottom:1px solid #39434B;position:relative}
-.v13-lane:last-child{border-bottom:0;background:#1A2026}
+.v13-lane:last-child{border-bottom:0;background:#1C2227}
 .v13-lane-index,.v13-identity{align-self:center}
 .v13-lane-index{width:clamp(51px,5.25vw,90px);height:clamp(65px,6.3vw,108px);
  display:grid;place-items:center;font:900 clamp(43px,4.6vw,78px)/1 'DIN Alternate','Bahnschrift','Barlow Condensed',sans-serif;
@@ -135,7 +135,7 @@ body[data-view="screen"] .v13-screen{
 .v13-next-note{font-size:clamp(10px,.75vw,14px);color:#B0C1CD;font-weight:650}
 .v13-next-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(7px,.8vw,14px);min-height:0}
 .v13-next-card{display:flex;align-items:center;min-width:0;gap:clamp(8px,.8vw,15px);
- background:#202830;box-shadow:inset 2px 0 0 #337D67;padding:4px clamp(8px,.9vw,16px)}
+ background:#242B30;box-shadow:inset 2px 0 0 #337D67;padding:4px clamp(8px,.9vw,16px)}
 .v13-next-card.v13-next-b{box-shadow:inset 2px 0 0 #B18B50}
 .v13-next-badge{flex:0 0 auto;display:grid;place-items:center;
  width:clamp(27px,2.15vw,38px);height:clamp(29px,2.4vw,43px);
