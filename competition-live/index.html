@@ -1398,10 +1398,10 @@ window.COMP26_TEAMS=[
 
 /* V9-V12 spectator CSS retired in V13; staff stopwatch styles above retained. */
 </style>
-<style id="spectator-v18-inline">
+<style id="spectator-v19-inline">
 /*
- MOVE.ARENA / V18 — EDITORIAL RACE BROADCAST
- Distinctive two-material composition: charcoal race stage, warm-silver timing tower.
+ MOVE.ARENA / V19 — UNIFIED COMPETITION BROADCAST
+ Unified midnight graphite broadcast, scores on a seamless 36-row timing tower.
  Art direction: F1-style timing tower + engineering workshop, restrained ink
  surfaces, large metrics, intentional spacing, semantic A/B color only.
  Underlying judge, score and admin components are unchanged.
@@ -1411,7 +1411,7 @@ window.COMP26_TEAMS=[
  --race-panel-3:#252E36;--race-line:#47545D;--race-sep:#35434C;
  --race-text:#F7F7F4;--race-sub:#B7C4CB;--race-dim:#8498A3;
  --race-gold:#E9B978;--race-a:#31BC9D;--race-b:#E7AD63;
- --race-paper:#F2F3EE;--race-paper-2:#E9EEEB;--race-ink-text:#23333A;
+ --race-paper:#151D25;--race-paper-2:#1E2831;--race-ink-text:#EEF2F3;
  --race-body:'Noto Sans SC','Microsoft YaHei',system-ui,sans-serif;
  --race-digits:'Bahnschrift','Barlow Condensed','DIN Alternate',system-ui,sans-serif;
  --race-ease:cubic-bezier(.22,1,.36,1)
@@ -1499,7 +1499,7 @@ body[data-view="screen"] .v13-screen{
  display:grid;grid-template-columns:minmax(0,1.13fr) minmax(0,.87fr);
  gap:clamp(11px,1.05vw,21px);min-height:0;min-width:0
 }
-.v13-left{display:grid;grid-template-rows:minmax(0,1fr) clamp(98px,13.8vh,136px);
+.v13-left{display:grid;grid-template-rows:minmax(0,1fr) clamp(115px,15vh,156px);
  gap:clamp(9px,.9vh,14px);min-width:0;min-height:0}
 .v13-stage{
  min-height:0;overflow:hidden;
@@ -1509,7 +1509,7 @@ body[data-view="screen"] .v13-screen{
 }
 .v13-stage-head{
  position:relative;isolation:isolate;
- display:flex;align-items:center;justify-content:space-between;gap:12px;
+ display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(9px,1vw,18px);
  padding:clamp(11px,1.1vh,15px) clamp(17px,1.3vw,25px);
  background:#202930;border-bottom:1px solid #56636A;min-width:0
 }
@@ -1524,13 +1524,13 @@ body[data-view="screen"] .v13-screen{
  letter-spacing:-1.4px;white-space:nowrap
 }
 .v13-round-total{color:var(--race-dim);font-size:clamp(10px,.76vw,14px);font-weight:700;white-space:nowrap}
-.v13-stage-clock{display:flex;align-items:center;justify-content:flex-end;gap:clamp(10px,1vw,21px);min-width:0}
+.v13-stage-clock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;justify-self:center}
 .v13-clock-caption{
- color:#ACBBC4;line-height:1.45;font-size:clamp(10px,.71vw,13px);
- font-weight:650;white-space:normal;text-align:right;max-width:86px
+ color:#ADBCC5;line-height:1.25;font-size:clamp(10px,.71vw,13px);
+ font-weight:650;white-space:nowrap;text-align:center;max-width:none
 }
 .v13-countdown{
- color:#FFE3B6;font:900 clamp(49px,4.8vw,85px)/.97 var(--race-digits);
+ color:#FFE3B6;font:900 clamp(52px,5.05vw,91px)/.95 var(--race-digits);
  letter-spacing:-.8px;white-space:nowrap
 }
 /* A continuous competition stripe, not a card within a card. */
@@ -1587,7 +1587,7 @@ body[data-view="screen"] .v13-screen{
 }
 .v13-data-value.is-time{font-size:clamp(26px,2.05vw,42px);color:#E5E8E7;letter-spacing:-.1px}
 .v13-data-value.is-long{font-size:clamp(31px,2.6vw,50px)}
-.v13-data-value.is-idle{color:#74848C}
+.v13-data-value.is-idle{color:#62737D;opacity:.48}
 .v13-stage-foot{
  display:flex;align-items:center;gap:8px;min-height:0;
  padding:0 clamp(16px,1.5vw,27px);
@@ -1603,7 +1603,7 @@ body[data-view="screen"] .v13-screen{
  background:#182129;border:1px solid var(--race-line)
 }
 .v13-next-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.v13-next-title{color:#F3F4F4;font-size:clamp(14px,1.04vw,20px);font-weight:800}
+.v13-next-title{color:#F3F4F4;font-size:clamp(17px,1.18vw,24px);font-weight:850}
 .v13-next-note{color:#879DA9;font-size:clamp(10px,.68vw,13px);font-weight:600;white-space:nowrap}
 .v13-next-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(7px,.9vw,16px);min-height:0}
 .v13-next-card{
@@ -1622,7 +1622,7 @@ body[data-view="screen"] .v13-screen{
 .v13-next-detail{display:flex;flex-direction:column;gap:3px;min-width:0}
 .v13-next-detail small{color:#8EA2AE;font-size:clamp(9px,.65vw,12px)}
 .v13-next-detail strong{
- color:#F0F2F3;font-size:clamp(13px,1vw,18px);font-weight:760;
+ color:#F3F6F6;font-size:clamp(17px,1.28vw,24px);font-weight:800;
  white-space:nowrap;text-overflow:ellipsis;overflow:hidden
 }
 .v13-round-progress{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:3px;min-height:4px;height:4px}
@@ -1633,23 +1633,23 @@ body[data-view="screen"] .v13-screen{
 .v13-ranking{
  display:grid;grid-template-rows:clamp(62px,7.8vh,86px) minmax(0,1fr) 19px;
  min-height:0;min-width:0;background:var(--race-paper);
- border:1px solid #BBC5C4;padding:0 clamp(11px,1vw,20px);overflow:hidden
+ border:1px solid #34434F;padding:0 clamp(11px,1vw,20px);overflow:hidden
 }
 .v13-ranking-head{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
- border-bottom:1px solid #B8C1BA;min-height:0;min-width:0
+ border-bottom:1px solid #465560;min-height:0;min-width:0
 }
 .v13-ranking-head>div{display:flex;align-items:baseline;gap:clamp(7px,.7vw,13px)}
-.v13-ranking-title{color:#18333A;font-size:clamp(22px,1.55vw,32px);font-weight:850;white-space:nowrap}
-.v13-ranking-total{color:#667A7B;font-size:clamp(10px,.7vw,13px);font-weight:650;white-space:nowrap}
-.v13-ranking-scored{color:#2A695B;font-size:clamp(10px,.76vw,14px);font-weight:750;white-space:nowrap}
+.v13-ranking-title{color:#F2F5F6;font-size:clamp(22px,1.55vw,32px);font-weight:850;white-space:nowrap}
+.v13-ranking-total{color:#93A7B2;font-size:clamp(10px,.7vw,13px);font-weight:650;white-space:nowrap}
+.v13-ranking-scored{color:#A4D4C3;font-size:clamp(10px,.76vw,14px);font-weight:750;white-space:nowrap}
 .v13-ranking-scored i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--race-a);margin-right:7px}
 .v13-ranking-columns{
  position:relative;min-height:0;min-width:0;display:grid;
  grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr);
  gap:clamp(17px,1.5vw,28px);padding:clamp(5px,.55vh,8px) 0;overflow:hidden
 }
-.v13-ranking-columns:after{content:'';position:absolute;top:6px;bottom:6px;left:50%;width:1px;background:#C5CFCA;transform:translateX(-.5px);pointer-events:none}
+.v13-ranking-columns:after{content:'';position:absolute;top:6px;bottom:6px;left:50%;width:1px;background:#45545F;transform:translateX(-.5px);pointer-events:none}
 .v13-ranking-column{
  display:grid;grid-template-rows:repeat(18,minmax(0,1fr));height:100%;min-height:0;
  gap:0;overflow:hidden;min-width:0
@@ -1657,50 +1657,50 @@ body[data-view="screen"] .v13-screen{
 .v13-rank-row{
  display:grid;grid-template-columns:clamp(23px,1.55vw,32px) minmax(0,1fr) max-content;
  gap:clamp(4px,.44vw,9px);align-items:center;min-height:0;overflow:hidden;
- border-bottom:1px solid #D8DEDA;padding:0 clamp(3px,.4vw,9px);
+ border-bottom:1px solid #303E49;padding:0 clamp(3px,.4vw,9px);
  background:transparent;position:relative
 }
-.v13-rank-row:nth-child(odd){background:rgba(19,51,53,.045)}
-.v13-rank-row.is-finished{background:#DAECE2}
-.v13-rank-row.is-medal{background:#F5E6CC}
-.v13-rank-row.is-current.is-lane-a{box-shadow:inset 4px 0 #278D72;background:#DDEFE6}
-.v13-rank-row.is-current.is-lane-b{box-shadow:inset 4px 0 #C38840;background:#F4E7D5}
-.v13-rank-row.is-next.is-lane-a{box-shadow:inset 2px 0 #71AA99;background:#E9F2EB}
-.v13-rank-row.is-next.is-lane-b{box-shadow:inset 2px 0 #B89A6E;background:#F5EEE3}
+.v13-rank-row:nth-child(odd){background:rgba(255,255,255,.023)}
+.v13-rank-row.is-finished{background:rgba(37,138,107,.075)}
+.v13-rank-row.is-medal{background:rgba(209,164,89,.075)}
+.v13-rank-row.is-current.is-lane-a{box-shadow:inset 3px 0 #31BC9D;background:rgba(49,188,157,.13)}
+.v13-rank-row.is-current.is-lane-b{box-shadow:inset 3px 0 #E7AD63;background:rgba(231,173,99,.13)}
+.v13-rank-row.is-next.is-lane-a{box-shadow:inset 2px 0 #448B79;background:rgba(49,188,157,.05)}
+.v13-rank-row.is-next.is-lane-b{box-shadow:inset 2px 0 #9F8155;background:rgba(231,173,99,.05)}
 .v13-rank-position{
  font:800 clamp(12px,.9vw,18px)/1 var(--race-digits);
- color:#617377;white-space:nowrap
+ color:#8AA0AE;white-space:nowrap
 }
-.v13-rank-row.is-finished .v13-rank-position,.v13-rank-row.is-medal .v13-rank-position{color:#A77638}
+.v13-rank-row.is-finished .v13-rank-position,.v13-rank-row.is-medal .v13-rank-position{color:#C7B18A}
 .v13-rank-name{
  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- color:#24363B;font-size:clamp(10px,.83vw,16px);
+ color:#EDF1F3;font-size:clamp(10px,.83vw,16px);
  font-weight:730;line-height:1.05
 }
 .v13-rank-right{
  display:flex;flex-direction:column;align-items:flex-end;
  justify-content:center;min-width:0;white-space:nowrap;
- color:#708184;font-size:clamp(9px,.68vw,12px);line-height:1.04
+ color:#97AAB4;font-size:clamp(9px,.68vw,12px);line-height:1.04
 }
 .v13-rank-right strong{
  font:800 clamp(12px,1vw,18px)/1 var(--race-digits);
- color:#946432
+ color:#F1BD78
 }
-.v13-rank-right small{font-size:clamp(8px,.57vw,10px);color:#6E898D}
-.v13-rank-row.is-current.is-lane-a .v13-status-label{color:#13795D;font-weight:800}
-.v13-rank-row.is-current.is-lane-b .v13-status-label{color:#A46E2D;font-weight:800}
-.v13-rank-row.is-next .v13-status-label{color:#657D7B}
+.v13-rank-right small{font-size:clamp(8px,.57vw,10px);color:#AABFC7}
+.v13-rank-row.is-current.is-lane-a .v13-status-label{color:#8CE0C9;font-weight:800}
+.v13-rank-row.is-current.is-lane-b .v13-status-label{color:#F5C38B;font-weight:800}
+.v13-rank-row.is-next .v13-status-label{color:#C0C8C7}
 .v13-ranking-foot{display:flex;align-items:center;justify-content:space-between;gap:5px;
- overflow:hidden;white-space:nowrap;color:#718080;font-size:clamp(9px,.62vw,11px)}
+ overflow:hidden;white-space:nowrap;color:#879CA6;font-size:clamp(9px,.62vw,11px)}
 /* Single broadcast ticker; awards and fullscreen are actions, not ornaments. */
 .v13-news{
  display:flex;align-items:center;min-width:0;
  gap:clamp(10px,1vw,18px);padding:0 clamp(13px,1.1vw,21px);
- background:#222A30;border-left:2px solid var(--race-gold)
+ background:#202831;border-left:0
 }
 .v13-news-label{
- color:#E4BC83;font-size:clamp(11px,.88vw,16px);
- font-weight:820;white-space:nowrap
+ color:#131A1F;font-size:clamp(12px,.91vw,17px);
+ font-weight:900;white-space:nowrap;background:#E8AF54;padding:6px 12px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)
 }
 .v13-news-copy{
  flex:1;min-width:0;color:#EBEEF0;font-size:clamp(12px,.9vw,17px);
@@ -1916,8 +1916,8 @@ body[data-view="screen"] .overlay-close:focus-visible{outline:2px solid #ECD198}
 }
 .v13-lane.v17-live-lane.v13-lane-a .v13-identity-status{color:#8EE6D0}
 .v13-lane.v17-live-lane.v13-lane-b .v13-identity-status{color:#F2C389}
-.v13-rank-row.is-finished:not(.is-medal){background:#DAECE2}
-.v13-rank-row.is-medal .v13-rank-position{color:#A76F32}
+.v13-rank-row.is-finished:not(.is-medal){background:rgba(37,138,107,.075)}
+.v13-rank-row.is-medal .v13-rank-position{color:#F0D5A9}
 .v13-actions button{transition:background-color .18s ease,border-color .18s ease,transform .14s ease}
 @media(prefers-reduced-motion:reduce){
  .v13-stage.is-live .v13-stage-foot:before{animation:none!important}
@@ -1928,9 +1928,9 @@ body[data-view="screen"] .overlay-close:focus-visible{outline:2px solid #ECD198}
 .v13-ranking{box-shadow:0 3px 0 rgba(15,22,27,.18)}
 .v13-ranking-head{position:relative;padding-left:clamp(7px,.68vw,13px)}
 .v13-ranking-head:before{content:'';position:absolute;left:0;top:30%;bottom:30%;
- width:3px;background:#C0904C}
-.v13-rank-row.is-finished .v13-rank-name{font-weight:820}
-.v13-rank-row.is-medal{box-shadow:inset 0 1px 0 #E6CCA8,inset 0 -1px 0 #E6CCA8}
+ width:3px;background:#D1A365}
+.v13-rank-row.is-finished .v13-rank-name{font-weight:800}
+.v13-rank-row.is-medal{box-shadow:none}
 .v13-rank-row.v15-score-updated{animation:row-arrival .9s ease-out both}
 .v13-next-title{letter-spacing:.15px}
 .v13-news-label{letter-spacing:.22px}
@@ -1939,6 +1939,87 @@ body[data-view="screen"] .overlay-close:focus-visible{outline:2px solid #ECD198}
 }
 @media(prefers-reduced-motion:reduce){
  .v13-rank-row.v15-score-updated{animation:none!important}
+}
+
+/* V19 semantic standings / duel focus / operator-only controls */
+.v13-stage-round{justify-self:start}
+.v19-stage-meta{justify-self:end;display:flex;flex-direction:column;align-items:flex-end;gap:4px;color:#91A8B4;font-weight:750;font-size:clamp(10px,.75vw,13px);white-space:nowrap}
+.v19-stage-meta strong{color:#E1B775;font-size:clamp(11px,.82vw,15px);font-weight:800}
+.v13-lanes{position:relative}
+.v19-versus{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;display:grid;place-items:center;width:clamp(38px,3vw,53px);height:clamp(29px,2.6vw,43px);background:#0B1014;border:1px solid #6B7881;color:#F4D29B;font:900 clamp(13px,1vw,19px)/1 var(--race-digits);letter-spacing:1px}
+.v13-stage.is-live .v19-versus{animation:v19-versus-pulse 3.5s ease-in-out infinite}
+@keyframes v19-versus-pulse{0%,100%{border-color:#66717A}50%{border-color:#D6A569}}
+.v19-status{padding:3px 8px;border:1px solid transparent;background:rgba(255,255,255,.04);font-weight:750;max-width:100%;width:max-content}
+.v19-status-ready{color:#EBC289;border-color:rgba(232,180,97,.32);background:rgba(232,180,97,.06)}
+.v19-status-running{color:#8BE3BE;border-color:rgba(49,188,157,.42);background:rgba(49,188,157,.09)}
+.v19-status-finished{color:#B6C8D0;border-color:rgba(187,198,205,.24);background:rgba(187,198,205,.05)}
+.v19-status-alert{color:#F2A39A;border-color:rgba(232,102,93,.45);background:rgba(232,102,93,.1)}
+.v19-status-ready i{background:#EBC289}
+.v19-status-running i{background:#46D6AC;animation:v19-state-pulse 2.2s ease-in-out infinite}
+.v19-status-alert i{background:#E88072;animation:v19-state-pulse 1.25s ease-in-out infinite}
+@keyframes v19-state-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.v13-ranking-title,.v13-ranking-total,.v13-ranking-scored{font-variant-numeric:tabular-nums}
+.v13-rank-row.is-unscored:not(.is-current):not(.is-next) .v13-rank-name{color:#C0CED4;font-weight:600}
+.v13-rank-row.is-unscored:not(.is-current):not(.is-next) .v13-status-label{color:#758995;opacity:.72}
+.v13-rank-row.is-finished .v13-rank-name{color:#F5F7F5}
+.v13-rank-row.is-finished .v13-rank-right{color:#EAB66F}
+.v13-rank-position{display:inline-grid;place-items:center;justify-self:start;min-width:clamp(20px,1.5vw,29px);height:clamp(19px,1.4vw,26px)}
+.v13-rank-row.v19-medal-1 .v13-rank-position{border:1px solid #E1B65D;background:rgba(225,182,93,.12);color:#F8DCA0}
+.v13-rank-row.v19-medal-2 .v13-rank-position{border:1px solid #A6BCC7;background:rgba(166,188,199,.13);color:#DCECF1}
+.v13-rank-row.v19-medal-3 .v13-rank-position{border:1px solid #B7896E;background:rgba(183,137,110,.12);color:#EFC1A0}
+.v13-rank-row.is-medal{background:transparent;box-shadow:none}
+.v13-rank-row.is-medal:nth-child(odd){background:rgba(255,255,255,.022)}
+.v13-rank-right:has(.v19-result){display:block}
+.v19-result{display:flex;align-items:center;justify-content:flex-end;gap:clamp(5px,.38vw,9px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.v19-result strong{font:850 clamp(12px,.93vw,17px)/1 var(--race-digits);color:#F0BB73}
+.v19-result small{font:700 clamp(10px,.71vw,13px)/1 var(--race-digits);color:#C3D1D5}
+.v19-result .v19-duration{padding-left:clamp(4px,.3vw,7px);border-left:1px solid #465861}
+.v13-rank-name.v19-name-long{font-size:clamp(9px,.74vw,14px);letter-spacing:-.2px}
+.v13-rank-name.v19-name-xl{font-size:clamp(9px,.69vw,12px);letter-spacing:-.35px}
+.v13-next-card{min-width:0}
+.v13-next-detail strong{font-size:clamp(17px,1.3vw,24px);line-height:1.15}
+.v13-news{position:relative;overflow:visible}
+.v19-marquee-viewport{flex:1 1 auto;min-width:0;overflow:hidden;color:#F1F5F4}
+.v19-marquee-track{display:inline-flex;align-items:center;gap:40px;white-space:nowrap;max-width:100%}
+.v19-marquee-track>span{display:inline-block;flex:0 0 auto}
+.v19-marquee-viewport.is-long .v19-marquee-track{max-width:none;min-width:max-content;animation:v19-marquee 30s linear infinite;will-change:transform}
+@keyframes v19-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.v13-actions{position:absolute;right:10px;bottom:4px;z-index:3;padding:4px 5px;background:#202A34;border:1px solid #495B67;border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.34);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.v19-operator-hotspot{position:absolute;z-index:2;right:0;bottom:0;width:110px;height:100%;pointer-events:auto}
+.v13-screen.v19-controls-visible .v13-actions,.v13-actions:focus-within{opacity:1;transform:translateY(0);pointer-events:auto}
+.v13-screen.v19-controls-visible .v19-operator-hotspot{pointer-events:none}
+@media(min-width:1040px) and (max-width:1580px){
+ .v13-stage-head{grid-template-columns:minmax(0,1fr) auto minmax(0,.75fr)}
+ .v13-countdown{font-size:clamp(46px,4.3vw,72px)}
+ .v19-stage-meta{font-size:10px}
+ .v13-next-detail strong{font-size:clamp(15px,1.17vw,20px)}
+ .v19-result{gap:4px}
+ .v19-result strong{font-size:clamp(11px,.82vw,14px)}
+ .v19-result small{font-size:clamp(9px,.64vw,11px)}
+}
+@media(min-width:1040px) and (max-height:820px){
+ .v13-left{grid-template-rows:minmax(0,1fr) clamp(98px,13.7vh,124px)}
+ .v13-next-detail strong{font-size:clamp(15px,1.1vw,20px)}
+}
+@media(max-width:1039px){
+ .v13-stage-head{display:flex;justify-content:space-between}
+ .v19-stage-meta{display:none}
+ .v13-stage-clock{flex-direction:row}
+ .v19-versus{width:32px;height:24px;font-size:12px}
+ .v13-actions{position:static;opacity:1;transform:none;pointer-events:auto;border:0;box-shadow:none}
+ .v19-operator-hotspot{display:none}
+ .v19-result{flex-direction:column;align-items:flex-end;gap:1px}
+ .v19-result .v19-duration{border:0;padding:0}
+}
+@media(max-width:620px){
+ .v19-marquee-track{gap:18px}
+ .v13-news-label{font-size:9px;padding:5px 7px}
+ .v19-status{padding:2px 4px;font-size:9px}
+ .v13-next-detail strong{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .v13-stage.is-live .v19-versus,.v19-status i,.v19-marquee-track{animation:none!important}
+ .v13-actions{transition:none!important}
 }
 
 </style>
@@ -2081,9 +2162,13 @@ function screen(){
    const order=t?.draw_order||t?.order;
    const score=scored?displayedScore(t):'---';
    const time=scored&&Number.isFinite(Number(t?.elapsed_ms))&&t?.elapsed_ms!==null?displayedTime(t):'--:--.--';
-   const status=t?teamStatus(t):'等待安排';
-   const idle=!t||(!scored&&e.phase==='upcoming')||status==='等待上场';
-   const statusClass=idle?' is-idle':scored?' is-complete':'';
+   const rawStatus=t?teamStatus(t):'等待安排';
+   const fault=!!t&&(t.status==='fault_pending'||t.status==='dnf');
+   const running=!!t&&!scored&&!fault&&(e.phase==='live'||e.phase==='retry');
+   const status=fault?rawStatus:scored?rawStatus:running?(e.phase==='retry'?'补赛中':'比赛进行中'):rawStatus;
+   const statusKind=fault?'alert':scored?'finished':running?'running':'ready';
+   const idle=!t||(!scored&&!running);
+   const statusClass=(idle?' is-idle':scored?' is-complete':'')+' v19-status v19-status-'+statusKind;
    return `<article class="v13-lane v13-lane-${key.toLowerCase()}${broadcastMotion.round?' v15-round-enter':''}${t&&(e.phase==='live'||e.phase==='retry')?' v17-live-lane':''}">
      <div class="v13-lane-index" aria-label="${key}赛道">${key}</div>
      <div class="v13-identity">
@@ -2105,10 +2190,10 @@ function screen(){
    const laneId=(t.lane==='B'?'b':'a');
    const message=playing?('本轮'+t.lane):waiting?'候场':'待赛';
    const linkedClass=(playing?' is-current':waiting?' is-next':'')+(playing||waiting?' is-lane-'+laneId:'');
-   return `<div class="v13-rank-row ${done?'is-finished':'is-unscored'}${medal?' is-medal':''}${linkedClass}${broadcastMotion.scoreIds.has(String(t.id))?' v15-score-updated':broadcastMotion.movedIds.has(String(t.id))?' v15-podium-updated':''}" title="${esc(t.name)} · ${done?'当前排名':'抽签签位'}${rank}${playing?' · 本轮'+t.lane+'赛道':waiting?' · 下轮候场':''}">
+   return `<div class="v13-rank-row ${done?'is-finished':'is-unscored'}${medal?' is-medal v19-medal-'+position:''}${linkedClass}${broadcastMotion.scoreIds.has(String(t.id))?' v15-score-updated':broadcastMotion.movedIds.has(String(t.id))?' v15-podium-updated':''}" title="${esc(t.name)} · ${done?'当前排名':'抽签签位'}${rank}${playing?' · 本轮'+t.lane+'赛道':waiting?' · 下轮候场':''}">
      <span class="v13-rank-position">${rank}</span>
-     <span class="v13-rank-name">${esc(t.name)}</span>
-     <span class="v13-rank-right">${done?`<strong>${displayedScore(t)}</strong><small>${displayedTime(t)}</small>`:`<span class="v13-status-label">${message}</span>`}</span>
+     <span class="v13-rank-name${Array.from(t.name).length>19?' v19-name-xl':Array.from(t.name).length>12?' v19-name-long':''}">${esc(t.name)}</span>
+     <span class="v13-rank-right">${done?`<span class="v19-result"><strong>${displayedScore(t)}</strong><small class="v19-duration">${displayedTime(t)}</small></span>`:`<span class="v13-status-label">${message}</span>`}</span>
    </div>`;
  };
  const nextLane=(key)=>{
@@ -2135,9 +2220,9 @@ function screen(){
        <section class="v13-stage${e.phase==='live'||e.phase==='retry'?' is-live':''}">
          <div class="v13-stage-head">
            <div class="v13-stage-round"><span class="v13-live-label">${esc(stageLabel)}</span><span class="v13-round-digit">${pad(e.current_round)}</span><span class="v13-round-total">/ 18轮</span></div>
-           <div class="v13-stage-clock"><span class="v13-clock-caption">本轮倒计时 · 4分钟</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div>
+           <div class="v13-stage-clock"><span class="v13-clock-caption">本轮倒计时 · 4分钟</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div><div class="v19-stage-meta"><strong>A / B 双赛道</strong><span>第${pad(e.current_round)}轮 · 4分钟</span></div>
          <div class="v15-round-rail" id="v15RoundRail" role="progressbar" aria-label="本轮剩余时间比例" aria-valuemin="0" aria-valuemax="240" aria-valuenow="240"><i></i></div></div>
-         <div class="v13-lanes">${lane(active.find(t=>t.lane==='A'),'A')}${lane(active.find(t=>t.lane==='B'),'B')}</div>
+         <div class="v13-lanes">${lane(active.find(t=>t.lane==='A'),'A')}${lane(active.find(t=>t.lane==='B'),'B')}<span class="v19-versus" aria-hidden="true">VS</span></div>
          <div class="v13-stage-foot"><span>${esc(hint)}</span></div>
        </section>
        <section class="v13-next">
@@ -2154,8 +2239,8 @@ function screen(){
      </aside>
    </main>
    <footer class="v13-news">
-     <span class="v13-news-label">现场播报</span><strong class="v13-news-copy${broadcastMotion.announcement?' v15-broadcast-update':''}">${esc(e.announcement||hint)}</strong>
-     <div class="v13-actions">${e.awards_revealed?'<button class="v13-awards" id="openAwards">获奖名单</button>':''}<button id="openFullscreen">全屏投影</button></div>
+     <span class="v13-news-label">现场调度</span><div class="v19-marquee-viewport${Array.from(e.announcement||hint).length>44?' is-long':''}" aria-label="${esc(e.announcement||hint)}"><strong class="v13-news-copy${broadcastMotion.announcement?' v15-broadcast-update':''} v19-marquee-track"><span>${esc(e.announcement||hint)}</span>${Array.from(e.announcement||hint).length>44?'<span aria-hidden="true">'+esc(e.announcement||hint)+'</span>':''}</strong></div>
+     <span class="v19-operator-hotspot" aria-hidden="true"></span><div class="v13-actions">${e.awards_revealed?'<button class="v13-awards" id="openAwards">获奖名单</button>':''}<button id="openFullscreen">全屏投影</button></div>
    </footer>
  </div>`;
 }
@@ -2218,6 +2303,23 @@ function prepareBroadcastMotion(){
 function render(){if(!state.event)return;const el=$('app');if(state.view==='screen')prepareBroadcastMotion();el.innerHTML=state.view==='screen'?screen():state.view==='judge'?judge():control();bindEvents();tick();}
 async function execute(action,data,success='操作成功'){try{await rpc(action,data);toast(success);await refresh(true)}catch(e){toast(e.message,true)}}
 function bindEvents(){
+ const spectatorScreen=document.querySelector('.v13-screen');
+ if(spectatorScreen){
+   let hideTimer=null;
+   const showTools=()=>{
+     spectatorScreen.classList.add('v19-controls-visible');
+     if(hideTimer)clearTimeout(hideTimer);
+     hideTimer=setTimeout(()=>{if(!spectatorScreen.querySelector('.v13-actions:focus-within'))spectatorScreen.classList.remove('v19-controls-visible')},3000);
+   };
+   const hotspot=spectatorScreen.querySelector('.v19-operator-hotspot');
+   hotspot?.addEventListener('mouseenter',showTools);
+   spectatorScreen.querySelector('.v13-actions')?.addEventListener('mouseenter',showTools);
+   spectatorScreen.querySelector('.v13-actions')?.addEventListener('focusin',showTools);
+   spectatorScreen.querySelector('.v13-actions')?.addEventListener('mouseleave',()=>{
+     if(hideTimer)clearTimeout(hideTimer);
+     hideTimer=setTimeout(()=>spectatorScreen.classList.remove('v19-controls-visible'),3000);
+   });
+ }
  $('openFullscreen')?.addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>toast('请通过浏览器菜单启用全屏',true)));
  $('fullscreenBtn')?.addEventListener('click',()=>setView('screen'));
  $('judgeShortcut')?.addEventListener('click',()=>setView('judge'));
