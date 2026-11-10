@@ -1398,7 +1398,7 @@ window.COMP26_TEAMS=[
 
 /* V9-V12 spectator CSS retired in V13; staff stopwatch styles above retained. */
 </style>
-<link rel="stylesheet" href="./spectator-v14.css?v=14.0.0">
+<link rel="stylesheet" href="./spectator-v15.css?v=15.0.0">
 
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
@@ -1526,7 +1526,7 @@ function screen(){
    const status=t?teamStatus(t):'等待安排';
    const idle=!t||(!scored&&e.phase==='upcoming')||status==='等待上场';
    const statusClass=idle?' is-idle':scored?' is-complete':'';
-   return `<article class="v13-lane v13-lane-${key.toLowerCase()}">
+   return `<article class="v13-lane v13-lane-${key.toLowerCase()}${broadcastMotion.round?' v15-round-enter':''}">
      <div class="v13-lane-index" aria-label="${key}赛道">${key}</div>
      <div class="v13-identity">
        <div class="v13-identity-meta">${order?'第 '+pad(order)+' 签位':'等待安排'}　/　第${pad(t?.round_no||e.current_round)}轮</div>
@@ -1534,7 +1534,7 @@ function screen(){
        <span class="v13-identity-status${statusClass}"><i></i>${esc(status)}</span>
      </div>
      <div class="v13-data" aria-label="${key}赛道成绩及用时">
-       <div class="v13-data-box"><span class="v13-data-label">本轮得分</span><strong class="v13-data-value ${!scored?'is-idle':score.length>=7?'is-long':''}">${score}</strong></div>
+       <div class="v13-data-box${scored&&broadcastMotion.scoreIds.has(String(t.id))?' v15-score-confirmed':''}"><span class="v13-data-label">本轮得分</span><strong class="v13-data-value ${!scored?'is-idle':score.length>=7?'is-long':''}">${score}</strong></div>
        <div class="v13-data-box"><span class="v13-data-label">完成用时</span><strong class="v13-data-value is-time ${!scored||time==='--:--.--'?'is-idle':''}">${time}</strong></div>
      </div></article>`;
  };
@@ -1547,7 +1547,7 @@ function screen(){
    const laneId=(t.lane==='B'?'b':'a');
    const message=playing?('本轮'+t.lane):waiting?'候场':'待赛';
    const linkedClass=(playing?' is-current':waiting?' is-next':'')+(playing||waiting?' is-lane-'+laneId:'');
-   return `<div class="v13-rank-row ${done?'is-finished':'is-unscored'}${medal?' is-medal':''}${linkedClass}" title="${esc(t.name)} · ${done?'当前排名':'抽签签位'}${rank}${playing?' · 本轮'+t.lane+'赛道':waiting?' · 下轮候场':''}">
+   return `<div class="v13-rank-row ${done?'is-finished':'is-unscored'}${medal?' is-medal':''}${linkedClass}${broadcastMotion.scoreIds.has(String(t.id))?' v15-score-updated':broadcastMotion.movedIds.has(String(t.id))?' v15-podium-updated':''}" title="${esc(t.name)} · ${done?'当前排名':'抽签签位'}${rank}${playing?' · 本轮'+t.lane+'赛道':waiting?' · 下轮候场':''}">
      <span class="v13-rank-position">${rank}</span>
      <span class="v13-rank-name">${esc(t.name)}</span>
      <span class="v13-rank-right">${done?`<strong>${displayedScore(t)}</strong><small>${displayedTime(t)}</small>`:`<span class="v13-status-label">${message}</span>`}</span>
@@ -1578,7 +1578,7 @@ function screen(){
          <div class="v13-stage-head">
            <div class="v13-stage-round"><span class="v13-live-label">${esc(stageLabel)}</span><span class="v13-round-digit">${pad(e.current_round)}</span><span class="v13-round-total">/ 18轮</span></div>
            <div class="v13-stage-clock"><span class="v13-clock-caption">本轮倒计时 · 4分钟</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div>
-         </div>
+         <div class="v15-round-rail" id="v15RoundRail" role="progressbar" aria-label="本轮剩余时间比例" aria-valuemin="0" aria-valuemax="240" aria-valuenow="240"><i></i></div></div>
          <div class="v13-lanes">${lane(active.find(t=>t.lane==='A'),'A')}${lane(active.find(t=>t.lane==='B'),'B')}</div>
          <div class="v13-stage-foot"><span>${esc(hint)}</span></div>
        </section>
@@ -1596,7 +1596,7 @@ function screen(){
      </aside>
    </main>
    <footer class="v13-news">
-     <span class="v13-news-label">现场播报</span><strong class="v13-news-copy">${esc(e.announcement||hint)}</strong>
+     <span class="v13-news-label">现场播报</span><strong class="v13-news-copy${broadcastMotion.announcement?' v15-broadcast-update':''}">${esc(e.announcement||hint)}</strong>
      <div class="v13-actions">${e.awards_revealed?'<button class="v13-awards" id="openAwards">获奖名单</button>':''}<button id="openFullscreen">全屏投影</button></div>
    </footer>
  </div>`;
@@ -1623,7 +1623,41 @@ function control(){if(!state.token)return login();if(state.role!=='admin')return
  <section class="panel comp-reset-panel"><div class="panel-head"><span class="panel-title">赛前测试数据重置</span><span class="eyebrow">ADMIN · RESET</span></div><p class="reset-hint">仅限赛事总管理员操作。重置将清除全部测试成绩、故障补赛和计时状态，恢复为第1轮待开赛。36队名单、抽签顺序、奖项名额和审计记录均保留；云端会先保存完整重置前快照。</p><button id="resetCompetition" class="btn block reset-button">↺ 清空测试成绩 · 恢复赛事初始状态</button><p class="tiny-note">重置需要输入“清空测试成绩”二次确认；正式比赛结束或颁奖后不可重置。</p></section>
  <section class="panel"><div class="panel-head"><span class="panel-title">历史成绩用时补录</span><span class="eyebrow">ADMIN · TIME AUDIT</span></div><p class="tiny-note">已有成绩但无用时的队伍只能依据现场录像或备用计时器补录。补录不修改分数，完整操作进入审计日志；缺少可信时间不能自行估算。</p>${state.teams.filter(t=>t.score!==null&&t.status!=='dnf'&&!t.elapsed_ms).length? `<form id="timeBackfillForm"><div class="field"><label>需要补录的队伍</label><select id="backfillTeam">${state.teams.filter(t=>t.score!==null&&t.status!=='dnf'&&!t.elapsed_ms).map(t=>`<option value="${esc(t.id)}">${esc(t.name)} · ${displayedScore(t)}分</option>`).join('')}</select></div><div class="field"><label>核实完成用时（秒）</label><input id="backfillSeconds" type="number" min="0.01" max="600" step="0.01" placeholder="例如 135.20" required></div><div class="field"><label>补录依据（必填）</label><textarea id="backfillReason" placeholder="例如：现场录像时间戳及裁判确认" maxlength="120" required></textarea></div><button class="btn block" type="submit">✓ 核实并补录用时（不改分数）</button></form>`:'<p class="subtext">所有已完成的队伍均有用时记录。</p>'}</section><section class="panel"><div class="panel-head"><span class="panel-title">成绩排行榜 · 同分裁决</span><span class="eyebrow">FINAL CHECK</span></div><div class="ranking-list" style="max-height:370px;overflow:auto">${ranked.map((t,i)=>`<div class="rank-item ${i===0?'top1':''}"><span class="rank-no">${pad(i+1)}</span><span class="rank-name">${esc(t.name)}</span><span class="rank-score">${displayedScore(t)}<small class="v8-admin-time">${displayedTime(t)}</small></span></div>`).join('')||'<p class="subtext">暂无分数</p>'}</div>${e.phase==='review'?`<form id="tieForm" style="margin-top:17px"><div class="form-grid"><div class="field"><label>同分队伍</label><select id="tieTeam">${ranked.map(t=>`<option value="${esc(t.id)}">${esc(t.name)} (${displayedScore(t)})</option>`).join('')}</select></div><div class="field"><label>分数和用时都相同时的裁决序</label><input id="tieNumber" type="number" min="1" max="36" placeholder="1"></div></div><button type="submit" class="btn block" style="margin-top:12px">保存裁决序</button></form>`:''}</section><button class="btn ghost" id="logoutBtn">退出总控账号</button></div></div>${footer()}`;
 }
-function render(){if(!state.event)return;const el=$('app');el.innerHTML=state.view==='screen'?screen():state.view==='judge'?judge():control();bindEvents();tick();}
+
+/* Transient, display-only event transitions — neither persisted nor sent to Supabase. */
+let broadcastVisual=null;
+let broadcastMotion={round:false,scoreIds:new Set(),movedIds:new Set(),announcement:false};
+function prepareBroadcastMotion(){
+  if(state.view!=='screen'||!state.event)return;
+  const e=state.event;
+  const rank=sortRank();
+  const byTeam=new Map(state.teams.map(t=>[String(t.id),{
+    score:t.score===null?null:Number(t.score),
+    status:t.status,
+    elapsed:t.elapsed_ms===null?null:Number(t.elapsed_ms)
+  }]));
+  const byRank=new Map(rank.map((t,i)=>[String(t.id),rankNum(rank,i)]));
+  const next={round:e.current_round,phase:e.phase,announcement:e.announcement||'',byTeam,byRank};
+  const change={round:false,scoreIds:new Set(),movedIds:new Set(),announcement:false};
+  if(broadcastVisual){
+    change.round=next.round!==broadcastVisual.round;
+    change.announcement=next.announcement!==broadcastVisual.announcement;
+    for(const [id,t] of byTeam){
+      const prior=broadcastVisual.byTeam.get(id);
+      if(prior && (t.score!==prior.score || (t.elapsed!==prior.elapsed && t.score!==null))){
+        change.scoreIds.add(id);
+      }
+    }
+    for(const [id,n] of byRank){
+      const priorRank=broadcastVisual.byRank.get(id);
+      if(priorRank!==undefined&&priorRank!==n && !change.scoreIds.has(id))change.movedIds.add(id);
+    }
+  }
+  broadcastVisual=next;
+  broadcastMotion=change;
+}
+
+function render(){if(!state.event)return;const el=$('app');if(state.view==='screen')prepareBroadcastMotion();el.innerHTML=state.view==='screen'?screen():state.view==='judge'?judge():control();bindEvents();tick();}
 async function execute(action,data,success='操作成功'){try{await rpc(action,data);toast(success);await refresh(true)}catch(e){toast(e.message,true)}}
 function bindEvents(){
  $('openFullscreen')?.addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>toast('请通过浏览器菜单启用全屏',true)));
@@ -1702,7 +1736,31 @@ function bindEvents(){
  $('tieForm')?.addEventListener('submit',ev=>{ev.preventDefault();const n=$('tieNumber').value;execute('tie',{p_team_id:$('tieTeam').value,p_tie:n?Number(n):null},'同分裁决序已保存')});
  $('revealButton')?.addEventListener('click',async()=>{if(confirm('确认所有36支队伍的成绩和同分裁决均已核对？\n发布后将向所有大屏公布一等奖3队、二等奖7队、三等奖8队。')){await execute('reveal',{},'获奖名单已正式发布！');if(state.event.awards_revealed)showAwards()}});
 }
-function tick(){ const time=nowTime();$('clock').textContent=time;const spectatorClock=$('v13Clock');if(spectatorClock)spectatorClock.textContent=time; if(state.stopwatch&&state.view==='judge')watchUI(state.stopwatch);const timer=$('roundTimer');if(timer&&state.event?.round_started_at&&state.event.phase==='live'){const elapsed=Math.floor((Date.now()-new Date(state.event.round_started_at).getTime())/1000);const remain=Math.max(0,240-elapsed);timer.textContent=pad(Math.floor(remain/60))+':'+pad(remain%60);timer.style.color=remain===0?'var(--orange)':'';}else if(timer)timer.textContent=state.event?.phase==='upcoming'?'04:00':'--:--';}
+function tick(){
+ const time=nowTime();
+ const baseClock=$('clock');if(baseClock)baseClock.textContent=time;
+ const spectatorClock=$('v13Clock');if(spectatorClock)spectatorClock.textContent=time;
+ if(state.stopwatch&&state.view==='judge')watchUI(state.stopwatch);
+ const timer=$('roundTimer'),rail=$('v15RoundRail');
+ if(!timer)return;
+ const running=!!(state.event?.round_started_at&&state.event.phase==='live');
+ const elapsed=running?Math.max(0,Math.floor((Date.now()-new Date(state.event.round_started_at).getTime())/1000)):0;
+ const remain=running?Math.max(0,240-elapsed):240;
+ const timerText=running?pad(Math.floor(remain/60))+':'+pad(remain%60):state.event?.phase==='upcoming'?'04:00':'--:--';
+ if(timer.textContent!==timerText)timer.textContent=timerText;
+ const severity=running?(remain===0?'expired':remain<=10?'critical':remain<=30?'warning':'normal'):'upcoming';
+ timer.classList.toggle('v15-time-warning',severity==='warning');
+ timer.classList.toggle('v15-time-critical',severity==='critical');
+ timer.classList.toggle('v15-time-expired',severity==='expired');
+ if(rail){
+   rail.classList.toggle('is-upcoming',!running);
+   for(const c of ['warning','critical','expired'])rail.classList.toggle('is-'+c,severity===c);
+   const frac=running?remain/240:1;
+   const fill=rail.firstElementChild;
+   if(fill)fill.style.transform='scaleX('+frac.toFixed(4)+')';
+   rail.setAttribute('aria-valuenow',String(remain));
+ }
+}
 let awardTimers=[];function showAwards(){if(!state.event?.awards_revealed){toast('奖项尚未由管理员正式公布',true);return;}sessionStorage.removeItem('comp26_skip_awards');state.awardOpened=true;const el=$('awardOverlay');el.classList.remove('hidden');awardTimers.forEach(clearTimeout);awardTimers=[];const r=sortRank();const prizes=[{n:3,label:'三等奖',list:r.slice(10,18),cls:''},{n:2,label:'二等奖',list:r.slice(3,10),cls:''},{n:1,label:'一等奖',list:r.slice(0,3),cls:'first'}];
  const content=$('awardContent');content.innerHTML='<div class="award-kicker">机械创新实验室 · 2026 AWARD CEREMONY</div><h1 class="award-heading">荣誉即将揭晓</h1><div class="countdown-num">3</div>';
  for(let i=2;i>=1;i--)awardTimers.push(setTimeout(()=>{content.innerHTML='<div class="award-kicker">THE MOMENT OF GLORY</div><h1 class="award-heading">最终获奖名单</h1><div class="countdown-num">'+i+'</div>'},(3-i)*1100));
