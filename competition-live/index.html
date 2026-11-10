@@ -2228,7 +2228,7 @@ function screen(){
  const nextIds=new Set(pendingNext.filter(t=>t.score===null).map(t=>t.id));
  const stageLabel=e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩复核':e.phase==='awards'?'获奖公布':e.phase==='upcoming'?'待开赛':'比赛进行中';
  const hint=e.phase==='live'&&round.every(t=>['scored','fault_pending','dnf'].includes(t.status))?'本轮成绩已确认，请下一组前往比赛区':e.phase==='live'?'下一轮选手请前往调试区':e.phase==='upcoming'?'第一组赛前调试4分钟':e.phase==='retry'?(retry?'故障补赛队伍请准备':'等待安排补赛'):phaseText[e.phase];
- const clockLabel=e.phase==='upcoming'?'04:00':'--:--';
+ const clockLabel=e.phase==='upcoming'?'04:00':e.phase==='review'||e.phase==='awards'||e.phase==='closed'?'00:00':'--:--';
  const lane=(t,key)=>{
    const scored=!!t&&t.score!==null&&t.score!==undefined;
    const order=t?.draw_order||t?.order;
@@ -2292,7 +2292,7 @@ function screen(){
        <section class="v13-stage${e.phase==='live'||e.phase==='retry'?' is-live':''}">
          <div class="v13-stage-head">
            <div class="v13-stage-round"><span class="v13-live-label">${esc(stageLabel)}</span><span class="v13-round-digit">${pad(e.current_round)}</span><span class="v13-round-total">/ 18轮</span></div>
-           <div class="v13-stage-clock"><span id="roundTimerLabel" class="v13-clock-caption">本轮倒计时</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div><div class="v19-stage-meta"><strong>A / B 双赛道</strong><span>双通道独立计时</span></div>
+           <div class="v13-stage-clock"><span id="roundTimerLabel" class="v13-clock-caption">${e.phase==='upcoming'?'等待比赛开始':e.phase==='live'?'本轮倒计时':e.phase==='retry'?'故障补赛':e.phase==='review'?'成绩核对':e.phase==='awards'?'获奖公布':'赛事状态'}</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div><div class="v19-stage-meta"><strong>A / B 双赛道</strong><span>双通道独立计时</span></div>
          <div class="v15-round-rail" id="v15RoundRail" role="progressbar" aria-label="本轮剩余时间比例" aria-valuemin="0" aria-valuemax="240" aria-valuenow="240"><i></i></div></div>
          <div class="v13-lanes">${lane(active.find(t=>t.lane==='A'),'A')}${lane(active.find(t=>t.lane==='B'),'B')}<span class="v19-versus" aria-hidden="true">VS</span></div>
          <div class="v13-stage-foot"><span>${esc(hint)}</span></div>
