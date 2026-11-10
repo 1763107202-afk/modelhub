@@ -1398,20 +1398,20 @@ window.COMP26_TEAMS=[
 
 /* V9-V12 spectator CSS retired in V13; staff stopwatch styles above retained. */
 </style>
-<style id="spectator-v19-inline">
+<style id="spectator-v20-inline">
 /*
- MOVE.ARENA / V19 — UNIFIED COMPETITION BROADCAST
+ MOVE.ARENA / V20 — HIGH CONTRAST BROADCAST
  Unified midnight graphite broadcast, scores on a seamless 36-row timing tower.
  Art direction: F1-style timing tower + engineering workshop, restrained ink
  surfaces, large metrics, intentional spacing, semantic A/B color only.
  Underlying judge, score and admin components are unchanged.
 */
 :root{
- --race-ink:#0D1116;--race-panel:#171E24;--race-panel-2:#1D252C;
- --race-panel-3:#252E36;--race-line:#47545D;--race-sep:#35434C;
- --race-text:#F7F7F4;--race-sub:#B7C4CB;--race-dim:#8498A3;
- --race-gold:#E9B978;--race-a:#31BC9D;--race-b:#E7AD63;
- --race-paper:#151D25;--race-paper-2:#1E2831;--race-ink-text:#EEF2F3;
+ --race-ink:#080C11;--race-panel:#101922;--race-panel-2:#19222B;
+ --race-panel-3:#202C36;--race-line:#435460;--race-sep:#2B3B45;
+ --race-text:#FFFFFF;--race-sub:#D3DFE4;--race-dim:#A2B4BE;
+ --race-gold:#FFC06C;--race-a:#29D1AC;--race-b:#FFB55D;
+ --race-paper:#111B23;--race-paper-2:#1A2630;--race-ink-text:#EEF2F3;
  --race-body:'Noto Sans SC','Microsoft YaHei',system-ui,sans-serif;
  --race-digits:'Bahnschrift','Barlow Condensed','DIN Alternate',system-ui,sans-serif;
  --race-ease:cubic-bezier(.22,1,.36,1)
@@ -1511,7 +1511,7 @@ body[data-view="screen"] .v13-screen{
  position:relative;isolation:isolate;
  display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(9px,1vw,18px);
  padding:clamp(11px,1.1vh,15px) clamp(17px,1.3vw,25px);
- background:#202930;border-bottom:1px solid #56636A;min-width:0
+ background:#14212D;border-bottom:1px solid #566775;min-width:0
 }
 .v13-stage-round{display:flex;align-items:center;gap:clamp(8px,.8vw,17px);flex:0 0 auto;min-width:0}
 .v13-live-label{
@@ -1530,7 +1530,7 @@ body[data-view="screen"] .v13-screen{
  font-weight:650;white-space:nowrap;text-align:center;max-width:none
 }
 .v13-countdown{
- color:#FFE3B6;font:900 clamp(52px,5.05vw,91px)/.95 var(--race-digits);
+ color:#FFC06C;font:900 clamp(52px,5.05vw,91px)/.95 var(--race-digits);
  letter-spacing:-.8px;white-space:nowrap
 }
 /* A continuous competition stripe, not a card within a card. */
@@ -1540,11 +1540,11 @@ body[data-view="screen"] .v13-screen{
  grid-template-columns:clamp(63px,5.55vw,108px) minmax(0,1fr) clamp(285px,22vw,420px);
  gap:clamp(10px,1.15vw,24px);align-items:center;
  padding:clamp(12px,1.75vh,24px) clamp(16px,1.5vw,29px);
- background:#192228;border-bottom:1px solid #405059;
+ background:#111D27;border-bottom:1px solid #3B5361;
  border-left:4px solid var(--race-a);position:relative;isolation:isolate;
  overflow:hidden
 }
-.v13-lane:last-child{background:#1C252B;border-left-color:var(--race-b);border-bottom:0}
+.v13-lane:last-child{background:#15222B;border-left-color:var(--race-b);border-bottom:0}
 .v13-lane:before{display:none}
 .v13-lane-index{
  display:grid;place-items:center;width:clamp(56px,4.45vw,83px);height:clamp(66px,5.3vw,100px);
@@ -1556,7 +1556,7 @@ body[data-view="screen"] .v13-screen{
 .v13-identity{display:flex;flex-direction:column;gap:clamp(7px,1vh,14px);min-width:0;z-index:1}
 .v13-identity-meta{color:#A2B5C0;font-size:clamp(10px,.82vw,15px);font-weight:650;white-space:nowrap}
 .v13-team-name{
- color:var(--race-text);font-weight:850;
+ color:#FFFFFF;font-weight:850;
  font-size:clamp(34px,2.84vw,59px);line-height:1.12;letter-spacing:-.55px;
  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
@@ -1587,7 +1587,7 @@ body[data-view="screen"] .v13-screen{
 }
 .v13-data-value.is-time{font-size:clamp(26px,2.05vw,42px);color:#E5E8E7;letter-spacing:-.1px}
 .v13-data-value.is-long{font-size:clamp(31px,2.6vw,50px)}
-.v13-data-value.is-idle{color:#62737D;opacity:.48}
+.v13-data-value.is-idle{color:#7793A2;opacity:.43}
 .v13-stage-foot{
  display:flex;align-items:center;gap:8px;min-height:0;
  padding:0 clamp(16px,1.5vw,27px);
@@ -1600,15 +1600,15 @@ body[data-view="screen"] .v13-screen{
 .v13-next{
  display:grid;grid-template-rows:auto minmax(0,1fr) 4px;min-height:0;
  gap:clamp(6px,.7vh,11px);padding:clamp(9px,1vh,14px) clamp(14px,1.3vw,24px);
- background:#182129;border:1px solid var(--race-line)
+ background:#121E29;border:1px solid var(--race-line)
 }
 .v13-next-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .v13-next-title{color:#F3F4F4;font-size:clamp(17px,1.18vw,24px);font-weight:850}
-.v13-next-note{color:#879DA9;font-size:clamp(10px,.68vw,13px);font-weight:600;white-space:nowrap}
+.v13-next-note{color:#B2C6D0;font-size:clamp(10px,.68vw,13px);font-weight:600;white-space:nowrap}
 .v13-next-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(7px,.9vw,16px);min-height:0}
 .v13-next-card{
  display:flex;align-items:center;gap:clamp(10px,.75vw,14px);
- background:#212C34;padding:4px clamp(9px,.75vw,15px);min-width:0;
+ background:#1E303A;padding:4px clamp(9px,.75vw,15px);min-width:0;
  border-left:2px solid var(--race-a)
 }
 .v13-next-card.v13-next-b{border-left-color:var(--race-b)}
@@ -1672,9 +1672,9 @@ body[data-view="screen"] .v13-screen{
  color:#8AA0AE;white-space:nowrap
 }
 .v13-rank-row.is-finished .v13-rank-position,.v13-rank-row.is-medal .v13-rank-position{color:#C7B18A}
-.v13-rank-name{
+ .v13-rank-name{
  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- color:#EDF1F3;font-size:clamp(10px,.83vw,16px);
+ color:#F4F8F9;font-size:clamp(10px,.83vw,16px);
  font-weight:730;line-height:1.05
 }
 .v13-rank-right{
@@ -1696,11 +1696,11 @@ body[data-view="screen"] .v13-screen{
 .v13-news{
  display:flex;align-items:center;min-width:0;
  gap:clamp(10px,1vw,18px);padding:0 clamp(13px,1.1vw,21px);
- background:#202831;border-left:0
+ background:#17242E;border-left:0
 }
 .v13-news-label{
  color:#131A1F;font-size:clamp(12px,.91vw,17px);
- font-weight:900;white-space:nowrap;background:#E8AF54;padding:6px 12px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)
+ font-weight:900;white-space:nowrap;background:#FFBD67;padding:6px 12px;clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)
 }
 .v13-news-copy{
  flex:1;min-width:0;color:#EBEEF0;font-size:clamp(12px,.9vw,17px);
@@ -1959,7 +1959,7 @@ body[data-view="screen"] .overlay-close:focus-visible{outline:2px solid #ECD198}
 .v19-status-alert i{background:#E88072;animation:v19-state-pulse 1.25s ease-in-out infinite}
 @keyframes v19-state-pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .v13-ranking-title,.v13-ranking-total,.v13-ranking-scored{font-variant-numeric:tabular-nums}
-.v13-rank-row.is-unscored:not(.is-current):not(.is-next) .v13-rank-name{color:#C0CED4;font-weight:600}
+.v13-rank-row.is-unscored:not(.is-current):not(.is-next) .v13-rank-name{color:#CEDDE3;font-weight:600}
 .v13-rank-row.is-unscored:not(.is-current):not(.is-next) .v13-status-label{color:#758995;opacity:.72}
 .v13-rank-row.is-finished .v13-rank-name{color:#F5F7F5}
 .v13-rank-row.is-finished .v13-rank-right{color:#EAB66F}
@@ -2020,6 +2020,78 @@ body[data-view="screen"] .overlay-close:focus-visible{outline:2px solid #ECD198}
 @media(prefers-reduced-motion:reduce){
  .v13-stage.is-live .v19-versus,.v19-status i,.v19-marquee-track{animation:none!important}
  .v13-actions{transition:none!important}
+}
+
+
+/* V20 — phase-aware broadcast timer, solid blacks and clearer scoreboard. */
+.v13-screen{background:#080C11;color:#FFFFFF}
+.v13-header{border-bottom-color:#5E6B73}
+.v13-brand-copy strong,.v13-title{color:#FFFFFF}
+.v13-time{color:#F4F8F9}
+.v13-stage{background:#101922;border-color:#425561}
+.v13-stage-head{background:#14212D;gap:clamp(9px,.8vw,16px)}
+.v13-stage-clock{
+ position:relative;justify-self:center;isolation:isolate;
+ min-width:clamp(176px,15vw,300px);padding:clamp(4px,.6vh,10px) clamp(11px,1.3vw,27px);
+ background:#080F17;border:1px solid rgba(255,192,108,.38);border-radius:3px;
+ flex-direction:column;align-items:center;justify-content:center;gap:3px;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.04)
+}
+.v13-clock-caption{color:#D5E0E5;max-width:none;white-space:nowrap;line-height:1.2;text-align:center;font-weight:800;letter-spacing:.4px}
+.v13-countdown{
+ display:block;min-width:5ch;text-align:center;
+ font:900 clamp(52px,4.9vw,88px)/.94 var(--race-digits);
+ color:#FFC06C;letter-spacing:0;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"
+}
+.v13-stage-clock.is-upcoming{border-color:#43515B}
+.v13-stage-clock.is-upcoming .v13-countdown{color:#EFC08A}
+.v13-stage-clock.is-running{border-color:rgba(255,192,108,.66)}
+.v13-stage-clock.is-warning{background:#20190F;border-color:#FFA944}
+.v13-stage-clock.is-critical{background:#291410;border-color:#FF8959}
+.v13-stage-clock.is-expired{background:#2A1318;border-color:#FE7869}
+.v13-stage-clock.is-review,.v13-stage-clock.is-retry{background:#121D27;border-color:#546371}
+.v13-stage-clock.is-review .v13-countdown,.v13-stage-clock.is-retry .v13-countdown{color:#D7E4E8}
+.v13-countdown.v15-time-critical{color:#FF9B71;animation:none}
+.v13-countdown.v15-time-expired{color:#FF8B7C}
+.v15-round-rail{height:4px;background:#34434F}
+.v15-round-rail>i{background:#FFC06C}
+.v15-round-rail.is-warning>i{background:#FFB14D}
+.v15-round-rail.is-critical>i{background:#FF885F}
+.v15-round-rail.is-expired>i{background:#F16E67}
+.v19-stage-meta strong{color:#E3EFF2}
+.v19-stage-meta span{color:#A9BCCA}
+.v13-lane{background:#111D27}
+.v13-lane:last-child{background:#15222B}
+.v13-data-label{color:#BCD2DC}
+.v13-data-value{color:#FFFFFF}
+.v13-data-value.is-time{color:#EFF4F5}
+.v13-ranking{background:#111B23;border-color:#465765}
+.v13-ranking-title{color:#F7FAFB}
+.v13-rank-name{color:#F2F7F9}
+.v13-rank-right{color:#A7BBC7}
+.v13-rank-row.is-current.is-lane-a{background:rgba(41,209,172,.16)}
+.v13-rank-row.is-current.is-lane-b{background:rgba(255,181,93,.16)}
+.v13-next-detail strong{color:#FFFFFF}
+.v13-news-copy{color:#FFFFFF}
+@media(min-width:1040px) and (max-width:1540px){
+ .v13-stage-clock{min-width:clamp(145px,13.6vw,220px);padding:5px 10px}
+ .v13-stage-clock .v13-countdown{font-size:clamp(40px,3.7vw,64px)}
+ .v13-stage-head{gap:6px}
+}
+@media(min-width:1040px) and (max-height:820px){
+ .v13-stage-clock{padding-block:3px;gap:1px}
+ .v13-stage-clock .v13-countdown{font-size:clamp(39px,3.55vw,63px)}
+ .v13-stage-clock .v13-clock-caption{font-size:clamp(9px,.66vw,12px);line-height:1.05}
+}
+@media(max-width:1039px){
+ .v13-stage-clock{min-width:0;padding:3px 6px;gap:1px}
+}
+@media(max-width:620px){
+ .v13-stage-clock .v13-countdown{font-size:34px;min-width:0}
+ .v13-stage-clock .v13-clock-caption{font-size:8px;letter-spacing:0}
+}
+@media(prefers-reduced-motion:reduce){
+ .v13-countdown,.v13-stage-clock{animation:none!important;transition:none!important}
 }
 
 </style>
@@ -2220,7 +2292,7 @@ function screen(){
        <section class="v13-stage${e.phase==='live'||e.phase==='retry'?' is-live':''}">
          <div class="v13-stage-head">
            <div class="v13-stage-round"><span class="v13-live-label">${esc(stageLabel)}</span><span class="v13-round-digit">${pad(e.current_round)}</span><span class="v13-round-total">/ 18轮</span></div>
-           <div class="v13-stage-clock"><span class="v13-clock-caption">本轮倒计时 · 4分钟</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div><div class="v19-stage-meta"><strong>A / B 双赛道</strong><span>第${pad(e.current_round)}轮 · 4分钟</span></div>
+           <div class="v13-stage-clock"><span id="roundTimerLabel" class="v13-clock-caption">本轮倒计时</span><strong id="roundTimer" class="v13-countdown">${clockLabel}</strong></div><div class="v19-stage-meta"><strong>A / B 双赛道</strong><span>双通道独立计时</span></div>
          <div class="v15-round-rail" id="v15RoundRail" role="progressbar" aria-label="本轮剩余时间比例" aria-valuemin="0" aria-valuemax="240" aria-valuenow="240"><i></i></div></div>
          <div class="v13-lanes">${lane(active.find(t=>t.lane==='A'),'A')}${lane(active.find(t=>t.lane==='B'),'B')}<span class="v19-versus" aria-hidden="true">VS</span></div>
          <div class="v13-stage-foot"><span>${esc(hint)}</span></div>
@@ -2403,22 +2475,47 @@ function tick(){
  if(state.stopwatch&&state.view==='judge')watchUI(state.stopwatch);
  const timer=$('roundTimer'),rail=$('v15RoundRail');
  if(!timer)return;
- const running=!!(state.event?.round_started_at&&state.event.phase==='live');
- const elapsed=running?Math.max(0,Math.floor((Date.now()-new Date(state.event.round_started_at).getTime())/1000)):0;
- const remain=running?Math.max(0,240-elapsed):240;
- const timerText=running?pad(Math.floor(remain/60))+':'+pad(remain%60):state.event?.phase==='upcoming'?'04:00':'--:--';
+ const event=state.event||{};
+ const phase=event.phase||'upcoming';
+ const startMs=event.round_started_at?new Date(event.round_started_at).getTime():NaN;
+ const hasStart=Number.isFinite(startMs);
+ const running=phase==='live'&&hasStart;
+ const seconds=running?Math.max(0,Math.floor((Date.now()-startMs)/1000)):0;
+ const remain=running?Math.max(0,240-seconds):240;
+ const expired=running&&seconds>=240;
+ let timerText='04:00',caption='本轮倒计时',visualState='upcoming';
+ if(phase==='live'){
+   if(!hasStart){timerText='--:--';caption='正在同步计时';visualState='review'}
+   else if(expired){timerText='00:00';caption='本轮时间到';visualState='expired'}
+   else{
+     timerText=pad(Math.floor(remain/60))+':'+pad(remain%60);
+     visualState=remain<=10?'critical':remain<=30?'warning':'running';
+     caption=remain<=10?'最后10秒':remain<=30?'最后30秒':'本轮倒计时';
+   }
+ }else if(phase==='retry'){
+   timerText='--:--';caption='故障补赛';visualState='retry';
+ }else if(phase==='review'||phase==='awards'||phase==='closed'){
+   timerText='00:00';caption=phase==='review'?'成绩核对':phase==='awards'?'获奖公布':'赛事已结束';visualState='review';
+ }else{
+   timerText='04:00';caption='等待比赛开始';visualState='upcoming';
+ }
  if(timer.textContent!==timerText)timer.textContent=timerText;
- const severity=running?(remain===0?'expired':remain<=10?'critical':remain<=30?'warning':'normal'):'upcoming';
- timer.classList.toggle('v15-time-warning',severity==='warning');
- timer.classList.toggle('v15-time-critical',severity==='critical');
- timer.classList.toggle('v15-time-expired',severity==='expired');
+ const captionNode=$('roundTimerLabel');
+ if(captionNode&&captionNode.textContent!==caption)captionNode.textContent=caption;
+ const panel=timer.parentElement;
+ if(panel){
+   for(const c of ['upcoming','running','warning','critical','expired','review','retry'])
+     panel.classList.toggle('is-'+c,visualState===c);
+ }
+ timer.classList.toggle('v15-time-warning',visualState==='warning');
+ timer.classList.toggle('v15-time-critical',visualState==='critical');
+ timer.classList.toggle('v15-time-expired',visualState==='expired');
  if(rail){
    rail.classList.toggle('is-upcoming',!running);
-   for(const c of ['warning','critical','expired'])rail.classList.toggle('is-'+c,severity===c);
-   const frac=running?remain/240:1;
+   for(const c of ['warning','critical','expired'])rail.classList.toggle('is-'+c,visualState===c);
    const fill=rail.firstElementChild;
-   if(fill)fill.style.transform='scaleX('+frac.toFixed(4)+')';
-   rail.setAttribute('aria-valuenow',String(remain));
+   if(fill)fill.style.transform='scaleX('+(running?remain/240:phase==='upcoming'?1:0).toFixed(4)+')';
+   rail.setAttribute('aria-valuenow',String(running?remain:phase==='upcoming'?240:0));
  }
 }
 let awardTimers=[];function showAwards(){if(!state.event?.awards_revealed){toast('奖项尚未由管理员正式公布',true);return;}sessionStorage.removeItem('comp26_skip_awards');state.awardOpened=true;const el=$('awardOverlay');el.classList.remove('hidden');awardTimers.forEach(clearTimeout);awardTimers=[];const r=sortRank();const prizes=[{n:3,label:'三等奖',list:r.slice(10,18),cls:''},{n:2,label:'二等奖',list:r.slice(3,10),cls:''},{n:1,label:'一等奖',list:r.slice(0,3),cls:'first'}];
