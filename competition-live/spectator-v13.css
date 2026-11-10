@@ -84,6 +84,7 @@ body[data-view="screen"] .v13-screen{
  align-items:stretch;padding:clamp(10px,1.3vh,18px) clamp(14px,1.5vw,29px);
  min-height:0;border-bottom:1px solid #364651;position:relative}
 .v13-lane:last-child{border-bottom:0;background:#121E29}
+.v13-lane-index,.v13-identity{align-self:center}
 .v13-lane-index{width:clamp(51px,5.25vw,90px);height:clamp(65px,6.3vw,108px);
  display:grid;place-items:center;font:900 clamp(43px,4.6vw,78px)/1 'DIN Alternate','Bahnschrift','Barlow Condensed',sans-serif;
  border-radius:2px;border:1px solid rgba(16,185,129,.75);background:rgba(16,185,129,.13);color:#75DBBA}
@@ -345,3 +346,35 @@ body[data-view="screen"] .v13-screen{
 }
 
 /* V13.2 broadcast micro-refinements — team state + race display alignment */
+
+/* V13.2.1 ranking viewport and stripe alignment */
+@media(min-width:1050px){
+  body[data-view="screen"] .v13-screen{
+    grid-template-rows:clamp(62px,7.5vh,80px) minmax(0,1fr) clamp(38px,4.4vh,48px)!important;
+    row-gap:clamp(5px,.62vh,8px)!important;
+  }
+  body[data-view="screen"] .v13-ranking{
+    height:100%!important;max-height:100%!important;
+    grid-template-rows:clamp(50px,6.5vh,68px) minmax(0,1fr) 18px!important;
+  }
+  body[data-view="screen"] .v13-ranking-columns{
+    display:grid!important;grid-template-rows:minmax(0,1fr)!important;
+    height:100%!important;overflow:hidden!important;padding:3px 0!important;
+  }
+  body[data-view="screen"] .v13-ranking-column{
+    height:100%!important;max-height:100%!important;
+    grid-template-rows:repeat(18,minmax(0,1fr))!important;
+    grid-auto-rows:minmax(0,1fr)!important;
+    gap:0!important;overflow:hidden!important;
+  }
+  body[data-view="screen"] .v13-rank-row{
+    min-height:0!important;height:100%!important;max-height:100%!important;
+    overflow:hidden!important;line-height:1!important;
+  }
+  body[data-view="screen"] .v13-rank-name{
+    font-size:clamp(10px,.82vw,15px)!important;line-height:1.03!important;
+  }
+  body[data-view="screen"] .v13-rank-right{
+    font-size:clamp(10px,.74vw,13px)!important;line-height:1!important;
+  }
+}
