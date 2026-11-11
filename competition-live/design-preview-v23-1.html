@@ -1,0 +1,479 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>MOVE.ARENA V23.1 · 鲜明赛事配色预览</title><style>
+/* MOVE.ARENA V23 — Editorial Motorsport
+   Human-designed rhythm: few surfaces, confident type, disciplined spacing.
+   No gradient glow, inset dashboards, faux-3D or scrolling scoreboards. */
+:root{
+ --canvas:#070b10;--ink:#fbfdfb;--secondary:#bfd0d7;--quiet:#8299a5;
+ --surface:#101922;--surface-raised:#1a2832;--line:#3c505b;--hairline:#2b3c46;
+ --signal:#ffd17d;--lane-a:#2bdfb6;--lane-b:#ffb45e;--danger:#f3766c;
+ --numeric:'Bahnschrift','Arial Narrow','DIN Alternate',system-ui,sans-serif;
+ --text:'Noto Sans SC','Microsoft YaHei','PingFang SC',system-ui,sans-serif;
+ --ease:cubic-bezier(.22,1,.36,1)
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;max-width:100%;background:var(--canvas);overflow:hidden}
+body{margin:0;height:100%;max-width:100%;background:var(--canvas);color:var(--ink);font-family:var(--text);overflow:hidden}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+[hidden]{display:none!important}
+.screen{
+ height:100dvh;width:100%;max-width:100vw;min-width:0;min-height:0;
+ display:grid;grid-template-rows:clamp(64px,8.1vh,86px) minmax(0,1fr) clamp(37px,4.7vh,50px);
+ gap:clamp(8px,.85vh,12px);
+ padding:0 clamp(12px,1.2vw,25px) clamp(8px,.85vh,12px);overflow:hidden
+}
+/* A real masthead, not a hero banner */
+.masthead{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr) minmax(0,.82fr);
+ gap:clamp(8px,1vw,22px);align-items:center;min-height:0;min-width:0;
+ border-bottom:1px solid #3b454c
+}
+.brand{display:flex;align-items:center;gap:clamp(8px,.8vw,14px);min-width:0}
+.brand-logo{
+ display:block;flex:0 0 auto;width:clamp(42px,3.45vw,63px);height:clamp(42px,3.45vw,63px);
+ object-fit:contain;background:#fff;border-radius:50%
+}
+.brand-name{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0}
+.brand-name small{font-size:clamp(9px,.65vw,12px);color:#a4b3bc;font-weight:500;white-space:nowrap}
+.brand-name strong{font-size:clamp(15px,1.16vw,23px);font-weight:720;white-space:nowrap}
+.event-id{display:flex;align-items:center;justify-content:center;gap:clamp(8px,1vw,18px);min-width:0}
+.event-id h1{
+ min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ margin:0;font-size:clamp(22px,1.77vw,37px);font-weight:760;line-height:1.1;
+ letter-spacing:-.06em;color:#fafaf8
+}
+.event-tag{font-size:clamp(10px,.7vw,13px);font-weight:680;white-space:nowrap;color:#f4c188;letter-spacing:.025em}
+.mast-right{justify-self:end;display:flex;align-items:center;gap:clamp(10px,.8vw,17px);white-space:nowrap;min-width:0}
+.net{font-size:11px;letter-spacing:.035em;color:#89e8c5;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.net:before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:#3de2b5}
+.real-clock{font:700 clamp(22px,1.8vw,35px)/1 var(--numeric);color:#dfe5e5;font-variant-numeric:tabular-nums}
+/* 56/44 fixed visual contract, without any hard min widths */
+.body{
+ display:grid;grid-template-columns:minmax(0,56fr) minmax(0,44fr);
+ gap:clamp(12px,1.15vw,23px);min-width:0;min-height:0;overflow:hidden
+}
+.left{
+ display:grid;grid-template-rows:minmax(0,1fr) clamp(107px,14.3vh,148px);
+ gap:clamp(10px,1vh,16px);min-width:0;min-height:0;overflow:hidden
+}
+/* One cohesive stage; no boxed data tiles */
+.arena{
+ display:grid;grid-template-rows:clamp(100px,11.3vh,126px) minmax(0,1fr) clamp(28px,3.4vh,37px);
+ min-width:0;min-height:0;background:var(--surface);overflow:hidden;
+ border-top:2px solid #c59a67;border-bottom:1px solid #3c484e
+}
+.arena-head{
+ position:relative;isolation:isolate;
+ display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+ gap:clamp(9px,1vw,18px);align-items:center;
+ padding:clamp(7px,.85vh,12px) clamp(15px,1.3vw,27px);
+ border-bottom:1px solid #48535a;min-width:0
+}
+.phase{display:flex;align-items:baseline;gap:clamp(8px,.8vw,16px);min-width:0;justify-self:start}
+.phase-label{font-size:clamp(11px,.8vw,15px);font-weight:620;white-space:nowrap;color:#c5cfd0}
+.phase-number{
+ font:730 clamp(49px,4.1vw,77px)/.97 var(--numeric);color:#ffd49a;
+ font-variant-numeric:tabular-nums;letter-spacing:-1.8px
+}
+.phase-total{font-size:clamp(11px,.76vw,15px);color:#8f9ca2;white-space:nowrap}
+.timer{
+ justify-self:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;
+ min-width:0;max-height:100%;padding:3px 6px;position:relative
+}
+.timer-caption{font-size:clamp(10px,.68vw,13px);font-weight:600;letter-spacing:.12em;color:#b1bfc4;white-space:nowrap}
+.timer-digits{
+ display:block;white-space:nowrap;font:780 clamp(55px,4.9vw,93px)/1 var(--numeric);
+ font-variant-numeric:tabular-nums;letter-spacing:-1px;color:#ffd17d;
+ margin:0;text-align:center
+}
+.timer.warn .timer-digits{color:#ffad59}
+.timer.danger .timer-digits{color:#ff7e75}
+.arena-summary{display:flex;align-items:flex-end;flex-direction:column;gap:7px;justify-self:end;min-width:0}
+.arena-summary strong{font-size:clamp(11px,.8vw,16px);font-weight:650;white-space:nowrap}
+.arena-summary small{font-size:clamp(10px,.67vw,13px);color:#8798a1;white-space:nowrap}
+.time-track{position:absolute;left:0;right:0;bottom:0;height:2px;background:#29343b;overflow:hidden}
+.time-track i{display:block;width:100%;height:100%;transform-origin:left center;background:#d9ab72;transition:transform .16s linear}
+.timer.warn~.time-track i{background:#f3a865}
+/* 2 horizontal lane strips, no inset rectangles, badges, gradients */
+.lanes{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));position:relative;min-height:0}
+.lane{
+ display:grid;grid-template-columns:clamp(46px,5.2vw,91px) minmax(0,1fr) minmax(235px,36%);
+ gap:clamp(8px,1.02vw,20px);align-items:center;
+ padding:clamp(12px,1.7vh,24px) clamp(13px,1.38vw,27px);
+ border-left:3px solid var(--lane-a);border-bottom:1px solid #354048;min-width:0;min-height:0;
+ background:transparent
+}
+.lane.b{border-left-color:var(--lane-b);border-bottom:0;background:rgba(255,255,255,.012)}
+.lane-code{
+ display:block;justify-self:start;
+ font:700 clamp(55px,5.1vw,91px)/.92 var(--numeric);
+ letter-spacing:-2px;color:#62f1c7
+}
+.lane.b .lane-code{color:#ffd095}
+.lane-identity{display:flex;flex-direction:column;justify-content:center;gap:clamp(7px,1.2vh,17px);min-width:0}
+.lane-meta{font-size:clamp(10px,.72vw,14px);font-weight:520;color:#90a0a9;white-space:nowrap}
+.lane-name{
+ display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ color:#fafaf7;font-size:clamp(30px,2.72vw,55px);font-weight:750;letter-spacing:-.045em;line-height:1.13
+}
+.lane-name.long{font-size:clamp(25px,2.1vw,43px)}
+.state{font-size:clamp(11px,.8vw,15px);font-weight:600;color:#f3c37f;display:flex;align-items:center;gap:8px}
+.state:before{content:'';display:block;height:5px;width:5px;background:currentColor;border-radius:50%}
+.state.live{color:#65eec2}.state.done{color:#c5d1d5}
+.results{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;
+ min-height:0;min-width:0;gap:clamp(7px,.8vw,14px);
+ border-left:1px solid #43505a;padding-left:clamp(14px,1.16vw,24px)
+}
+.result{display:flex;flex-direction:column;justify-content:center;gap:clamp(11px,1.3vh,17px);min-width:0}
+.result-label{font-size:clamp(10px,.75vw,14px);color:#98a8b0;font-weight:550;white-space:nowrap}
+.result-value{
+ white-space:nowrap;font:730 clamp(37px,3.3vw,64px)/1 var(--numeric);
+ font-variant-numeric:tabular-nums;color:#f4f7f5
+}
+.result.duration .result-value{font-size:clamp(20px,1.8vw,36px);color:#d6dfe0}
+.result-value.blank{color:#657c8a;opacity:.55}
+.versus{
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ z-index:2;background:var(--surface);color:#aab3b4;
+ font:640 clamp(11px,.75vw,15px)/1 var(--numeric);padding:5px 8px;letter-spacing:.08em;
+ border-top:1px solid #59656b;border-bottom:1px solid #59656b;pointer-events:none
+}
+.arena-prompt{
+ display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden;
+ padding:0 clamp(15px,1.3vw,27px);font-size:clamp(11px,.72vw,14px);
+ color:#97ada7;letter-spacing:.005em
+}
+.arena-prompt:before{content:'';display:block;flex:0 0 auto;background:#6cb5a1;width:5px;height:5px;border-radius:50%}
+.arena-prompt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Scheduling content is not another dashboard */
+.next{
+ display:grid;grid-template-rows:auto minmax(0,1fr) 3px;gap:clamp(7px,.8vh,11px);
+ min-width:0;min-height:0;padding:clamp(12px,1vh,17px) clamp(15px,1.3vw,27px);
+ background:var(--surface);border-top:1px solid #49545b;overflow:hidden
+}
+.next-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
+.next-head h2{font-size:clamp(17px,1.2vw,24px);line-height:1.16;letter-spacing:-.025em;font-weight:720;margin:0;white-space:nowrap}
+.next-head small{font-size:clamp(9px,.7vw,13px);color:#91a2aa;white-space:nowrap}
+.next-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));min-height:0;min-width:0;gap:clamp(16px,1.7vw,32px)}
+.next-item{display:flex;align-items:center;gap:clamp(8px,.8vw,15px);min-width:0}
+.next-item.b{border-left:1px solid #39464d;padding-left:clamp(12px,1.1vw,22px)}
+.next-key{font:760 clamp(21px,1.55vw,32px)/1 var(--numeric);color:#6bf0c9}
+.next-item.b .next-key{color:#ffd092}
+.next-text{display:flex;flex-direction:column;min-width:0;gap:3px}
+.next-text small{font-size:clamp(9px,.66vw,12px);color:#9aafb6;white-space:nowrap}
+.next-text strong{
+ color:#e9eeee;font-size:clamp(15px,1.12vw,23px);font-weight:720;
+ white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis
+}
+.stages{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:3px;max-height:3px}
+.stages i{background:#344049}.stages i.done{background:#4bc8a5}.stages i.active{background:var(--signal)}
+/* Timing tower: quiet rows, status-first, no individual cards */
+.tower{
+ min-height:0;min-width:0;overflow:hidden;display:grid;
+ grid-template-rows:clamp(62px,7.7vh,84px) minmax(0,1fr) 20px;
+ padding:0 clamp(10px,1vw,20px);background:#11171c;
+ border-top:2px solid #56616a
+}
+.tower-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;border-bottom:1px solid #3d494f}
+.tower-head h2{margin:0;font-size:clamp(21px,1.5vw,32px);letter-spacing:-.038em;font-weight:735;white-space:nowrap}
+.tower-live{font-size:clamp(10px,.76vw,14px);color:#a9e1c9;font-weight:550;white-space:nowrap}
+.tower-columns{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr);
+ gap:clamp(15px,1.3vw,26px);padding:clamp(5px,.6vh,9px) 0;
+ min-height:0;min-width:0;position:relative;overflow:hidden
+}
+.tower-columns:after{content:'';position:absolute;left:50%;top:8px;bottom:8px;width:1px;background:#3b464d;transform:translateX(-.5px)}
+.tower-col{display:grid;grid-template-rows:repeat(18,minmax(0,1fr));min-width:0;min-height:0;overflow:hidden}
+.row{
+ display:grid;grid-template-columns:clamp(23px,1.56vw,32px) minmax(0,1fr) max-content;
+ align-items:center;min-width:0;min-height:0;overflow:hidden;gap:clamp(4px,.45vw,9px);
+ padding:0 clamp(2px,.32vw,7px);border-bottom:1px solid #29333a;
+ background:transparent
+}
+.row-rank{font:650 clamp(12px,.85vw,17px)/1 var(--numeric);color:#87959a;white-space:nowrap}
+.row-name{
+ min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:clamp(11px,.82vw,16px);font-weight:590;line-height:1.05;color:#d7dee0
+}
+.row-name.long{font-size:clamp(10px,.73vw,14px)}
+.row-name.xlong{font-size:clamp(9px,.67vw,13px)}
+.row.pending .row-name{color:#aebdc4;font-weight:520}
+.row.scored .row-name{color:#f1f4f4;font-weight:675}
+.row-status{font-size:clamp(9px,.67vw,12px);color:#65757f;white-space:nowrap;font-weight:540}
+.row.in-a{box-shadow:inset 2px 0 #39c8a5;background:#15372e}
+.row.in-b{box-shadow:inset 2px 0 #e9ad65;background:#38291e}
+.row.in-a .row-status{color:#91f1ce}
+.row.in-b .row-status{color:#ffd096}
+.row.wait-a,.row.wait-b{box-shadow:inset 1px 0 #69776e}
+.row.wait-a .row-status,.row.wait-b .row-status{color:#b3c0c3}
+.row-stat{display:flex;align-items:center;gap:clamp(5px,.47vw,9px);white-space:nowrap;font-family:var(--numeric);font-variant-numeric:tabular-nums}
+.row-stat b{color:#ffce91;font-size:clamp(12px,.93vw,18px);font-weight:760}
+.row-stat small{color:#b8c4c7;font-size:clamp(9px,.67vw,13px);font-weight:520}
+.row.medal1 .row-rank{color:#ffdb9c}
+.row.medal2 .row-rank{color:#d7e1e3}
+.row.medal3 .row-rank{color:#dcae93}
+.tower-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:clamp(9px,.65vw,12px);color:#7c8f98;white-space:nowrap;min-width:0}
+/* One sober dispatch ribbon */
+.announcements{
+ display:flex;align-items:center;gap:clamp(12px,1.1vw,23px);min-width:0;
+ padding:0 clamp(12px,1.1vw,24px);background:#1a2228;border-top:1px solid #465158
+}
+.announce-lead{font-size:clamp(11px,.8vw,15px);font-weight:730;white-space:nowrap;color:#ffcc86}
+.announce-message{
+ color:#dce3e5;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:clamp(11px,.85vw,16px);font-weight:580
+}
+.demo-notice{font-size:clamp(10px,.7vw,13px);color:#a8bac2;white-space:nowrap;font-weight:570}
+/* Demo-only controls sit outside the composition, unobtrusively */
+.preview-trigger{
+ position:fixed;right:clamp(14px,1.5vw,28px);bottom:clamp(55px,6vh,76px);z-index:20;
+ border:1px solid #45555d;border-radius:2px;background:#20292e;color:#cad5d7;
+ padding:7px 13px;font-size:12px;font-weight:640
+}
+.preview-trigger:hover{background:#2c3940;color:#fff}
+.preview-menu{
+ position:fixed;right:clamp(14px,1.5vw,28px);bottom:clamp(96px,10.5vh,128px);z-index:21;
+ width:min(325px,calc(100vw - 28px));padding:16px;background:#192127;border:1px solid #667078;
+ box-shadow:0 15px 32px rgba(0,0,0,.35);border-radius:2px;display:flex;flex-direction:column;gap:10px
+}
+.preview-menu>strong{font-size:16px;font-weight:720}
+.preview-menu>small{font-size:12px;color:#b1c1c7;line-height:1.55}
+.scene-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.scene-grid button,.award-close{
+ padding:9px 10px;border:1px solid #46545c;background:#222d33;color:#e2ebed;
+ border-radius:2px;font-size:12px;font-weight:620;text-align:center
+}
+.scene-grid button[aria-pressed="true"]{border-color:#d0aa7d;background:#3b332b;color:#ffe1b8}
+/* Awards: typographic ceremony, not exploding graphics */
+.award-curtain{
+ position:fixed;inset:0;z-index:50;background:#090c0e;
+ display:flex;align-items:center;justify-content:center;padding:clamp(20px,3vw,64px);
+ overflow:auto
+}
+.award-dialog{width:min(1160px,100%);display:flex;flex-direction:column;gap:clamp(24px,3.6vh,50px);min-width:0}
+.award-kicker{font-size:clamp(12px,1vw,17px);color:#d9b68d;letter-spacing:.09em}
+.award-dialog h2{font-size:clamp(34px,3.8vw,76px);font-weight:720;line-height:1.13;letter-spacing:-.05em;margin:0}
+.award-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(15px,2vw,30px);min-width:0}
+.award-box{
+ display:flex;flex-direction:column;gap:15px;min-width:0;padding:clamp(19px,2.2vw,37px) 0;
+ border-top:2px solid #58616a;border-bottom:1px solid #48535b
+}
+.award-box.gold{border-top-color:#ffce81}.award-box.silver{border-top-color:#becad0}.award-box.bronze{border-top-color:#ae886c}
+.award-box b{font:750 clamp(56px,6vw,116px)/1 var(--numeric);font-variant-numeric:tabular-nums;color:#ffd492}
+.award-box.silver b{color:#cdd9dc}.award-box.bronze b{color:#d8ae91}
+.award-box strong{font-size:clamp(22px,1.9vw,34px);font-weight:720}
+.award-box small{color:#a8b8c0;font-size:clamp(11px,.85vw,16px);line-height:1.4}
+.award-close{align-self:flex-start;padding:11px 18px}
+@keyframes lane-enter{from{opacity:.55;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.scene-change .lane-identity,.scene-change .row.scored{animation:lane-enter .32s var(--ease) both}
+.scene-change .lane.b .lane-identity{animation-delay:.08s}
+/* The rank has exactly 18 fractions per column, never an internal scroller. */
+@media(min-width:1040px) and (max-width:1580px){
+ .masthead{grid-template-columns:minmax(0,.9fr) minmax(0,1.8fr) minmax(0,.7fr)}
+ .event-id h1{font-size:clamp(20px,1.65vw,28px)}
+ .arena-head{gap:7px}
+ .timer-digits{font-size:clamp(45px,4.2vw,68px)}
+ .phase-number{font-size:clamp(43px,3.7vw,61px)}
+ .lane{grid-template-columns:clamp(39px,4.6vw,67px) minmax(0,1fr) minmax(181px,38%);gap:clamp(6px,.7vw,12px);padding-inline:clamp(10px,.9vw,16px)}
+ .lane-code{font-size:clamp(47px,4.6vw,66px)}
+ .lane-name{font-size:clamp(26px,2.25vw,40px)}
+ .lane-name.long{font-size:clamp(22px,1.88vw,34px)}
+ .results{padding-left:clamp(8px,.8vw,13px);gap:6px}
+ .result-value{font-size:clamp(31px,2.62vw,44px)}
+ .result.duration .result-value{font-size:clamp(18px,1.54vw,27px)}
+ .next-text strong{font-size:clamp(13px,1.05vw,19px)}
+ .row-stat{gap:5px}
+ .row-stat b{font-size:clamp(11px,.84vw,15px)}
+ .row-stat small{font-size:clamp(9px,.63vw,11px)}
+}
+@media(min-width:1040px) and (max-height:820px){
+ .screen{grid-template-rows:clamp(54px,7.7vh,73px) minmax(0,1fr) 35px;gap:clamp(5px,.6vh,8px);padding-bottom:6px}
+ .left{grid-template-rows:minmax(0,1fr) clamp(82px,12.3vh,112px);gap:6px}
+ .arena{grid-template-rows:clamp(71px,9.7vh,83px) minmax(0,1fr) clamp(24px,3.3vh,29px)}
+ .arena-head{padding-top:4px;padding-bottom:3px}
+ .timer-digits{font-size:clamp(40px,3.6vw,61px)}
+ .timer-caption{font-size:10px}
+ .phase-number{font-size:clamp(39px,3.35vw,57px)}
+ .lane{padding-top:6px;padding-bottom:6px}
+ .tower{grid-template-rows:clamp(44px,6.3vh,58px) minmax(0,1fr) 15px}
+ .tower-columns{padding-top:2px;padding-bottom:2px}
+ .row-name{font-size:clamp(10px,.8vw,14px)}
+ .row-stat small{font-size:clamp(8px,.62vw,11px)}
+ .next{padding-top:7px;padding-bottom:6px;gap:5px}
+ .next-head h2{font-size:clamp(15px,1vw,19px)}
+ .next-text strong{font-size:clamp(12px,.96vw,17px)}
+}
+@media(max-width:1039px){
+ html,body{height:auto;min-height:100dvh;overflow:auto}
+ .screen{height:auto;min-height:100dvh;grid-template-rows:auto auto auto;overflow:visible;padding:0 12px 12px}
+ .masthead{display:flex;flex-wrap:wrap;min-height:72px;padding:11px 0}
+ .event-id{order:3;flex:1 1 100%;justify-content:flex-start}
+ .event-id h1{font-size:clamp(21px,3.45vw,31px)}
+ .mast-right{margin-left:auto}
+ .body{grid-template-columns:1fr;gap:12px;overflow:visible}
+ .left{grid-template-rows:515px 130px}
+ .arena{grid-template-rows:82px minmax(0,1fr) 32px}
+ .arena-head{padding:5px 10px}
+ .phase-number{font-size:44px}
+ .timer-digits{font-size:47px}
+ .lane{grid-template-columns:55px minmax(0,1fr) 37%;gap:8px}
+ .lane-code{font-size:56px}
+ .lane-name{font-size:clamp(25px,3.7vw,41px)}
+ .tower{min-height:730px;grid-template-rows:60px minmax(0,1fr) 21px}
+ .tower-col{grid-template-rows:repeat(18,minmax(31px,1fr))}
+ .announcements{min-height:46px}
+}
+@media(max-width:620px){
+ .brand-logo{width:39px;height:39px}
+ .brand-name strong{font-size:15px}
+ .event-id h1{font-size:clamp(17px,4.9vw,24px)}
+ .event-tag{font-size:9px}
+ .real-clock{font-size:22px}
+ .left{grid-template-rows:457px 117px}
+ .arena{grid-template-rows:71px minmax(0,1fr) 28px}
+ .arena-summary{display:none}
+ .phase-label{font-size:10px}
+ .phase-number{font-size:37px}
+ .phase-total{font-size:10px}
+ .timer-digits{font-size:41px}
+ .timer-caption{font-size:8px}
+ .lane{grid-template-columns:35px minmax(0,1fr) 37%;gap:5px;padding:8px 6px}
+ .lane-code{font-size:37px}
+ .lane-meta{font-size:9px}
+ .lane-name{font-size:clamp(17px,4.5vw,24px)}
+ .lane-name.long{font-size:16px}
+ .state{font-size:10px}
+ .results{padding-left:5px;gap:2px}
+ .result{gap:6px}
+ .result-label{font-size:8px}
+ .result-value{font-size:17px}
+ .result.duration .result-value{font-size:10px}
+ .next{padding:8px;gap:6px}
+ .next-head h2{font-size:14px}
+ .next-head small{font-size:9px}
+ .next-item{gap:6px}
+ .next-item.b{padding-left:8px}
+ .next-key{font-size:20px}
+ .next-text small{font-size:8px}
+ .next-text strong{font-size:11px}
+ .tower{min-height:718px;padding:0 7px;grid-template-rows:55px minmax(0,1fr) 20px}
+ .tower-head h2{font-size:21px}
+ .tower-live{font-size:10px}
+ .tower-columns{gap:8px}
+ .row{grid-template-columns:18px minmax(0,1fr) max-content;gap:2px;padding:0 1px}
+ .row-rank{font-size:10px}
+ .row-name{font-size:9px}
+ .row-name.long,.row-name.xlong{font-size:8px}
+ .row-status{font-size:8px}
+ .row-stat{flex-direction:column;gap:1px;align-items:end}
+ .row-stat b{font-size:10px}
+ .row-stat small{font-size:8px}
+ .tower-foot{font-size:8px}
+ .announcements{padding:0 7px;gap:7px}
+ .announce-lead{font-size:10px}
+ .announce-message{font-size:10px}
+ .demo-notice{font-size:8px}
+ .award-groups{grid-template-columns:1fr;gap:9px}
+ .award-box{padding:12px 0;gap:7px}
+ .award-box b{font-size:44px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* V23.1 — stronger, meaningful color; no glowing widgets or decorative gradients.
+   Saturation is concentrated on active race lanes, clock and verified scores. */
+.arena{border-top-color:#D5A467}
+.lane{border-left-color:var(--lane-a)}
+.lane.b{border-left-color:var(--lane-b)}
+.timer-digits{color:var(--signal)}
+.timer.warn .timer-digits{color:#FFB15B}
+.timer.danger .timer-digits{color:#FF8175}
+.phase-number{color:#FFD39A}
+.row.in-a{background:#17382F;box-shadow:inset 3px 0 var(--lane-a)}
+.row.in-b{background:#3D2D1F;box-shadow:inset 3px 0 var(--lane-b)}
+.row.in-a .row-status{color:#A9F6D8}
+.row.in-b .row-status{color:#FFDBA8}
+.row.scored .row-stat b{color:#FFD08D}
+.row.scored .row-name{color:#FFFFFF}
+.tower-live{color:#A9E2C9}
+.lane-code{color:#66F2C9}
+.lane.b .lane-code{color:#FFD39B}
+.next-key{color:#6CF0CA}
+.next-item.b .next-key{color:#FFD196}
+.state.live{color:#67EFC4}
+.announce-lead{color:#FFD197}
+.event-tag{color:#F6CB94}
+.net:before{background:#42E2B6}
+</style></head><body>
+<div class="screen" id="screen"><header class="masthead"><div class="brand"><img class="brand-logo" src="../assets/lab-logo-transparent.svg" alt="机械创新实验室官方徽标"><div class="brand-name"><small>江苏科技大学</small><strong>机械创新实验室</strong></div></div><div class="event-id"><h1>智能搬运小车创新挑战赛</h1><span class="event-tag">2026 校内赛</span></div><div class="mast-right"><div class="net"><span>演示模式</span></div><time class="real-clock" id="localClock">--:--:--</time></div></header>
+<main class="body"><div class="left"><section class="arena"><div class="arena-head"><div class="phase"><span class="phase-label" id="phaseLabel">待开赛</span><strong class="phase-number" id="phaseNumber">01</strong><span class="phase-total">/ 18轮</span></div><div class="timer" id="timeBox"><small class="timer-caption" id="timerCaption">等待比赛开始</small><strong class="timer-digits" id="timeDigits">04:00</strong></div><div class="arena-summary"><strong>A / B 双赛道</strong><small>双赛道独立计时</small></div><div class="time-track"><i id="timerFill"></i></div></div><div class="lanes"><article class="lane a" id="laneA"></article><article class="lane b" id="laneB"></article><span class="versus" aria-hidden="true">VS</span></div><div class="arena-prompt"><span id="arenaHint">第一组赛前调试4分钟</span></div></section><section class="next"><div class="next-head"><h2>下一轮候场</h2><small>请提前进入调试区</small></div><div class="next-columns"><div class="next-item a" id="nextA"></div><div class="next-item b" id="nextB"></div></div><div class="stages" id="stageSteps"></div></section></div><aside class="tower"><div class="tower-head"><h2>实时积分榜</h2><span class="tower-live" id="scoreCount">已录分 0 / 36</span></div><div class="tower-columns" id="towerColumns"></div><div class="tower-foot"><span>未赛显示签位 · 完赛显示名次</span><span>同分按完成用时排序</span></div></aside></main>
+<footer class="announcements"><strong class="announce-lead">现场调度</strong><span class="announce-message" id="liveNotice">欢迎参加2026智能搬运小车创新挑战赛</span><span class="demo-notice">DEMO / 非正式成绩</span></footer></div>
+<button id="menuToggle" class="preview-trigger" aria-controls="demoMenu" aria-expanded="false">切换场景</button><section id="demoMenu" class="preview-menu" hidden><strong>V23.1 配色预览</strong><small>全部为本地模拟数据，不涉及正式比赛数据库</small><div class="scene-grid"><button data-scene="upcoming" aria-pressed="true">待开赛</button><button data-scene="live" aria-pressed="false">进行中</button><button data-scene="warning" aria-pressed="false">最后25秒</button><button data-scene="finished" aria-pressed="false">22队录分</button><button data-scene="awards" aria-pressed="false">模拟颁奖</button><button id="openFullscreen">全屏查看</button></div></section>
+<div id="awardCurtain" class="award-curtain" hidden role="dialog" aria-modal="true" aria-labelledby="awardTitle"><section class="award-dialog"><span class="award-kicker">2026 · 校内赛　/　模拟颁奖画面</span><h2 id="awardTitle">精彩的较量，致敬每一支队伍。</h2><div class="award-groups"><div class="award-box gold"><b>03</b><strong>一等奖</strong><small>3支队伍 · 按模拟成绩展示</small></div><div class="award-box silver"><b>07</b><strong>二等奖</strong><small>7支队伍 · 按模拟成绩展示</small></div><div class="award-box bronze"><b>08</b><strong>三等奖</strong><small>8支队伍 · 按模拟成绩展示</small></div></div><button id="closeAwards" class="award-close" type="button">返回赛事大屏</button></section></div>
+<script>
+'use strict';
+const teams=[{"order":1,"name":"哈雪大帽险","round":1,"lane":"A"},{"order":2,"name":"稀有队","round":1,"lane":"B"},{"order":3,"name":"一车九九九","round":2,"lane":"A"},{"order":4,"name":"阿塔浪队","round":2,"lane":"B"},{"order":5,"name":"老鼠洗完头","round":3,"lane":"A"},{"order":6,"name":"无言以对","round":3,"lane":"B"},{"order":7,"name":"宝宝巴士","round":4,"lane":"A"},{"order":8,"name":"迅风小队","round":4,"lane":"B"},{"order":9,"name":"如来佛组","round":5,"lane":"A"},{"order":10,"name":"组一辈子少男乐队","round":5,"lane":"B"},{"order":11,"name":"窝累铜泥丸","round":6,"lane":"A"},{"order":12,"name":"用户9527","round":6,"lane":"B"},{"order":13,"name":"友商都是**","round":7,"lane":"A"},{"order":14,"name":"我们说的都队","round":7,"lane":"B"},{"order":15,"name":"免费帮测灵根队","round":8,"lane":"A"},{"order":16,"name":"從來唔會輸","round":8,"lane":"B"},{"order":17,"name":"奶龙队","round":9,"lane":"A"},{"order":18,"name":"求针队","round":9,"lane":"B"},{"order":19,"name":"训狗大队","round":10,"lane":"A"},{"order":20,"name":"步履者","round":10,"lane":"B"},{"order":21,"name":"终极赛罗警卫队","round":11,"lane":"A"},{"order":22,"name":"666","round":11,"lane":"B"},{"order":23,"name":"超能鹿战队","round":12,"lane":"A"},{"order":24,"name":"你说的都队","round":12,"lane":"B"},{"order":25,"name":"华人青年队","round":13,"lane":"A"},{"order":26,"name":"陪跑队","round":13,"lane":"B"},{"order":27,"name":"今天吃点啥","round":14,"lane":"A"},{"order":28,"name":"Astralis","round":14,"lane":"B"},{"order":29,"name":"胜你无需第二遍队","round":15,"lane":"A"},{"order":30,"name":"猛攻队","round":15,"lane":"B"},{"order":31,"name":"三英战大车","round":16,"lane":"A"},{"order":32,"name":"凌云机创队","round":16,"lane":"B"},{"order":33,"name":"果宝机甲队","round":17,"lane":"A"},{"order":34,"name":"图灵测试队","round":17,"lane":"B"},{"order":35,"name":"胆子肥嘟嘟队","round":18,"lane":"A"},{"order":36,"name":"爱拼才会赢队","round":18,"lane":"B"}];
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const displayTime=ms=>ms==null?'--:--.--':pad(Math.floor(ms/60000))+':'+pad(Math.floor(ms/1000)%60)+'.'+pad(Math.floor(ms%1000/10));
+const scores=teams.map((t,i)=>({...t,score:+(98.15-i*1.42+(i%4)*.14).toFixed(2),elapsed:82500+i*1970}));
+const states={upcoming:{round:1,remain:240,scored:0,label:'待开赛',caption:'等待比赛开始',hint:'第一组赛前调试4分钟，请A/B赛道选手做好准备'},live:{round:4,remain:200,scored:6,label:'比赛进行中',caption:'本轮倒计时',hint:'第4轮正在比赛，下一轮队伍请前往调试区'},warning:{round:4,remain:25,scored:6,label:'比赛进行中',caption:'最后25秒',hint:'本轮剩余25秒，请注意赛道安全与裁判指令'},finished:{round:12,remain:0,scored:22,label:'成绩核对',caption:'成绩核对',hint:'已录入22队成绩，裁判正在复核，请等待公布'},awards:{round:18,remain:0,scored:36,label:'颁奖揭晓',caption:'颁奖阶段',hint:'演示赛事已结束，当前展示的是模拟颁奖名单'}};
+let current='upcoming',remain=240,lastTick=performance.now();
+function cfg(){return states[current]}
+function completed(){return scores.slice(0,cfg().scored)}
+function ranks(){const done=completed().slice().sort((a,b)=>b.score-a.score||a.elapsed-b.elapsed);const ids=new Set(done.map(t=>t.order));return [...done,...teams.filter(t=>!ids.has(t.order))]}
+function sceneTeam(lane){return teams.find(t=>t.round===cfg().round&&t.lane===lane)}
+function nextTeam(lane){return teams.find(t=>t.round===cfg().round+1&&t.lane===lane)}
+function currentLane(lane){
+ const t=sceneTeam(lane),score=completed().find(x=>x.order===t?.order);
+ const status=score?'已完成':current==='live'||current==='warning'?'比赛进行中':current==='upcoming'?'等待上场':'等待成绩';
+ const className=score?'done':current==='live'||current==='warning'?'live':'';
+ return `<span class="lane-code">${lane}</span><div class="lane-identity"><div class="lane-meta">第 ${pad(t?.order||0)} 签位　 /　第${pad(cfg().round)}轮</div><strong class="lane-name ${[...(t?.name||'')].length>9?'long':''}" title="${esc(t?.name||'')}">${esc(t?.name||'等待安排')}</strong><span class="state ${className}">${status}</span></div><div class="results"><div class="result"><small class="result-label">本轮得分</small><strong class="result-value ${score?'':'blank'}">${score?score.score.toFixed(2):'---'}</strong></div><div class="result duration"><small class="result-label">完成用时</small><strong class="result-value ${score?'':'blank'}">${displayTime(score?.elapsed)}</strong></div></div>`;
+}
+function nextMarkup(lane){const t=nextTeam(lane);return `<span class="next-key">${lane}</span><div class="next-text"><small>${lane}赛道 · 下一轮</small><strong title="${esc(t?.name||'')}">${esc(t?.name||'正赛已结束')}</strong></div>`}
+function rankMarkup(t,index){
+ const scored=t.score!==undefined;const live=!scored&&['upcoming','live','warning'].includes(current)&&t.round===cfg().round;
+ const next=!scored&&t.round===cfg().round+1&&current!=='awards';
+ const medal=scored&&index<3?' medal'+(index+1):'';
+ const classes=['row',scored?'scored':'pending',live?'in-'+t.lane.toLowerCase():'',next?'wait-'+t.lane.toLowerCase():'',medal].join(' ');
+ const nameLength=[...t.name].length,nameClass=nameLength>16?'xlong':nameLength>10?'long':'';
+ const content=scored?`<span class="row-stat"><b>${t.score.toFixed(2)}</b><small>${displayTime(t.elapsed)}</small></span>`:`<span class="row-status">${live?'本轮'+t.lane:next?'候场':'待赛'}</span>`;
+ return `<div class="${classes}"><span class="row-rank">${pad(scored?index+1:t.order)}</span><span class="row-name ${nameClass}" title="${esc(t.name)}">${esc(t.name)}</span>${content}</div>`;
+}
+function refresh(){
+ const s=cfg();$('phaseLabel').textContent=s.label;$('phaseNumber').textContent=pad(s.round);
+ $('laneA').innerHTML=currentLane('A');$('laneB').innerHTML=currentLane('B');
+ $('nextA').innerHTML=nextMarkup('A');$('nextB').innerHTML=nextMarkup('B');
+ const all=ranks();$('towerColumns').innerHTML=[0,1].map(k=>`<div class="tower-col">${all.slice(k*18,(k+1)*18).map((t,i)=>rankMarkup(t,k*18+i)).join('')}</div>`).join('');
+ $('scoreCount').textContent='已录分 '+s.scored+' / 36';
+ $('stageSteps').innerHTML=Array.from({length:18},(_,i)=>`<i class="${i+1<s.round?'done':i+1===s.round?'active':''}"></i>`).join('');
+ $('arenaHint').textContent=s.hint;$('liveNotice').textContent=s.hint;
+ $('awardCurtain').hidden=current!=='awards';
+ paintClock();
+}
+function paintClock(){
+ const d=new Date();$('localClock').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(pad).join(':');
+ const running=current==='live'||current==='warning',danger=running&&remain<=10,warn=running&&remain<=30&&!danger;
+ const label=current==='upcoming'?'等待比赛开始':current==='finished'?'成绩核对':current==='awards'?'颁奖阶段':remain<=0?'本轮时间到':danger?'最后10秒':warn?'最后30秒':'本轮倒计时';
+ $('timerCaption').textContent=label;
+ $('timeDigits').textContent=running?pad(Math.floor(remain/60))+':'+pad(remain%60):current==='upcoming'?'04:00':'00:00';
+ $('timeBox').classList.toggle('warn',warn);$('timeBox').classList.toggle('danger',danger);
+ $('timerFill').style.transform='scaleX('+(running?remain/240:current==='upcoming'?1:0).toFixed(4)+')';
+}
+function choose(scene){
+ if(!states[scene])return;current=scene;remain=states[scene].remain;lastTick=performance.now();
+ const shell=$('screen');shell.classList.remove('scene-change');void shell.offsetWidth;shell.classList.add('scene-change');
+ $('demoMenu').hidden=true;$('menuToggle').setAttribute('aria-expanded','false');$('menuToggle').textContent='切换场景';
+ document.querySelectorAll('[data-scene]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scene===scene)));
+ refresh();
+}
+document.querySelectorAll('[data-scene]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.scene)));
+$('menuToggle').addEventListener('click',()=>{const m=$('demoMenu'),opening=m.hidden;m.hidden=!opening;$('menuToggle').setAttribute('aria-expanded',String(opening));$('menuToggle').textContent=opening?'收起预览':'切换场景';});
+$('openFullscreen').addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>{}));
+$('closeAwards').addEventListener('click',()=>{if(current==='awards')choose('finished');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('awardCurtain').hidden)choose('finished');if(e.key==='Escape'&&!$('demoMenu').hidden){$('demoMenu').hidden=true;$('menuToggle').setAttribute('aria-expanded','false');$('menuToggle').textContent='切换场景';}});
+setInterval(()=>{const now=performance.now(),elapsed=now-lastTick;lastTick=now;if((current==='live'||current==='warning')&&document.visibilityState==='visible')remain=Math.max(0,remain-Math.round(elapsed/1000));paintClock();},1000);
+refresh();
+</script></body></html>
