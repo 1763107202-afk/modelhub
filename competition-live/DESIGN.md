@@ -1,8 +1,8 @@
 # MOVE.ARENA Design System
-> Version: DS 1.0 · 2026-11-11 · Scope: 江苏科技大学机械创新实验室「智能搬运小车创新挑战赛」
+> Version: DS 1.1 · 2026-11-11 · Scope: 江苏科技大学机械创新实验室「智能搬运小车创新挑战赛」
 >
 > Status: **Design specification / preview phase**. This document does **not** authorize changing live scores, judge logic, or production layout.
-> Canonical visual prototype: [design-preview-v21.html](./design-preview-v21.html).
+> Canonical design candidate: [design-preview-v22.html](./design-preview-v22.html). V21 remains available as an archived preview.
 
 ## 1. 产品目标
 
@@ -143,3 +143,18 @@
 - 所有未来 UI 变更必须附：参考的规范章节、影响范围、测试分辨率、截图或浏览器证据、未完成验收项目。
 
 **发布门槛：设计预览验收通过 + 真正的多尺寸回归 + 演示模式赛事流程验收；之后才允许改动生产观众端。**
+
+
+## 9. V22 风格融合与审美复盘（2026-11-11）
+
+本版综合用户近期提供的 \`ai-design-skills\`、VoltAgent \`awesome-design-md\` / Google Stitch \`DESIGN.md\` 参考，并吸收 V18–V20 实际截图的问题：
+
+- **Linear 的结构性精致**：接近黑色的主背景、少量层级、精确栅格、统一字重，而非泛蓝灰色的大面积卡片。
+- **NVIDIA 的工程可读性**：清晰发丝线、接近直角的组件和密集但有秩序的数据排列，不复制 NVIDIA 的绿或品牌。
+- **BMW M 的赛事张力**：字体数字成为竞技气质来源，计时居中，队名与分数是主要视觉资产，不引入赛车照片或专属品牌色。
+- **用户本人反馈约束**：摒弃左右黑白割裂、计时压线、宽度溢出、重复文字、过强未赛占位符、候场字号太小、观众端长期显示后台按钮等历史问题。
+- **动态只奖励真实信息事件**：模拟换轮、分数更新、低于 30 秒和颁奖；预览场景必须明显标出「演示」。
+- **结构不可降级**：保留 36 队实时同屏，在 1920×1080、1521×1258、1366×768、1280×720 逐项检查横向溢出和计时器的上下安全区。预览本地布局检查不等同于线上生产回归。
+
+设计审美原则：宁可让辅助信息稍小，也不允许“比赛倒计时”和“实时积分榜”互相挤占。视觉重点由 **对比度、比例、留白、数字节奏和一贯语义** 产生，避免模仿堆砌式 AI 仪表盘。
+
