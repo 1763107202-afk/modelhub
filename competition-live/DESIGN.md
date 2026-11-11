@@ -1,8 +1,8 @@
 # MOVE.ARENA Design System
-> Version: DS 1.1 · 2026-11-11 · Scope: 江苏科技大学机械创新实验室「智能搬运小车创新挑战赛」
+> Version: DS 1.2 · 2026-11-11 · Scope: 江苏科技大学机械创新实验室「智能搬运小车创新挑战赛」
 >
 > Status: **Design specification / preview phase**. This document does **not** authorize changing live scores, judge logic, or production layout.
-> Canonical design candidate: [design-preview-v22.html](./design-preview-v22.html). V21 remains available as an archived preview.
+> Canonical design candidate: [design-preview-v23.html](./design-preview-v23.html). V21 and V22 remain as earlier comparisons.
 
 ## 1. 产品目标
 
@@ -158,3 +158,18 @@
 
 设计审美原则：宁可让辅助信息稍小，也不允许“比赛倒计时”和“实时积分榜”互相挤占。视觉重点由 **对比度、比例、留白、数字节奏和一贯语义** 产生，避免模仿堆砌式 AI 仪表盘。
 
+
+
+## 10. V23 — 去模板化 / Editorial Motorsport（2026-11-11）
+
+用户授权大幅调整预览版观众端 UI。此次有意识地舍弃此前不断叠加的组件化仪表盘观感，以「赛事编辑设计 / Editorial Motorsport」作为唯一视觉主线：
+
+- 取消赛道内用于装饰的 A/B 卡片、得分嵌套卡、背景渐变、发光与厚重边框；赛道字母改成排版元素，不再表现为按钮。
+- 左右面板统一为深黑/炭灰色调；不再做左黑右白割裂，使用实线和空间而非阴影堆出层级。
+- 得分、用时、赛道队名与中央计时器采用三层清晰字阶，不再所有模块都巨大加粗；状态文字安静且具有语义。
+- 榜单恢复计时塔的连续 18×2 行结构，优先真实队名与成绩，弱化未赛状态，奖牌仅通过前三名签位数字颜色呈现。
+- 候场区域改为无卡片两列，现场播报为单行文字带，演示按钮在主体布局之外。
+- 只保留赛况切换的一次性细微过渡和必要的倒计时状态色；尊重 reduced-motion。
+- 演示页面 \`design-preview-v23.html\` 独立于生产，保留原36队、原徽标、五种模拟场景和3/7/8奖项；不接云端服务。
+
+交付状态：**V23 是预览候选，未获用户视觉确认时不得替换正式比赛页面。** 仍须在目标投影设备用 100% 缩放核对 1521×1258 与 1366×768 的真实布局，特别是右榜最后一行、中央时钟下沿及长队名。
