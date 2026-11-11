@@ -1,0 +1,174 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>MOVE.ARENA V22 · 广播大屏设计预览</title><style>
+:root{
+ --canvas:#080b10;--panel:#11171e;--panel-soft:#151e27;--panel-lift:#1c2630;
+ --line:#33424d;--line-soft:#26333c;--ink:#f8f9fa;--text:#dce5e9;
+ --sub:#adbec8;--muted:#738995;--warm:#f5be78;--a:#37cba7;--b:#ecb069;
+ --warning:#f8a453;--danger:#ee7d75;--num:'Bahnschrift','Arial Narrow','DIN Alternate',system-ui,sans-serif;
+ --ui:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+ --ease:cubic-bezier(.22,1,.36,1)
+}
+*,*:before,*:after{box-sizing:border-box}
+html{height:100%;background:var(--canvas);overflow:hidden}body{margin:0;min-height:100%;font-family:var(--ui);background:var(--canvas);color:var(--ink);overflow:hidden}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid var(--warm);outline-offset:3px}
+.screen{height:100dvh;width:100%;display:grid;grid-template-rows:clamp(64px,7.7vh,86px) minmax(0,1fr) clamp(39px,4.7vh,50px);gap:clamp(7px,.8vh,12px);min-width:0;padding:0 clamp(10px,1.2vw,24px) clamp(7px,.85vh,13px);overflow:hidden}
+/* Exact 3-column master: brand, title, live clock. */
+.masthead{display:grid;grid-template-columns:minmax(180px,1.02fr) minmax(0,1.8fr) minmax(150px,.82fr);align-items:center;gap:clamp(8px,.9vw,17px);min-width:0;min-height:0;border-bottom:1px solid #394751}
+.brand{display:flex;gap:clamp(7px,.73vw,13px);align-items:center;min-width:0}
+.brand-logo{display:block;height:clamp(42px,3.75vw,64px);width:clamp(42px,3.75vw,64px);flex:0 0 auto;border-radius:50%;background:#fff;object-fit:contain}
+.brand-name{min-width:0;display:flex;flex-direction:column;gap:3px}.brand-name small{font-size:clamp(9px,.7vw,13px);font-weight:600;white-space:nowrap;color:#aebdc8}.brand-name strong{font-size:clamp(16px,1.22vw,24px);font-weight:750;white-space:nowrap;letter-spacing:.1px}
+.event-id{display:flex;gap:clamp(8px,.9vw,17px);align-items:center;justify-content:center;min-width:0;white-space:nowrap}
+.event-id h1{margin:0;font-weight:780;font-size:clamp(22px,1.95vw,39px);letter-spacing:-.045em;line-height:1.08;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.event-tag{border-left:2px solid var(--warm);padding:4px 0 4px clamp(8px,.7vw,13px);font-size:clamp(10px,.77vw,15px);color:#dfb989;font-weight:750;white-space:nowrap}
+.mast-right{display:flex;justify-content:flex-end;align-items:center;gap:clamp(8px,.85vw,16px);min-width:0}.net{display:flex;gap:7px;align-items:center;font-size:clamp(9px,.68vw,12px);color:var(--sub);font-weight:700;white-space:nowrap}.net:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--a)}.net span{font-size:inherit}
+.real-clock{font:750 clamp(23px,1.8vw,36px)/1 var(--num);font-variant-numeric:tabular-nums;letter-spacing:.25px;white-space:nowrap}
+/* Broadcast grid uses 0-min tracks: a real 44% scoreboard, not a clipped fixed-width board. */
+.body{display:grid;grid-template-columns:minmax(0,56fr) minmax(0,44fr);gap:clamp(9px,1vw,18px);min-width:0;min-height:0;overflow:hidden}
+.left{display:grid;grid-template-rows:minmax(0,1fr) clamp(106px,14vh,151px);gap:clamp(8px,.85vh,13px);min-height:0;min-width:0;overflow:hidden}
+.arena{background:var(--panel);border:1px solid var(--line);border-top:2px solid #bb8b56;display:grid;grid-template-rows:clamp(82px,10.25vh,114px) minmax(0,1fr) clamp(30px,3.4vh,38px);min-width:0;min-height:0;overflow:hidden}
+.arena-head{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(8px,1vw,17px);min-width:0;padding:5px clamp(10px,1.2vw,23px);position:relative;background:#19222b;border-bottom:1px solid #43515a}
+.phase{display:flex;align-items:center;gap:clamp(8px,.8vw,15px);min-width:0}.phase-label{display:flex;align-items:center;gap:8px;color:#cdd8dd;font-size:clamp(11px,.78vw,15px);font-weight:700;white-space:nowrap}.phase-label:before{content:'';height:13px;width:3px;background:var(--warm)}
+.phase-number{font:800 clamp(43px,4.2vw,77px)/1 var(--num);color:#ecc394;font-variant-numeric:tabular-nums}.phase-total{font-size:clamp(10px,.78vw,14px);color:#899da8;white-space:nowrap}
+.timer{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;justify-self:center;align-self:center;max-height:calc(100% - 7px);min-width:clamp(165px,13vw,266px);padding:clamp(4px,.45vh,7px) clamp(10px,.8vw,18px);border:1px solid rgba(245,190,120,.36);background:#0a1118}
+.timer-caption{font-weight:700;color:#b9cbd2;font-size:clamp(10px,.73vw,14px);white-space:nowrap;line-height:1.2}.timer-digits{font:850 clamp(38px,min(4vw,5.5vh),68px)/1 var(--num);color:var(--warm);font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.06;letter-spacing:.25px}
+.timer.warn{border-color:var(--warning);background:#1e170f}.timer.warn .timer-digits{color:#ffc077}.timer.danger{border-color:var(--danger);background:#291615}.timer.danger .timer-digits{color:#fb8c82}
+.arena-summary{justify-self:end;text-align:right;display:flex;flex-direction:column;gap:5px;min-width:0}.arena-summary strong{font-size:clamp(11px,.76vw,15px);white-space:nowrap;font-weight:750}.arena-summary small{font-size:clamp(9px,.68vw,13px);color:#a4b7c1;white-space:nowrap}
+.time-track{position:absolute;bottom:0;left:0;right:0;height:3px;background:#3a4852;overflow:hidden}.time-track i{display:block;width:100%;height:100%;background:var(--warm);transform-origin:left center;transition:transform .26s linear,background-color .2s ease}
+/**** Two competing lanes share the same column ruler. ****/
+.lanes{position:relative;display:grid;grid-template-rows:repeat(2,minmax(0,1fr));min-height:0}
+.lane{display:grid;grid-template-columns:clamp(56px,5vw,91px) minmax(0,1fr) minmax(185px,37%);gap:clamp(9px,1vw,21px);min-width:0;min-height:0;align-items:center;padding:clamp(10px,1.4vh,22px) clamp(12px,1.25vw,26px);background:#111c25;border-left:4px solid var(--a);border-bottom:1px solid #394a54;position:relative;overflow:hidden}
+.lane.b{background:#141f28;border-left-color:var(--b);border-bottom:0}
+.lane-code{display:grid;place-items:center;height:clamp(67px,5.9vw,106px);width:clamp(51px,4.6vw,84px);border:1px solid #3b8975;color:#a2e9d2;background:#162e2b;font:850 clamp(42px,4vw,73px)/1 var(--num)}
+.lane.b .lane-code{border-color:#99774c;color:#f4d2a7;background:#302a23}
+.lane-identity{min-width:0;display:flex;flex-direction:column;gap:clamp(8px,1.1vh,16px)}.lane-meta{font-size:clamp(10px,.76vw,14px);font-weight:600;color:#9eb4bd;white-space:nowrap;letter-spacing:.04em}
+.lane-name{margin:0;font-size:clamp(32px,2.87vw,57px);font-weight:850;line-height:1.13;letter-spacing:-.045em;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}.lane-name.long{font-size:clamp(24px,2.2vw,43px)}
+.state{display:inline-flex;align-items:center;gap:8px;max-width:max-content;color:#f0cb93;font-size:clamp(11px,.83vw,16px);font-weight:710;white-space:nowrap}.state:before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}.state.live{color:#79e4c2}.state.done{color:#c9d6dd}.state.fault{color:#fc9b91}
+.results{height:100%;min-width:0;border-left:1px solid #43545e;display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.result{display:flex;flex-direction:column;justify-content:center;gap:clamp(7px,1.05vh,13px);min-width:0;padding:7px clamp(8px,.86vw,17px)}.result+.result{border-left:1px solid #2b3d47}
+.result-label{font-size:clamp(10px,.76vw,14px);font-weight:600;color:#a9bdc7;white-space:nowrap}.result-value{font:850 clamp(36px,2.92vw,59px)/1 var(--num);font-variant-numeric:tabular-nums;color:#f7f9fa;white-space:nowrap}.result.duration .result-value{font-size:clamp(19px,1.7vw,34px);color:#deeaed}.result-value.blank{color:#718591;opacity:.5}
+.versus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:grid;place-items:center;width:45px;height:34px;background:#0b1117;border:1px solid #65717a;color:#e9bb80;font:800 16px/1 var(--num);pointer-events:none}
+.arena-prompt{display:flex;align-items:center;gap:9px;padding:0 clamp(11px,1.2vw,24px);background:#1b3431;font-size:clamp(11px,.76vw,15px);font-weight:650;color:#cbebe1;white-space:nowrap;min-width:0}.arena-prompt:before{content:'';width:7px;height:7px;border-radius:50%;background:var(--a);flex:0 0 auto}.arena-prompt span{overflow:hidden;text-overflow:ellipsis}
+.next{background:#141d26;border:1px solid var(--line);display:grid;grid-template-rows:auto minmax(0,1fr) 4px;gap:clamp(6px,.7vh,9px);min-width:0;min-height:0;padding:clamp(8px,.9vh,14px) clamp(12px,1.15vw,24px)}
+.next-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.next-head h2{margin:0;font-size:clamp(17px,1.22vw,24px);line-height:1.16;font-weight:800}.next-head small{font-size:clamp(9px,.69vw,13px);color:#9fb1ba;white-space:nowrap}
+.next-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(7px,.85vw,14px);min-width:0;min-height:0}.next-item{display:flex;align-items:center;gap:clamp(9px,.8vw,15px);min-width:0;background:#1d2b35;padding:5px clamp(9px,.9vw,17px);border-left:2px solid var(--a)}.next-item.b{border-left-color:var(--b)}.next-key{display:grid;place-items:center;height:clamp(32px,2.55vw,44px);width:clamp(29px,2.18vw,38px);border:1px solid #3ca68a;color:#9be9d0;flex:0 0 auto;font:850 clamp(21px,1.7vw,30px)/1 var(--num)}.next-item.b .next-key{border-color:#c28c4e;color:#f6cc99}
+.next-text{display:flex;flex-direction:column;min-width:0;gap:2px}.next-text small{font-size:clamp(9px,.66vw,12px);color:#9eb5bf}.next-text strong{font-size:clamp(15px,1.22vw,24px);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stages{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:3px;height:4px}.stages i{background:#3b4852}.stages i.done{background:#3ca88e}.stages i.active{background:var(--warm)}
+/* The 36-row tower is exactly two equal 18-row tracks. */
+.tower{background:#12191f;border:1px solid var(--line);display:grid;grid-template-rows:clamp(58px,7vh,76px) minmax(0,1fr) 19px;min-height:0;min-width:0;overflow:hidden;padding:0 clamp(9px,1.05vw,20px)}
+.tower-head{display:flex;align-items:center;justify-content:space-between;gap:9px;border-bottom:1px solid #48565f;min-width:0}.tower-head h2{margin:0;font-size:clamp(22px,1.58vw,33px);font-weight:800;white-space:nowrap}.tower-live{font-size:clamp(10px,.76vw,14px);color:#a5dcc8;white-space:nowrap;font-weight:750}
+.tower-columns{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:clamp(13px,1.1vw,22px);min-width:0;min-height:0;padding:4px 0;overflow:hidden}.tower-columns:before{content:'';position:absolute;top:4px;bottom:4px;left:50%;width:1px;background:#3e4c55;z-index:0;pointer-events:none}
+.tower-col{display:grid;grid-template-rows:repeat(18,minmax(0,1fr));height:100%;min-height:0;min-width:0;overflow:hidden}
+.row{display:grid;grid-template-columns:clamp(22px,1.55vw,34px) minmax(0,1fr) max-content;gap:clamp(4px,.42vw,8px);align-items:center;padding:0 clamp(2px,.34vw,8px);border-bottom:1px solid #29343d;min-height:0;min-width:0;overflow:hidden;position:relative}
+.row:nth-child(odd){background:#ffffff05}.row.in-a{box-shadow:inset 3px 0 var(--a);background:rgba(55,203,167,.11)}.row.in-b{box-shadow:inset 3px 0 var(--b);background:rgba(236,176,105,.11)}.row.wait-a{box-shadow:inset 2px 0 #457c6a}.row.wait-b{box-shadow:inset 2px 0 #806747}.row.scored{background:rgba(55,203,167,.048)}
+.row-rank{font:750 clamp(12px,.9vw,18px)/1 var(--num);font-variant-numeric:tabular-nums;color:#8fa3b0}.row.scored .row-rank{color:#d6bf9e}.row.medal1 .row-rank{border:1px solid #b89560;color:#ffdda3}.row.medal2 .row-rank{border:1px solid #a6b4bf;color:#d8e4ea}.row.medal3 .row-rank{border:1px solid #b38265;color:#ebc0aa}
+.row-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-size:clamp(11px,.86vw,16px);font-weight:700;color:#e3ebee;line-height:1.06}.row-name.long{font-size:clamp(10px,.75vw,14px)}.row-name.xlong{font-size:clamp(9px,.7vw,12px)}.row.pending .row-name{color:#b9c9d0;font-weight:600}
+.row-status{white-space:nowrap;color:#7f949e;font-size:clamp(9px,.7vw,13px);font-weight:600}.row.in-a .row-status{color:#86dfc2}.row.in-b .row-status{color:#efc18a}.row.wait-a .row-status,.row.wait-b .row-status{color:#b9c5cc}
+.row-stat{display:flex;align-items:baseline;gap:clamp(4px,.38vw,7px);font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--num)}.row-stat b{font-size:clamp(12px,1vw,18px);color:#f1c083}.row-stat small{font-size:clamp(9px,.7vw,13px);color:#bdcbd1;border-left:1px solid #46555f;padding-left:clamp(4px,.28vw,6px)}
+.tower-foot{display:flex;justify-content:space-between;align-items:center;gap:7px;color:#8fa0aa;font-size:clamp(9px,.64vw,11px);white-space:nowrap}
+.announcements{display:flex;align-items:center;gap:clamp(8px,.8vw,16px);padding:0 clamp(10px,1vw,20px);background:#19232b;min-width:0}.announce-lead{padding:6px 10px;background:#f5be78;color:#1a1b1a;font-size:clamp(10px,.82vw,15px);font-weight:900;white-space:nowrap;flex:0 0 auto}
+.announce-message{font-size:clamp(12px,.9vw,17px);font-weight:670;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;color:#f1f4f6}.demo-notice{font-size:clamp(9px,.69vw,12px);font-weight:750;color:#eecb9c;white-space:nowrap;border:1px solid #886946;padding:4px 7px}
+/* The demo control is a separate overlay and is not a production UI element. */
+.preview-trigger{position:fixed;z-index:60;right:14px;bottom:clamp(60px,6vh,83px);padding:7px 10px;border:1px solid #687987;background:#283844;color:#e8ebea;border-radius:3px;font-size:12px;font-weight:700}
+.preview-menu{position:fixed;z-index:60;right:14px;bottom:clamp(98px,10vh,126px);width:290px;max-width:calc(100vw - 28px);padding:12px;background:#1c2831;border:1px solid #53636f;box-shadow:0 16px 32px #0009;display:grid;gap:10px}
+.preview-menu[hidden]{display:none}.preview-menu strong{font-size:14px}.preview-menu small{font-size:11px;color:#c4ced3}.scene-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.scene-grid button{background:#2a3943;border:1px solid #5b6b76;color:#ebf0f2;border-radius:2px;padding:7px 6px;font-size:12px}.scene-grid button[aria-pressed='true']{border-color:#eeb775;background:#4a3826;color:#ffe2b7}.scene-grid button:hover{border-color:#eebb7d}
+/* Celebration is explicitly simulation, not actual award distribution. */
+.award-curtain{position:fixed;z-index:25;inset:0;background:#090e13ee;display:grid;place-items:center;padding:clamp(18px,3vw,50px)}.award-curtain[hidden]{display:none}.award-dialog{width:min(1120px,100%);background:#121b23;border:1px solid #836643;border-top:3px solid var(--warm);padding:clamp(22px,3vw,46px);display:grid;gap:clamp(20px,3vh,38px)}.award-kicker{font-size:clamp(12px,1vw,17px);letter-spacing:.1em;color:#f1c38b;font-weight:700}.award-dialog h2{margin:0;font-size:clamp(32px,4.1vw,67px);line-height:1.1}.award-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(9px,1.3vw,20px)}.award-box{padding:clamp(14px,2vw,26px);background:#1a2630;border-left:3px solid #8d7b69;display:grid;gap:10px}.award-box.gold{border-left-color:#eebd73;background:#2b251e}.award-box.silver{border-left-color:#b5c6cf}.award-box.bronze{border-left-color:#bb8b6c}.award-box b{font:800 clamp(36px,3vw,56px)/1 var(--num)}.award-box strong{font-size:clamp(16px,1.2vw,23px)}.award-box small{font-size:clamp(11px,.83vw,15px);color:#b6c7d1}.award-close{justify-self:end;background:#2b3944;border:1px solid #647683;color:white;padding:9px 16px}.award-curtain:not([hidden]) .award-box{animation:award-rise .45s var(--ease) both}.award-curtain:not([hidden]) .award-box:nth-child(2){animation-delay:.1s}.award-curtain:not([hidden]) .award-box:nth-child(3){animation-delay:.2s}@keyframes award-rise{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
+/* Viewport-specific optical corrections, no JS viewport hacks. */
+@media(min-width:1040px) and (max-width:1600px){
+ .masthead{grid-template-columns:minmax(165px,1fr) minmax(0,1.8fr) minmax(135px,.65fr)}
+ .event-id h1{font-size:clamp(20px,1.65vw,29px)}.event-tag{font-size:10px}
+ .lane{grid-template-columns:clamp(44px,4.3vw,66px) minmax(0,1fr) minmax(180px,40%);gap:clamp(6px,.7vw,12px);padding-inline:clamp(9px,.85vw,15px)}
+ .lane-code{width:clamp(41px,4vw,62px);height:clamp(55px,5.3vw,80px)}.lane-name{font-size:clamp(25px,2.5vw,40px)}
+ .result{padding-inline:clamp(5px,.52vw,10px)}.result-value{font-size:clamp(29px,2.55vw,46px)}.result.duration .result-value{font-size:clamp(18px,1.6vw,28px)}
+ .timer{min-width:clamp(140px,12.6vw,210px)}.timer-digits{font-size:clamp(42px,3.7vw,65px)}
+ .next-text strong{font-size:clamp(13px,1.15vw,20px)}
+ .row-name{font-size:clamp(10px,.8vw,13px)}.row-stat b{font-size:clamp(11px,.92vw,16px)}.row-stat small{font-size:clamp(8px,.65vw,11px)}
+}
+@media(min-width:1040px) and (max-height:840px){
+ .screen{grid-template-rows:clamp(56px,7.5vh,72px) minmax(0,1fr) clamp(33px,4.4vh,43px);gap:6px}
+ .left{grid-template-rows:minmax(0,1fr) clamp(85px,12.8vh,116px)}.arena{grid-template-rows:clamp(69px,9.2vh,84px) minmax(0,1fr) 27px}
+ .arena-head{padding-block:2px}.timer{padding-block:1px;gap:0}.timer-digits{font-size:clamp(35px,min(3.1vw,5.3vh),54px)}
+ .phase-number{font-size:clamp(37px,3.5vw,61px)}.lane{padding-block:7px}.lane-code{height:clamp(55px,5.2vw,75px)}
+ .tower{grid-template-rows:clamp(44px,6.5vh,58px) minmax(0,1fr) 15px}.tower-columns{padding-block:2px}.row-name{font-size:clamp(10px,.78vw,13px)}
+ .next{padding-block:7px;gap:4px}.next-head h2{font-size:clamp(15px,1.02vw,19px)}.next-text strong{font-size:clamp(12px,1vw,18px)}
+}
+@media(min-width:1040px) and (max-height:710px){.screen{grid-template-rows:53px minmax(0,1fr) 33px;gap:4px}.tower{grid-template-rows:41px minmax(0,1fr) 13px}.tower-columns{padding:1px 0}.row-name{font-size:10px}.row-status{font-size:9px}.left{grid-template-rows:minmax(0,1fr) 85px}.arena{grid-template-rows:66px minmax(0,1fr) 26px}.next{padding-block:4px}}
+@media(max-width:1039px){html,body{height:auto;overflow:auto}.screen{height:auto;min-height:100dvh;overflow:visible;grid-template-rows:auto auto auto;gap:10px}.masthead{display:flex;flex-wrap:wrap;padding:11px 0;gap:10px}.event-id{order:3;flex:1 1 100%;justify-content:flex-start}.event-id h1{font-size:clamp(19px,3vw,29px)}.mast-right{margin-left:auto}.body{grid-template-columns:1fr;overflow:visible}.left{grid-template-rows:520px 127px}.tower{min-height:730px;grid-template-rows:59px minmax(0,1fr) 20px}.tower-col{grid-template-rows:repeat(18,minmax(32px,1fr))}.announcements{min-height:48px}.award-groups{grid-template-columns:1fr}}
+@media(max-width:610px){.brand-logo{width:44px;height:44px}.brand-name strong{font-size:16px}.event-id h1{font-size:clamp(18px,4.55vw,24px)}.event-tag{font-size:10px}.left{grid-template-rows:464px 125px}.arena{grid-template-rows:67px minmax(0,1fr) 30px}.arena-head{padding-inline:8px;gap:4px}.phase-label{font-size:9px}.phase-number{font-size:36px}.phase-total{font-size:9px}.timer{min-width:0;padding:3px 5px}.timer-digits{font-size:34px}.timer-caption{font-size:9px}.arena-summary{display:none}.lane{grid-template-columns:40px minmax(0,1fr) 36%;gap:5px;padding:7px 5px}.lane-code{height:48px;width:36px;font-size:34px}.lane-name{font-size:clamp(17px,4.4vw,24px)}.lane-meta{font-size:8px}.lane-identity{gap:5px}.state{font-size:9px}.results{grid-template-columns:1fr 1fr}.result{padding-inline:3px;gap:5px}.result-label{font-size:8px}.result-value{font-size:16px}.result.duration .result-value{font-size:10px}.next{padding:8px}.next-head h2{font-size:14px}.next-head small{font-size:9px}.next-item{padding:4px;gap:6px}.next-key{height:29px;width:26px;font-size:21px}.next-text small{font-size:8px}.next-text strong{font-size:10px}.tower{min-height:720px;padding-inline:7px}.tower-head h2{font-size:20px}.tower-live{font-size:10px}.tower-columns{gap:9px}.row{grid-template-columns:17px minmax(0,1fr) max-content;gap:2px;padding-inline:1px}.row-rank,.row-name{font-size:9px}.row-name.long,.row-name.xlong{font-size:8px}.row-status{font-size:8px}.row-stat{flex-direction:column;align-items:flex-end;gap:1px}.row-stat b{font-size:10px}.row-stat small{font-size:8px;padding:0;border:0}.tower-foot{font-size:8px}.announcements{gap:6px;padding-inline:6px}.announce-lead{font-size:9px;padding:5px 6px}.announce-message{font-size:10px}.demo-notice{font-size:9px;padding:3px 5px}}
+
+/* Event-driven, brief motions only: the rest of the board remains still. */
+.scene-change .lane-identity{animation:lane-in .4s var(--ease) both}
+.scene-change .lane.b .lane-identity{animation-delay:.07s}
+.scene-change .timer{animation:clock-in .32s var(--ease) both}
+@keyframes lane-in{from{opacity:.45;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes clock-in{from{opacity:.6;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="screen" id="screen"><header class="masthead"><div class="brand"><img class="brand-logo" src="../assets/lab-logo-transparent.svg" alt="机械创新实验室官方徽标"><div class="brand-name"><small>江苏科技大学</small><strong>机械创新实验室</strong></div></div><div class="event-id"><h1>智能搬运小车创新挑战赛</h1><span class="event-tag">2026 校内赛</span></div><div class="mast-right"><div class="net"><span>演示模式</span></div><time class="real-clock" id="localClock">--:--:--</time></div></header>
+<main class="body"><div class="left"><section class="arena"><div class="arena-head"><div class="phase"><span class="phase-label" id="phaseLabel">待开赛</span><strong class="phase-number" id="phaseNumber">01</strong><span class="phase-total">/ 18轮</span></div><div class="timer" id="timeBox"><small class="timer-caption" id="timerCaption">等待比赛开始</small><strong class="timer-digits" id="timeDigits">04:00</strong></div><div class="arena-summary"><strong>A / B 双赛道</strong><small>双赛道独立计时</small></div><div class="time-track"><i id="timerFill"></i></div></div><div class="lanes"><article class="lane a" id="laneA"></article><article class="lane b" id="laneB"></article><span class="versus" aria-hidden="true">VS</span></div><div class="arena-prompt"><span id="arenaHint">第一组赛前调试4分钟</span></div></section><section class="next"><div class="next-head"><h2>下一轮候场</h2><small>请提前进入调试区</small></div><div class="next-columns"><div class="next-item a" id="nextA"></div><div class="next-item b" id="nextB"></div></div><div class="stages" id="stageSteps"></div></section></div><aside class="tower"><div class="tower-head"><h2>实时积分榜</h2><span class="tower-live" id="scoreCount">已录分 0 / 36</span></div><div class="tower-columns" id="towerColumns"></div><div class="tower-foot"><span>未赛显示签位 · 完赛显示名次</span><span>同分按完成用时排序</span></div></aside></main>
+<footer class="announcements"><strong class="announce-lead">现场调度</strong><span class="announce-message" id="liveNotice">欢迎参加2026智能搬运小车创新挑战赛</span><span class="demo-notice">DEMO / 非正式成绩</span></footer></div>
+<button id="menuToggle" class="preview-trigger" aria-controls="demoMenu" aria-expanded="false">切换场景</button><section id="demoMenu" class="preview-menu" hidden><strong>V22 独立视觉验收</strong><small>全部为本地模拟数据，不涉及正式比赛数据库</small><div class="scene-grid"><button data-scene="upcoming" aria-pressed="true">待开赛</button><button data-scene="live" aria-pressed="false">进行中</button><button data-scene="warning" aria-pressed="false">最后25秒</button><button data-scene="finished" aria-pressed="false">22队录分</button><button data-scene="awards" aria-pressed="false">模拟颁奖</button><button id="openFullscreen">全屏查看</button></div></section>
+<div id="awardCurtain" class="award-curtain" hidden role="dialog" aria-modal="true" aria-labelledby="awardTitle"><section class="award-dialog"><span class="award-kicker">2026 · 校内赛　/　模拟颁奖画面</span><h2 id="awardTitle">精彩的较量，致敬每一支队伍。</h2><div class="award-groups"><div class="award-box gold"><b>03</b><strong>一等奖</strong><small>3支队伍 · 按模拟成绩展示</small></div><div class="award-box silver"><b>07</b><strong>二等奖</strong><small>7支队伍 · 按模拟成绩展示</small></div><div class="award-box bronze"><b>08</b><strong>三等奖</strong><small>8支队伍 · 按模拟成绩展示</small></div></div><button id="closeAwards" class="award-close" type="button">返回赛事大屏</button></section></div>
+<script>
+'use strict';
+const teams=[{"order":1,"name":"哈雪大帽险","round":1,"lane":"A"},{"order":2,"name":"稀有队","round":1,"lane":"B"},{"order":3,"name":"一车九九九","round":2,"lane":"A"},{"order":4,"name":"阿塔浪队","round":2,"lane":"B"},{"order":5,"name":"老鼠洗完头","round":3,"lane":"A"},{"order":6,"name":"无言以对","round":3,"lane":"B"},{"order":7,"name":"宝宝巴士","round":4,"lane":"A"},{"order":8,"name":"迅风小队","round":4,"lane":"B"},{"order":9,"name":"如来佛组","round":5,"lane":"A"},{"order":10,"name":"组一辈子少男乐队","round":5,"lane":"B"},{"order":11,"name":"窝累铜泥丸","round":6,"lane":"A"},{"order":12,"name":"用户9527","round":6,"lane":"B"},{"order":13,"name":"友商都是**","round":7,"lane":"A"},{"order":14,"name":"我们说的都队","round":7,"lane":"B"},{"order":15,"name":"免费帮测灵根队","round":8,"lane":"A"},{"order":16,"name":"從來唔會輸","round":8,"lane":"B"},{"order":17,"name":"奶龙队","round":9,"lane":"A"},{"order":18,"name":"求针队","round":9,"lane":"B"},{"order":19,"name":"训狗大队","round":10,"lane":"A"},{"order":20,"name":"步履者","round":10,"lane":"B"},{"order":21,"name":"终极赛罗警卫队","round":11,"lane":"A"},{"order":22,"name":"666","round":11,"lane":"B"},{"order":23,"name":"超能鹿战队","round":12,"lane":"A"},{"order":24,"name":"你说的都队","round":12,"lane":"B"},{"order":25,"name":"华人青年队","round":13,"lane":"A"},{"order":26,"name":"陪跑队","round":13,"lane":"B"},{"order":27,"name":"今天吃点啥","round":14,"lane":"A"},{"order":28,"name":"Astralis","round":14,"lane":"B"},{"order":29,"name":"胜你无需第二遍队","round":15,"lane":"A"},{"order":30,"name":"猛攻队","round":15,"lane":"B"},{"order":31,"name":"三英战大车","round":16,"lane":"A"},{"order":32,"name":"凌云机创队","round":16,"lane":"B"},{"order":33,"name":"果宝机甲队","round":17,"lane":"A"},{"order":34,"name":"图灵测试队","round":17,"lane":"B"},{"order":35,"name":"胆子肥嘟嘟队","round":18,"lane":"A"},{"order":36,"name":"爱拼才会赢队","round":18,"lane":"B"}];
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const displayTime=ms=>ms==null?'--:--.--':pad(Math.floor(ms/60000))+':'+pad(Math.floor(ms/1000)%60)+'.'+pad(Math.floor(ms%1000/10));
+const scores=teams.map((t,i)=>({...t,score:+(98.15-i*1.42+(i%4)*.14).toFixed(2),elapsed:82500+i*1970}));
+const states={upcoming:{round:1,remain:240,scored:0,label:'待开赛',caption:'等待比赛开始',hint:'第一组赛前调试4分钟，请A/B赛道选手做好准备'},live:{round:4,remain:200,scored:6,label:'比赛进行中',caption:'本轮倒计时',hint:'第4轮正在比赛，下一轮队伍请前往调试区'},warning:{round:4,remain:25,scored:6,label:'比赛进行中',caption:'最后25秒',hint:'本轮剩余25秒，请注意赛道安全与裁判指令'},finished:{round:12,remain:0,scored:22,label:'成绩核对',caption:'成绩核对',hint:'已录入22队成绩，裁判正在复核，请等待公布'},awards:{round:18,remain:0,scored:36,label:'颁奖揭晓',caption:'颁奖阶段',hint:'演示赛事已结束，当前展示的是模拟颁奖名单'}};
+let current='upcoming',remain=240,lastTick=performance.now();
+function cfg(){return states[current]}
+function completed(){return scores.slice(0,cfg().scored)}
+function ranks(){const done=completed().slice().sort((a,b)=>b.score-a.score||a.elapsed-b.elapsed);const ids=new Set(done.map(t=>t.order));return [...done,...teams.filter(t=>!ids.has(t.order))]}
+function sceneTeam(lane){return teams.find(t=>t.round===cfg().round&&t.lane===lane)}
+function nextTeam(lane){return teams.find(t=>t.round===cfg().round+1&&t.lane===lane)}
+function currentLane(lane){
+ const t=sceneTeam(lane),score=completed().find(x=>x.order===t?.order);
+ const status=score?'已完成':current==='live'||current==='warning'?'比赛进行中':current==='upcoming'?'等待上场':'等待成绩';
+ const className=score?'done':current==='live'||current==='warning'?'live':'';
+ return `<span class="lane-code">${lane}</span><div class="lane-identity"><div class="lane-meta">第 ${pad(t?.order||0)} 签位　 /　第${pad(cfg().round)}轮</div><strong class="lane-name ${[...(t?.name||'')].length>9?'long':''}" title="${esc(t?.name||'')}">${esc(t?.name||'等待安排')}</strong><span class="state ${className}">${status}</span></div><div class="results"><div class="result"><small class="result-label">本轮得分</small><strong class="result-value ${score?'':'blank'}">${score?score.score.toFixed(2):'---'}</strong></div><div class="result duration"><small class="result-label">完成用时</small><strong class="result-value ${score?'':'blank'}">${displayTime(score?.elapsed)}</strong></div></div>`;
+}
+function nextMarkup(lane){const t=nextTeam(lane);return `<span class="next-key">${lane}</span><div class="next-text"><small>${lane}赛道 · 下一轮</small><strong title="${esc(t?.name||'')}">${esc(t?.name||'正赛已结束')}</strong></div>`}
+function rankMarkup(t,index){
+ const scored=t.score!==undefined;const live=!scored&&['upcoming','live','warning'].includes(current)&&t.round===cfg().round;
+ const next=!scored&&t.round===cfg().round+1&&current!=='awards';
+ const medal=scored&&index<3?' medal'+(index+1):'';
+ const classes=['row',scored?'scored':'pending',live?'in-'+t.lane.toLowerCase():'',next?'wait-'+t.lane.toLowerCase():'',medal].join(' ');
+ const nameLength=[...t.name].length,nameClass=nameLength>16?'xlong':nameLength>10?'long':'';
+ const content=scored?`<span class="row-stat"><b>${t.score.toFixed(2)}</b><small>${displayTime(t.elapsed)}</small></span>`:`<span class="row-status">${live?'本轮'+t.lane:next?'候场':'待赛'}</span>`;
+ return `<div class="${classes}"><span class="row-rank">${pad(scored?index+1:t.order)}</span><span class="row-name ${nameClass}" title="${esc(t.name)}">${esc(t.name)}</span>${content}</div>`;
+}
+function refresh(){
+ const s=cfg();$('phaseLabel').textContent=s.label;$('phaseNumber').textContent=pad(s.round);
+ $('laneA').innerHTML=currentLane('A');$('laneB').innerHTML=currentLane('B');
+ $('nextA').innerHTML=nextMarkup('A');$('nextB').innerHTML=nextMarkup('B');
+ const all=ranks();$('towerColumns').innerHTML=[0,1].map(k=>`<div class="tower-col">${all.slice(k*18,(k+1)*18).map((t,i)=>rankMarkup(t,k*18+i)).join('')}</div>`).join('');
+ $('scoreCount').textContent='已录分 '+s.scored+' / 36';
+ $('stageSteps').innerHTML=Array.from({length:18},(_,i)=>`<i class="${i+1<s.round?'done':i+1===s.round?'active':''}"></i>`).join('');
+ $('arenaHint').textContent=s.hint;$('liveNotice').textContent=s.hint;
+ $('awardCurtain').hidden=current!=='awards';
+ paintClock();
+}
+function paintClock(){
+ const d=new Date();$('localClock').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(pad).join(':');
+ const running=current==='live'||current==='warning',danger=running&&remain<=10,warn=running&&remain<=30&&!danger;
+ const label=current==='upcoming'?'等待比赛开始':current==='finished'?'成绩核对':current==='awards'?'颁奖阶段':remain<=0?'本轮时间到':danger?'最后10秒':warn?'最后30秒':'本轮倒计时';
+ $('timerCaption').textContent=label;
+ $('timeDigits').textContent=running?pad(Math.floor(remain/60))+':'+pad(remain%60):current==='upcoming'?'04:00':'00:00';
+ $('timeBox').classList.toggle('warn',warn);$('timeBox').classList.toggle('danger',danger);
+ $('timerFill').style.transform='scaleX('+(running?remain/240:current==='upcoming'?1:0).toFixed(4)+')';
+}
+function choose(scene){
+ if(!states[scene])return;current=scene;remain=states[scene].remain;lastTick=performance.now();
+ const shell=$('screen');shell.classList.remove('scene-change');void shell.offsetWidth;shell.classList.add('scene-change');
+ $('demoMenu').hidden=true;$('menuToggle').setAttribute('aria-expanded','false');$('menuToggle').textContent='切换场景';
+ document.querySelectorAll('[data-scene]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scene===scene)));
+ refresh();
+}
+document.querySelectorAll('[data-scene]').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.scene)));
+$('menuToggle').addEventListener('click',()=>{const m=$('demoMenu'),opening=m.hidden;m.hidden=!opening;$('menuToggle').setAttribute('aria-expanded',String(opening));$('menuToggle').textContent=opening?'收起预览':'切换场景';});
+$('openFullscreen').addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>{}));
+$('closeAwards').addEventListener('click',()=>{if(current==='awards')choose('finished');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('awardCurtain').hidden)choose('finished');if(e.key==='Escape'&&!$('demoMenu').hidden){$('demoMenu').hidden=true;$('menuToggle').setAttribute('aria-expanded','false');$('menuToggle').textContent='切换场景';}});
+setInterval(()=>{const now=performance.now(),elapsed=now-lastTick;lastTick=now;if((current==='live'||current==='warning')&&document.visibilityState==='visible')remain=Math.max(0,remain-Math.round(elapsed/1000));paintClock();},1000);
+refresh();
+</script></body></html>
