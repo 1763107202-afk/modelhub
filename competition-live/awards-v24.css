@@ -1,0 +1,32 @@
+/* Shared ceremony: only the existing award dialog is affected. */
+#awardOverlay.award-overlay{background:#101312!important;border:0!important;padding:clamp(48px,6vh,80px) clamp(22px,4vw,80px) 32px!important;overflow:auto!important;align-items:center!important;color:#f3f4ee;font-family:'Microsoft YaHei','PingFang SC',system-ui,sans-serif}
+#awardOverlay:before{display:none!important}
+#awardContent.award-content{width:min(1600px,100%)!important;max-width:1600px!important;text-align:left!important;padding:0!important}
+#awardOverlay .overlay-close{position:fixed;top:18px;right:clamp(22px,4vw,80px);background:#202822;border:1px solid #4d5d51;color:#dce7df;border-radius:2px;padding:10px 16px;font-size:12px;min-height:40px}
+#awardOverlay .overlay-close:focus-visible{outline:2px solid #38e2ad;outline-offset:4px}
+#awardContent .ma24-awards-head{margin:0 0 clamp(24px,4vh,48px)}
+#awardContent .ma24-awards-head>span{font-size:clamp(10px,.85vw,16px);color:#a8b8ab;letter-spacing:.05em}
+#awardContent .ma24-awards-head h1{font-size:clamp(26px,2vw,39px);font-weight:500;line-height:1.35;letter-spacing:.02em;margin:12px 0}
+#awardContent .ma24-awards-head h1 strong{font-weight:650}
+#awardContent .ma24-awards-head p{font-size:clamp(10px,.8vw,14px);color:#9baa9e;margin:0;line-height:1.6}
+#awardContent .ma24-prizes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,2.3vw,44px)}
+#awardContent .ma24-prize{--prize:#f8d18c;border-top:2px solid var(--prize);min-width:0}
+#awardContent .ma24-prize-second{--prize:#d5e2d8}
+#awardContent .ma24-prize-third{--prize:#d2a584}
+#awardContent .ma24-prize>header{display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:0;padding:clamp(15px,2.2vh,26px) 0;border-bottom:1px solid #39443c}
+#awardContent .ma24-prize>header small{color:#a0b1a4;font-size:clamp(10px,.72vw,14px);font-weight:400}
+#awardContent .ma24-prize h2{font-size:clamp(22px,1.9vw,36px);color:var(--prize);margin:6px 0 0;font-weight:600;line-height:1.4}
+#awardContent .ma24-prize>header>strong{font:500 clamp(42px,4vw,78px)/1 'Bahnschrift','Arial Narrow',sans-serif;color:var(--prize);white-space:nowrap;font-variant-numeric:tabular-nums}
+#awardContent .ma24-prize>header>strong small{margin-left:7px;font:400 12px 'Microsoft YaHei',sans-serif}
+#awardContent .ma24-prize ol{list-style:none;margin:0;padding:0}
+#awardContent .ma24-prize li{display:grid;grid-template-columns:25px minmax(0,1fr) max-content;align-items:center;gap:clamp(8px,.7vw,14px);min-height:clamp(48px,5.8vh,70px);padding:8px 0;border-bottom:1px solid #2b352e}
+#awardContent .ma24-winner-rank{font:500 clamp(12px,1vw,18px)/1 'Bahnschrift','Arial Narrow',sans-serif;color:#93a297;font-variant-numeric:tabular-nums}
+#awardContent .ma24-winner-name{font-size:clamp(13px,1.1vw,21px);line-height:1.5;overflow-wrap:anywhere;font-weight:500;min-width:0}
+#awardContent .ma24-winner-result{display:flex;flex-direction:column;gap:5px;align-items:flex-end;font-family:'Bahnschrift','Arial Narrow',sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+#awardContent .ma24-winner-result b{font-size:clamp(17px,1.45vw,27px);font-weight:500;color:#f3f4ee}
+#awardContent .ma24-winner-result small{font-size:clamp(10px,.78vw,14px);font-weight:400;color:#a8b8ab}
+#awardContent .ma24-awards-foot{display:flex;justify-content:space-between;gap:16px;margin-top:24px;padding-top:16px;border-top:1px solid #39443c;color:#b8c5bb;font-size:clamp(10px,.75vw,14px);line-height:1.7}
+#awardContent .ma24-awards-foot span{color:#91a095}
+@media(min-width:1040px) and (max-height:820px){#awardOverlay.award-overlay{padding-top:48px!important;padding-bottom:22px!important}#awardContent .ma24-awards-head{margin-bottom:18px}#awardContent .ma24-awards-head h1{font-size:29px;line-height:1.35;margin:7px 0}#awardContent .ma24-prize>header{padding:12px 0}#awardContent .ma24-prize li{min-height:43px;padding:5px 0}#awardContent .ma24-awards-foot{margin-top:16px;padding-top:12px}}
+@media(max-width:1039px){#awardContent .ma24-prizes{grid-template-columns:1fr;gap:26px}#awardContent .ma24-awards-head h1{font-size:30px}#awardContent .ma24-prize li{min-height:56px}#awardContent .ma24-winner-name{font-size:17px}#awardContent .ma24-winner-result b{font-size:23px}#awardContent .ma24-winner-result small{font-size:12px}#awardContent .ma24-awards-foot{flex-direction:column;gap:4px}#awardOverlay.award-overlay{align-items:start!important}}
+@media(prefers-reduced-motion:reduce){#awardOverlay *,#awardOverlay *:before,#awardOverlay *:after{animation:none!important;transition:none!important}}
