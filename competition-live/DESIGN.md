@@ -1,8 +1,8 @@
 # MOVE.ARENA Design System
-> Version: DS 1.2 · 2026-11-11 · Scope: 江苏科技大学机械创新实验室「智能搬运小车创新挑战赛」
+> Version: DS 1.3 · 2026-11-12 · Scope: 江苏科技大学机械创新实验室「智能搬运小车创新挑战赛」
 >
 > Status: **Design specification / preview phase**. This document does **not** authorize changing live scores, judge logic, or production layout.
-> Canonical design candidate: [design-preview-v23.html](./design-preview-v23.html). V21 and V22 remain as earlier comparisons.
+> Canonical design candidate: [design-preview-v24.html](./design-preview-v24.html). V21–V23.1 remain as earlier comparisons.
 
 ## 1. 产品目标
 
@@ -173,3 +173,20 @@
 - 演示页面 \`design-preview-v23.html\` 独立于生产，保留原36队、原徽标、五种模拟场景和3/7/8奖项；不接云端服务。
 
 交付状态：**V23 是预览候选，未获用户视觉确认时不得替换正式比赛页面。** 仍须在目标投影设备用 100% 缩放核对 1521×1258 与 1366×768 的真实布局，特别是右榜最后一行、中央时钟下沿及长队名。
+
+
+
+## 11. V24 — 赛事计分台（2026-11-12）
+
+基于 `redesign-existing-projects` 与 `design-taste-frontend`，重建独立设计预览。视觉方向为炭黑底色、暖白数字、青绿 A 赛道和琥珀 B 赛道；色彩集中于赛道与真实状态。
+
+- 主舞台改为「上方计时与轮次 / 下方 A、B 并列赛道」，队名上层、得分和完成用时下层对齐。用排版与间距建立层级。
+- 标题中文恢复正常字距，收敛字重。删除 VS、重复广播和嵌套数据框；已录分成绩使用暖白，前三仅强调名次数值。
+- 桌面积分榜保留18×2，并补充签位/名次、队伍、得分/用时表头；手机改为36队单列，常规队名14px、最小行高44px。
+- 保留36队原始报名数据、原实验室徽标和模拟成绩排序；新增本轮成绩场景。该预览没有云端请求，不提供裁判录分与总控写入。
+- 颁奖明确为03/07/08奖项名额示意，不声称展示获奖名单。弹层支持初始焦点、Tab限制、Esc和焦点恢复。
+- 减弱动画时所有关键信息保持可读；使用本地系统字体，无新增依赖。
+
+验证：Edge 浏览器真实视口 1920×1080、1521×1258、1366×768、1280×720 下均为36行、无纵横滚动，榜单尾行在屏幕内；390×844 为可纵向阅读的单列榜单，无横向溢出，第18/19/36行均44px。已验证待赛、进行中、25秒警示、本轮完整得分与用时、22队录分、03/07/08颁奖名额与Esc焦点恢复。内联JS通过node语法检查，原36队JSON逐项相同，全部ID引用存在。物理投影设备、多客户端实时同步未在本次独立设计预览中验收。
+
+交付文件：`design-preview-v24.html`。正式 `index.html`、裁判业务逻辑、排名实现和云端数据没有在本次改动中写入。
