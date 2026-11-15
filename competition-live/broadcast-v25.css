@@ -1,0 +1,249 @@
+/* V25 · competition broadcast. Presentation only; V24 supplies the layout. */
+body[data-view="screen"] {
+  --canvas:#090e12; --surface:#101920; --raised:#18262d;
+  --ink:#f4f7f5; --secondary:#bcc9ce; --quiet:#95a9b0;
+  --line:#34454e; --hairline:#22343e;
+  --lane-a:#40edbd; --lane-b:#ffb46b; --signal:#ffd084;
+  background:var(--canvas)!important;
+}
+body[data-view="screen"] .ma24-screen {
+  position:relative; isolation:isolate;
+  background:radial-gradient(ellipse at 4% 34%,#15332e42,transparent 48%),
+    radial-gradient(ellipse at 61% 0%,#19344330,transparent 46%);
+}
+body[data-view="screen"] .ma24-screen::before {
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(115deg,transparent 66%,#bddbe604 66%,#bddbe604 66.15%,transparent 66.15%),
+    repeating-linear-gradient(0deg,transparent 0 71px,#9bc1d304 71px 72px);
+}
+body[data-view="screen"] .ma24-masthead {border-bottom-color:#4b6069; position:relative}
+body[data-view="screen"] .ma24-masthead::after {
+  content:"";position:absolute;bottom:-1px;left:0;width:20%;height:2px;
+  background:linear-gradient(90deg,var(--lane-a),transparent);
+}
+body[data-view="screen"] .ma24-event-mark {
+  width:7px;height:40px;transform:skewY(-28deg);
+  background:var(--lane-a);box-shadow:7px 0 0 #40edbd20;
+}
+body[data-view="screen"] .ma24-event-tag {letter-spacing:.08em;color:#a5b9c2}
+body[data-view="screen"] .ma24-event-id h1 {font-weight:750;letter-spacing:.025em}
+body[data-view="screen"] .ma24-brand-logo {box-shadow:0 0 0 5px #bfd9df06}
+body[data-view="screen"] .ma24-arena {
+  position:relative; isolation:isolate;
+  background:linear-gradient(135deg,#15242b,#10191f 58%,#111a20);
+  border:1px solid #314650;border-top:2px solid #4b666f;
+  box-shadow:0 14px 42px #00000024;
+}
+body[data-view="screen"] .ma24-arena::before {
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:repeating-linear-gradient(115deg,transparent 0 92px,#a4c2d305 92px 93px);
+}
+body[data-view="screen"] .ma24-section-head {border-bottom-color:#40535c}
+body[data-view="screen"] .ma24-section-head h2 {font-weight:650;letter-spacing:.11em}
+body[data-view="screen"] .ma24-arena-head {padding-bottom:clamp(22px,2.8vh,34px)}
+body[data-view="screen"] .ma24-timer {gap:clamp(10px,1.2vh,16px)}
+body[data-view="screen"] .ma24-timer-caption {letter-spacing:.12em;font-size:clamp(11px,.8vw,16px)}
+body[data-view="screen"] .ma24-timer-digits {
+  font-weight:600;letter-spacing:-.035em;
+  text-shadow:0 3px 24px #c4edff0c;
+}
+body[data-view="screen"] .ma24-phase {
+  padding-right:clamp(0px,.5vw,10px);gap:clamp(8px,1.4vh,16px);
+}
+body[data-view="screen"] .ma24-phase-label {
+  padding:5px 10px;border:1px solid #40edbd42;
+  background:#40edbd0b;font-weight:600;
+}
+body[data-view="screen"] .ma24-phase-number {font-weight:600}
+/* Existing tick() controls the fill with server-derived remaining time. */
+body[data-view="screen"] .ma24-rail {
+  height:7px;bottom:9px;background:#24323a;overflow:hidden;
+}
+body[data-view="screen"] .ma24-rail i {
+  background:linear-gradient(90deg,#219f83,var(--lane-a));
+  box-shadow:0 0 12px #40edbd35;transition:transform .15s linear;
+}
+body[data-view="screen"] .ma24-rail::after {
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 calc(4.166667% - 3px),#10191f calc(4.166667% - 3px) 4.166667%);
+}
+body[data-view="screen"] .ma24-rail.is-warning i {background:linear-gradient(90deg,#bf772b,var(--signal))}
+body[data-view="screen"] .ma24-rail:is(.is-critical,.is-expired) i {background:var(--danger)}
+body[data-view="screen"] .ma24-timer.is-critical {animation:ma25-critical 750ms ease-out 1}
+@keyframes ma25-critical {40%{filter:drop-shadow(0 0 12px #ff817840)}}
+body[data-view="screen"] .ma24-lanes {
+  position:relative;gap:clamp(22px,2.1vw,40px);border-top:0;
+}
+body[data-view="screen"] .ma24-lane {
+  position:relative;isolation:isolate;border-top:2px solid var(--lane);
+  padding-right:0;padding-left:clamp(12px,1vw,20px);
+  padding-top:clamp(13px,1.9vh,24px);padding-bottom:clamp(13px,1.9vh,24px);
+  background:linear-gradient(160deg,#40edbd0b,transparent 66%);
+}
+body[data-view="screen"] .ma24-lane.ma24-b {
+  border-left:0;padding-left:clamp(12px,1vw,20px);padding-right:0;
+  background:linear-gradient(160deg,#ffb46b0c,transparent 66%);
+}
+body[data-view="screen"] .ma24-lane::before {
+  left:auto;right:0;top:-2px;width:clamp(24px,2.2vw,42px);height:6px;
+  background:var(--lane);clip-path:polygon(14% 0,100% 0,100% 100%,0 100%);
+}
+body[data-view="screen"] .ma24-lane.ma24-b::before {left:auto;right:0}
+body[data-view="screen"] .ma24-lane-code {
+  font-size:clamp(25px,2.1vw,42px);font-style:italic;font-weight:650;
+}
+body[data-view="screen"] .ma24-lane-name {
+  font-size:clamp(27px,2.5vw,49px);font-weight:750;letter-spacing:.025em;line-height:1.3;
+}
+body[data-view="screen"] .ma24-lane-name.ma24-long {font-size:clamp(24px,2.05vw,40px)}
+body[data-view="screen"] .ma24-results {gap:10px;padding-right:8px}
+body[data-view="screen"] .ma24-result-value {font-weight:600}
+body[data-view="screen"] .ma24-result.ma24-score-change {
+  position:relative;isolation:isolate;overflow:hidden;
+  background:transparent;animation:ma25-result 600ms ease-out;
+}
+body[data-view="screen"] .ma24-result.ma24-score-change::after {
+  content:"";position:absolute;inset:-10% -30%;z-index:-1;pointer-events:none;
+  background:linear-gradient(110deg,transparent 32%,#d9fff550 49%,transparent 66%);
+  animation:ma25-sweep 780ms cubic-bezier(.2,.65,.3,1) both;
+}
+@keyframes ma25-sweep {from{transform:translateX(-90%)}to{transform:translateX(90%)}}
+@keyframes ma25-result {from{opacity:.45;transform:translateY(7px)}to{opacity:1;transform:none}}
+body[data-view="screen"] .ma24-row.ma24-score-change {animation:ma25-row 1000ms ease-out}
+@keyframes ma25-row {0%,20%{background:#40edbd32}100%{background:transparent}}
+body[data-view="screen"] .ma24-lane.ma24-scene-change {animation:ma25-lane-a 440ms cubic-bezier(.2,.7,.2,1) both}
+body[data-view="screen"] .ma24-lane.ma24-b.ma24-scene-change {animation-name:ma25-lane-b}
+@keyframes ma25-lane-a {from{opacity:.25;transform:translateX(-15px)}to{opacity:1;transform:none}}
+@keyframes ma25-lane-b {from{opacity:.25;transform:translateX(15px)}to{opacity:1;transform:none}}
+body[data-view="screen"] .ma24-next {border-top:1px solid #3a505b;padding-top:clamp(9px,1vh,13px)}
+body[data-view="screen"] .ma24-next-key {font-style:italic;font-weight:600}
+body[data-view="screen"] .ma24-next-text strong {font-weight:600}
+body[data-view="screen"] .ma24-stages {height:4px}
+body[data-view="screen"] .ma24-stages i.active {box-shadow:0 0 9px #40edbd45}
+body[data-view="screen"] .ma24-tower-head {border-bottom-color:#51636c}
+body[data-view="screen"] .ma24-tower-head h2 {font-weight:750;letter-spacing:.055em}
+body[data-view="screen"] .ma24-row-stat b {font-weight:650}
+body[data-view="screen"] .ma24-row:is(.ma24-in-a,.ma24-in-b) {border-right:2px solid var(--lane-a)}
+body[data-view="screen"] .ma24-row.ma24-in-b {border-right-color:var(--lane-b)}
+body[data-view="screen"] .ma24-row:is(.ma24-medal1,.ma24-medal2,.ma24-medal3) .ma24-row-rank {
+  background:#ffd0840b;border-left:2px solid currentColor;padding-left:5px;
+}
+body[data-view="screen"] .ma24-announcements {border-top:1px solid #415762}
+body[data-view="screen"] .ma24-announce-lead {color:var(--canvas);background:var(--signal);padding:5px 9px;font-weight:650}
+
+/* Ceremony: names, rather than award quotas, are the principal content. */
+#awardOverlay.award-overlay {
+  background:radial-gradient(ellipse at 12% 0%,#6b4a222e,transparent 49%),
+    linear-gradient(145deg,#12120f,#0c1012 66%)!important;
+}
+html:has(#awardOverlay:not(.hidden)),body:has(#awardOverlay:not(.hidden)) {overflow:hidden!important}
+#awardContent .ma24-awards-head {position:relative;border-left:3px solid #eac37c;padding-left:22px}
+#awardContent .ma24-awards-head>span {color:#d6bd92;letter-spacing:.1em}
+#awardContent .ma24-awards-head h1 {font-size:clamp(26px,1.9vw,38px);color:#d6deda}
+#awardContent .ma24-awards-head h1 strong {color:#ffe3aa;font-size:1.16em;letter-spacing:.08em}
+#awardContent .ma24-prizes {grid-template-columns:1.13fr 1fr 1fr;gap:clamp(20px,2.2vw,42px);align-items:start}
+#awardContent .ma24-prize {position:relative;isolation:isolate;border-top:2px solid var(--prize)}
+#awardContent .ma24-prize::before {
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(145deg,#e5b86c0c,transparent 58%);
+}
+#awardContent .ma24-prize-first {--prize:#f7d38d}
+#awardContent .ma24-prize-first>header {background:linear-gradient(90deg,#d9a95019,transparent);padding-left:14px;padding-right:14px}
+#awardContent .ma24-prize>header>strong {font-size:clamp(26px,2.1vw,42px);color:#c1c6be}
+#awardContent .ma24-prize h2 {font-weight:700;letter-spacing:.06em}
+#awardContent .ma24-prize-first li {min-height:clamp(94px,12.5vh,142px);gap:12px;padding-inline:14px}
+#awardContent .ma24-prize-first .ma24-winner-name {font-size:clamp(22px,1.7vw,33px);font-weight:700;color:#fff0cd;line-height:1.4}
+#awardContent .ma24-prize-first .ma24-winner-rank {color:#efd09a}
+#awardContent .ma24-prize-first .ma24-winner-result b {color:#f6d69e;font-size:clamp(20px,1.5vw,29px)}
+#awardContent .ma24-prize:not(.ma24-prize-first) .ma24-winner-name {font-size:clamp(14px,1.05vw,21px);font-weight:550}
+#awardContent .ma24-prize>header::after {
+  content:"";position:absolute;top:-2px;left:0;right:0;height:2px;pointer-events:none;
+  background:#fff1cc;transform-origin:left;animation:ma25-gold-line 700ms cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes ma25-gold-line {from{transform:scaleX(0)}to{transform:scaleX(1)}}
+#awardOverlay:not(.hidden) .ma24-prize {animation:ma25-ceremony 650ms cubic-bezier(.2,.7,.2,1) both}
+#awardOverlay:not(.hidden) .ma24-prize-second {animation-delay:100ms}
+#awardOverlay:not(.hidden) .ma24-prize-third {animation-delay:200ms}
+@keyframes ma25-ceremony {from{opacity:.15;transform:translateY(18px)}to{opacity:1;transform:none}}
+#awardContent .ma24-awards-foot {border-top-color:#5a503d}
+
+/* Use the whole projection canvas; each prize list shares its column height. */
+#awardContent.award-content {max-width:none!important;width:100%!important}
+#awardFullscreen {
+  position:fixed;z-index:3;top:18px;right:clamp(140px,12vw,220px);
+  min-height:40px;padding:10px 16px;border:1px solid #65715c;
+  background:#202822;color:#f2e3c4;font:12px system-ui;cursor:pointer;
+}
+#awardFullscreen:focus-visible {outline:2px solid #f7d38d;outline-offset:4px}
+#awardFullscreen:disabled {opacity:.65;cursor:default}
+@media(min-width:1040px) {
+  #awardOverlay.award-overlay {
+    padding:clamp(48px,5vh,66px) clamp(22px,2.2vw,64px) clamp(18px,2.4vh,34px)!important;
+    align-items:stretch!important;overflow:hidden!important;
+  }
+  #awardContent.award-content {
+    height:100%;min-height:0;display:grid;
+    grid-template-rows:auto minmax(0,1fr) auto;
+    gap:clamp(15px,2.1vh,32px);
+  }
+  #awardContent .ma24-awards-head {margin:0}
+  #awardContent .ma24-awards-head h1 {font-size:clamp(24px,2.05vw,48px);margin:8px 0;line-height:1.25}
+  #awardContent .ma24-prizes {height:100%;min-height:0;align-items:stretch}
+  #awardContent .ma24-prize {display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0}
+  #awardContent .ma24-prize>header {padding-block:clamp(10px,1.7vh,24px)}
+  #awardContent .ma24-prize ol {display:grid;grid-auto-rows:minmax(0,1fr);min-height:0}
+  #awardContent .ma24-prize li,#awardContent .ma24-prize-first li {min-height:0;padding-block:clamp(4px,.7vh,12px)}
+  #awardContent .ma24-prize-first .ma24-winner-name {font-size:clamp(23px,2.15vw,58px)}
+  #awardContent .ma24-prize:not(.ma24-prize-first) .ma24-winner-name {font-size:clamp(14px,1.28vw,32px)}
+  #awardContent .ma24-winner-result {gap:4px}
+  #awardContent .ma24-winner-result b {font-size:clamp(19px,1.5vw,38px);line-height:1}
+  #awardContent .ma24-winner-result small {font-size:clamp(10px,.78vw,18px);line-height:1.1}
+  #awardContent .ma24-awards-foot {margin:0;padding-top:12px}
+}
+
+@media(min-width:1040px) and (max-height:820px) {
+  body[data-view="screen"] .ma24-arena-head {padding-bottom:22px}
+  body[data-view="screen"] .ma24-lane-name {font-size:clamp(24px,2.3vw,34px)}
+  body[data-view="screen"] .ma24-lane-name.ma24-long {font-size:clamp(22px,1.9vw,29px)}
+  body[data-view="screen"] .ma24-lane {padding-top:10px;padding-bottom:12px}
+  body[data-view="screen"] .ma24-lane-code {font-size:27px}
+  body[data-view="screen"] .ma24-next {padding-top:8px}
+  #awardOverlay.award-overlay {padding-top:44px!important;padding-bottom:16px!important}
+  #awardContent .ma24-awards-head {margin-bottom:16px}
+  #awardContent .ma24-awards-head h1 {font-size:24px;margin:6px 0}
+  #awardContent .ma24-prize>header {padding-top:10px;padding-bottom:10px}
+  #awardContent .ma24-prize h2 {font-size:25px;margin-top:4px}
+  #awardContent .ma24-prize:not(.ma24-prize-first) li {min-height:45px;padding-block:5px}
+  #awardContent .ma24-winner-result {gap:3px}
+  #awardContent .ma24-winner-result b {font-size:20px;line-height:1}
+  #awardContent .ma24-winner-result small {font-size:10px;line-height:1.1}
+  #awardContent .ma24-prize-first li {min-height:92px}
+  #awardContent .ma24-prize-first .ma24-winner-name {font-size:23px}
+  #awardContent .ma24-awards-foot {margin-top:12px;padding-top:10px;font-size:10px}
+}
+@media(max-width:1039px) {
+  body[data-view="screen"] .ma24-lanes {gap:22px}
+  body[data-view="screen"] .ma24-lane-name {font-size:30px}
+  body[data-view="screen"] .ma24-lane-name.ma24-long {font-size:26px}
+  #awardContent .ma24-prizes {grid-template-columns:1fr;gap:28px}
+  #awardContent .ma24-prize-first li {min-height:85px}
+  #awardContent .ma24-prize-first .ma24-winner-name {font-size:25px}
+}
+@media(max-width:620px) {
+  body[data-view="screen"] .ma24-arena {padding-inline:18px}
+  body[data-view="screen"] .ma24-lanes {gap:0}
+  body[data-view="screen"] .ma24-lane,body[data-view="screen"] .ma24-lane.ma24-b {padding:20px 10px}
+  body[data-view="screen"] .ma24-lane-name,body[data-view="screen"] .ma24-lane-name.ma24-long {font-size:28px}
+  body[data-view="screen"] .ma24-phase-label {padding:4px 7px}
+  body[data-view="screen"] .ma24-announce-lead {padding:4px 7px}
+  #awardContent .ma24-awards-head {padding-left:14px}
+  #awardContent .ma24-awards-head h1 {font-size:25px}
+  #awardContent .ma24-prize-first li {padding-inline:8px;grid-template-columns:22px minmax(0,1fr) max-content;gap:8px}
+  #awardContent .ma24-prize-first .ma24-winner-name {font-size:23px}
+}
+@media(prefers-reduced-motion:reduce) {
+  body[data-view="screen"] *,body[data-view="screen"] *::before,body[data-view="screen"] *::after,
+  #awardOverlay *,#awardOverlay *::before,#awardOverlay *::after {
+    animation:none!important;transition:none!important;scroll-behavior:auto!important;
+  }
+}

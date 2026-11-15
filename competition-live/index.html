@@ -1402,6 +1402,7 @@ window.COMP26_TEAMS=[
 <link rel="stylesheet" href="./spectator-v24.css?v=20261112-v24">
 <link rel="stylesheet" href="./staff-v24.css?v=20261112-v24">
 <link rel="stylesheet" href="./awards-v24.css?v=20261112-v24">
+<link rel="stylesheet" href="./broadcast-v25.css?v=20261115-v25">
 
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
@@ -1413,7 +1414,7 @@ window.COMP26_TEAMS=[
 </header>
 <div id="message" class="toast" role="status" aria-live="polite"></div>
 <main id="app" class="shell"><section class="loading"><div class="spinner"></div><p>正在加载实时赛事数据</p></section></main>
-<div id="awardOverlay" class="award-overlay hidden" role="dialog" aria-modal="true" aria-label="比赛颁奖揭晓"><button class="overlay-close" id="closeAwards">✕ 退出颁奖</button><div id="awardContent" class="award-content"></div></div>
+<div id="awardOverlay" class="award-overlay hidden" role="dialog" aria-modal="true" aria-label="比赛颁奖揭晓"><button type="button" id="awardFullscreen" data-presentation-fullscreen>全屏投影</button><button class="overlay-close" id="closeAwards">✕ 退出颁奖</button><div id="awardContent" class="award-content"></div></div>
 <script>/* MOVE.ARENA · 独立比赛直播应用。无第三方 JS 依赖；与主站完全隔离。 */
 (() => {
 'use strict';
@@ -1860,7 +1861,11 @@ $('closeAwards').addEventListener('click',()=>{
  if(awardReturnFocus?.isConnected)awardReturnFocus.focus();else $('openAwards')?.focus();
 });
 document.addEventListener('keydown',ev=>{
- if(ev.key==='Tab'&&!$('awardOverlay').classList.contains('hidden')){ev.preventDefault();$('closeAwards').focus();}
+ if(ev.key==='Tab'&&!$('awardOverlay').classList.contains('hidden')){
+  const buttons=[...$('awardOverlay').querySelectorAll('button:not(:disabled)')];
+  const index=buttons.indexOf(document.activeElement);
+  ev.preventDefault();buttons[(index+(ev.shiftKey?-1:1)+buttons.length)%buttons.length]?.focus();
+ }
 });
 
 document.querySelectorAll('[data-nav]').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.nav)));
@@ -1869,4 +1874,5 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('awardOverlay').
 setView(location.hash.slice(1)||'screen');refresh(true);setInterval(()=>refresh(false),Math.max(1500,C.pollingMs));setInterval(tick,100);
 })();
 </script>
+<script src="./presentation-v25.js?v=20261115-v25"></script>
 </body></html>
