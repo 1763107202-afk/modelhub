@@ -1403,6 +1403,18 @@ window.COMP26_TEAMS=[
 <link rel="stylesheet" href="./staff-v24.css?v=20261112-v24">
 <link rel="stylesheet" href="./awards-v24.css?v=20261112-v24">
 <link rel="stylesheet" href="./broadcast-v25.css?v=20261115-v25">
+<style id="ma26-retry-shortcut-style">
+body[data-view="control"] .ma26-retry-shortcut{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 22px;margin:-7px 0 24px;background:linear-gradient(115deg,#162c32,#172621 75%);border:1px solid #4b655b;border-left:3px solid #a4e0b7;border-radius:8px}
+body[data-view="control"] .ma26-retry-shortcut-label{display:flex;align-items:center;flex-wrap:wrap;gap:12px;color:#e0eee5}
+body[data-view="control"] .ma26-retry-shortcut-label>strong{font-size:17px;letter-spacing:.02em}
+body[data-view="control"] .ma26-retry-count{border:1px solid #668473;border-radius:3px;padding:3px 9px;color:#b6dec4;font-size:12px}
+body[data-view="control"] .ma26-retry-shortcut p{margin:7px 0 0;color:#b5c6bc;font-size:12px;line-height:1.7}
+body[data-view="control"] .ma26-retry-shortcut .btn{white-space:nowrap;min-width:156px;background:#c7e9cc;color:#153026;border:0;font-weight:750;min-height:42px}
+body[data-view="control"] .ma26-retry-shortcut .btn:hover{background:#e1f5e5;color:#09261c}
+body[data-view="control"] #retryManagement:focus{outline:2px solid #98dfb4;outline-offset:5px}
+body[data-view="control"] #retryManagement{scroll-margin-top:105px}
+@media(max-width:670px){body[data-view="control"] .ma26-retry-shortcut{flex-direction:column;align-items:stretch;padding:16px;margin-top:0}body[data-view="control"] .ma26-retry-shortcut .btn{width:100%}}
+</style>
 <style id="ma26-spectator-award-entry">
 body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #b69e6b88;border-radius:4px;background:#c9ad7320;color:#eed6a0;font-weight:650;letter-spacing:.02em;white-space:nowrap;transition:border-color .2s,background .2s}
 body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry:hover,
@@ -1649,15 +1661,20 @@ function control(){
  const awardPlan=window.COMP26_AWARDS.planAwards(state.teams);
  return `<header class="staff-head"><div><div class="eyebrow">赛事管理员</div><h1 class="staff-heading">赛事总控台</h1><p class="subtext">核对双赛道成绩，推进赛程，向全场发布通知与奖项。</p></div><span class="role-chip">${demoMode?'本机演示 · 不上传成绩':'赛事总管理员'}</span></header>
  <section class="staff-metrics" aria-label="赛事概况"><div class="metric"><span>当前阶段</span><strong class="staff-phase-value">${esc(phaseText[e.phase])}</strong></div><div class="metric"><span>比赛轮次</span><strong>${pad(e.current_round)} / 18</strong></div><div class="metric"><span>已确认成绩</span><strong>${state.teams.filter(t=>t.score!==null).length} / 36</strong></div><div class="metric"><span>补赛待处理</span><strong>${faults.length}</strong></div></section>
+  <section class="ma26-retry-shortcut" aria-label="补赛管理快捷入口">
+    <div><div class="ma26-retry-shortcut-label"><strong>故障补赛管理</strong><span class="ma26-retry-count">待处理 ${faults.length} 队</span></div>
+    <p>${e.phase==='retry'?(e.active_retry_team?'当前有队伍正在补赛；请先提交该队成绩或登记未完成。':'补赛阶段已开放，可在下方逐队安排补赛。'):e.phase==='live'?'正赛进行中，可提前查看故障队列；完成第18轮后自动进入补赛阶段。':e.phase==='upcoming'?'赛前可查看补赛管理区域，正式比赛中由裁判申报硬件故障。':'当前非补赛阶段，可查看队列与处理状态。'}</p></div>
+    <button type="button" id="goRetryManagement" class="btn">查看补赛管理 ›</button>
+  </section>
  <div class="staff-layout">
   <div class="staff-column">
    <section class="panel"><div class="panel-head"><span class="panel-title">比赛进程</span><span class="staff-panel-note">${esc(phaseText[e.phase])}</span></div><div class="stage-card"><div><h2>第 ${pad(e.current_round)} 轮</h2><p class="subtext">A ${esc(arr[0]?.name)}<br>B ${esc(arr[1]?.name)}</p></div><span class="status-tag">${arr.length-pending.length} / 2 已确认</span></div>
-    <div class="btns staff-primary-actions">${e.phase==='upcoming'?'<button class="btn primary big" data-action="start">宣布正式开始比赛</button>':''}${e.phase==='live'?`<button class="btn primary big" data-action="next" ${pending.length?'disabled':''}>${e.current_round===18?'结束18轮正赛':'确认本轮成绩 · 进入下一轮'}</button>`:''}${e.phase==='retry'?'<button class="btn lime big" data-action="finish_retries" '+(faults.length?'disabled':'')+'>补赛全部完成 · 进入奖项核对</button>':''}</div>
+    <div class="btns staff-primary-actions">${e.phase==='upcoming'?'<button class="btn primary big" data-action="start">宣布正式开始比赛</button>':''}${e.phase==='live'?`<button class="btn primary big" data-action="next" ${pending.length?'disabled':''}>${e.current_round===18?(faults.length?'结束正赛 · 进入补赛':'结束正赛 · 进入成绩复核'):'确认本轮成绩 · 进入下一轮'}</button>`:''}${e.phase==='retry'?'<button class="btn lime big" data-action="finish_retries" '+(faults.length?'disabled':'')+'>补赛全部完成 · 进入奖项核对</button>':''}</div>
     ${pending.length&&e.phase==='live'?`<p class="tiny-note">还需处理 ${pending.map(t=>esc(t.name)).join('、')}。确认录分、申报故障或标记未完成后，即可切换下一轮。</p>`:''}
     ${['review','awards','closed'].includes(e.phase)?'<div class="staff-phase-note">正赛已结束，请核对右侧奖项信息及最终成绩。</div>':''}
    </section>
    <section class="panel"><div class="panel-head"><span class="panel-title">赛道成绩复核</span><span class="staff-panel-note">本轮 A / B</span></div><div class="team-list">${arr.map(t=>`<div class="team-entry staff-review-row"><div><strong>${esc(t.lane)} 赛道 · ${esc(t.name)}</strong><small>${esc(teamStatus(t))}</small></div><span class="score">${displayedScore(t)}<small class="v8-admin-time">${displayedTime(t)}</small></span><button class="btn danger" data-dnf="${esc(t.id)}" ${!(['pending','fault_pending'].includes(t.status)&&e.phase==='live')?'disabled':''}>标记未完成</button></div>`).join('')}</div><p class="tiny-note">仅正式未完成或未到场的队伍记0分。临时硬件故障请使用补赛流程。</p></section>
-   <section class="panel"><div class="panel-head"><span class="panel-title">故障顺延补赛</span><span class="staff-panel-note">每队一次</span></div>${faults.length?faults.map(t=>`<div class="team-entry staff-review-row"><div><strong>${esc(t.name)}</strong><small>${esc(teamStatus(t))} · ${esc(t.lane)}赛道</small></div><span class="staff-panel-note">第 ${t.attempt_count} / 2 次</span><button class="btn" data-retry="${esc(t.id)}" ${e.phase!=='retry'||e.active_retry_team||t.status!=='fault_pending'?'disabled':''}>安排补赛</button></div>`).join(''):'<p class="subtext">暂无等待补赛的队伍。</p>'}${e.active_retry_team?'<div class="staff-tools"><button class="btn danger" id="retryFail">当前补赛未完成 · 记0分</button></div>':''}</section>
+   <section class="panel" id="retryManagement" tabindex="-1" aria-label="故障顺延补赛管理"><div class="panel-head"><span class="panel-title">故障顺延补赛</span><span class="staff-panel-note">每队一次</span></div>${faults.length?faults.map(t=>`<div class="team-entry staff-review-row"><div><strong>${esc(t.name)}</strong><small>${esc(teamStatus(t))} · ${esc(t.lane)}赛道</small></div><span class="staff-panel-note">第 ${t.attempt_count} / 2 次</span><button class="btn" data-retry="${esc(t.id)}" ${e.phase!=='retry'||e.active_retry_team||t.status!=='fault_pending'?'disabled':''}>安排补赛</button></div>`).join(''):'<p class="subtext">暂无等待补赛的队伍。</p>'}${e.active_retry_team?'<div class="staff-tools"><button class="btn danger" id="retryFail">当前补赛未完成 · 记0分</button></div>':''}</section>
    <section class="panel"><div class="panel-head"><span class="panel-title">最终成绩核对</span><span class="staff-panel-note">得分 / 完成用时</span></div><div class="staff-ranking">${ranked.map((t,i)=>`<div class="rank-item ${i===0?'top1':''}"><span class="rank-no">${pad(rankNum(ranked,i))}</span><span class="rank-name">${esc(t.name)}</span><span class="rank-score">${displayedScore(t)}<small class="v8-admin-time">${displayedTime(t)}</small></span></div>`).join('')||'<p class="subtext">暂无已确认成绩。</p>'}</div>
     ${e.phase==='review'?`<form id="tieForm" class="staff-form staff-tie-form"><p class="tiny-note">仅当得分与用时均相同、需要区分奖项边界时填写裁决序。数值较小者排名靠前。</p><div class="form-grid"><div class="field"><label for="tieTeam">同分队伍</label><select id="tieTeam">${ranked.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}（${displayedScore(t)}分）</option>`).join('')}</select></div><div class="field"><label for="tieNumber">同分裁决序</label><input id="tieNumber" type="number" min="1" max="36" placeholder="1"></div></div><button type="submit" class="btn block">保存裁决序</button></form>`:''}
    </section>
@@ -1731,6 +1748,13 @@ function bindEvents(){
  $('openFullscreen')?.addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>toast('请通过浏览器菜单启用全屏',true)));
  $('fullscreenBtn')?.addEventListener('click',()=>setView('screen'));
  $('judgeShortcut')?.addEventListener('click',()=>setView('judge'));
+ $('goRetryManagement')?.addEventListener('click',()=>{
+  const section=$('retryManagement');
+  if(!section)return;
+  section.scrollIntoView({behavior:'smooth',block:'start'});
+  section.focus({preventScroll:true});
+  if(state.event?.phase!=='retry'&&state.event?.phase==='live')toast('可查看故障队列，完成第18轮后才能安排补赛');
+ });
  $('openAwards')?.addEventListener('click',showAwardsEntry);
  $('logoutBtn')?.addEventListener('click',()=>{state.token='';state.role='';for(const k of ['comp26_token','comp26_role','comp26_token_v2','comp26_role_v2'])sessionStorage.removeItem(k);render()});
  $('authForm')?.addEventListener('submit',async ev=>{ev.preventDefault();const code=$('accessCode').value.trim();const selected=$('accessRole').value;if(!/^[0-9]{6}$/.test(code)||!roleText[selected]){toast('请正确选择身份并填写6位数字访问码',true);return;}const token='MOVE.ARENA:2026:'+selected+':'+code;const old=state.token,oldRole=state.role;state.token=token;state.role=selected;try{const probe=await rpc('probe');if(probe.role!==selected)throw Error('身份验证不一致，请联系管理员');state.role=probe.role;sessionStorage.setItem('comp26_token_v2',token);sessionStorage.setItem('comp26_role_v2',probe.role);toast('验证成功：'+roleText[probe.role]);render()}catch(e){state.token=old;state.role=oldRole;toast(e.message,true)}});
@@ -1795,7 +1819,7 @@ function bindEvents(){
  }
  $('scoreForm')?.addEventListener('submit',async ev=>{ev.preventDefault();const team=state.teams.find(t=>t.id===$('currentTeamId').value);const score=Number($('scoreInput').value);const note=$('scoreNote').value.trim(), w=watchFor(team), seconds=Number($('elapsedInput').value), elapsed_ms=Math.round(seconds*1000), source=$('elapsedInput').dataset.source||'manual';if(!Number.isFinite(score)||score<0||score>9999){toast('分数必须在0—9999之间',true);return}if(w.running||w.paused){toast('请先停止计时，再确认最终用时',true);return}if(!Number.isFinite(seconds)||!Number.isInteger(elapsed_ms)||elapsed_ms<=0||elapsed_ms>600000){toast('用时必须在0.01至600秒之间',true);return}if(source==='manual'&&!note){toast('手动录入或修正用时，请在备注中说明原因',true);return}if(confirm(`确认提交？\n队伍：${team.name}\n赛道：${team.lane}\n最终成绩：${score.toFixed(2)} 分\n完成用时：${window.COMP26_RANKING.displayTime(elapsed_ms)}\n\n同分时用时短者排名靠前。`))await execute('submit',{p_team_id:team.id,p_score:score,p_elapsed_ms:elapsed_ms,p_time_source:source,p_note:note},'成绩与完成用时已同步到大屏')});
  $('faultBtn')?.addEventListener('click',async()=>{const t=state.teams.find(t=>t.id===$('currentTeamId').value);if(confirm(`确定申报 ${t.name} 的临时硬件故障？\n确认后该队将顺延至补赛时段，每队仅允许一次补赛。`))await execute('fault',{p_team_id:t.id,p_note:'临时硬件故障 · 现场裁判确认'},'已加入故障补赛队列')});
- document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async()=>{const act=b.dataset.action;if(confirm(act==='start'?'确定宣布赛事正式开始？':act==='next'?'本轮双赛道成绩已确认，确定有请下一轮队伍？':'所有故障队伍均已处理，进入成绩核对？') )await execute(act,{},'比赛进程已同步到全场大屏')}));
+ document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async()=>{const act=b.dataset.action;if(confirm(act==='start'?'确定宣布赛事正式开始？':act==='next'?(state.event.current_round===18?(state.teams.some(t=>['fault_pending','retry_active'].includes(t.status))?'确定结束第18轮正赛，进入故障补赛阶段？':'确定结束第18轮正赛，进入成绩复核？'):'本轮双赛道成绩已确认，确定有请下一轮队伍？'):'所有故障队伍均已处理，进入成绩核对？') )await execute(act,{},'比赛进程已同步到全场大屏')}));
  document.querySelectorAll('[data-dnf]').forEach(b=>b.addEventListener('click',()=>{const t=state.teams.find(x=>x.id===b.dataset.dnf);if(confirm('请核实：将 '+t.name+' 标记为未完成（0分），此操作会计入最终排名。'))execute('mark_dnf',{p_team_id:t.id},'已记录为未完成')}));
  document.querySelectorAll('[data-retry]').forEach(b=>b.addEventListener('click',()=>{const t=state.teams.find(x=>x.id===b.dataset.retry);if(confirm('安排 '+t.name+' 进行唯一一次补赛？'))execute('activate_retry',{p_team_id:t.id},'补赛通知已同步至赛道')}));
  $('retryFail')?.addEventListener('click',()=>{if(confirm('补赛未完成将记为0分。确定？'))execute('retry_fail',{p_team_id:state.event.active_retry_team},'补赛结果已登记')});
