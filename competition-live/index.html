@@ -1403,6 +1403,18 @@ window.COMP26_TEAMS=[
 <link rel="stylesheet" href="./staff-v24.css?v=20261112-v24">
 <link rel="stylesheet" href="./awards-v24.css?v=20261112-v24">
 <link rel="stylesheet" href="./broadcast-v25.css?v=20261115-v25">
+<style id="ma26-spectator-award-entry">
+body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #b69e6b88;border-radius:4px;background:#c9ad7320;color:#eed6a0;font-weight:650;letter-spacing:.02em;white-space:nowrap;transition:border-color .2s,background .2s}
+body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry:hover,
+body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry:focus-visible{background:#c9ad733b;color:#fff0cf;border-color:#ebcd86}
+body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry.is-revealed{background:#d8b96830;border-color:#e1bd74;color:#ffe2a4}
+body[data-view="screen"] .ma24-actions #openAwards.ma26-awards-entry:focus-visible{outline:2px solid #e9d39c;outline-offset:2px}
+#awardContent .ma26-awards-locked{min-height:240px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;border-bottom:1px solid #3c453c;color:#aab8ac;text-align:center}
+#awardContent .ma26-awards-locked>span{font-size:28px;color:#d9bf8f}
+#awardContent .ma26-awards-locked>strong{font-weight:600;font-size:clamp(17px,1.25vw,24px);color:#e8e4d9}
+#awardContent .ma26-awards-locked>small{font-size:clamp(10px,.75vw,14px);color:#9dab9c}
+@media(max-width:1039px){#awardContent .ma26-awards-locked{min-height:130px}}
+</style>
 
 </head><body>
 <div class="ambient-grid" aria-hidden="true"></div><div class="ambient-glow" aria-hidden="true"></div>
@@ -1560,7 +1572,7 @@ function screen(){
  <main class="ma24-body"><div class="ma24-left"><section class="ma24-arena" aria-labelledby="ma24ArenaTitle"><div class="ma24-section-head"><h2 id="ma24ArenaTitle">当前赛况</h2><small>A / B 双赛道 · 独立计时</small></div><div class="ma24-arena-head"><div class="ma24-timer"><small class="ma24-timer-caption" id="roundTimerLabel">${esc(phaseLabel)}</small><strong class="ma24-timer-digits" id="roundTimer">04:00</strong></div><div class="ma24-phase"><span class="ma24-phase-label">${esc(phaseLabel)}</span><div class="ma24-phase-round"><strong class="ma24-phase-number">${pad(e.current_round)}</strong><span class="ma24-phase-total">/ 18 轮</span></div><small class="ma24-phase-caption">本轮比赛</small></div><div class="ma24-rail" id="v15RoundRail" role="progressbar" aria-label="本轮剩余秒数" aria-valuemin="0" aria-valuemax="240" aria-valuenow="240"><i></i></div></div><div class="ma24-lanes">${lane('A')}${lane('B')}</div><div class="ma24-arena-prompt"><span>共36支队伍 · 当前第${pad(e.current_round)}轮</span><span>用时以裁判记录为准</span></div></section>
  <section class="ma24-next" aria-labelledby="ma24NextTitle"><div class="ma24-next-head"><h2 id="ma24NextTitle">下一轮候场</h2><small>请提前进入调试区</small></div><div class="ma24-next-columns">${nextLane('A')}${nextLane('B')}</div><div class="ma24-stages" aria-label="18轮比赛进度">${Array.from({length:18},(_,i)=>`<i class="${['awards','closed'].includes(e.phase)||i+1<e.current_round?'ma24-done':i+1===e.current_round?'ma24-active':''}"></i>`).join('')}</div></section></div>
  <aside class="ma24-tower" aria-labelledby="ma24TowerTitle"><div class="ma24-tower-head"><div class="ma24-tower-heading"><h2 id="ma24TowerTitle">实时积分榜</h2><small class="ma24-tower-subtitle">未赛按签位 · 完赛按名次</small></div><span class="ma24-tower-live">已录分 <b>${ranked.length}</b> / 36</span></div><div class="ma24-tower-columns">${columns}</div><div class="ma24-tower-foot"><span>成绩以最终审核结果为准</span><span>同分按完成用时排序</span></div></aside></main>
- <footer class="ma24-announcements"><strong class="ma24-announce-lead">现场通知</strong><div class="ma24-news-viewport" aria-label="${esc(notice)}"><div class="ma24-news-track${Array.from(notice).length>44?' is-long':''}"><span>${esc(notice)}</span>${Array.from(notice).length>44?'<span aria-hidden="true">'+esc(notice)+'</span>':''}</div></div>${demoMode?'<span class="ma24-demo-notice">演示数据 · 非正式成绩</span>':''}<div class="ma24-actions">${e.awards_revealed?'<button id="openAwards">获奖名单</button>':''}<button id="openFullscreen">全屏投影</button>${!displayOnly?'<a href="#judge">裁判</a><a href="#control">总控</a>':''}</div></footer>
+ <footer class="ma24-announcements"><strong class="ma24-announce-lead">现场通知</strong><div class="ma24-news-viewport" aria-label="${esc(notice)}"><div class="ma24-news-track${Array.from(notice).length>44?' is-long':''}"><span>${esc(notice)}</span>${Array.from(notice).length>44?'<span aria-hidden="true">'+esc(notice)+'</span>':''}</div></div>${demoMode?'<span class="ma24-demo-notice">演示数据 · 非正式成绩</span>':''}<div class="ma24-actions"><button type="button" id="openAwards" class="ma26-awards-entry ${e.awards_revealed?'is-revealed':'is-pending'}" aria-label="${e.awards_revealed?'查看一等奖、二等奖、三等奖正式获奖名单':'查看奖项设置，获奖名单尚未公布'}"><span aria-hidden="true">★</span> ${e.awards_revealed?'查看获奖名单':'奖项揭晓 · 待公布'}</button><button id="openFullscreen">全屏投影</button>${!displayOnly?'<a href="#judge">裁判</a><a href="#control">总控</a>':''}</div></footer>
  </div>`;
 }
 
@@ -1719,7 +1731,7 @@ function bindEvents(){
  $('openFullscreen')?.addEventListener('click',()=>document.documentElement.requestFullscreen?.().catch(()=>toast('请通过浏览器菜单启用全屏',true)));
  $('fullscreenBtn')?.addEventListener('click',()=>setView('screen'));
  $('judgeShortcut')?.addEventListener('click',()=>setView('judge'));
- $('openAwards')?.addEventListener('click',showAwards);
+ $('openAwards')?.addEventListener('click',showAwardsEntry);
  $('logoutBtn')?.addEventListener('click',()=>{state.token='';state.role='';for(const k of ['comp26_token','comp26_role','comp26_token_v2','comp26_role_v2'])sessionStorage.removeItem(k);render()});
  $('authForm')?.addEventListener('submit',async ev=>{ev.preventDefault();const code=$('accessCode').value.trim();const selected=$('accessRole').value;if(!/^[0-9]{6}$/.test(code)||!roleText[selected]){toast('请正确选择身份并填写6位数字访问码',true);return;}const token='MOVE.ARENA:2026:'+selected+':'+code;const old=state.token,oldRole=state.role;state.token=token;state.role=selected;try{const probe=await rpc('probe');if(probe.role!==selected)throw Error('身份验证不一致，请联系管理员');state.role=probe.role;sessionStorage.setItem('comp26_token_v2',token);sessionStorage.setItem('comp26_role_v2',probe.role);toast('验证成功：'+roleText[probe.role]);render()}catch(e){state.token=old;state.role=oldRole;toast(e.message,true)}});
 
@@ -1844,6 +1856,13 @@ function tick(){
 }
 let awardTimers=[];
 let awardReturnFocus=null;
+function showAwardsEntry(){
+ if(state.event?.awards_revealed){showAwards();return;}
+ awardReturnFocus=document.activeElement;
+ awardTimers.forEach(clearTimeout);awardTimers=[];
+ $('awardContent').innerHTML=`<header class="ma24-awards-head"><span>2026 校内赛 · 江苏科技大学机械创新实验室</span><h1>智能搬运小车创新挑战赛<br><strong>荣誉榜 · 即将揭晓</strong></h1><p>获奖名单尚未正式公布，公布后可在此查看最终获奖队伍。</p></header><div class="ma24-prizes ma26-awards-pending">${[{key:'first',label:'一等奖',count:3,ranks:'第 1–3 名'},{key:'second',label:'二等奖',count:7,ranks:'第 4–10 名'},{key:'third',label:'三等奖',count:8,ranks:'第 11–18 名'}].map(g=>`<section class="ma24-prize ma24-prize-${g.key}"><header><div><small>${g.ranks}</small><h2>${g.label}</h2></div><strong>${pad(g.count)}<small>队</small></strong></header><div class="ma26-awards-locked"><span aria-hidden="true">⌛</span><strong>等待正式公布</strong><small>名单由赛事管理员核定后开放</small></div></section>`).join('')}</div><footer class="ma24-awards-foot">一等奖 3 队 · 二等奖 7 队 · 三等奖 8 队<span>实时积分榜不等于最终获奖名单，以正式核定结果为准</span></footer>`;
+ $('awardOverlay').classList.remove('hidden');$('closeAwards').focus();
+}
 function showAwards(){
  if(!state.event?.awards_revealed){toast('奖项尚未由管理员正式公布',true);return;}
  const plan=window.COMP26_AWARDS.planAwards(state.teams);
@@ -1857,7 +1876,7 @@ function showAwards(){
 }
 $('closeAwards').addEventListener('click',()=>{
  $('awardOverlay').classList.add('hidden');awardTimers.forEach(clearTimeout);
- sessionStorage.setItem('comp26_skip_awards','1');
+ if(state.event?.awards_revealed)sessionStorage.setItem('comp26_skip_awards','1');
  if(awardReturnFocus?.isConnected)awardReturnFocus.focus();else $('openAwards')?.focus();
 });
 document.addEventListener('keydown',ev=>{
