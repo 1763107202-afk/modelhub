@@ -176,8 +176,8 @@ html[data-theme="light"] .teamPickerDialog{background:#fff;color:#19344f}html[da
 <div class="progressMetrics" aria-label="近期进度数据">
   <section class="progressMetric progressMetricPrimary"><span>个人进度已更新</span><div><strong id="personalUpdatedCount">0</strong><small>人</small></div><p>本周期个人更新人数</p></section>
   <section class="progressMetric"><span>队伍进度已更新</span><div><strong id="teamUpdatedCount">0</strong><small>人</small></div><p>本周期队伍覆盖人数</p></section>
-  <section class="progressMetric progressMetricAlert"><span>超过两周未更新</span><div><strong id="progressReminderCount">0</strong><small>人</small></div><p>需要关注的成员</p></section>
-  <section class="progressMetric"><span>队伍动态记录</span><div><strong id="progressTeamRecordMetric">0</strong><small>条</small></div><p>队伍进度记录总量</p></section>
+  <section class="progressMetric progressMetricAlert"><span>个人进度逾期</span><div><strong id="progressReminderCount">0</strong><small>人</small></div><p>14 天未更新个人进度</p></section>
+  <section class="progressMetric"><span>团队进度逾期</span><div><strong id="teamReminderCount">0</strong><small>人</small></div><p>参与的团队项目逾期</p></section>
 </div>
 <div class="progressTopGrid">
 <section class="progressComposer glass" id="progressComposer" aria-label="提交进度">
@@ -191,7 +191,7 @@ html[data-theme="light"] .teamPickerDialog{background:#fff;color:#19344f}html[da
     <div><span class="eyebrow">PERSONAL PROGRESS</span><h3>个人进度</h3><p class="profileHint">仿真、论文、科研、专利、课程设计等都可以作为个人项目；也可以不关联项目，单独记录普通个人进度。</p></div>
     <label>项目名称<input id="progressProject" list="progressProjectList" maxlength="160" required placeholder="请输入项目名称，例如：桥梁桁架有限元分析"></label>
     <datalist id="progressProjectList"></datalist>
-    <small class="profileHint">项目名称必须填写。提交时会先让你确认是否合并到已有个人项目或团队项目；选择团队项目后，个人进度仍会更新，同时同步到该团队项目。</small>
+    <small class="profileHint">项目名称必须填写。提交时会先让你确认是否合并到已有个人项目或团队项目；选择团队项目后，只将个人贡献关联到项目，不会自动生成队伍进度或刷新团队的 14 天周期。</small>
     <label>近期个人进度<textarea id="progressCurrent" rows="6" maxlength="5000" required placeholder="这段时间个人完成了什么、目前做到哪一步、遇到哪些问题"></textarea></label>
     <label>下一时期个人目标<textarea id="progressGoal" rows="5" maxlength="5000" required placeholder="下一阶段个人准备完成哪些任务、达到什么目标"></textarea></label>
     <label>相关链接（可选）<input id="progressLink" type="url" placeholder="https://..."></label>
@@ -228,10 +228,10 @@ html[data-theme="light"] .teamPickerDialog{background:#fff;color:#19344f}html[da
     <div class="personalStatusPanel">
       <div><span class="eyebrow">MY STATUS</span><h4>本周期个人状态</h4></div>
       <div class="personalStatusRow"><span>当前状态</span><b id="personalStatusLabel">正在加载…</b></div>
-      <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div>
+      <div class="personalStatusRow"><span>最近更新</span><b id="personalStatusTime">—</b></div><div class="personalStatusRow"><span>团队周期</span><b id="teamStatusLabel">正在加载…</b></div><div class="personalStatusRow"><span>团队最近更新</span><b id="teamStatusTime">—</b></div>
       <p>每个项目分别保留你的最新一条个人进度；同一项目再次提交后会替换旧记录，并自动清理上一条附件。</p>
     </div>
-<section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>两周未更新提醒</h2></div></div><div id="progressBulkActions" class="progressBulkActions" hidden><button id="progressBulkOpen" class="btn sec" type="button">🔔 批量提醒</button><small>仅老师手动触发，发送前可取消勾选</small></div><p class="progressReminderHint">个人项目进度、普通个人进度和队伍项目进度都会计入更新；超过 14 天没有新的记录会进入提醒区。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressMemberSwitcher" role="tablist" aria-label="成员更新列表">
+<section class="progressReminder glass"><div class="progressSummaryHead"><div><span class="eyebrow">REMINDER</span><h2>14 天独立周期提醒</h2></div></div><div id="progressBulkActions" class="progressBulkActions" hidden><button id="progressBulkOpen" class="btn sec" type="button">🔔 批量提醒</button><small>仅老师手动触发，发送前可取消勾选</small></div><p class="progressReminderHint">个人进度和进行中团队项目的进度分别计算 14 天周期；任何一项逾期均单独提醒，互不抵扣。未加入团队不考核团队进度。</p><div id="progressReminderList" class="progressReminderList"><div class="empty">正在检查成员进度…</div></div></section><div class="progressMemberSwitcher" role="tablist" aria-label="成员更新列表">
 <button type="button" id="progressMembersPersonal" class="progressMemberTab is-active" role="tab" aria-selected="true" aria-controls="progressMembersPersonalPanel">个人已更新</button>
 <button type="button" id="progressMembersTeam" class="progressMemberTab" role="tab" aria-selected="false" aria-controls="progressMembersTeamPanel">团队已更新</button>
 </div>
