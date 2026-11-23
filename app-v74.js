@@ -2679,7 +2679,7 @@ async function sendBulkReminders(){
  for(let i=0;i<ids.length;i++){
    const id=ids[i];q("#progressBulkStatus").textContent="正在处理 "+(i+1)+"/"+ids.length+"；站内成功 "+site+"，微信已接受 "+push+"，跳过 "+skipped+"，失败 "+failed;
    try{
-     const row={sender_id:state.user.id,recipient_id:id,message_type:"reminder",message:"你的近期项目进度已经超过两周没有更新，请及时登录实验室网站补充当前成果与下一步计划。"};
+     const row={sender_id:state.user.id,recipient_id:id,message_type:"reminder",message:"你的个人进度或团队进度已超过 14 天未更新。两项分别考核、互不抵扣，请登录实验室网站查看对应逾期项目并补充进度。"};
      const result=await supabase.from("progress_member_notices").insert(row).select("id").single();
      if(result.error){skipped++;continue}
      site++;
@@ -2699,7 +2699,11 @@ function setupProgressBulkReminder(reminders){
  if(!progressBulkReady){
   progressBulkReady=true;
   q("#progressBulkOpen").onclick=()=>{
-   q("#progressBulkChoices").innerHTML=progressBulkEligible.map(x=>'<label><input type="checkbox" value="'+esc(x.user_id)+'" checked><span>'+esc(x.member_name||"成员")+' · 已 '+esc(x.days_since)+' 天未更新</span></label>').join("");
+   q("#progressBulkChoices").innerHTML=progressBulkEligible.map(x=>{
+      const cycle=window.__progressCycleById?.get(x.user_id);
+      const detail=cycle?[cycle.personal_overdue?"个人 "+cycle.personal_days_since+" 天":null,cycle.team_overdue?"团队 "+cycle.team_days_since+" 天":null].filter(Boolean).join("；"):"逾期 "+x.days_since+" 天";
+      return '<label><input type="checkbox" value="'+esc(x.user_id)+'" checked><span>'+esc(x.member_name||"成员")+' · '+esc(detail)+'</span></label>';
+    }).join("");
    q("#progressBulkStatus").textContent="将向勾选成员发送站内提醒并尝试微信推送，同时发送一条 QQ 群提醒。";
    q("#progressBulkSend").disabled=false;q("#progressBulkSend").textContent="确认发送";
    dialog.showModal();
@@ -2720,6 +2724,7 @@ async function loadProgressOverview(){
   ]);
   const cycles=cycleReq.error?[]:(cycleReq.data||[]);
   const cycleById=new Map(cycles.map(x=>[x.member_id,x]));
+  window.__progressCycleById=cycleById;
 
   const statuses=statusReq.error?[]:(statusReq.data||[]);
   const personal=statuses.filter(x=>x.personal_updated);
