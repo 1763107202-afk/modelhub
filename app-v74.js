@@ -147,6 +147,9 @@ function fetchProgressRemindersOnce(){
 function fetchProgressMemberStatusOnce(){
   return singleFlight(authScopedKey("rpc:get_progress_member_status"),()=>supabase.rpc("get_progress_member_status"));
 }
+function fetchProgressCycleStatusOnce(){
+  return singleFlight(authScopedKey("rpc:get_progress_cycle_status"),()=>supabase.rpc("get_progress_cycle_status"));
+}
 function fetchFormalMemberDirectoryOnce(){
   return singleFlight(authScopedKey("rpc:get_formal_member_directory"),()=>supabase.rpc("get_formal_member_directory"));
 }
@@ -1942,10 +1945,10 @@ async function refreshHomeSummary(){
   const alertBox=q("#homeProgressAlert"),progressModule=q("#homeProgressModule"),alertText=q("#homeProgressAlertText");
   if(alertBox){alertBox.hidden=true;alertBox.classList.remove("show")}
   if(progressModule)progressModule.classList.remove("progressOverdue");
-  if(alertText)alertText.textContent="请尽快更新个人进度，或由所在队伍提交队伍进度并将你加入成员名单。";
+  if(alertText)alertText.textContent="个人进度与团队进度各有独立的 14 天周期，请分别完成更新。";
 
   const reminderPromise=(state.user&&membershipStatus()==="formal")
-    ?fetchProgressRemindersOnce()
+    ?fetchProgressCycleStatusOnce()
     :Promise.resolve({data:[],error:null});
   const minePromise=state.user
     ?supabase.from("submissions").select("id",{count:"exact",head:true}).eq("user_id",state.user.id)
@@ -1958,11 +1961,14 @@ async function refreshHomeSummary(){
   ]);
 
   if(!reminderReq.error){
-    const mine=(reminderReq.data||[]).find(x=>x.user_id===state.user?.id);
-    if(mine){
+    const mine=(reminderReq.data||[]).find(x=>x.member_id===state.user?.id);
+    if(mine&&(mine.personal_overdue||mine.team_overdue)){
       if(alertBox){alertBox.hidden=false;alertBox.classList.add("show")}
       if(progressModule)progressModule.classList.add("progressOverdue");
-      if(alertText)alertText.textContent="你已经 "+mine.days_since+" 天没有新的个人或队伍进度记录，请尽快更新。";
+      const overdueParts=[];
+      if(mine.personal_overdue)overdueParts.push("个人进度已 "+mine.personal_days_since+" 天未更新");
+      if(mine.team_overdue)overdueParts.push("团队进度已 "+mine.team_days_since+" 天未更新"+(mine.team_overdue_names?.length?"（"+mine.team_overdue_names.join("、")+"）":""));
+      if(alertText)alertText.textContent=overdueParts.join("；")+"。两类进度互不抵扣，请分别更新。";
     }
   }
 
@@ -2707,10 +2713,13 @@ function setupProgressBulkReminder(reminders){
 }
 async function loadProgressOverview(){
   if(!state.user)return;
-  const [statusReq,reminderReq]=await Promise.all([
+  const [statusReq,reminderReq,cycleReq]=await Promise.all([
     fetchProgressMemberStatusOnce(),
-    fetchProgressRemindersOnce()
+    fetchProgressRemindersOnce(),
+    fetchProgressCycleStatusOnce()
   ]);
+  const cycles=cycleReq.error?[]:(cycleReq.data||[]);
+  const cycleById=new Map(cycles.map(x=>[x.member_id,x]));
 
   const statuses=statusReq.error?[]:(statusReq.data||[]);
   const personal=statuses.filter(x=>x.personal_updated);
@@ -2724,18 +2733,29 @@ async function loadProgressOverview(){
   if(tn)tn.innerHTML=team.length?team.map(x=>'<span class="progressNameChip">'+esc(x.member_name||"成员")+(x.competition_name?' · '+esc(x.competition_name):'')+'</span>').join(""):'<span class="progressNoSubmitter">暂时还没有队伍进度更新</span>';
 
   const reminders=reminderReq.error?[]:(reminderReq.data||[]);
+  const mineCycle=cycleById.get(state.user?.id);
+  const teamLabel=q("#teamStatusLabel"),teamTime=q("#teamStatusTime");
+  if(teamLabel)teamLabel.textContent=cycleReq.error?"加载失败":!mineCycle?"暂无状态":!mineCycle.team_required?"未加入进行中的团队":mineCycle.team_overdue?"团队进度已逾期":mineCycle.team_updated?"14 天内已更新":"周期内待更新";
+  if(teamTime)teamTime.textContent=cycleReq.error?"—":mineCycle?.team_at?fmt(mineCycle.team_at):(mineCycle?.team_required?"尚未提交":"不适用");
   const permission=await supabase.from("profiles").select("role,progress_exempt").eq("id",state.user.id).maybeSingle();
   const authorized=!permission.error&&(permission.data?.role==="super_admin"||permission.data?.progress_exempt===true);
   if(authorized)setupProgressBulkReminder(reminders);
   else if(q("#progressBulkActions")){q("#progressBulkActions").hidden=true;}
   if(reminderReq.error&&authorized){const b=q("#progressBulkOpen");if(b){b.disabled=true;b.textContent="成员名单加载失败，请刷新重试";}}
 
-  const rc=q("#progressReminderCount");if(rc)rc.textContent=String(reminders.length);
+  const rc=q("#progressReminderCount");if(rc)rc.textContent=String(cycleReq.error?reminders.length:cycles.filter(x=>x.personal_overdue).length);
+  const trc=q("#teamReminderCount");if(trc)trc.textContent=cycleReq.error?"—":String(cycles.filter(x=>x.team_overdue).length);
   const rb=q("#progressReminderList");
   if(rb){
     if(reminderReq.error){
       showModuleRetry(rb,"提醒区加载失败："+reminderReq.error.message,"progress-overview",()=>loadProgressOverview());
-    }else rb.innerHTML=reminders.length?reminders.map(x=>'<article class="progressReminderItem"><div><b>'+esc(x.member_name||"成员")+'</b>'+(x.member_major?'<span>'+esc(x.member_major)+'</span>':'')+'</div><div class="progressReminderMeta">'+(x.last_progress_at?'最近进度：'+fmt(x.last_progress_at):'尚未提交过进度')+' · 已 '+esc(x.days_since)+' 天</div></article>').join(""):'<div class="progressReminderOk">当前没有超过两周未更新的成员。</div>';
+    }else rb.innerHTML=reminders.length?reminders.map(x=>{
+      const cycle=cycleById.get(x.user_id),parts=[];
+      if(cycle?.personal_overdue)parts.push("个人进度："+cycle.personal_days_since+" 天未更新");
+      if(cycle?.team_overdue)parts.push("团队进度："+cycle.team_days_since+" 天未更新"+(cycle.team_overdue_names?.length?"（"+cycle.team_overdue_names.join("、")+"）":""));
+      if(!parts.length)parts.push("已 "+x.days_since+" 天未更新");
+      return '<article class="progressReminderItem"><div><b>'+esc(x.member_name||"成员")+'</b>'+(x.member_major?'<span>'+esc(x.member_major)+'</span>':'')+'</div><div class="progressReminderMeta">'+esc(parts.join("；"))+'</div></article>';
+    }).join(""):'<div class="progressReminderOk">当前所有适用的个人和团队进度周期均无逾期。</div>';
   }
 }
 async function loadProgressPage(){
@@ -3322,9 +3342,9 @@ async function initProgress(){
       form.reset();q("#progressFilePreview").textContent="";window.JUSTProgressUX43?.clear("personal");
       __projectDirectoryCache=[];
       if(mergeChoice.mode==="existing"&&mergeChoice.project){
-        toast("个人进度已更新，并合并到"+(mergeChoice.project.project_mode==="team"?"团队项目：":"个人项目：")+mergeChoice.project.name);
+        toast("个人进度已更新，已关联"+(mergeChoice.project.project_mode==="team"?"团队项目：":"个人项目：")+mergeChoice.project.name+"（不会自动提交团队进度）");
       }else{
-        toast(resultRow?.created_project?"个人进度已更新，并自动创建新的个人项目":resultRow?.resolved_project_mode==="team"?"个人进度已同步到同名团队项目":"个人进度已同步到个人项目");
+        toast(resultRow?.created_project?"个人进度已更新，并自动创建新的个人项目":resultRow?.resolved_project_mode==="team"?"个人进度已关联同名团队项目（未提交队伍进度）":"个人进度已关联个人项目");
       }
       await loadProgressPage();
     }catch(err){toast("提交失败："+(err?.message||String(err)))}
