@@ -5027,7 +5027,41 @@ function spaceRenderFeed(){
 }
 
 async function runPage(){if(page==="home")return initHome();if(page==="works")return initWorks();if(page==="exams")return initExams();if(page==="tutorials")return initTutorials();if(page==="files")return initFiles();if(page==="progress")return initProgress();if(page==="space")return initSpace();if(page==="submit")return initSubmit();if(page==="mine")return initMine();if(page==="profile")return initProfile();if(page==="messages")return initMessages();if(page==="projects")return initProjects();if(page==="admin")return initAdmin()}
+
+function protectSearchInputs(){
+  const selector='input[type="search"],input[id*="search" i],input[id*="filter" i],input[placeholder*="搜索"],input[placeholder*="筛选"]';
+  const seen=new WeakSet();
+  function setup(input){
+    if(seen.has(input)||["email","password","hidden","checkbox","radio"].includes(input.type))return;
+    seen.add(input);
+    input.setAttribute("autocomplete","off");
+    input.setAttribute("autocorrect","off");
+    input.setAttribute("autocapitalize","off");
+    input.setAttribute("data-lpignore","true");
+    input.setAttribute("data-1p-ignore","true");
+    input.setAttribute("data-bwignore","true");
+    input.name="lab_query_"+(input.id||Math.random().toString(36).slice(2));
+    let intentional=false;
+    const arm=()=>{intentional=true};
+    input.addEventListener("pointerdown",arm);
+    input.addEventListener("keydown",arm);
+    input.addEventListener("beforeinput",e=>{if(e.inputType&&e.inputType!=="insertReplacementText")arm()});
+    const unwanted=()=>!intentional&&!!input.value;
+    const clear=()=>{if(unwanted()){input.value="";input.dispatchEvent(new Event("input",{bubbles:true}));}};
+    input.addEventListener("input",e=>{if(unwanted()){input.value="";}},true);
+    input.addEventListener("change",clear,true);
+    input.addEventListener("focus",clear,true);
+    clear();
+    for(const delay of [200,800,2000,5000])setTimeout(clear,delay);
+  }
+  const scan=()=>document.querySelectorAll(selector).forEach(setup);
+  scan();
+  new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener("pageshow",scan);
+}
+
 renderChrome();
+protectSearchInputs();
 globalThis.JUST_CHROME_READY=true;
 window.dispatchEvent(new CustomEvent("just:chrome-ready"));
 // Older cached theme-init scripts may rerender labels on DOMContentLoaded; keep the compact icon in control.
