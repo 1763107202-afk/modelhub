@@ -1899,7 +1899,7 @@ async function loadAnnouncements(adminMode=false){
   const [r,important]=await Promise.all([req,importantReq]);
   if(r.error){
     console.error("公告加载失败",r.error);
-    const box=q("#announcementList"),section=q("#announcementSection");
+    const box=q(adminMode?"#adminAnnouncementList":"#announcementList"),section=q("#announcementSection");
     if(section)section.classList.remove("hidden");
     if(box)showModuleRetry(box,"公告暂时加载失败："+(r.error?.message||"网络异常"),"announcements",()=>loadAnnouncements(adminMode));
     return;
@@ -4171,8 +4171,22 @@ function initExamForm(){
 async function initAdmin(){
   if(!state.user||!isAdmin()){q("#adminGate").innerHTML='<div class="notice">当前账号没有管理权限。</div>';q("#adminContent").classList.add("hidden");return}
   q("#adminContent").classList.remove("hidden");
-  loadAdminDashboard();
-  loadStorageHealth();
+  void loadAdminDashboard().catch(console.error);
+  const refreshAdminList=(kind)=>{
+    const isSub=kind==="submissions";
+    const target=q(isSub?"#adminSubmissionFilterStatus":"#adminAnnouncementList");
+    if(target)target.textContent="正在读取记录…";
+    let timer;
+    Promise.race([Promise.resolve().then(()=>isSub?loadAllSubmissions():loadAnnouncements(true)),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error("读取超时")),20000)})]).catch(err=>{
+      if(target)showModuleRetry(target,"读取失败："+(err?.message||String(err)),"admin-"+kind,()=>refreshAdminList(kind));
+    }).finally(()=>clearTimeout(timer));
+  };
+  refreshAdminList("announcements");
+  refreshAdminList("submissions");
+  for(const [id,kind] of [["drawerSubmissions","submissions"],["drawerAnnouncementManage","announcements"]]){
+    const btn=q('[data-admin-drawer="'+id+'"]');if(btn)btn.onclick=()=>refreshAdminList(kind);
+  }
+  if(q("#storageHealthStatus"))void loadStorageHealth();
   const storageScan=q("#storageHealthScan");if(storageScan)storageScan.onclick=()=>loadStorageHealth();
   const storageClean=q("#storageHealthClean");if(storageClean)storageClean.onclick=()=>cleanStorageOrphans();
   q("#announcementForm").onsubmit=async e=>{
@@ -4204,7 +4218,6 @@ async function initAdmin(){
     const u=URL.createObjectURL(f);
     box.innerHTML='<img class="announcementImagePreviewImg" src="'+u+'" alt="公告图片预览"><small>'+esc(f.name)+' · '+bytesText(f.size)+'</small>';
   };
-  loadAnnouncements(true);
   q("#resourceShareForm").onsubmit=async e=>{
     e.preventDefault();
     const title=q("#resourceShareTitle").value.trim(),content=q("#resourceShareContent").value.trim(),rawLink=q("#resourceShareLink").value.trim(),imageFile=q("#resourceShareImage").files[0],attachFile=q("#resourceShareFile").files[0];
