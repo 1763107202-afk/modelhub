@@ -4172,6 +4172,7 @@ async function initAdmin(){
   if(!state.user||!isAdmin()){q("#adminGate").innerHTML='<div class="notice">当前账号没有管理权限。</div>';q("#adminContent").classList.add("hidden");return}
   q("#adminContent").classList.remove("hidden");
   loadAdminDashboard();
+  initQQMonitor();
   loadStorageHealth();
   const storageScan=q("#storageHealthScan");if(storageScan)storageScan.onclick=()=>loadStorageHealth();
   const storageClean=q("#storageHealthClean");if(storageClean)storageClean.onclick=()=>cleanStorageOrphans();
@@ -5185,3 +5186,20 @@ supabase.auth.onAuthStateChange((event,session)=>{
   setTimeout(()=>{void handleAuthStateChange(event,session).catch(err=>console.warn("账号状态同步失败",err))},0);
 });
 
+
+let qqMonitorTimer;
+function initQQMonitor(){
+ const host=q("#adminContent .adminDash");if(!host)return;
+ let panel=q("#qqMonitorPanel");
+ if(!panel){panel=document.createElement("section");panel.id="qqMonitorPanel";panel.className="adminDash";panel.innerHTML='<div class="head"><div><span class="eyebrow">QQ BRIDGE</span><h2>QQ机器人运行监控</h2></div><button type="button" class="btn ghost" id="qqMonitorRefresh">刷新</button></div><div class="adminDashGrid"><article class="adminDashCard"><span>桥接程序</span><b id="qqBridgeState" style="font-size:23px">—</b><small id="qqContact">等待检测</small></article><article class="adminDashCard"><span>QQ登录状态</span><b id="qqLoginState" style="font-size:23px">—</b><small id="qqHeartbeat">等待心跳</small></article><article class="adminDashCard"><span>已发送 / 待发送</span><b id="qqSentState" style="font-size:23px">—</b><small>累计消息统计</small></article><article class="adminDashCard"><span>发送失败</span><b id="qqFailedState">—</b><small>累计失败消息</small></article></div><p id="qqMonitorNote" role="status" style="font-size:13px;margin-top:10px"></p>';host.after(panel);}
+ const fmt=v=>v?new Date(v).toLocaleString("zh-CN",{timeZone:"Asia/Shanghai"}):"暂无";
+ let busy=false;
+ async function refresh(){if(busy||document.hidden)return;busy=true;try{const {data:d,error}=await supabase.rpc("qq_get_bridge_status");if(error||!d)throw error||Error("empty");
+ q("#qqBridgeState").textContent=({connected:"已连接",disconnected:"已失联",unknown:"未检测"})[d.bridge_status]||"未知";
+ q("#qqLoginState").textContent=d.qq_online===true?(d.qq_good===false?"运行异常":"在线"):d.qq_online===false?"已掉线":"未知";
+ q("#qqContact").textContent="最后连接："+fmt(d.last_contact);q("#qqHeartbeat").textContent="最后心跳："+fmt(d.last_heartbeat);
+ q("#qqSentState").textContent=d.sent+" / "+d.pending;q("#qqFailedState").textContent=d.failed;
+ q("#qqMonitorNote").textContent="每30秒刷新；超过90秒未收到心跳，QQ登录状态显示未知。";
+ }catch(e){for(const id of ["qqBridgeState","qqLoginState","qqSentState","qqFailedState"])q("#"+id).textContent="—";q("#qqMonitorNote").textContent="状态读取失败或无权限，请刷新重试。";}finally{busy=false}}
+ q("#qqMonitorRefresh").onclick=refresh;clearInterval(qqMonitorTimer);qqMonitorTimer=setInterval(refresh,30000);void refresh();
+}
