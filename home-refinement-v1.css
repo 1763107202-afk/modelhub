@@ -112,3 +112,30 @@ body[data-page="home"] .homeWorkItem:focus-visible,body[data-page="home"] .homeH
 @media(prefers-reduced-motion:reduce){
   body[data-page="home"] main *,body[data-page="home"] main *::before,body[data-page="home"] main *::after{scroll-behavior:auto;transition:none!important;animation:none!important}
 }
+
+/* Resolve legacy light-theme !important rules within the refined homepage only. */
+html[data-theme="light"] body[data-page="home"] .heroGrid .panel.glass,
+html[data-theme="light"] body[data-page="home"] .moduleCard{
+  background:var(--home-surface)!important;border-color:var(--home-line)!important;box-shadow:none!important;
+}
+html[data-theme="light"] body[data-page="home"] .moduleCard:hover{background:var(--home-hover)!important}
+html[data-theme="light"] body[data-page="home"] .heroGrid .stat{
+  background:transparent!important;border-color:var(--home-line)!important;box-shadow:none!important;
+}
+html[data-theme="light"] body[data-page="home"] .heroGrid .stat b{color:var(--home-ink)!important}
+html[data-theme="light"] body[data-page="home"] .heroGrid .stat #homeOverdueMembers{color:var(--home-warn)!important}
+html[data-theme="light"] body[data-page="home"] .heroGrid .stat span,
+html[data-theme="light"] body[data-page="home"] .heroGrid p,
+html[data-theme="light"] body[data-page="home"] .moduleCard p,
+html[data-theme="light"] body[data-page="home"] main>.section.wrap>.head p,
+html[data-theme="light"] body[data-page="home"] .homeWorkbenchHead p,
+html[data-theme="light"] body[data-page="home"] .homeWorkCopy small{color:var(--home-muted)!important}
+html[data-theme="light"] body[data-page="home"] .moduleCard h3,
+html[data-theme="light"] body[data-page="home"] .homeWorkCopy strong{color:var(--home-ink)!important}
+html[data-theme="light"] body[data-page="home"] .moduleCard .tag{background:none!important;border-color:transparent!important;color:var(--home-muted)!important}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem{background:transparent;color:var(--home-ink);border-color:var(--home-line)}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem:hover{background:var(--home-hover)}
+html[data-theme="light"] body[data-page="home"] .homeWorkIcon{background:transparent;border:0;color:var(--home-accent)}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem.progressOverdue{background:color-mix(in srgb,var(--home-warn) 12%,var(--home-surface));box-shadow:inset 3px 0 var(--home-warn)}
+html[data-theme="light"] body[data-page="home"] .homeWorkItem.progressOverdue .homeWorkIcon{background:transparent;border:0;color:var(--home-warn)}
+html[data-theme="light"] body[data-page="home"] .homeHeroTextLink{color:var(--home-accent)}
